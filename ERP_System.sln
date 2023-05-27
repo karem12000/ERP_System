@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33130.400
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERP_System.Web", "ERP_System.Web\ERP_System.Web.csproj", "{0C53C9D4-B416-4BB9-A46C-F881AC855CC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERP_System.Common", "ERP_System.Common\ERP_System.Common.csproj", "{DE2A4FE4-1A39-449E-9611-566F41216383}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERP_System.Tables", "ERP_System.Tables\ERP_System.Tables.csproj", "{DAB07E4F-961F-44A5-8EE0-0ABB4EE67C05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERP_System.DAL", "ERP_System.DAL\ERP_System.DAL.csproj", "{241E7DB1-A367-418C-8841-FAA5062A8847}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERP_System.DTO", "ERP_System.DTO\ERP_System.DTO.csproj", "{A4276174-DB38-45BD-9065-628BEE6C351D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERP_System.BLL", "ERP_System.BLL\ERP_System.BLL.csproj", "{DDF20EB3-039D-4680-869A-3C2A0A2A33CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERP_System.IOC", "ERP_System.IOC\ERP_System.IOC.csproj", "{7DAA6183-0196-47B8-93E6-FB3BDAB7EBD6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C53C9D4-B416-4BB9-A46C-F881AC855CC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C53C9D4-B416-4BB9-A46C-F881AC855CC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C53C9D4-B416-4BB9-A46C-F881AC855CC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C53C9D4-B416-4BB9-A46C-F881AC855CC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE2A4FE4-1A39-449E-9611-566F41216383}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE2A4FE4-1A39-449E-9611-566F41216383}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE2A4FE4-1A39-449E-9611-566F41216383}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE2A4FE4-1A39-449E-9611-566F41216383}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAB07E4F-961F-44A5-8EE0-0ABB4EE67C05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAB07E4F-961F-44A5-8EE0-0ABB4EE67C05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAB07E4F-961F-44A5-8EE0-0ABB4EE67C05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAB07E4F-961F-44A5-8EE0-0ABB4EE67C05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{241E7DB1-A367-418C-8841-FAA5062A8847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{241E7DB1-A367-418C-8841-FAA5062A8847}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{241E7DB1-A367-418C-8841-FAA5062A8847}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{241E7DB1-A367-418C-8841-FAA5062A8847}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4276174-DB38-45BD-9065-628BEE6C351D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4276174-DB38-45BD-9065-628BEE6C351D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4276174-DB38-45BD-9065-628BEE6C351D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4276174-DB38-45BD-9065-628BEE6C351D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDF20EB3-039D-4680-869A-3C2A0A2A33CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDF20EB3-039D-4680-869A-3C2A0A2A33CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDF20EB3-039D-4680-869A-3C2A0A2A33CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDF20EB3-039D-4680-869A-3C2A0A2A33CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DAA6183-0196-47B8-93E6-FB3BDAB7EBD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DAA6183-0196-47B8-93E6-FB3BDAB7EBD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DAA6183-0196-47B8-93E6-FB3BDAB7EBD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DAA6183-0196-47B8-93E6-FB3BDAB7EBD6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {174BDE1E-878A-46E4-88EE-149EC25CEE30}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,55 @@
+﻿@inject ERP_System.BLL.PageBll _pageBll;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        @{
+            string pageName = Url.ActionContext.RouteData.Values["controller"].ToString();
+            if (Url.ActionContext.RouteData.Values["action"].ToString() == "ChangePassword")
+            {
+                pageName = (Url.ActionContext.RouteData.Values["action"].ToString());
+            }
+
+            if (string.IsNullOrEmpty(_pageBll.GetPageName(pageName)))
+                pageName = "نظام المحاسبه ";
+            else
+            pageName = "نظام المحاسبه - " + _pageBll.GetPageName(pageName);
+
+        }
+
+        @pageName
+    </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ERP.Web.styles.css" asp-append-version="true" />
+    <script>
+       let  mainAppUserId = '@ViewContext.HttpContext.UserId()'
+    </script>
+</head>
+<body dir="rtl">
+    <vc:aside-bar></vc:aside-bar>
+    <partial name="_Header" />
+
+
+    <div class="container-fluid px-0">
+
+        <div class="content">
+            @RenderBody()
+
+        </div>
+
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - ERP.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

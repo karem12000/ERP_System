@@ -1,0 +1,58 @@
+﻿
+@model IEnumerable<AsideBarPagesDTO>
+@inject ERP_System.BLL.UserBll _userBll;
+@{
+    var userid = ViewContext.HttpContext.UserId();
+    string userName = string.Empty;
+    var flag = 0;
+}
+
+<nav class="navbar navbar-vertical navbar-expand-lg">
+
+    <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
+        <!-- scrollbar removed-->
+        <div class="navbar-vertical-content">
+            <ul class="navbar-nav flex-column" id="navbarVerticalNav">
+                <li class="nav-item">
+                    <div class="nav-item-wrapper">
+
+                        <a href="/Home/Index" class="nav-link  dropdown-indicator">
+                            <div class="d-flex align-items-center">
+
+
+                                <span class="nav-link-icon">
+                                    <i class="fas fa-tachometer-alt-average"></i>
+                                </span>
+                                <span class="nav-link-text" data-key="t-dashboards">الرئيسية</span>
+                            </div>
+
+
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    @foreach (var pageItem in Model.Where(p => p.HasPermission))
+                    {
+                        @*active*@
+                        <a class="nav-link " href="/@pageItem.PageRoute" data-bs-toggle="" aria-expanded="false">
+                            <div class="d-flex align-items-center">
+                                <span class="nav-link-text">@pageItem.PageTitle</span>
+                            </div>
+                        </a>
+                        flag++;
+                    }
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <div class="navbar-vertical-footer">
+        <button id="Nav-Collapsed" class="btn navbar-vertical-toggle border-0 fw-semi-bold w-100 white-space-nowrap d-flex align-items-center"><span class="uil uil-left-arrow-to-left fs-0"></span><span class="uil uil-arrow-from-right fs-0"></span><span class="navbar-vertical-footer-text ms-2">Collapsed View</span></button>
+    </div>
+</nav>
+
+
+
+
+
