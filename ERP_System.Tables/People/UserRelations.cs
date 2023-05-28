@@ -60,6 +60,10 @@ namespace ERP_System.Tables
         public ICollection<Unit> UnitCreated { get; set; }
         public ICollection<Unit> UnitModified { get; set; }
         public ICollection<Unit> UnitDeleted { get; set; }
+
+        public ICollection<Attachment> AttatchCreated { get; set; }
+        public ICollection<Attachment> AttatchModified { get; set; }
+        public ICollection<Attachment> AttatchDeleted { get; set; }
         #endregion
         #region Setting
         public ICollection<Setting> SettingCreated { get; set; }

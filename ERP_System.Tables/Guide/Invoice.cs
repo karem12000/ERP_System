@@ -10,31 +10,42 @@ namespace ERP_System.Tables
     [Table(nameof(Invoice) + "s", Schema = AppConstants.Areas.Guide)]
     public class Invoice : BaseEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+       
         public int InvoiceNumber { get; set; }
-        public string? Name { get; set; }
-        public string? BarCode { get; set; }
-        public double? PricePerUnit { get; set; }
-        //public decimal TotalQtyPrice  =>Convert.ToDecimal(PricePerUnit * Qty);
+        
         public decimal? TotalPrice { get; set; }
-        public double? Qty { get; set; }
-        public string? Image { get; set; }
+       
         public DateTime InvoiceDate { get; set; }
-        public InvoiceType InvoiceType { get; set; }
+        public InvoiceType? InvoiceType { get; set; }
+
+
         public string? ResourceName { get; set; }
         public string? BuyerName { get; set; }
 
-        public ICollection<InvoiceProduct> InvoiceProducts { get; set; }
+        public ICollection<InvoiceDetail> InvoiceDetails { get; set; }
 
     }
 
-    [Table(nameof(InvoiceProduct) + "s", Schema = AppConstants.Areas.Guide)]
-    public class InvoiceProduct : BaseEntity
+    [Table(nameof(InvoiceDetail) + "s", Schema = AppConstants.Areas.Guide)]
+    public class InvoiceDetail : BaseEntity
     {
+        public string? UnitName { get; set; }
+        public Guid? UnitId { get; set; }
+        public string? GroupName { get; set; }
+        public Guid? GroupId { get; set; }
+
+        public string? StockName { get; set; }
+        public Guid? StockId { get; set; }
+
+        public double? Qty { get; set; }
+        public double? PricePerUnit { get; set; }
+        public double? PricePerQty  => Qty * PricePerUnit;
+
 
         [ForeignKey(nameof(Invoice))]
         public Guid? InvoiceId { get; set; }
         public virtual Invoice Invoice { get; set; }
+
 
         [ForeignKey(nameof(Product))]
         public Guid? ProductId { get; set; }

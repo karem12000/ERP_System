@@ -11,9 +11,9 @@ namespace ERP_System.Tables
     {
         public string Name { get; set; }
         public double Price { get; set; }
-        public string? Image { get; set; }
+        public string? BarCodeText { get; set; }
+        public string? BarCodePath { get; set; }
         public decimal? QtyInStock { get; set; }
-
 
         [ForeignKey(nameof(Group))]
         public Guid? GroupId { get; set; }
@@ -23,7 +23,8 @@ namespace ERP_System.Tables
         public Guid? UnitId { get; set; }
         public virtual Unit Unit { get; set; }
         public ICollection<StockProduct> StockProducts { get; set; }
-        public ICollection<InvoiceProduct> InvoiceProducts { get; set; }
+        public ICollection<InvoiceDetail> InvoiceDetails { get; set; }
+        public ICollection<Attachment> Attachments { get; set; }
 
 
     }

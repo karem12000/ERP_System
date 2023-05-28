@@ -17,8 +17,17 @@ namespace ERP_System.Common.General
     /// </summary>
     public enum InvoiceType
     {
-       Sale=1 , Receipt, ThrowBack
+       Sale=1 , Receipt, SaleThrowBack,ReciptThrowBack
+    }
+    public enum AttachmentType
+    {
+        file = 0,
+        image = 1,
     }
 
+    public enum UserTypeFlag
+    {
+        Client , Suppliers 
+    }
 
 }

@@ -1,5 +1,6 @@
 ﻿
 using ERP_System.BLL;
+using ERP_System.BLL.Guide;
 using ERP_System.DAL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +18,7 @@ namespace ERP_System.IOC
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             #endregion
-            var BllClasses = typeof(PageBll).Assembly.GetTypes().Where(p => p.IsClass && p.Name.ToLower().Contains("bll"));
+            var BllClasses = typeof(ItemGrpoupBll).Assembly.GetTypes().Where(p => p.IsClass && p.Name.ToLower().Contains("bll"));
 
             #region BLL
             BllClasses.ToList().ForEach(p =>
@@ -25,14 +26,7 @@ namespace ERP_System.IOC
                 services.AddScoped(p);
 
             });
-            //services.AddScoped<UserBll>();
-            //services.AddScoped<SendBll>();
-            //services.AddScoped<GasStationBll>();
-            //services.AddScoped<VisitBll>();
-            //services.AddScoped<QuestionsBll>();
-            //services.AddScoped<CityBll>();
-            //services.AddScoped<ManualDistributionBll>();
-            //services.AddScoped<DashboardBll>();
+           
             #endregion
 
         }

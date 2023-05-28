@@ -12,11 +12,13 @@ namespace ERP_System.Web.Areas.People.Controllers
         #region Fields
 
         private readonly UserBll _userBll;
-        private readonly UserTypeBll _userTypeBll;  
+        private readonly UserTypeBll _userTypeBll;
+        public readonly HelperBll _helperBll;
 
-        public PermissionsController(UserBll userBll,  UserTypeBll userTypeBll)
+        public PermissionsController(HelperBll helperBll ,UserBll userBll,  UserTypeBll userTypeBll)
         {
             _userBll = userBll;
+            _helperBll = helperBll;
             _userTypeBll = userTypeBll;
         }
         #endregion
@@ -24,10 +26,9 @@ namespace ERP_System.Web.Areas.People.Controllers
         #region Actions
         public IActionResult Index()
         {
+            //_helperBll.GenerateBarcode("2AC545VF", "\\BarCodes\\");
+
             ViewData["UserTypeId"] = _userTypeBll.GetSelect();
-
-            //ViewBag.UserTypeId = new SelectList(_userTypeBll.GetSelect(), "Value", "Text");
-
 
             return View();
         }

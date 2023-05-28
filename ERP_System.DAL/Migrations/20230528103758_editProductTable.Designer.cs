@@ -4,14 +4,16 @@ using ERP_System.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERP_System.DAL.Migrations
 {
     [DbContext(typeof(ERP_SystemDbContext))]
-    partial class ERP_SystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230528103758_editProductTable")]
+    partial class editProductTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,61 +71,6 @@ namespace ERP_System.DAL.Migrations
                     b.HasIndex("PageId");
 
                     b.ToTable("ActionsPages", "Page");
-                });
-
-            modelBuilder.Entity("ERP_System.Tables.Attachment", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AddedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Path")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AddedBy");
-
-                    b.HasIndex("DeletedBy");
-
-                    b.HasIndex("ModifiedBy");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("Attachments", "Guide");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.Invoice", b =>
@@ -379,6 +326,9 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<Guid?>("GroupId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -821,35 +771,6 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("Page");
                 });
 
-            modelBuilder.Entity("ERP_System.Tables.Attachment", b =>
-                {
-                    b.HasOne("ERP_System.Tables.User", "CreatedUser")
-                        .WithMany("AttatchCreated")
-                        .HasForeignKey("AddedBy");
-
-                    b.HasOne("ERP_System.Tables.User", "DeletedUser")
-                        .WithMany("AttatchDeleted")
-                        .HasForeignKey("DeletedBy");
-
-                    b.HasOne("ERP_System.Tables.User", "ModifiedUser")
-                        .WithMany("AttatchModified")
-                        .HasForeignKey("ModifiedBy");
-
-                    b.HasOne("ERP_System.Tables.Product", "Product")
-                        .WithMany("Attachments")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedUser");
-
-                    b.Navigation("DeletedUser");
-
-                    b.Navigation("ModifiedUser");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("ERP_System.Tables.Invoice", b =>
                 {
                     b.HasOne("ERP_System.Tables.User", "CreatedUser")
@@ -1184,8 +1105,6 @@ namespace ERP_System.DAL.Migrations
 
             modelBuilder.Entity("ERP_System.Tables.Product", b =>
                 {
-                    b.Navigation("Attachments");
-
                     b.Navigation("InvoiceProducts");
 
                     b.Navigation("StockProducts");
@@ -1208,12 +1127,6 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("ActionsPageDeleted");
 
                     b.Navigation("ActionsPageModified");
-
-                    b.Navigation("AttatchCreated");
-
-                    b.Navigation("AttatchDeleted");
-
-                    b.Navigation("AttatchModified");
 
                     b.Navigation("InvoiceCreated");
 

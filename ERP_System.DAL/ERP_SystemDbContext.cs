@@ -68,6 +68,10 @@ namespace ERP_System.DAL
             modelBuilder.Entity<User>().HasMany(x => x.UnitModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
             modelBuilder.Entity<User>().HasMany(x => x.UnitDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
 
+            modelBuilder.Entity<User>().HasMany(x => x.AttatchCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.AttatchModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.AttatchDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+
             #endregion
             #region Setting
             modelBuilder.Entity<User>().HasMany(x => x.SettingCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
@@ -95,6 +99,7 @@ namespace ERP_System.DAL
 
         #region Guide
         public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<Attachment> Attachments { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<ItemGrpoup> ItemGrpoups { get; set; }
         public DbSet<Product> Products { get; set; }
