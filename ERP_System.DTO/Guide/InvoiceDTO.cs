@@ -36,9 +36,9 @@ namespace ERP_System.DTO.Guide
         public string? StockName { get; set; }
         public Guid? StockId { get; set; }
 
-        public double? Qty { get; set; }
-        public double? PricePerUnit { get; set; }
-        public double? PricePerQty => Qty * PricePerUnit;
+        public decimal? RequiredQty { get; set; }
+        public decimal? PricePerUnit { get; set; }
+        public decimal? PricePerQty => RequiredQty * PricePerUnit;
 
     }
 }

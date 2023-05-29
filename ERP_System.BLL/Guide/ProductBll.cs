@@ -54,21 +54,42 @@ namespace ERP_System.BLL.Guide
 
         }
 
-        public object GetByBarCodeOrName(string text)
+        public ResultViewModel GetByBarCodeOrName(string text)
         {
-            var data = _repoProduct.GetAllAsNoTracking().Include(x => x.Unit).Where(p => p.Name == text || p.BarCodeText == text && p.IsActive && !p.IsDeleted).Select(x => new
+            var resultView = new ResultViewModel();
+            resultView.Status = false;
+            var data = _repoProduct.GetAllAsNoTracking().Include(x => x.Unit).Where(p => p.Name == text || p.BarCodeText.Trim().ToLower() == text.Trim().ToLower() && p.IsActive && !p.IsDeleted).Select(x => new
             {
                 ID = x.ID,
                 Name = x.Name,
                 BarCodeText = x.BarCodeText,
+                QtyInStock = x.QtyInStock ==null? 0 : x.QtyInStock,
+                GroupId = x.GroupId,
+                Price = x.Price,
+                ProductImages = x.Attachments.ToList(),
+                UnitId = x.UnitId,
+                UnitName = x.Unit.Name,
+                GroupName = x.Group.Name
             }).FirstOrDefault();
 
-            return data;
+            if (data != null)
+            {
+                resultView.Status = true;
+                resultView.Data = data;
+            }
+            else
+            {
+                resultView.Message = AppConstants.Messages.ProductByNameNotFound;
+            }
 
+            return resultView;
         }
-        public ProductDTO GetByProductBarCode(string barcode)
+        public ResultViewModel GetByProductBarCode(string barcode)
         {
-            return _repoProduct.GetAllAsNoTracking().Include(p => p.Group).Include(p => p.Unit)
+            var resultView = new ResultViewModel();
+            resultView.Status = false;
+
+            var data = _repoProduct.GetAllAsNoTracking().Include(p => p.Group).Include(p => p.Unit)
                 .Where(p => p.BarCodeText.Trim().ToLower() == barcode.Trim().ToLower() && p.IsActive && !p.IsDeleted)
                 .Select(p => new ProductDTO
                 {
@@ -83,6 +104,18 @@ namespace ERP_System.BLL.Guide
                     UnitName = p.Unit.Name,
                     GroupName = p.Group.Name
                 }).FirstOrDefault();
+
+            if (data != null)
+            {
+                resultView.Status = true;
+                resultView.Data = data;
+            }
+            else
+            {
+                resultView.Message = AppConstants.Messages.ProductByNameNotFound;
+            }
+
+            return resultView;
         }
 
         public IQueryable<SelectListDTO> GetSelect()

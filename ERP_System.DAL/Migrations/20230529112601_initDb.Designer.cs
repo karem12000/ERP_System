@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP_System.DAL.Migrations
 {
     [DbContext(typeof(ERP_SystemDbContext))]
-    [Migration("20230527110223_initDb2")]
-    partial class initDb2
+    [Migration("20230529112601_initDb")]
+    partial class initDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -73,7 +73,7 @@ namespace ERP_System.DAL.Migrations
                     b.ToTable("ActionsPages", "Page");
                 });
 
-            modelBuilder.Entity("ERP_System.Tables.Invoice", b =>
+            modelBuilder.Entity("ERP_System.Tables.Attachment", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
@@ -81,12 +81,6 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<Guid?>("AddedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BarCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BuyerName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -96,20 +90,6 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("InvoiceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("InvoiceNumber")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("InvoiceType")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -123,14 +103,72 @@ namespace ERP_System.DAL.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Path")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("PricePerUnit")
-                        .HasColumnType("float");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<double?>("Qty")
-                        .HasColumnType("float");
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AddedBy");
+
+                    b.HasIndex("DeletedBy");
+
+                    b.HasIndex("ModifiedBy");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Attachments", "Guide");
+                });
+
+            modelBuilder.Entity("ERP_System.Tables.Invoice", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AddedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BuyerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("InvoiceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("InvoiceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("InvoiceType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ResourceName")
                         .HasColumnType("nvarchar(max)");
@@ -149,7 +187,7 @@ namespace ERP_System.DAL.Migrations
                     b.ToTable("Invoices", "Guide");
                 });
 
-            modelBuilder.Entity("ERP_System.Tables.InvoiceProduct", b =>
+            modelBuilder.Entity("ERP_System.Tables.InvoiceDetail", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
@@ -167,6 +205,12 @@ namespace ERP_System.DAL.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("GroupName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("InvoiceId")
                         .HasColumnType("uniqueidentifier");
 
@@ -182,8 +226,26 @@ namespace ERP_System.DAL.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<double?>("PricePerUnit")
+                        .HasColumnType("float");
+
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<double?>("Qty")
+                        .HasColumnType("float");
+
+                    b.Property<Guid?>("StockId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StockName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UnitId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UnitName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -197,7 +259,7 @@ namespace ERP_System.DAL.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("InvoiceProducts", "Guide");
+                    b.ToTable("InvoiceDetails", "Guide");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.ItemGrpoup", b =>
@@ -309,6 +371,12 @@ namespace ERP_System.DAL.Migrations
                     b.Property<Guid?>("AddedBy")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("BarCodePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BarCodeText")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -320,9 +388,6 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<Guid?>("GroupId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -572,6 +637,9 @@ namespace ERP_System.DAL.Migrations
                     b.Property<Guid?>("AddedBy")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CodeOfReset")
                         .HasColumnType("nvarchar(max)");
 
@@ -610,6 +678,9 @@ namespace ERP_System.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("ResetPasswordDate")
                         .HasColumnType("datetime2");
 
@@ -618,6 +689,9 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<bool>("UseDefaultPassword")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("UserClassification")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserImage")
                         .HasColumnType("nvarchar(max)");
@@ -765,6 +839,35 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("Page");
                 });
 
+            modelBuilder.Entity("ERP_System.Tables.Attachment", b =>
+                {
+                    b.HasOne("ERP_System.Tables.User", "CreatedUser")
+                        .WithMany("AttatchCreated")
+                        .HasForeignKey("AddedBy");
+
+                    b.HasOne("ERP_System.Tables.User", "DeletedUser")
+                        .WithMany("AttatchDeleted")
+                        .HasForeignKey("DeletedBy");
+
+                    b.HasOne("ERP_System.Tables.User", "ModifiedUser")
+                        .WithMany("AttatchModified")
+                        .HasForeignKey("ModifiedBy");
+
+                    b.HasOne("ERP_System.Tables.Product", "Product")
+                        .WithMany("Attachments")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedUser");
+
+                    b.Navigation("DeletedUser");
+
+                    b.Navigation("ModifiedUser");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("ERP_System.Tables.Invoice", b =>
                 {
                     b.HasOne("ERP_System.Tables.User", "CreatedUser")
@@ -786,7 +889,7 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("ModifiedUser");
                 });
 
-            modelBuilder.Entity("ERP_System.Tables.InvoiceProduct", b =>
+            modelBuilder.Entity("ERP_System.Tables.InvoiceDetail", b =>
                 {
                     b.HasOne("ERP_System.Tables.User", "CreatedUser")
                         .WithMany()
@@ -797,7 +900,7 @@ namespace ERP_System.DAL.Migrations
                         .HasForeignKey("DeletedBy");
 
                     b.HasOne("ERP_System.Tables.Invoice", "Invoice")
-                        .WithMany("InvoiceProducts")
+                        .WithMany("InvoiceDetails")
                         .HasForeignKey("InvoiceId");
 
                     b.HasOne("ERP_System.Tables.User", "ModifiedUser")
@@ -805,7 +908,7 @@ namespace ERP_System.DAL.Migrations
                         .HasForeignKey("ModifiedBy");
 
                     b.HasOne("ERP_System.Tables.Product", "Product")
-                        .WithMany("InvoiceProducts")
+                        .WithMany("InvoiceDetails")
                         .HasForeignKey("ProductId");
 
                     b.Navigation("CreatedUser");
@@ -1084,7 +1187,7 @@ namespace ERP_System.DAL.Migrations
 
             modelBuilder.Entity("ERP_System.Tables.Invoice", b =>
                 {
-                    b.Navigation("InvoiceProducts");
+                    b.Navigation("InvoiceDetails");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.ItemGrpoup", b =>
@@ -1099,7 +1202,9 @@ namespace ERP_System.DAL.Migrations
 
             modelBuilder.Entity("ERP_System.Tables.Product", b =>
                 {
-                    b.Navigation("InvoiceProducts");
+                    b.Navigation("Attachments");
+
+                    b.Navigation("InvoiceDetails");
 
                     b.Navigation("StockProducts");
                 });
@@ -1121,6 +1226,12 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("ActionsPageDeleted");
 
                     b.Navigation("ActionsPageModified");
+
+                    b.Navigation("AttatchCreated");
+
+                    b.Navigation("AttatchDeleted");
+
+                    b.Navigation("AttatchModified");
 
                     b.Navigation("InvoiceCreated");
 

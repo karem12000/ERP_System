@@ -1,4 +1,5 @@
 ﻿using ERP_System.Common;
+using ERP_System.Common.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,6 +17,8 @@ namespace ERP_System.Tables
 
         [Required]
         public string Email { get; set; }
+        public string? Phone { get; set; }
+        public string? Address { get; set; }
 
         [Required]
         public string PasswordHash { get; set; }
@@ -32,6 +35,7 @@ namespace ERP_System.Tables
         public DateTime? ResetPasswordDate { get; set; }
 
         public string CodeOfReset { get; set; } = string.Empty;
+        public UserClassification? UserClassification { get; set; }
 
         #endregion
 

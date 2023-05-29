@@ -55,6 +55,8 @@ namespace ERP_System.Common
             public const string EnterRequiredFields = "من فضلك أدخل الحقول المطلوبة";
             public const string UserTypeRequiredMessage = "نوع المستخدم مطلوب";
             public const string StopTitle = "توقف";
+            public const string ProductByBarCodeNotFound = "لايوجد منتج بهذا الباركود";
+            public const string ProductByNameNotFound = "لايوجد منتج بهذا الاسم";
 
 
 

@@ -25,7 +25,7 @@ namespace ERP_System.Common.General
         image = 1,
     }
 
-    public enum UserTypeFlag
+    public enum UserClassification
     {
         Client , Suppliers 
     }
