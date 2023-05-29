@@ -21,13 +21,12 @@
 
         @pageName
     </title>
-    //<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    //<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    //<link rel="stylesheet" href="~/ERP.Web.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/css/main/app.css">
-    <link rel="stylesheet" href="~/assets/css/pages/auth.css">
-    <link rel="shortcut icon" href="~/assets/images/logo/favicon.svg" type="image/x-icon">
-    <link rel="shortcut icon" href="~/assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="~/new-assets/app.css">
+    <link rel="stylesheet" href="~/assets/css/pages/fontawesome.css">
+
+    <link rel="stylesheet" href="~/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="~/assets/css/pages/datatables.css">
     <script>
        let  mainAppUserId = '@ViewContext.HttpContext.UserId()'
     </script>
@@ -36,15 +35,19 @@
     <div id="app">
 
     <vc:aside-bar></vc:aside-bar>
-    <partial name="_Header" />
+    
 
-    <div class="container-fluid px-0">
+    <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
 
-        <div class="content">
+            <div class="page-heading">
+
             @RenderBody()
-
-        </div>
-
+            </div>
     </div>
 
     <footer class="border-top footer text-muted">
@@ -55,12 +58,13 @@
     </div>
 
 
-
-    //<script src="~/lib/jquery/dist/jquery.min.js"></script>
-    //<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    //<script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/assets/js/bootstrap.js"></script>
     <script src="~/assets/js/app.js"></script>
+
+    //data tables script
+    <script src="~/assets/extensions/jquery/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
+    <script src="~/assets/js/pages/datatables.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
