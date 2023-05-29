@@ -21,17 +21,22 @@
 
         @pageName
     </title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ERP.Web.styles.css" asp-append-version="true" />
+    //<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    //<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    //<link rel="stylesheet" href="~/ERP.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/assets/css/main/app.css">
+    <link rel="stylesheet" href="~/assets/css/pages/auth.css">
+    <link rel="shortcut icon" href="~/assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="~/assets/images/logo/favicon.png" type="image/png">
     <script>
        let  mainAppUserId = '@ViewContext.HttpContext.UserId()'
     </script>
 </head>
 <body dir="rtl">
+    <div id="app">
+
     <vc:aside-bar></vc:aside-bar>
     <partial name="_Header" />
-
 
     <div class="container-fluid px-0">
 
@@ -47,9 +52,15 @@
             &copy; 2023 - ERP.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    </div>
+
+
+
+    //<script src="~/lib/jquery/dist/jquery.min.js"></script>
+    //<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    //<script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/assets/js/bootstrap.js"></script>
+    <script src="~/assets/js/app.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
