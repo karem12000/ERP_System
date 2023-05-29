@@ -61,10 +61,17 @@
     <script src="~/assets/js/bootstrap.js"></script>
     <script src="~/assets/js/app.js"></script>
 
-    //data tables script
     <script src="~/assets/extensions/jquery/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
     <script src="~/assets/js/pages/datatables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-responsive/2.4.1/dataTables.responsive.min.js" integrity="sha512-9BgeOjT7sU+CPMlXJrq1Shzkx2spfWhhxEnUJ7Ab9b5bSPGCzT8DaT1a/qUfrTBtgJetJwnI81ilCJkXFZRGPA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $(document).ready(function () {
+            $('#testTable').DataTable({
+                responsive: true
+            });
+        });
+</script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
