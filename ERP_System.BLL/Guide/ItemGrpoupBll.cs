@@ -14,7 +14,7 @@ namespace ERP_System.BLL.Guide
 {
     public class ItemGrpoupBll
     {
-        private const string _spGroupItems = "Guide.[spGroupItem]";
+        private const string _spGroupItems = "[Guide].[spItemGroups]";
         private readonly IRepository<ItemGrpoup> _repoGroup;
         private readonly IMapper _mapper;
 
@@ -93,6 +93,7 @@ namespace ERP_System.BLL.Guide
                     return resultViewModel;
                 }
                 var tbl = _mapper.Map<ItemGrpoup>(GroupItemDTO);
+                tbl.IsActive = true;
                 if (_repoGroup.UserId != Guid.Empty)
                 {
                     tbl.AddedBy = _repoGroup.UserId;

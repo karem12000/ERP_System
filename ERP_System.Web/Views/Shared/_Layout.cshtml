@@ -66,11 +66,39 @@
     <script src="~/assets/js/pages/datatables.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-responsive/2.4.1/dataTables.responsive.min.js" integrity="sha512-9BgeOjT7sU+CPMlXJrq1Shzkx2spfWhhxEnUJ7Ab9b5bSPGCzT8DaT1a/qUfrTBtgJetJwnI81ilCJkXFZRGPA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        $(document).ready(function () {
-            $('#testTable').DataTable({
-                responsive: true
-            });
-        });
+        //$(document).ready(function () {
+        //    $('#testTable').DataTable({
+        //        responsive: true
+        //    });
+        //});
+
+        let _dataTableNextText = 'التالي',
+            _dataTablePrevText = 'السابق',
+            _dataTableSearch = 'بحث',
+            _dataTableShowText = 'عرض',
+            _dataTableFromText = 'من',
+            _dataTableRowsText = 'بيانات',
+            _dataTableSearchText = '',
+            _dataTableToText = 'الى',
+            _dataTableNoDataText = 'لا يوجد بيانات',
+            _dataTableLoadingText = 'انتظر';
+        let _dataTableTranslate = {
+            "oPaginate": {
+                "sPrevious": '<i class="fas fa-chevron-right"></i>',
+                "sNext": '<i class="fas fa-chevron-left"></i>'
+            },
+            "Processing": "جاري التحميل...",
+            "sLengthMenu": "عرض _MENU_",
+            "sZeroRecords": "لم يُعثر على أية سجلات",
+            "sInfo": "إظهار _START_ إلى _END_ من أصل _TOTAL_ مُدخل",
+            "sInfoEmpty": "يعرض 0 إلى 0 من أصل 0 سجلّ",
+            "sInfoFiltered": "(منتقاة من مجموع _MAX_ مُدخل)",
+            "sInfoPostFix": "",
+            "sSearch": "<p style='margin-left:5px;cursor: auto;'>بحث<p/>",
+            "sSearchPlaceholder": ""
+
+
+        }
 </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

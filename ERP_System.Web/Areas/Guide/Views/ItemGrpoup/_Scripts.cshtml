@@ -1,0 +1,64 @@
+﻿
+<script>
+    $(document).ready(function () {
+        LoadItemGroupTable();
+
+    });
+
+    let form = $('#frm');
+    function Submit() {
+
+        event.preventDefault();
+
+        Save();
+
+    }
+
+
+    function Save() {
+
+        $.post('@Url.GetAction("Save")', form.serialize(), function (res) {
+            if (res.status) {
+                window.alert(res.message);
+
+            }
+            else {
+                window.alert(res.message);
+
+            }
+        });
+
+
+    }
+
+     function Edit(e, id) {
+
+        $('#id').val(id);
+        var item = $(e);
+        var itemName = item.closest('tr').find('.ItemName').html();
+        $('#Name').val(itemName);
+
+    }
+
+
+    function LoadItemGroupTable() {
+        // LoadTable
+    }
+
+    function Delete(e, id) {
+
+        var btn = $(e);
+        var id = id;
+       
+                $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
+
+                    if (res.status) {
+                        btn.closest('tr').remove();
+                    }
+                    else {
+                        
+                    }
+                });
+    }
+
+</script>

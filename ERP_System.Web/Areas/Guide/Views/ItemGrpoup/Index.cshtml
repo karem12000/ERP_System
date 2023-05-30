@@ -1,1 +1,31 @@
-﻿شاشة المجموعات
+﻿@{
+    Layout = "_Layout";
+}
+@if (CurrentForm.CurrentFormPermissionActions.AddHasPermission)
+{
+    <form id="frm" onsubmit="Submit()">
+        <div class="container">
+            <div class="row">
+                <div class="form-group position-relative has-icon-left mb-4 col-md-6">
+                    <input hidden name="id" id="id" value="" />
+                    <input type="text" required id="Name" name="Name" class="form-control form-control-xl" placeholder="اسم المجموعة">
+                </div>
+            </div>
+        </div>
+       
+        <button type="button" onclick="Submit()" class="btn btn-primary btn-block btn-lg shadow-lg mt-5">حفظ</button>
+    </form>
+}
+
+
+
+@if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
+{
+    <partial name="_DataTable" />
+}
+
+@section Scripts
+{
+
+    <partial name="_Scripts" />
+}
