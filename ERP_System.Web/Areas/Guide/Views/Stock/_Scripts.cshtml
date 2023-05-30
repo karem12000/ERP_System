@@ -38,7 +38,7 @@
                         showConfirmButton: false
                     }).then((result) => {
                         resetForm();
-                        window.location.href = "/Guide/ItemGrpoup/Index";
+                        window.location.href = "/Guide/Stock/Index";
                     })
 
                 }
@@ -56,14 +56,7 @@
 
     }
 
-    function Edit(e, id) {
-
-        $('#id').val(id);
-        var item = $(e);
-        var itemName = item.closest('tr').find('.GroupName').html();
-        $('#Name').val(itemName);
-
-    }
+    
 
 
     function LoadTable() {
@@ -95,13 +88,31 @@
                 {
                     data: null,
                     bSortable: true,
-                    render: function (data, type, row) { return '<label class="GroupName">' + (data.Name ?? "") + '</label><input hidden name="groupId" class="groupId" value="' + data.ID + '" /> ' }
+                    render: function (data, type, row) { return '<label class="StockName">' + (data.Name ?? "") + '</label><input hidden name="StockId" class="StockId" value="' + data.ID + '" /> ' }
 
                 },
                 {
                     data: null,
                     bSortable: true,
-                    render: function (data, type, row) { return '<label class="AddedDate">' + (data.AddedDate ?? "") + '</label><input hidden name="groupId" class="groupId" value="' + data.AddedDate + '" /> ' }
+                    render: function (data, type, row) { return '<label class="StockAddress">' + (data.Address ?? "") + '</label><input hidden name="StockAddress" class="StockAddress" value="' + data.Address + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="StockPhone">' + (data.Phone ?? "") + '</label><input hidden name="phone" class="phone" value="' + data.Phone + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="ManagerName">' + (data.ManagerName ?? "") + '</label><input hidden name="managerName" class="managerName" value="' + data.ManagerName + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="AddedDate">' + (data.AddedDate ?? "") + '</label><input hidden name="addedDate" class="addedDate" value="' + data.AddedDate + '" /> ' }
 
                 },
                 {
@@ -128,7 +139,7 @@
 
     @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
     {
-                                                                                <a class="btn-icon btn btn-warning"  href="/Guide/ItemGrpoup/Edit/${data.ID}" >
+                                                                                <a class="btn-icon btn btn-warning"  href="/Guide/Stock/Edit/${data.ID}" >
                                                                  <i class="fas fa-pen"></i>
 
                                                                 </a>

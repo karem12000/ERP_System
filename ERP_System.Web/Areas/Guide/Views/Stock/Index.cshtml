@@ -1,1 +1,23 @@
-﻿شاشة المخازن
+﻿@{
+    Layout = "_Layout";
+}
+
+@if (CurrentForm.CurrentFormPermissionActions.AddHasPermission)
+{
+    <div class="container">
+        <div class="row">
+            <a href="/Guide/Stock/Add">إضافة جديد</a>
+        </div>
+    </div>
+}
+
+@if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
+{
+    <partial name="_DataTable" />
+}
+
+@section Scripts
+    {
+
+    <partial name="_Scripts" />
+}

@@ -19,6 +19,24 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             return View();
         }
 
+        public IActionResult Add()
+        {
+
+            return View();
+        }
+
+        public IActionResult Edit(Guid id)
+        {
+            var item = _stockBll.GetById(id);
+            if (item != null)
+            {
+
+                return View(item);
+            }
+            else
+                return Redirect("/Guide/Stock/Index");
+        }
+
         public IActionResult Save(StockDto mdl) => Ok(_stockBll.Save(mdl));
 
         [HttpPost]

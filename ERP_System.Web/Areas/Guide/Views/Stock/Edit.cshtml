@@ -1,0 +1,73 @@
+﻿@{
+    Layout = "_Layout";
+}
+@model ERP_System.Tables.Stock;
+@if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+{
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">إضافة مخزن</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit()">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Name">اسم المخزن</label>
+                                            <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
+                                            <input type="text" value="@Model.Name" id="Name" name="Name" class="form-control" placeholder="اسم المخزن">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Name">عنوان المخزن</label>
+                                            <input type="text" value="@Model.Address" id="Address" name="Address" class="form-control" placeholder="عنوان المخزن">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Name">تليفون المخزن</label>
+                                            <input type="text" value="@Model.Phone" id="Phone" name="Phone" class="form-control" placeholder="تليفون المخزن">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Name">اسم المسؤول</label>
+                                            <input type="text" value="@Model.ManagerName" id="ManagerName" name="ManagerName" class="form-control" placeholder="اسم المسؤول">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 d-flex">
+                                        <div class="form-check">
+                                            <div class="checkbox">
+                                                <input type="checkbox" name="IsActive" id="IsActive"  class="form-check-input" checked="@Model.IsActive">
+                                                <label for="IsActive">الحاله</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 d-flex justify-content-end">
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
+                                            حفظ
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-2"></div>
+    </div>
+}
+
+@section Scripts
+    {
+
+    <partial name="_Scripts" />
+}
+}

@@ -19,6 +19,24 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             return View();
         }
 
+        public IActionResult Add()
+        {
+
+            return View();
+        }
+
+        public IActionResult Edit(Guid id)
+        {
+            var item = _itemGrpoupBll.GetById(id);
+            if (item != null)
+            {
+                
+                return View(item);
+            }
+            else
+                return Redirect("/Guide/ItemGrpoup/Index");
+        }
+
         public IActionResult Save(ItemGroupDTO mdl) => Ok(_itemGrpoupBll.Save(mdl));
 
         [HttpPost]
