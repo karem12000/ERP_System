@@ -46,7 +46,6 @@ namespace ERP_System.Web.Areas.People.Controllers
         [HttpPost]
         public IActionResult ResetPassword(Guid id) => Ok(_userBll.ResetPassword(id));
 
-        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_userBll.LoadData(mdl));
 
         #endregion
 

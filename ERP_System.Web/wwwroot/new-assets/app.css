@@ -9,7 +9,7 @@
 }
 
 [dir="rtl"] .sidebar-wrapper .menu .sidebar-link {
-    flex-direction: row-reverse;
+    /* flex-direction: row-reverse; */
 }
 
 [dir="rtl"] #main {
@@ -48,6 +48,6 @@
     border-top-left-radius: var(--bs-pagination-border-radius);
 }
 
-[dir="rtl"] table.dataTable thead th{
-    text-align:right;
+[dir="rtl"] table.dataTable thead th {
+    text-align: right;
 }

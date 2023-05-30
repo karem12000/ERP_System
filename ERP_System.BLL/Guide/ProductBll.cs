@@ -166,13 +166,7 @@ namespace ERP_System.BLL.Guide
                 });
         }
 
-        public DataTableResponse LoadData(DataTableRequest mdl)
-        {
-            var data = _repoProduct.ExecuteStoredProcedure<ProductTableDTO>
-                (_spProduct, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
-
-            return new DataTableResponse() { AaData = data, ITotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
-        }
+       
         #endregion
         #region Save 
         public ResultViewModel Save(ProductDTO productDto)

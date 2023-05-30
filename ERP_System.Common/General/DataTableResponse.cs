@@ -10,17 +10,17 @@ namespace ERP_System
 
         public DataTableResponse(int ITotalRecords, object Data)
         {
-            this.ITotalRecords = ITotalRecords;
-            AaData = Data;
+            this.iTotalRecords = ITotalRecords;
+            aaData = Data;
         }
 
-        public int ITotalRecords { get; set; }
+        public int iTotalRecords { get; set; }
 
-        public int ITotalDisplayRecords => ITotalRecords;
+        public int iTotalDisplayRecords => iTotalRecords;
 
-        public object AaData { get; set; }
+        public object aaData { get; set; }
 
-        public object Data => AaData;
+        public object data => aaData;
 
     }
 }

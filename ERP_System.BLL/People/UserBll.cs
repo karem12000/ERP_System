@@ -313,13 +313,7 @@ namespace ERP_System.BLL
         }
         
         #region LoadData
-        public DataTableResponse LoadData(DataTableRequest mdl)
-        {
-            var data = _repoUser.ExecuteStoredProcedure<UserDTO>
-                ("sp", mdl?.ToSqlParameter(_repoUser.UserId), CommandType.StoredProcedure);
-
-            return new DataTableResponse() { AaData = data, ITotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
-        }
+       
         #endregion
         #region Login For Web
         #region  تسجيل الدخول

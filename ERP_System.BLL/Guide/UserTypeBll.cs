@@ -43,13 +43,7 @@ namespace ERP_System.BLL
                 Text = p.Name
             });
         }
-        public DataTableResponse LoadData(DataTableRequest mdl)
-        {
-            var data = _repoUserType.ExecuteStoredProcedure<UserTypeTableDTO>
-                (_spUserTypes, mdl?.ToSqlParameter(), CommandType.StoredProcedure); 
-
-            return new DataTableResponse() { AaData = data, ITotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
-        }
+      
 
         public IQueryable<UserType> GetAll()
         {

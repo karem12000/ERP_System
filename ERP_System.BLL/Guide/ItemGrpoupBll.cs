@@ -50,7 +50,7 @@ namespace ERP_System.BLL.Guide
             var data = _repoGroup.ExecuteStoredProcedure<ItemGroupTableDTO>
                 (_spGroupItems, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
 
-            return new DataTableResponse() { AaData = data, ITotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
+            return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
         }
         #endregion
         #region Save 

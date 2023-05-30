@@ -1,7 +1,7 @@
 ﻿
 <script>
     $(document).ready(function () {
-        LoadItemGroupTable();
+        LoadTable();
 
     });
 
@@ -31,7 +31,7 @@
 
     }
 
-     function Edit(e, id) {
+    function Edit(e, id) {
 
         $('#id').val(id);
         var item = $(e);
@@ -41,24 +41,99 @@
     }
 
 
-    function LoadItemGroupTable() {
-        // LoadTable
+    function LoadTable() {
+        $('#tbl').DataTable().destroy();
+
+        dt = $('#tbl').DataTable({
+            "columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+
+            "language": _dataTableTranslate,
+            pageLength: 10,
+            pagijngType: "full_numbers",
+            direction: 'rtl',
+            serverSide: true,
+            scrollX: true,
+            processing: true,
+            lengthMenu: [10, 25, 50, 75, 100],
+            sAjaxSource: '@Url.GetAction("LoadDataTable")',
+            sServerMethod: "POST",
+            bPaginate: true,
+            paging: true,
+            dom: 'Blfrtip',
+            buttons: [
+
+
+            ],
+            search: {},
+            columns: [
+
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="NameFirst">' + (data.Name ?? "") + '</label><input hidden name="branchId" class="branchId" value="' + data.ID + '" /> ' }
+
+                },
+                {
+
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+
+                       return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />' 
+
+                    }
+
+                },
+
+
+                {
+
+                    data: null,
+                    bSortable: false,
+                    render: function (data, type, row) {
+                        let btn = `<div class="Event">
+
+
+
+    @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+    {
+                                                                <a class="btn-icon btn btn-warning"  onclick="Edit(this,'${data.ID}')">
+                                                         <i class="fas fa-pen"></i>
+
+                                                        </a>
+
+    }
+
+    @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
+    {
+                                                                   <a class="btn-icon btn btn-danger" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                       <i class="fas fa-trash-alt"></i>
+
+                                                       </a>
+    }
+                                       `;
+                        return btn + '</div>';
+                    }
+                }
+            ]
+        });
+
     }
 
     function Delete(e, id) {
 
         var btn = $(e);
         var id = id;
-       
-                $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
 
-                    if (res.status) {
-                        btn.closest('tr').remove();
-                    }
-                    else {
-                        
-                    }
-                });
+        $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
+
+            if (res.status) {
+                btn.closest('tr').remove();
+            }
+            else {
+
+            }
+        });
     }
 
 </script>

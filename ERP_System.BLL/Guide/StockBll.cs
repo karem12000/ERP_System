@@ -47,13 +47,7 @@ namespace ERP_System.BLL.Guide
             return _repoStock.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.IsActive);
         }
 
-        public DataTableResponse LoadData(DataTableRequest mdl)
-        {
-            var data = _repoStock.ExecuteStoredProcedure<StockTableDTO>
-                (_spStock, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
-
-            return new DataTableResponse() { AaData = data, ITotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
-        }
+      
         #endregion
         #region Save 
         public ResultViewModel Save(StockDto stockDto)
