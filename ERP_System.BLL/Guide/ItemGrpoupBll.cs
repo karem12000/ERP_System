@@ -93,7 +93,7 @@ namespace ERP_System.BLL.Guide
                     return resultViewModel;
                 }
                 var tbl = _mapper.Map<ItemGrpoup>(GroupItemDTO);
-                tbl.IsActive = true;
+                
                 if (_repoGroup.UserId != Guid.Empty)
                 {
                     tbl.AddedBy = _repoGroup.UserId;

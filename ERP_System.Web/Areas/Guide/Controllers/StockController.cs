@@ -15,7 +15,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         }
         public IActionResult Index()
         {
-            ViewData["Stocks"] = _stockBll.GetSelect();
+           
             return View();
         }
 
@@ -23,6 +23,11 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
         [HttpPost]
         public IActionResult Delete(Guid id) => Ok(_stockBll.Delete(id));
+
+        #region LoadData
+        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_stockBll.LoadData(mdl));
+
+        #endregion
 
     }
 }

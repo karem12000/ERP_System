@@ -52,7 +52,13 @@ namespace ERP_System.BLL.Guide
             return _repoUnit.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.IsActive);
         }
 
-       
+        public DataTableResponse LoadData(DataTableRequest mdl)
+        {
+            var data = _repoUnit.ExecuteStoredProcedure<UnitTableDTO>
+                (_spUnits, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
+
+            return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
+        }
         #endregion
         #region Save 
         public ResultViewModel Save(UnitDTO unitDTO)

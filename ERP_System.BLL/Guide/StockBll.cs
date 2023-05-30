@@ -14,7 +14,7 @@ namespace ERP_System.BLL.Guide
 {
     public class StockBll
     {
-        private const string _spStock = "Guide.[spStock]";
+        private const string _spStock = "[Guide].[spStocks]";
         private readonly IRepository<Stock> _repoStock;
         private readonly IMapper _mapper;
 
@@ -47,7 +47,13 @@ namespace ERP_System.BLL.Guide
             return _repoStock.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.IsActive);
         }
 
-      
+        public DataTableResponse LoadData(DataTableRequest mdl)
+        {
+            var data = _repoStock.ExecuteStoredProcedure<StockTableDTO>
+                (_spStock, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
+
+            return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
+        }
         #endregion
         #region Save 
         public ResultViewModel Save(StockDto stockDto)

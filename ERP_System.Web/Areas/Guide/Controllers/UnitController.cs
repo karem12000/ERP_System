@@ -27,5 +27,10 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         [HttpPost]
         public IActionResult Delete(Guid id) => Ok(_UnitBll.Delete(id));
 
+        #region LoadData
+        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_UnitBll.LoadData(mdl));
+
+        #endregion
+
     }
 }

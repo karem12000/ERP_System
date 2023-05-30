@@ -15,7 +15,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         }
         public IActionResult Index()
         {
-            ViewData["Groups"] = _itemGrpoupBll.GetSelect();
+            
             return View();
         }
 

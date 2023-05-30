@@ -196,6 +196,10 @@ namespace ERP_System.BLL.Guide
                 {
                     tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
                     tbl.BarCodeText = productDto.BarCodeText;
+                    if (!string.IsNullOrEmpty(data.BarCodePath))
+                    {
+                        File.Delete(_webHostEnvironment + data.BarCodePath);
+                    }
                 }
                 tbl.AddedBy = data.AddedBy;
 
