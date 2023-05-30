@@ -12,7 +12,7 @@
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
-                    <a href="index.html"><img src="assets/images/logo/logo.svg" alt="Logo" srcset="" /></a>
+                    <a href="index.html"><img src="~/assets/images/logo-removebg-preview.png" alt="Logo" srcset="" width="250"/></a>
                 </div>
                 <div class="theme-toggle d-flex gap-2  align-items-center mt-2 d-none">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -49,24 +49,24 @@
         </div>
         <div class="sidebar-menu">
             <ul class="menu">
-                
+                <li class="sidebar-title">الصفحات</li>
                 <li class="sidebar-item active">
-                    <a href="/home/index" class="">
+                    <a href="/home/index" class="sidebar-link">
                         <i class="bi bi-grid-fill"></i>
                         <span>الرئيسية</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item ">
                     @foreach (var pageItem in Model.Where(p => p.HasPermission))
                     {
+                    <li class="sidebar-item ">
                         <a class="sidebar-link" href="/@pageItem.PageRoute">
                             <i class="@pageItem.IconName"></i>
                             <span>@pageItem.PageTitle</span>
                         </a>
+                    </li>
                         flag++;
                     }
-                </li>
 
                @* <li class="sidebar-item has-sub">
                     <a href="#" class="sidebar-link">

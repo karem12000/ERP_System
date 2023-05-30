@@ -10,6 +10,7 @@
 
 [dir="rtl"] .sidebar-wrapper .menu .sidebar-link {
     /* flex-direction: row-reverse; */
+    gap:10px;
 }
 
 [dir="rtl"] #main {
@@ -50,4 +51,20 @@
 
 [dir="rtl"] table.dataTable thead th {
     text-align: right;
+}
+.sidebar-wrapper .sidebar-header .logo a {
+    display: inline-block;
+    width: 225px;
+    height: 80px;
+}
+.sidebar-wrapper .sidebar-header .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+[dir="rtl"] #main.layout-navbar {
+    transition: margin-right .5s ease-out;
+}
+[dir="rtl"] #sidebar:not(.active) ~ #main {
+    margin-right: 0;
 }

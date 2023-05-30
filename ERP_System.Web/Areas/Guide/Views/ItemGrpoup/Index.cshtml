@@ -3,7 +3,7 @@
 }
 @if (CurrentForm.CurrentFormPermissionActions.AddHasPermission)
 {
-    <form id="frm" onsubmit="Submit()">
+    @*<form id="frm" onsubmit="Submit()">
         <div class="container">
             <div class="row">
                 <div class="form-group position-relative has-icon-left mb-4 col-md-6">
@@ -14,7 +14,49 @@
         </div>
        
         <button type="button" onclick="Submit()" class="btn btn-primary btn-block btn-lg shadow-lg mt-5">حفظ</button>
-    </form>
+    </form>*@
+
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">إضافة مجموعة</h4>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <form class="form form-horizontal" id="frm" onsubmit="Submit()">
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="Name">اسم المجموعة</label>
+                                        <input hidden name="id" id="id" value="" class="d-none"/>
+                                        <input type="text" required id="Name" name="Name" class="form-control" placeholder="اسم المجموعة">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <div class="checkbox">
+                                            <input type="checkbox" id="checkbox3" class="form-check-input" checked="">
+                                            <label for="checkbox3">Remember Me</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 d-flex justify-content-end">
+                                    <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
+                                        حفظ
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-2"></div>
+</div>
 }
 
 
