@@ -35,16 +35,17 @@
 <body dir="rtl">
     <div id="app">
 
-    <vc:aside-bar></vc:aside-bar>
-    <partial name="_Header" />
-
+        <vc:aside-bar></vc:aside-bar>
+        <div id="main" class="layout-navbar">
+            <partial name="_Header" />
             <div class="main-content">
-                <div class="page-heading">
+                    <div class="page-heading">
 
-                @RenderBody()
-                </div>
+                    @RenderBody()
+                    </div>
             </div>
         </div>
+    </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
@@ -91,10 +92,10 @@
 
         }
     </script>
-    <script src="~/assets/extensions/sweetalert2/sweetalert2.min.js"></script>>
-    <script >
+    <script src="~/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
+    <script>
         
-    </script>>
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
