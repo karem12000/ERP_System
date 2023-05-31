@@ -90,3 +90,20 @@
         width: 100%;
         height: 100%;
     }
+
+[dir= "rtl"] .choices[data-type*=select-multiple] .choices__button, .choices[data-type*=text] .choices__button {
+    margin-left: -4px;
+    margin-right: 8px;
+    border-right: 1px solid #293c7e;
+    border-left: unset;
+}
+
+.choices__list--multiple .choices__item {
+    background-color: #435ebe;
+    border-color: #435ebe
+}
+
+.choices__inner {
+    background-color: #fff;
+    border-radius:10px
+}

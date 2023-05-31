@@ -22,12 +22,12 @@
         @pageName
     </title>
     <link rel="stylesheet" href="~/assets/css/main/app.css">
-    <link rel="stylesheet" href="~/new-assets/app.css">
     <link rel="stylesheet" href="~/assets/css/pages/fontawesome.css">
-
+    <link rel="stylesheet" href="~/assets/extensions/choices.js/public/assets/styles/choices.css">
     <link rel="stylesheet" href="~/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="~/assets/css/pages/datatables.css">
     <link rel="stylesheet" href="~/assets/extensions/sweetalert2/sweetalert2.min.css">
+    <link rel="stylesheet" href="~/new-assets/app.css">
     <script>
        let  mainAppUserId = '@ViewContext.HttpContext.UserId()'
     </script>
@@ -62,6 +62,26 @@
     <script src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
     <script src="~/assets/js/pages/datatables.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-responsive/2.4.1/dataTables.responsive.min.js" integrity="sha512-9BgeOjT7sU+CPMlXJrq1Shzkx2spfWhhxEnUJ7Ab9b5bSPGCzT8DaT1a/qUfrTBtgJetJwnI81ilCJkXFZRGPA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="~/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>
+    <script>
+        const element = document.querySelector('.choices.multiple-remove');
+        const example = new Choices(element,
+            {
+                delimiter: ',',
+                editItems: true,
+                maxItemCount: -1,
+                removeItemButton: true,
+            });
+
+        element.addEventListener(
+            'addItem',
+            function (event) {
+                document.querySelector('.choices__input.choices__input--cloned').remove()
+                console.log(event.detail.value);
+            },
+            false,
+        );
+    </script>
     <script>
        
         let _dataTableNextText = 'التالي',
