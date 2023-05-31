@@ -5,11 +5,10 @@
 @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
 {
     <div class="row">
-        <div class="col-2"></div>
-        <div class="col-lg-8">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">إضافة مجموعة</h4>
+                    <h4 class="card-title">تعديل بيانات المجموعة</h4>
                 </div>
                 <div class="card-content">
                     <div class="card-body">
@@ -37,7 +36,7 @@
                                         </button>
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
-                                            <div class="mb-3 d-flex align-items-center justify-content-end ps-2">
+                                            <div class="d-flex align-items-center justify-content-end ps-2">
                                                 <a class="btn btn-outline-primary" href="/Guide/ItemGrpoup/Index">
                                                     رجوع للقائمة
                                                     <span class="fa-arrow-left fas"></span>
@@ -52,7 +51,6 @@
                 </div>
             </div>
         </div>
-        <div class="col-2"></div>
     </div>
 }
 
@@ -60,5 +58,4 @@
     {
 
     <partial name="_Scripts" />
-}
 }

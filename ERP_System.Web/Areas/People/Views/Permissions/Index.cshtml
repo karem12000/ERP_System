@@ -9,8 +9,9 @@
                 <div class="d-flex justify-content-between align-items-center gap-2">
 
                     <a class="SaveBtn" style="cursor:pointer" id="btnSave" onclick="SaveUserPermission()">
-                        <div class="d-flex align-items-center m-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="15" height="15" x="0" y="0" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><path d="M420.284 0H60C26.916 0 0 26.916 0 60v392c0 33.084 26.916 60 60 60h392c33.084 0 60-26.916 60-60V91.716zM157 40h119v76h40V40h40v96c0 11.028-8.972 20-20 20H177c-11.028 0-20-8.972-20-20zm239 432H117V296c0-11.028 8.972-20 20-20h239c11.028 0 20 8.972 20 20zm76-20c0 11.028-8.972 20-20 20h-16V296c0-33.084-26.916-60-60-60H137c-33.084 0-60 26.916-60 60v176H60c-11.028 0-20-8.972-20-20V60c0-11.028 8.972-20 20-20h57v96c0 33.084 26.916 60 60 60h159c33.084 0 60-26.916 60-60V40h7.716L472 108.284z" fill="#000000" data-original="#000000" class=""></path></g></svg>                            حفظ
+                        <div class="btn btn-primary">
+                            حفظ
+                            <i class="far fa-save"></i>
                         </div>
 
 
@@ -23,30 +24,30 @@
             <div class="w-100 d-flex flex-wrap align-items-end   mt-3 gap-3">
 
 
-                <div class="form-group  min-w-3">
-                    <div class="form-group  min-w-3">
-                        <label class="lable" for="ddlRegions">نوع المستخدم</label>
-                        <select onchange="ShowUserPermission()" class="Select sAddress form-select" aria-label="اختر المنطقة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypeId"], "Value", "Text")' name="UserTypeId" id="ddlUserType">
-                            <option value="@Guid.Empty">اختر</option>
-                        </select>
-
-                    </div>
-                  
-                </div>
             </div>
         </div>
     </div>
 
     <div class="row">
 
-        <div class="col-xl-12">
-            <div class="CardDiv newDataTable">
+        <div class="card">
+        <div class="w-25">
+            <div class="p-4 d-flex align-items-center">
+                <label class="lable w-25" for="ddlRegions">نوع المستخدم</label>
+                <select onchange="ShowUserPermission()" class="Select sAddress form-select w-50" aria-label="اختر المنطقة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypeId"], "Value", "Text")' name="UserTypeId" id="ddlUserType">
+                    <option value="@Guid.Empty">اختر</option>
+                </select>
+
+            </div>
+                  
+            </div>
+            <div class="card-body">
 
                 <div class="row">
 
                     <table id="tbl" class="table " width="100%">
                         <thead>
-                            <tr>
+                            <tr class="text-center">
                                 <th>#</th>
                                 <th>الصفحة</th>
                                 <th>اضافة</th>
