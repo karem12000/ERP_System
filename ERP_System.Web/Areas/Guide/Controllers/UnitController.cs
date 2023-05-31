@@ -1,5 +1,6 @@
 ﻿using ERP_System.BLL.Guide;
 using ERP_System.DTO.Guide;
+using ERP_System.Tables;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,24 +16,18 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         }
         public IActionResult Index()
         {
-           
+
             return View();
         }
         public IActionResult Add()
         {
-
+            ViewData["Units"] = _UnitBll.GetSelect();
             return View();
         }
 
-        public IActionResult Edit(Guid id)
+        public IActionResult Edit(Unit mdl)
         {
-            var item = _UnitBll.GetById(id);
-            if (item != null)
-            {
-                return View(item);
-            }
-            else
-                return Redirect("/Guide/Unit/Index");
+            return View(mdl);
         }
         public IActionResult Save(UnitDTO mdl) => Ok(_UnitBll.Save(mdl));
         public IActionResult GetAll() => Ok(_UnitBll.GetAll());

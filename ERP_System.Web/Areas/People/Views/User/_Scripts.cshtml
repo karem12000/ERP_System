@@ -6,210 +6,205 @@
             multiple: true,
             dir: "rtl",
         });
-      });
+    });
 
     let form = $('#frm');
     function Submit() {
 
         event.preventDefault();
 
-        var valid = form.valid();
-        if (valid) {
             Save();
-        }
-    }
-
-    function AddNew() {
-        $('#id').val('');
-        $('#userName').val('');
-        $('#email').val('');
-        $('#UserTypeId').val('0').trigger('change');
-        $('#ddlBranchs').val('').trigger('change');
-        $('#ddlFocusTypes').val('').trigger('change');
-    }
-
-
-    function Save() {
-     
-            $.post('@Url.GetAction("Save")', form.serialize(), function (res) {
-                if (res.status) {
-                    window.alert(res.message);
-
-                }
-                else {
-                    window.alert(res.message);
-                }
-            });
         
     }
 
-    function Delete(e,id) {
+    
+    function Save() {
+        if ($('#Name').val() == '' || $('#UserName').val() == '' || $('#Email').val()=='' || $('#ddlUserTypeId').val()=='' ) {
+            Swal.fire({
+                title: `من فضلك أدخل البيانات الأساسية`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            });
+        }else{
+             $.post('@Url.GetAction("Save")', form.serialize(), function (res) {
+            if (res.Status) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        showConfirmButton: false
+                    }).then((result) => {
+                        window.location.href = "/Guide/Unit/Index";
+                    })
+            }
+            else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    })
+            }
+        });
+        }
+    }
 
-        alertify.confirm().setting('modal', false);
+    function Delete(e, id) {
 
         var btn = $(e);
-            var id = id;
-      
+        var id = id;
+        Swal.fire({
+            title: 'هل أنت متأكد؟',
+            text: "هل انت متاكد من اجراء العملية",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'الغاء',
+            confirmButtonText: 'نعم ، حذف!'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
 
-                    if (res.status) {
+                    if (res.Status) {
                         Swal.fire(
                             'تم الحذف!',
-                            `${res.message}`,
+                            `${res.Message}`,
                             'success'
                         )
-                        btn.closest('tr').remove();
+                        LoadTable();
                     }
                     else {
                         Swal.fire(
                             'توقف!',
-                            `${res.message}`,
+                            `${res.Message}`,
                             'warning'
                         )
                     }
                 });
-            
-    }
 
-
-    function Edit(e,id) {
-
-        var user = $(e);
-        $('#id').val(id);
-        var userName = user.closest('tr').find('.userName').html();
-        var email = user.closest('tr').find('.email').html();
-        var userTypeId = user.closest('tr').find('.userTypeId').val().toLowerCase();
-        var branchIds = user.closest('tr').find('.branchIds').val().toLowerCase().split(',');
-        var focusTypeIds = user.closest('tr').find('.focusTypeIds').val().toLowerCase().split(',');
-        var isActive = user.closest('tr').find('.isActive').val();
-
-
-
-        $('#userName').val(userName);
-        $('#email').val(email);
-        $('#UserTypeId').val(userTypeId).trigger('change');
-        $('#ddlBranchs').val(branchIds).trigger('change');
-        $('#ddlFocusTypes').val(focusTypeIds).trigger('change');
-        if (isActive == 'true') {
-            $("#IsActive").prop("checked", true);
-        }
-        else {
-            $("#IsActive").prop("checked", false);
-        }
-
-
-        window.scrollTo(0, 0);
+            }
+        })
 
     }
 
     function LoadTable() {
-       dt = $('#tbl').DataTable({ "columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+        dt = $('#tbl').DataTable({
+            "columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
 
-             "language": _dataTableTranslate,
-                pageLength: 10,
-                scrollX: true,
-                pagijngType: "full_numbers",
-                direction: 'rtl',
-                serverSide: true,
-                processing: true,
-                lengthMenu: [ 10, 25, 50, 75, 100 ],
-                sAjaxSource: '@Url.GetAction("LoadDataTable")',
-                sServerMethod: "POST",
-                bPaginate: true,
-                paging: true,
-                dom: 'Blfrtip',
-                buttons: [
-
+            "language": _dataTableTranslate,
+            pageLength: 10,
+            scrollX: true,
+            pagijngType: "full_numbers",
+            direction: 'rtl',
+            serverSide: true,
+            processing: true,
+            lengthMenu: [10, 25, 50, 75, 100],
+            sAjaxSource: '@Url.GetAction("LoadDataTable")',
+            sServerMethod: "POST",
+            bPaginate: true,
+            paging: true,
+            dom: 'Blfrtip',
+            buttons: [
 
             ],
-                search:{},
-                columns: [
-                     {
-                        data: null,
-                        bSortable: true,
-                        render: function (data, type, row) { return '<label class="userName">' + (data.userName ?? "") + '</label><input hidden name="userId" class="userId" value="' + data.id + '" /> ' }
+            search: {},
+            columns: [
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="Name">' + (data.Name == null ? "" : data.Name) + '</label><input hidden name="UserId" class="UserId" value="' + (data.ID) + '" /> ' }
 
-                    },
-                     {
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="UserName">' + (data.UserName == null ? "" : data.UserName) + '</label><input hidden name="UserName" class="UserName" value="' + (data.UserName == null ? "" : data.UserName) + '" /> ' }
+
+                },
+                {
                     data: null,
                     bSortable: true,
                     render: function (data, type, row) {
-                        return '<label class="email">' + (data.email ?? "") + '</label>  <input hidden name="email" class="email" value="' + data.Email + '" />'
+                        return '<label class="Email">' + (data.Email == null ? "" : data.Email) + '</label>  <input hidden name="Email" class="Email" value="' + (data.Email == null ? "" : data.Email) + '" />'
                     }
-
-                    },
-                    {
-                        data: null,
-                        bSortable: true,
-                        render: function (data, type, row) {
-                            return '<label class="userType">' + (data.userTypeName ?? "") + '</label>  <input hidden name="userTypeId" class="userTypeId" value="' + data.userTypeId + '" />'
-                        }
-
-                    },
-                    {
-
-                        data: null,
-                        bSortable: true,
-                        render: function (data, type, row) {
-                            return '<label class="branchNames">' + ((data.branchNames.split(",").join(" , ")) ?? "") + '</label>  <input hidden name="branchIds" class="branchIds" value="' + data.branchIdAsString + '" />'
-                        }
-
-                    },
-                    {
-
-                        data: null,
-                        bSortable: true,
-                        render: function (data, type, row) {
-                            return '<label class="focusTypeNames">' + (data.focusTypeNames ?? "") + '</label>  <input hidden name="focusTypeIds" class="focusTypeIds" value="' + data.userFocusTypeIdAsString + '" />'
-                        }
-
-                    },
-
-                //  class for Deactivate 'IsDeactivate'
-                {
-                    data: null,
-                    bSortable: false,
-                    render: function (data, type, row) { return '<label class="align-center statesact ' + ((data.isActive) ? "IsActive" : "IsDeactivate") + ' "> <span>' + ((data.isActive) ? "مفعل" : "غير مفعل") + '</span></label><input hidden class="isActive" value="' + data.isActive + '" />'  }
 
                 },
-
-                    {
-
-                        data: null,
-                        bSortable: false,
-                        render: function (data, type, row) {
-                               let btn = `<div class="Event">
-
-                                   @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
-                                   {
-                                   <a class="btn-icon btn btn-info">
-        <i class="far fa-eye"></i>
-                                           </a>
-                                   }
-
-                                   @if(CurrentForm.CurrentFormPermissionActions.EditHasPermission)
-                                    {
-                                        <a class="btn-icon btn btn-warning btn-sm"  onclick="Edit(this,'${data.id}')">
-                                        <i class="far fa-pen"></i>
-                                               
-                                        </a>
-
-                                    }
-
-                                    @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
-                                  {
-                                                   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.id}')" href="javascript:void(0)">
-                             <i class="fas fa-trash-alt"></i>
-                                       
-                                       </a>
-                                  }
-                               `;
-     return btn +'</div>';
- }
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+                        return '<label class="UserType">' + (data.UserTypeName == null ? "" : data.UserTypeName) + '</label>  <input hidden name="UserTypeId" class="UserTypeId" value="' + data.UserTypeId + '" />'
                     }
 
-                ]
-            });
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+                        return '<label class="Phone">' + (data.Phone == null ? "" : data.Phone) + '</label>  <input hidden name="Phone" class="Phone" value="' + (data.Phone == null ? "" : data.Phone) + '" />'
+                    }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+                        return '<label class="Address">' + (data.Address == null ? "" : data.Address) + '</label>  <input hidden name="Address" class="Address" value="' + (data.Address == null ? "" : data.Address) + '" />'
+                    }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="AddedDate">' + (data.AddedDate ?? "") + '</label><input hidden name="groupId" class="groupId" value="' + data.AddedDate + '" /> ' }
+
+                },
+                {
+
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+
+                        return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+                    }
+
+                },
+                {
+
+                    data: null,
+                    bSortable: false,
+                    render: function (data, type, row) {
+                        let btn = `<div class="Event">
+
+    @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+    {
+                                                                <a class="btn-icon btn btn-warning btn-sm" href="/People/User/Edit">
+                                                                <i class="far fa-pen"></i>
+
+                                                                </a>
+
+    }
+
+    @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
+    {
+                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.id}')" href="javascript:void(0)">
+                                                     <i class="fas fa-trash-alt"></i>
+
+                                                               </a>
+    }
+                                           `;
+                        return btn + '</div>';
+                    }
+                }
+
+            ]
+        });
 
     }
 
@@ -224,7 +219,7 @@
         var input = $(btn.closest('tr')).find('input[type=hidden]');
         var id = input.val();
         var name = input.attr('name');
-        $.post('@Url.GetAction("ShowUserPermission")', {id:id} , function (res) {
+        $.post('@Url.GetAction("ShowUserPermission")', { id: id }, function (res) {
 
             $('#tbodyUserPermissions').html('');
 
@@ -242,11 +237,11 @@
 
     function ShowUserClientModal(e) {
         var btn = $(e);
-            var input = $(btn.closest('tr')).find('input[type=hidden]');
-            var id = input.val();
-            var name = input.attr('name');
+        var input = $(btn.closest('tr')).find('input[type=hidden]');
+        var id = input.val();
+        var name = input.attr('name');
 
-        $.post('@Url.GetAction("ShowUserClient")', {id:id} , function (res) {
+        $.post('@Url.GetAction("ShowUserClient")', { id: id }, function (res) {
 
             $('#ddlUserClients').html('');
 
@@ -265,7 +260,7 @@
     function SaveUserPermission() {
 
 
-            var ArrayOfObj = [];
+        var ArrayOfObj = [];
         $.each($('#tbodyUserPermissions').children(), function (key, value) {
             var tr = $(value);
             var Permissions = tr.find('.Permission');
@@ -285,20 +280,20 @@
 
         });
 
-            $.post('@Url.GetAction("SaveUserPermission")', { userId: $('#tbodyUserPermissions').attr('userId'), mdl: ArrayOfObj }, function (res) {
+        $.post('@Url.GetAction("SaveUserPermission")', { userId: $('#tbodyUserPermissions').attr('userId'), mdl: ArrayOfObj }, function (res) {
 
 
-                if (res.status) {
-                    alertify.success(res.message);
-                }
-                else {
-                    alertify.alert(res.message).setHeader('@AppConstants.Messages.StopTitle');
+            if (res.status) {
+                alertify.success(res.message);
+            }
+            else {
+                alertify.alert(res.message).setHeader('@AppConstants.Messages.StopTitle');
 
-                }
+            }
 
 
 
-            });
+        });
 
 
     }
@@ -306,63 +301,63 @@
     function SaveUserClient() {
 
 
-            let ArrayOfObj = [];
-            $.each($('#ddlUserClients').children(), function (key, value) {
-                let obj = new Object();
+        let ArrayOfObj = [];
+        $.each($('#ddlUserClients').children(), function (key, value) {
+            let obj = new Object();
 
-                let ClientId = $(value).val();
-                let UserId = $('#ddlUserClients').attr('userid')
-                let ClientChecked = $(value).prop('selected');
+            let ClientId = $(value).val();
+            let UserId = $('#ddlUserClients').attr('userid')
+            let ClientChecked = $(value).prop('selected');
 
-                obj.ClientId = ClientId;
-                obj.UserId = UserId;
-                obj.ClientChecked = ClientChecked;
-                ArrayOfObj.push(obj);
-            });
-          //  console.log(ArrayOfObj);
-            let frm = new FormData();
-            frm.append('userId', $('#ddlUserClients').attr('userId'));
-            frm.append('mdl', JSON.stringify(ArrayOfObj));
+            obj.ClientId = ClientId;
+            obj.UserId = UserId;
+            obj.ClientChecked = ClientChecked;
+            ArrayOfObj.push(obj);
+        });
+        //  console.log(ArrayOfObj);
+        let frm = new FormData();
+        frm.append('userId', $('#ddlUserClients').attr('userId'));
+        frm.append('mdl', JSON.stringify(ArrayOfObj));
 
 
 
-            $.ajax({
-                type: "POST",
-                url: '@Url.GetAction("SaveUserClient")',
-                data: frm,
-                contentType: false,
-                processData: false,
-                dataType: "json",
-                success: function (res) {
-                    if (res.status) {
-                        alertify.success(res.message);
-                    }
-                    else {
-                        alertify.alert(res.message).setHeader('@AppConstants.Messages.StopTitle');
-
-                    }
-                },
-                failure: function (response) {
-                },
-                error: function (response) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.GetAction("SaveUserClient")',
+            data: frm,
+            contentType: false,
+            processData: false,
+            dataType: "json",
+            success: function (res) {
+                if (res.status) {
+                    alertify.success(res.message);
                 }
-            });
+                else {
+                    alertify.alert(res.message).setHeader('@AppConstants.Messages.StopTitle');
+
+                }
+            },
+            failure: function (response) {
+            },
+            error: function (response) {
+            }
+        });
 
 
 
     }
 
     function ChangeStatus(e) {
-          alertify.confirm().setting('modal', false);
+        alertify.confirm().setting('modal', false);
 
         var btn = $(e);
         var id = $(btn.closest('tr')).find('input[type=hidden]').val();
         alertify.confirm('هل انت متاكد من اجراء العملية', '', function () {
 
-            $.post('@Url.GetAction("ChangeStatus")', {id:id}, function (res) {
+            $.post('@Url.GetAction("ChangeStatus")', { id: id }, function (res) {
 
-                 if (res.status) {
-                     alertify.success(res.message);
+                if (res.status) {
+                    alertify.success(res.message);
 
 
                 }
@@ -383,16 +378,16 @@
     }
 
     function ResetPassword(e) {
-          alertify.confirm().setting('modal', false);
+        alertify.confirm().setting('modal', false);
 
         var btn = $(e);
         var id = $(btn.closest('tr')).find('input[type=hidden]').val();
         alertify.confirm('هل انت متاكد من اجراء العملية', '', function () {
 
-            $.post('@Url.GetAction("ResetPassword")', {id:id}, function (res) {
+            $.post('@Url.GetAction("ResetPassword")', { id: id }, function (res) {
 
-                 if (res.status) {
-                     alertify.success(res.message);
+                if (res.status) {
+                    alertify.success(res.message);
 
 
                 }

@@ -2,7 +2,6 @@
 <script>
     $(document).ready(function () {
         LoadTable();
-
     });
 
     let form = $('#frm');
@@ -12,36 +11,38 @@
 
     }
 
-    function resetForm() {
-        $('#Name').val('');
-        $('#id').val('');
-
-    }
-    $("#ddlUnitType").change(function (e) {
-
-        var Type = $('#ddlUnitType').val();
-        $('.parentDev').toggleClass("d-none");
-        $('.rateDev').toggleClass("d-none");
-
-    });
     function Save() {
-        if ($('#ddlUnitType').val() == '0' && $('#ParentUnitId').val() === '') {
-            Swal.fire({
-                title: `من فضلك اختر الوحدة الأساسية`,
-                timer: 2000,
-                timerProgressBar: true,
-                icon: 'error',
-                showConfirmButton: false
-            })
-        }else  if ($('#Name').val() == '') {
+
+        if ($('#Name').val() == '') {
             Swal.fire({
                 title: `من فضلك أدخل الاسم`,
                 timer: 2000,
                 timerProgressBar: true,
                 icon: 'error',
                 showConfirmButton: false
-            })
-        } else {
+            });
+        }
+        else if ($('#ddlUnitType').val() == '1' && $('#ParentId').val() == '0') {
+
+            Swal.fire({
+                title: `من فضلك اختر الوحدة الأساسية `,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            });
+        }
+        else if ($('#ddlUnitType').val() == '1' && $('#Rate').val() == '') {
+
+            Swal.fire({
+                title: `من فضلك اختر الوحدة الأساسية `,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            });
+        }
+        else {
             $.post('@Url.GetAction("Save")', form.serialize(), function (res) {
                 if (res.Status) {
                     Swal.fire({
@@ -51,7 +52,6 @@
                         icon: 'success',
                         showConfirmButton: false
                     }).then((result) => {
-                        resetForm();
                         window.location.href = "/Guide/Unit/Index";
                     })
 
@@ -70,22 +70,11 @@
 
     }
 
-    function Edit(e, id) {
-
-        $('#id').val(id);
-        var item = $(e);
-        var itemName = item.closest('tr').find('.GroupName').html();
-        $('#Name').val(itemName);
-
-    }
-    
-
     function LoadTable() {
         $('#tbl').DataTable().destroy();
 
         dt = $('#tbl').DataTable({
             "columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
-
             "language": _dataTableTranslate,
             pageLength: 10,
             pagijngType: "full_numbers",
@@ -109,7 +98,31 @@
                 {
                     data: null,
                     bSortable: true,
-                    render: function (data, type, row) { return '<label class="GroupName">' + (data.Name ?? "") + '</label><input hidden name="groupId" class="groupId" value="' + data.ID + '" /> ' }
+                    render: function (data, type, row) { return '<label class="Name">' + (data.Name ?? "") + '</label><input hidden name="UnitID" class="UnitID" value="' + data.ID + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+                        if (data.UnitType == 0) {
+                            return '<label class="UnitType">أساسية</label><input hidden name="UnitType" class="UnitType" value="' + (data.UnitType) + '" /> '
+                        } else {
+                            return '<label class="UnitType">فرعية</label><input hidden name="UnitType" class="UnitType" value="' + (data.UnitType) + '" /> '
+                        }
+                    }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="ParentName">' + (data.ParentName == null ? "" : data.ParentName) + '</label><input hidden name="ParentId" class="ParentId" value="' + (data.ParentId == null ? null : data.ParentId) + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="Rate">' + (data.Rate == null ? "" : data.Rate) + '</label><input hidden name="Rate" class="Rate" value="' + (data.Rate == null ? null : data.Rate) + '" /> ' }
 
                 },
                 {
@@ -129,8 +142,6 @@
                     }
 
                 },
-
-
                 {
 
                     data: null,
@@ -142,21 +153,21 @@
 
     @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
     {
-                                                                                        <a class="btn-icon btn btn-warning"  href="/Guide/Unit/Edit/${data.ID}" >
-                                                                         <i class="fas fa-pen"></i>
+                                                                                                                                <a class="btn-icon btn btn-warning btn-sm"  onclick="Edit(this,'${data.ID}')" href="javascript:void(0)" >
+                                                                                                 <i class="fas fa-pen"></i>
 
-                                                                        </a>
+                                                                                                </a>
 
     }
 
     @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
     {
-                                                                                   <a class="btn-icon btn btn-danger" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
-                                                                       <i class="fas fa-trash-alt"></i>
+                                                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                                                               <i class="fas fa-trash-alt"></i>
 
-                                                                       </a>
+                                                                                               </a>
     }
-                                               `;
+                                                           `;
                         return btn + '</div>';
                     }
                 }
@@ -165,6 +176,23 @@
 
     }
 
+    function Edit(e, id) {
+
+        $.post('@Url.GetAction("GetById")', { "id": id }, function (data) {
+            if (data.Data != null) {
+                let unit = data.Data;
+                $.post("/Guide/Unit/Edit",{'mdl':unit});
+            } else {
+                Swal.fire({
+                    title: `خطأ`,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    icon: 'error',
+                    showConfirmButton: false
+                });
+            }
+        });
+    }
 
     function Delete(e, id) {
 
@@ -204,6 +232,13 @@
         })
 
     }
+
+    $("#ddlUnitType").change(function (e) {
+
+        $(".parentDev").toggleClass("d-none");
+        $(".rateDev").toggleClass("d-none");
+    });
+
 
     $("#IsActive").change(function (e) {
         var isChecked = $(this).prop("checked");
