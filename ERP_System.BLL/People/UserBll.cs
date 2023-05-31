@@ -17,18 +17,20 @@ namespace ERP_System.BLL
     {
         #region Fields
         private readonly IRepository<User> _repoUser;
+        private readonly IRepository<UserStock> _repoUserStock;
         private readonly IRepository<UserPermission> _repoUserPermission;
         private readonly IRepository<Page> _repoPage;
         private readonly IRepository<ActionsPage> _repoActionsPage;
 
-        public UserBll(IRepository<User> repoUser,
+        public UserBll(IRepository<User> repoUser, IRepository<UserStock> repoUserStock,
             IRepository<UserPermission> repoUserPermission, IRepository<Page> repoPage,
-            IRepository<ActionsPage> repoActionsPage  )
+            IRepository<ActionsPage> repoActionsPage)
         {
             _repoUser = repoUser;
             _repoUserPermission = repoUserPermission;
             _repoPage = repoPage;
             _repoActionsPage = repoActionsPage;
+            _repoUserStock = repoUserStock;
         }
 
         #endregion
@@ -52,7 +54,7 @@ namespace ERP_System.BLL
             {
                 Value = p.ID,
                 Text = p.UserName,
-                
+
             });
         }
         public IQueryable<UserSelectDTO> GetSelect(Guid? userId)
@@ -61,7 +63,7 @@ namespace ERP_System.BLL
             {
                 Id = p.ID,
                 Username = p.UserName,
-                Selected=p.ID==userId
+                Selected = p.ID == userId
 
             });
         }
@@ -185,8 +187,8 @@ namespace ERP_System.BLL
             }
             else
             {
-               result.Message = "لايوجد مستخدم بهذا الاسم";
-                
+                result.Message = "لايوجد مستخدم بهذا الاسم";
+
             }
             return result;
 
@@ -204,7 +206,7 @@ namespace ERP_System.BLL
             var tbl = _repoUser.GetAllAsNoTracking().Where(p => p.ID == userDTO.ID).FirstOrDefault();
             if (tbl == null)
             {
-                if (_repoUser.GetAll().Where(p => p.UserName.Trim().ToLower() == userDTO.UserName.Trim().ToLower()&& !p.IsDeleted).FirstOrDefault() != null)
+                if (_repoUser.GetAll().Where(p => p.UserName.Trim().ToLower() == userDTO.UserName.Trim().ToLower() && !p.IsDeleted).FirstOrDefault() != null)
                 {
                     resultViewModel.Message = AppConstants.UserMessages.UsernameAlreadyExists;
                     return resultViewModel;
@@ -219,10 +221,25 @@ namespace ERP_System.BLL
 
                 user.PasswordHash = AppConstants.DefaultPassword.EncryptString();
                 user.Salt = AppConstants.EncryptKey;
+                var AllStock = new List<UserStock>();
 
-               
+                if (userDTO.StockIds != null && userDTO.StockIds.Count() > 0)
+                {
+                    foreach (var item in userDTO.StockIds)
+                    {
+                        var oneStock = new UserStock
+                        {
+                            UserId = user.ID,
+                            StockId = item
+                        };
+                        AllStock.Add(oneStock);
+                    };
+
+                }
+
                 if (_repoUser.Insert(user))
                 {
+                    _repoUserStock.InsertRange(AllStock);
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
 
@@ -249,14 +266,27 @@ namespace ERP_System.BLL
                 tbl.UserTypeId = user.UserTypeId;
                 tbl.AddedBy = tbl.AddedBy;
 
+                var AllStock = new List<UserStock>();
 
+                if (userDTO.StockIds != null && userDTO.StockIds.Count() > 0)
+                {
+                    foreach (var item in userDTO.StockIds)
+                    {
+                        var oneStock = new UserStock
+                        {
+                            UserId = tbl.ID,
+                            StockId = item,
+                            AddedBy = _repoUser.UserId
+                        };
+                        AllStock.Add(oneStock);
+                    };
 
-                // tbl.CityId = user.CityId;
+                }
+
                 if (_repoUser.Update(tbl))
                 {
-                  
-
-                   
+                    _repoUserStock.ExecuteStoredProcedure<int>($"DELETE FROM [People].[UserStocks] us WHERE us.UserId='${tbl.ID}'", null, CommandType.StoredProcedure);
+                    _repoUserStock.InsertRange(AllStock);
 
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
@@ -311,9 +341,9 @@ namespace ERP_System.BLL
 
             return resultViewModel;
         }
-        
+
         #region LoadData
-       
+
         #endregion
         #region Login For Web
         #region  تسجيل الدخول
@@ -372,7 +402,7 @@ namespace ERP_System.BLL
         {
             if (branchId.HasValue)
             {
-                return _repoUser.GetAllAsNoTracking().Where(p => p.IsActive && !p.IsDeleted );
+                return _repoUser.GetAllAsNoTracking().Where(p => p.IsActive && !p.IsDeleted);
 
             }
             return Enumerable.Empty<User>();
@@ -418,7 +448,7 @@ namespace ERP_System.BLL
             ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
             foreach (var item in userPermissionsDTOs)
             {
-                if (item.PageId==Guid.Parse("16ead915-1e11-4b9a-ac79-e23625440bd2"))
+                if (item.PageId == Guid.Parse("16ead915-1e11-4b9a-ac79-e23625440bd2"))
                 {
 
                 }

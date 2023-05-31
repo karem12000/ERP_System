@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP_System.DAL.Migrations
 {
     [DbContext(typeof(ERP_SystemDbContext))]
-    [Migration("20230529112601_initDb")]
+    [Migration("20230531131021_initDb")]
     partial class initDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -226,14 +226,14 @@ namespace ERP_System.DAL.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double?>("PricePerUnit")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("PricePerUnit")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double?>("Qty")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("Qty")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("StockId")
                         .HasColumnType("uniqueidentifier");
@@ -517,9 +517,6 @@ namespace ERP_System.DAL.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("ID");
 
                     b.HasIndex("AddedBy");
@@ -527,8 +524,6 @@ namespace ERP_System.DAL.Migrations
                     b.HasIndex("DeletedBy");
 
                     b.HasIndex("ModifiedBy");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Stocks", "Guide");
                 });
@@ -768,6 +763,57 @@ namespace ERP_System.DAL.Migrations
                     b.ToTable("UserPermissions", "People");
                 });
 
+            modelBuilder.Entity("ERP_System.Tables.UserStock", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AddedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StockId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AddedBy");
+
+                    b.HasIndex("DeletedBy");
+
+                    b.HasIndex("ModifiedBy");
+
+                    b.HasIndex("StockId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserStocks", "People");
+                });
+
             modelBuilder.Entity("ERP_System.Tables.UserType", b =>
                 {
                     b.Property<Guid>("ID")
@@ -892,11 +938,11 @@ namespace ERP_System.DAL.Migrations
             modelBuilder.Entity("ERP_System.Tables.InvoiceDetail", b =>
                 {
                     b.HasOne("ERP_System.Tables.User", "CreatedUser")
-                        .WithMany()
+                        .WithMany("InvoiceDetailCreated")
                         .HasForeignKey("AddedBy");
 
                     b.HasOne("ERP_System.Tables.User", "DeletedUser")
-                        .WithMany()
+                        .WithMany("InvoiceDetailDeleted")
                         .HasForeignKey("DeletedBy");
 
                     b.HasOne("ERP_System.Tables.Invoice", "Invoice")
@@ -904,7 +950,7 @@ namespace ERP_System.DAL.Migrations
                         .HasForeignKey("InvoiceId");
 
                     b.HasOne("ERP_System.Tables.User", "ModifiedUser")
-                        .WithMany()
+                        .WithMany("InvoiceDetailModified")
                         .HasForeignKey("ModifiedBy");
 
                     b.HasOne("ERP_System.Tables.Product", "Product")
@@ -1032,31 +1078,25 @@ namespace ERP_System.DAL.Migrations
                         .WithMany("StockModified")
                         .HasForeignKey("ModifiedBy");
 
-                    b.HasOne("ERP_System.Tables.User", "User")
-                        .WithMany("Stocks")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("CreatedUser");
 
                     b.Navigation("DeletedUser");
 
                     b.Navigation("ModifiedUser");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.StockProduct", b =>
                 {
                     b.HasOne("ERP_System.Tables.User", "CreatedUser")
-                        .WithMany()
+                        .WithMany("StockProductCreated")
                         .HasForeignKey("AddedBy");
 
                     b.HasOne("ERP_System.Tables.User", "DeletedUser")
-                        .WithMany()
+                        .WithMany("StockProductDeleted")
                         .HasForeignKey("DeletedBy");
 
                     b.HasOne("ERP_System.Tables.User", "ModifiedUser")
-                        .WithMany()
+                        .WithMany("StockProductModified")
                         .HasForeignKey("ModifiedBy");
 
                     b.HasOne("ERP_System.Tables.Product", "Product")
@@ -1064,7 +1104,7 @@ namespace ERP_System.DAL.Migrations
                         .HasForeignKey("ProductId");
 
                     b.HasOne("ERP_System.Tables.Stock", "Stock")
-                        .WithMany("StockProducts")
+                        .WithMany()
                         .HasForeignKey("StockId");
 
                     b.Navigation("CreatedUser");
@@ -1159,6 +1199,43 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("UserType");
                 });
 
+            modelBuilder.Entity("ERP_System.Tables.UserStock", b =>
+                {
+                    b.HasOne("ERP_System.Tables.User", "CreatedUser")
+                        .WithMany("UserStockCreated")
+                        .HasForeignKey("AddedBy");
+
+                    b.HasOne("ERP_System.Tables.User", "DeletedUser")
+                        .WithMany("UserStockDeleted")
+                        .HasForeignKey("DeletedBy");
+
+                    b.HasOne("ERP_System.Tables.User", "ModifiedUser")
+                        .WithMany("UserStockModified")
+                        .HasForeignKey("ModifiedBy");
+
+                    b.HasOne("ERP_System.Tables.Stock", "Stock")
+                        .WithMany("UserStocks")
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP_System.Tables.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedUser");
+
+                    b.Navigation("DeletedUser");
+
+                    b.Navigation("ModifiedUser");
+
+                    b.Navigation("Stock");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ERP_System.Tables.UserType", b =>
                 {
                     b.HasOne("ERP_System.Tables.User", "CreatedUser")
@@ -1211,7 +1288,7 @@ namespace ERP_System.DAL.Migrations
 
             modelBuilder.Entity("ERP_System.Tables.Stock", b =>
                 {
-                    b.Navigation("StockProducts");
+                    b.Navigation("UserStocks");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.Unit", b =>
@@ -1236,6 +1313,12 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("InvoiceCreated");
 
                     b.Navigation("InvoiceDeleted");
+
+                    b.Navigation("InvoiceDetailCreated");
+
+                    b.Navigation("InvoiceDetailDeleted");
+
+                    b.Navigation("InvoiceDetailModified");
 
                     b.Navigation("InvoiceModified");
 
@@ -1269,7 +1352,11 @@ namespace ERP_System.DAL.Migrations
 
                     b.Navigation("StockModified");
 
-                    b.Navigation("Stocks");
+                    b.Navigation("StockProductCreated");
+
+                    b.Navigation("StockProductDeleted");
+
+                    b.Navigation("StockProductModified");
 
                     b.Navigation("UnitCreated");
 
@@ -1288,6 +1375,12 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("UserPermissionDeleted");
 
                     b.Navigation("UserPermissionModified");
+
+                    b.Navigation("UserStockCreated");
+
+                    b.Navigation("UserStockDeleted");
+
+                    b.Navigation("UserStockModified");
 
                     b.Navigation("UserTypeCreated");
 

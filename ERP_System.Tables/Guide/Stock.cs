@@ -10,16 +10,18 @@ namespace ERP_System.Tables
     public class Stock : BaseEntity
     {
         public string Name { get; set; }
-        public string? Address { get; set; }
-        public string? Phone { get; set; }
-        public string? ManagerName { get; set; }
+        public string Address { get; set; }
+        public string Phone { get; set; }
+        public string ManagerName { get; set; }
         //public decimal? Quantity { get; set; }
 
+        public ICollection<UserStock> UserStocks { get; set; }
 
-        [ForeignKey(nameof(User))]
-        public Guid? UserId { get; set; }
-        public virtual User User { get; set; }
-        public ICollection<StockProduct> StockProducts { get; set; }
+        //[ForeignKey(nameof(User))]
+        //public Guid? UserId { get; set; }
+        //public virtual User User { get; set; }
+        //public ICollection<StockProduct> StockProducts { get; set; }
+
 
     }
 
@@ -33,5 +35,17 @@ namespace ERP_System.Tables
         [ForeignKey(nameof(Product))]
         public Guid? ProductId { get; set; }
         public virtual Product Product { get; set; }
+    }
+
+    [Table(nameof(UserStock) + "s", Schema = AppConstants.Areas.People)]
+    public class UserStock : BaseEntity
+    {
+        [ForeignKey(nameof(Stock))]
+        public Guid StockId { get; set; }
+        public virtual Stock Stock { get; set; }
+
+        [ForeignKey(nameof(User))]
+        public Guid UserId { get; set; }
+        public virtual User User { get; set; }
     }
 }

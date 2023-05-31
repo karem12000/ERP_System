@@ -16,12 +16,14 @@ namespace ERP_System.BLL.Guide
     {
         private const string _spStock = "[Guide].[spStocks]";
         private readonly IRepository<Stock> _repoStock;
+        private readonly IRepository<UserStock> _repoUserStock;
         private readonly IMapper _mapper;
 
-        public StockBll(IRepository<Stock> repoStock, IMapper mapper)
+        public StockBll(IRepository<Stock> repoStock, IRepository<UserStock> repoUserStock, IMapper mapper)
         {
             _repoStock = repoStock;
             _mapper = mapper;
+            _repoUserStock = repoUserStock;
         }
 
         #region Get
@@ -43,12 +45,14 @@ namespace ERP_System.BLL.Guide
 
         public IQueryable<Stock> GetAll()
         {
-
+            var userId = _repoStock.UserId;
             return _repoStock.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.IsActive);
         }
 
         public DataTableResponse LoadData(DataTableRequest mdl)
         {
+            var userId = _repoStock.UserId;
+            mdl.UserID = userId;
             var data = _repoStock.ExecuteStoredProcedure<StockTableDTO>
                 (_spStock, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
 
@@ -101,6 +105,15 @@ namespace ERP_System.BLL.Guide
                 }
                 if (_repoStock.Insert(tbl))
                 {
+
+                    var oneStock = new UserStock
+                    {
+                        UserId = Guid.Parse("80968C16-15D8-4533-B771-5285299EDCB6"),
+                        StockId = tbl.ID,
+                        AddedBy = _repoStock.UserId
+                    };
+                    _repoUserStock.Insert(oneStock);
+                         
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
 

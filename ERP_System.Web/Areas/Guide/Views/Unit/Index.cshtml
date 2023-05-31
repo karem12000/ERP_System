@@ -1,1 +1,24 @@
-﻿شاشة الوحدات
+﻿@{
+    Layout = "_Layout";
+}
+
+@if (CurrentForm.CurrentFormPermissionActions.AddHasPermission)
+{
+    <div class="mb-3 d-flex align-items-center justify-content-end ps-2">
+        <a class="btn btn-outline-primary" href="/Guide/Unit/Add">
+            إضافة جديد
+            <span class="fa-fw select-all fas"></span>
+        </a>
+    </div>
+}
+
+@if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
+{
+    <partial name="_DataTable" />
+}
+
+@section Scripts
+    {
+
+    <partial name="_Scripts" />
+}

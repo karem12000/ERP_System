@@ -116,7 +116,8 @@ namespace ERP_System
             }
         }
 
-       
+        public Guid? UserID { get; set; }
+
         public SqlParameter[] ToSqlParameter(Guid? UserId = null, Guid? LanguageId = null , params SqlParameter[] sqlParameters)
         {
             List<SqlParameter> _list = new List<SqlParameter>
@@ -129,9 +130,9 @@ namespace ERP_System
             };
 
            
-            if (UserId != null)
+            if (UserID != null)
             {
-                _list.Add(new SqlParameter() { ParameterName = "@UserID", Value = UserId });
+                _list.Add(new SqlParameter() { ParameterName = "@UserID", Value = UserID });
             }
 
             if (LanguageId != null)

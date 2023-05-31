@@ -9,7 +9,7 @@ namespace ERP_System.Tables
 
 
         public virtual UserType UserType { get; set; }
-        public ICollection<Stock> Stocks { get; set; }
+
 
         public ICollection<UserPermission> UserPermissionCreated { get; set; }
         public ICollection<UserPermission> UserPermissionModified { get; set; }
@@ -43,8 +43,20 @@ namespace ERP_System.Tables
         #region Guide
         public ICollection<Invoice> InvoiceCreated { get; set; }
         public ICollection<Invoice> InvoiceModified { get; set; }
-        public ICollection<Invoice> InvoiceDeleted { get; set; } 
+        public ICollection<Invoice> InvoiceDeleted { get; set; }
         
+        public ICollection<InvoiceDetail> InvoiceDetailCreated { get; set; }
+        public ICollection<InvoiceDetail> InvoiceDetailModified { get; set; }
+        public ICollection<InvoiceDetail> InvoiceDetailDeleted { get; set; }
+
+        public ICollection<StockProduct> StockProductCreated { get; set; }
+        public ICollection<StockProduct> StockProductModified { get; set; }
+        public ICollection<StockProduct> StockProductDeleted { get; set; }
+        
+        public ICollection<UserStock> UserStockCreated { get; set; }
+        public ICollection<UserStock> UserStockModified { get; set; }
+        public ICollection<UserStock> UserStockDeleted { get; set; }
+
         public ICollection<Stock> StockCreated { get; set; }
         public ICollection<Stock> StockModified { get; set; }
         public ICollection<Stock> StockDeleted { get; set; }

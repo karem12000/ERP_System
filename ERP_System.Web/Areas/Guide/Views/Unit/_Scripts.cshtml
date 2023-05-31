@@ -1,0 +1,212 @@
+﻿
+<script>
+    $(document).ready(function () {
+        LoadTable();
+
+    });
+
+    let form = $('#frm');
+    function Submit() {
+        event.preventDefault();
+        Save();
+
+    }
+
+    function resetForm() {
+        $('#Name').val('');
+        $('#id').val('');
+
+    }
+    $("#ddlUnitType").change(function (e) {
+
+        var Type = $('#ddlUnitType').val();
+        $('.parentDev').toggleClass("d-none");
+
+    });
+    function Save() {
+        if ($('#ddlUnitType').val() == '0' && $('#ParentUnitId').val() === '') {
+            Swal.fire({
+                title: `من فضلك اختر الوحدة الأساسية`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            })
+        }else  if ($('#Name').val() == '') {
+            Swal.fire({
+                title: `من فضلك أدخل الاسم`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            })
+        } else {
+            $.post('@Url.GetAction("Save")', form.serialize(), function (res) {
+                if (res.Status) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        showConfirmButton: false
+                    }).then((result) => {
+                        resetForm();
+                        window.location.href = "/Guide/Unit/Index";
+                    })
+
+                }
+                else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    })
+                }
+            });
+        }
+
+    }
+
+    function Edit(e, id) {
+
+        $('#id').val(id);
+        var item = $(e);
+        var itemName = item.closest('tr').find('.GroupName').html();
+        $('#Name').val(itemName);
+
+    }
+    
+
+    function LoadTable() {
+        $('#tbl').DataTable().destroy();
+
+        dt = $('#tbl').DataTable({
+            "columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+
+            "language": _dataTableTranslate,
+            pageLength: 10,
+            pagijngType: "full_numbers",
+            direction: 'rtl',
+            serverSide: true,
+            scrollX: true,
+            processing: true,
+            lengthMenu: [10, 25, 50, 75, 100],
+            sAjaxSource: '@Url.GetAction("LoadDataTable")',
+            sServerMethod: "POST",
+            bPaginate: true,
+            paging: true,
+            dom: 'Blfrtip',
+            buttons: [
+
+
+            ],
+            search: {},
+            columns: [
+
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="GroupName">' + (data.Name ?? "") + '</label><input hidden name="groupId" class="groupId" value="' + data.ID + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="AddedDate">' + (data.AddedDate ?? "") + '</label><input hidden name="groupId" class="groupId" value="' + data.AddedDate + '" /> ' }
+
+                },
+                {
+
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+
+                        return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+                    }
+
+                },
+
+
+                {
+
+                    data: null,
+                    bSortable: false,
+                    render: function (data, type, row) {
+                        let btn = `<div class="Event">
+
+
+
+    @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+    {
+                                                                                        <a class="btn-icon btn btn-warning"  href="/Guide/Unit/Edit/${data.ID}" >
+                                                                         <i class="fas fa-pen"></i>
+
+                                                                        </a>
+
+    }
+
+    @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
+    {
+                                                                                   <a class="btn-icon btn btn-danger" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                                       <i class="fas fa-trash-alt"></i>
+
+                                                                       </a>
+    }
+                                               `;
+                        return btn + '</div>';
+                    }
+                }
+            ]
+        });
+
+    }
+
+
+    function Delete(e, id) {
+
+        var btn = $(e);
+        var id = id;
+        Swal.fire({
+            title: 'هل أنت متأكد؟',
+            text: "هل انت متاكد من اجراء العملية",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'الغاء',
+            confirmButtonText: 'نعم ، حذف!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
+
+                    if (res.Status) {
+                        Swal.fire(
+                            'تم الحذف!',
+                            `${res.Message}`,
+                            'success'
+                        )
+                        LoadTable();
+                    }
+                    else {
+                        Swal.fire(
+                            'توقف!',
+                            `${res.Message}`,
+                            'warning'
+                        )
+                    }
+                });
+
+            }
+        })
+
+    }
+
+    $("#IsActive").change(function (e) {
+        var isChecked = $(this).prop("checked");
+        $("#IsActive").val(isChecked);
+    });
+
+</script>

@@ -8,6 +8,7 @@ namespace ERP_System.DTO.Guide
     public class UnitDTO
     {
         public Guid ID { get; set; }
+        public Guid? ParentUnitId { get; set; }
         [Required]
         public string Name { get; set; }
         public bool IsActive { get; set; }
@@ -16,6 +17,7 @@ namespace ERP_System.DTO.Guide
     {
 
         public Guid ID { get; set; }
+        public Guid? ParentUnitId { get; set; }
         public string Name { get; set; }
         public string AddedDate { get; set; }
         public bool IsActive { get; set; }

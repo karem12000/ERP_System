@@ -18,7 +18,22 @@ namespace ERP_System.Web.Areas.Guide.Controllers
            
             return View();
         }
+        public IActionResult Add()
+        {
 
+            return View();
+        }
+
+        public IActionResult Edit(Guid id)
+        {
+            var item = _UnitBll.GetById(id);
+            if (item != null)
+            {
+                return View(item);
+            }
+            else
+                return Redirect("/Guide/Unit/Index");
+        }
         public IActionResult Save(UnitDTO mdl) => Ok(_UnitBll.Save(mdl));
         public IActionResult GetAll() => Ok(_UnitBll.GetAll());
         public IActionResult GetById(Guid id) => Ok(_UnitBll.GetById(id));

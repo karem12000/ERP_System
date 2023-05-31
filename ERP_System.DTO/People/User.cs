@@ -73,6 +73,7 @@ namespace ERP_System.DTO
 
         public bool IsActive { get; set; }
         public string AddedDate { get; set; }
+        public IEnumerable<Guid>? StockIds { get; set; }
 
         public Guid? UserTypeId { get; set; }
 

@@ -30,14 +30,11 @@ namespace ERP_System.DAL
             modelBuilder.Entity<User>().HasMany(x => x.UserPermissionModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
             modelBuilder.Entity<User>().HasMany(x => x.UserPermissionDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
 
-          
+
             #endregion
             #region Pages
 
-            //modelBuilder.Entity<User>().HasMany(x => x.AreaCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
-            //modelBuilder.Entity<User>().HasMany(x => x.AreaModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
-            //modelBuilder.Entity<User>().HasMany(x => x.AreaDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
-
+     
             modelBuilder.Entity<User>().HasMany(x => x.PageCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
             modelBuilder.Entity<User>().HasMany(x => x.PageModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
             modelBuilder.Entity<User>().HasMany(x => x.PageDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
@@ -51,7 +48,25 @@ namespace ERP_System.DAL
             modelBuilder.Entity<User>().HasMany(x => x.InvoiceCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
             modelBuilder.Entity<User>().HasMany(x => x.InvoiceModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
             modelBuilder.Entity<User>().HasMany(x => x.InvoiceDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
-              
+            
+            modelBuilder.Entity<User>().HasMany(x => x.InvoiceDetailCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.InvoiceDetailModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.InvoiceDetailDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+
+             modelBuilder.Entity<User>().HasMany(x => x.InvoiceCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.InvoiceModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.InvoiceDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+
+
+            modelBuilder.Entity<User>().HasMany(x => x.StockProductCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.StockProductModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.StockProductDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+
+             modelBuilder.Entity<User>().HasMany(x => x.UserStockCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.UserStockModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.UserStockDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+
+
             modelBuilder.Entity<User>().HasMany(x => x.StockCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
             modelBuilder.Entity<User>().HasMany(x => x.StockModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
             modelBuilder.Entity<User>().HasMany(x => x.StockDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
@@ -90,6 +105,7 @@ namespace ERP_System.DAL
 
         public DbSet<User> Users { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
+        public DbSet<UserStock> UserStocks { get; set; }
 
 
 
@@ -99,8 +115,10 @@ namespace ERP_System.DAL
 
         #region Guide
         public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         public DbSet<Stock> Stocks { get; set; }
+        public DbSet<StockProduct> StockProducts { get; set; }
         public DbSet<ItemGrpoup> ItemGrpoups { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Unit> Units { get; set; }
