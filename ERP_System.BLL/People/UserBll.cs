@@ -230,7 +230,15 @@ namespace ERP_System.BLL
                 {
                     user.PasswordHash = userDTO.Password.EncryptString();
                 }
-                
+
+                if (userDTO.UserTypeId == Guid.Parse("8484E624-C5A0-463E-986A-66A118D1F2EB"))
+                    user.UserClassification = UserClassification.Client;
+                else if (userDTO.UserTypeId == Guid.Parse("DF5D2D3C-655A-431E-93A3-AC4AF07C8805"))
+                    user.UserClassification = UserClassification.Suppliers;
+
+
+
+
                 user.Salt = AppConstants.EncryptKey;
 
                 var AllStock = new List<UserStock>();
@@ -276,6 +284,11 @@ namespace ERP_System.BLL
                 tbl.IsActive = user.IsActive;
                 tbl.UserTypeId = user.UserTypeId;
                 tbl.AddedBy = tbl.AddedBy;
+
+                if (user.UserTypeId == Guid.Parse("8484E624-C5A0-463E-986A-66A118D1F2EB"))
+                    tbl.UserClassification = UserClassification.Client;
+                else if (user.UserTypeId == Guid.Parse("DF5D2D3C-655A-431E-93A3-AC4AF07C8805"))
+                    tbl.UserClassification = UserClassification.Suppliers;
 
                 var AllStock = new List<UserStock>();
 

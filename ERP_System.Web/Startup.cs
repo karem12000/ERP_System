@@ -167,7 +167,7 @@ namespace ERP_System.Web
             app.UseRequestLocalization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute("Default", "{controller=Home}/{action=index}/{id?}");
+                endpoints.MapControllerRoute("Default", "{controller=Home}/{action=Index}/{id?}");
 
                 endpoints.MapControllerRoute(name: "areas", pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });

@@ -64,23 +64,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-responsive/2.4.1/dataTables.responsive.min.js" integrity="sha512-9BgeOjT7sU+CPMlXJrq1Shzkx2spfWhhxEnUJ7Ab9b5bSPGCzT8DaT1a/qUfrTBtgJetJwnI81ilCJkXFZRGPA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="~/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>
     <script>
-        const element = document.querySelector('.choices.multiple-remove');
-        const example = new Choices(element,
-            {
-                delimiter: ',',
-                editItems: true,
-                maxItemCount: -1,
-                removeItemButton: true,
-            });
-
-        element.addEventListener(
-            'addItem',
-            function (event) {
-                document.querySelector('.choices__input.choices__input--cloned').remove()
-                console.log(event.detail.value);
-            },
-            false,
-        );
+       
     </script>
     <script>
        
@@ -119,6 +103,9 @@
                     let pathName = location.pathname.split("/");
             pathName.pop();
             pathName =pathName.join("/");
+            if (pathName === '') {
+                pathName = '/Home/Index';
+            }
         let linkT;
 
         $.each($(".sidebar-link"), function () {

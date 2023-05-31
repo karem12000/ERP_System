@@ -16,11 +16,13 @@ namespace ERP_System.Web.Areas.People.Controllers
 
         private readonly UserBll _userBll;
         private readonly UserTypeBll _userTypeBll;  
+        private readonly StockBll _stockBll;  
 
-        public UserController(UserBll userBll, UserTypeBll userTypeBll)
+        public UserController(UserBll userBll, UserTypeBll userTypeBll, StockBll stockBll)
         {
             _userBll = userBll;
             _userTypeBll = userTypeBll;
+            _stockBll = stockBll;
         }
         #endregion
 
@@ -35,6 +37,7 @@ namespace ERP_System.Web.Areas.People.Controllers
         public IActionResult Add()
         {
             ViewData["UserTypes"] = _userTypeBll.GetSelect();
+            ViewData["Stocks"] = _stockBll.GetSelect();
             return View();
         }
 
