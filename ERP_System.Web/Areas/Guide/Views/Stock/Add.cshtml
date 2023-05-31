@@ -5,8 +5,7 @@
 @if (CurrentForm.CurrentFormPermissionActions.AddHasPermission)
 {
     <div class="row">
-        <div class="col-2"></div>
-        <div class="col-lg-8">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">إضافة مخزن</h4>
@@ -16,26 +15,26 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit()">
                             <div class="form-body">
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Name">اسم المخزن</label>
                                             <input hidden name="id" id="id" value="" class="d-none" />
                                             <input type="text" required id="Name" name="Name" class="form-control" placeholder="اسم المخزن">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Name">عنوان المخزن</label>
                                             <input type="text" id="Address" name="Address" class="form-control" placeholder="عنوان المخزن">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Name">تليفون المخزن</label>
                                             <input type="text" id="Phone" name="Phone" class="form-control" placeholder="تليفون المخزن">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Name">اسم المسؤول</label>
                                             <input type="text" id="ManagerName" name="ManagerName" class="form-control" placeholder="اسم المسؤول">
@@ -55,7 +54,7 @@
                                         </button>
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
-                                            <div class="mb-3 d-flex align-items-center justify-content-end ps-2">
+                                            <div class="d-flex align-items-center justify-content-end ps-2">
                                                 <a class="btn btn-outline-primary" href="/Guide/Stock/Index">
                                                     رجوع للقائمة
                                                     <span class="fa-arrow-left fas"></span>
@@ -70,7 +69,6 @@
                 </div>
             </div>
         </div>
-        <div class="col-2"></div>
     </div>
 }
 
@@ -78,5 +76,4 @@
     {
 
     <partial name="_Scripts" />
-}
 }
