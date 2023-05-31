@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "_Layout";
 }
-@model ERP_System.Tables.ItemGrpoup;
+@model ERP_System.Tables.Unit;
 
 @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
 {
@@ -9,7 +9,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">إضافة وحدة</h4>
+                    <h4 class="card-title">تعديل بيانات الوحدة</h4>
                 </div>
                 <div class="card-content">
                     <div class="card-body">
@@ -19,13 +19,13 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="Name">اسم الوحدة</label>
-                                            <input hidden name="id" id="id" value="" class="d-none" />
-                                            <input type="text" required id="Name" name="Name" class="form-control" placeholder="اسم الوحدة">
+                                            <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
+                                            <input type="text" required id="Name" value="@Model.Name" name="Name" class="form-control" placeholder="اسم الوحدة">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="lable" for="FocusTypeId">  نوع الوحده </label>
+                                            <label class="lable" for="FocusTypeId">  نوع الوحدة </label>
                                             <select class="Select sAddress form-select" aria-label="اختر النوع" required name="UnitType" id="ddlUnitType">
                                                 <option selected value="0">أساسية</option>
                                                 <option value="1">فرعية</option>
@@ -43,7 +43,7 @@
                                     <div class="col-12 d-flex">
                                         <div class="form-check">
                                             <div class="checkbox">
-                                                <input type="checkbox" name="IsActive" id="IsActive" value="true" class="form-check-input" checked>
+                                                <input type="checkbox" name="IsActive" id="IsActive" class="form-check-input" checked="@Model.IsActive">
                                                 <label for="IsActive">الحاله</label>
                                             </div>
                                         </div>
