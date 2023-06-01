@@ -105,5 +105,35 @@
 
 .choices__inner {
     background-color: #fff;
-    border-radius:10px
+    border-radius: 10px
+}
+
+.form-auth {
+    position: absolute;
+    background: #fff;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 25px;
+}
+
+#auth #auth-left {
+    padding: 2rem 5rem
+}
+
+#auth #auth-left .auth-title {
+    font-size: 3rem;
+    text-align: center
+}
+
+#auth #auth-left .auth-subtitle {
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    text-align: center
+}
+
+@media screen and (max-width: 576px) {
+    #auth #auth-left {
+        padding: 1rem 2rem;
+    }
 }
