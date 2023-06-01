@@ -14,39 +14,39 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit()">
                             <div class="form-body">
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Name">الاسم</label>
                                             <input hidden name="id" id="id" value="" class="d-none" />
                                             <input type="text" required id="Name" name="Name" class="form-control" placeholder="الاسم">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="UserName">اسم المستخدم</label>
                                             <input type="text" value="" id="UserName" name="UserName" class="form-control" placeholder="اسم المستخدم">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Email">الايميل</label>
                                             <input type="text" required id="Email" name="Email" class="form-control" placeholder="الايميل">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Password">الباسوورد</label>
                                             <input type="password" value="" id="Password" name="Password" class="form-control" placeholder="الباسوورد">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label class="lable" for="UserTypeId">نوع المستخدم</label>
                                             <select class="Select sAddress form-select" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label class="lable" for="UserTypeId">المخازن المتاحة</label>
                                             <select class="choices form-select multiple-remove" multiple="multiple" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")'>
@@ -65,19 +65,21 @@
                                                 </optgroup>*@
                                             </select>
                                         </div>
+                                    </div>
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label class="lable" for="UserTypeId">نوع المستخدم</label>
                                             <select class="Select sAddress form-select" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Phone">التليفون</label>
                                             <input type="text" required id="Phone" name="Phone" class="form-control" placeholder="التليفون">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Address">العنوان</label>
                                             <input type="text" required id="Address" name="Address" class="form-control" placeholder="العنوان">
