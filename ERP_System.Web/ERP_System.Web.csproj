@@ -25,4 +25,8 @@
     <ProjectReference Include="..\ERP_System.IOC\ERP_System.IOC.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\SiteImages\" />
+  </ItemGroup>
+
 </Project>

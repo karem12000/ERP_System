@@ -37,7 +37,7 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label class="lable" for="UserTypeId">نوع المستخدم</label>
-                                            <select class="Select sAddress form-select" value="@Model.UserTypeId" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
+                                            <select class="Select form-select"  value="@Model.UserTypeId" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
                                             </select>
                                         </div>
                                     </div>
@@ -85,6 +85,7 @@
         </div>
     </div>
 }
+
 @section Scripts
     {
     <partial name="_Scripts" />

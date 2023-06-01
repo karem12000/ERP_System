@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace ERP_System.Web.Controllers
 {
@@ -43,6 +44,7 @@ namespace ERP_System.Web.Controllers
                         return Redirect(returnUrl);
                     }
                     return Redirect("~/Home/Index");
+                    //return RedirectToAction("Index", "Home", new { user = user });
                 }
             }
 

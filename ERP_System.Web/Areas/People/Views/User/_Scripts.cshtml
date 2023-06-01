@@ -198,7 +198,7 @@
 
     @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
     {
-                                                                <a class="btn-icon btn btn-warning btn-sm" href="/People/User/Edit">
+                                                                <a class="btn-icon btn btn-warning btn-sm" href="/People/User/Edit/${data.ID}">
                                                                 <i class="fas fa-pen"></i>
 
                                                                 </a>
@@ -228,6 +228,7 @@
         var isChecked = $(this).prop("checked");
         $("#IsActive").val(isChecked);
     });
+    
 
     function ShowUserPermissionModal(e) {
         var btn = $(e);

@@ -212,7 +212,7 @@ namespace ERP_System.BLL.Guide
                 {
                     if (productDto.images != null && productDto.images.Length > 0)
                     {
-                        _helperBll.UploadFile(tbl.ID, productDto.images, ImagesFoldeName);
+                        _helperBll.UploadFiles(tbl.ID, productDto.images, ImagesFoldeName);
                     }
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
@@ -241,7 +241,7 @@ namespace ERP_System.BLL.Guide
                 {
                     if (productDto.images != null && productDto.images.Length > 0)
                     {
-                        _helperBll.UploadFile(tbl.ID, productDto.images, ImagesFoldeName);
+                        _helperBll.UploadFiles(tbl.ID, productDto.images, ImagesFoldeName);
                     }
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;

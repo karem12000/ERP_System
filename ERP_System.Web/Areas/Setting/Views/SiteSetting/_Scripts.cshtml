@@ -1,0 +1,78 @@
+﻿
+<script>
+    $(document).ready(function () {
+
+
+    });
+
+    let form = $('#frm');
+    function Submit() {
+        event.preventDefault();
+        Save();
+
+    }
+
+    function file_changed() {
+        var selectedFile = document.querySelectorAll('input[type="file"]')[0].files[0];
+        var img = document.getElementById('img')
+        var reader = new FileReader();
+        reader.onload = function () {
+            img.style.removeProperty('display');
+            img.src = this.result
+        }
+        reader.readAsDataURL(selectedFile);
+    }
+
+    function Save() {
+
+
+
+        let frm = new FormData();
+
+        frm.append("ID", document.getElementById('id').value);
+        frm.append("SiteName", document.getElementById('SiteName').value);
+        frm.append("Logo", document.querySelectorAll('input[type="file"]')[0].files[0]);
+
+
+        if ($('#Name').val() == '') {
+
+            Swal.fire({
+                title: `من فضلك أدخل الحقول المطلوبة`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            })
+        } else {
+            $.ajax({
+                url: '@Url.GetAction("Save")',
+                method: "POST",
+                contentType: false,
+                processData: false,
+                data: frm,
+                success: function (res) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        showConfirmButton: false
+                    }).then((result) => {
+
+                    })
+                },
+                error: function (res) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    })
+                }
+            });
+        }
+    }
+
+
+</script>

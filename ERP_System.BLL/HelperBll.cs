@@ -19,12 +19,12 @@ namespace ERP_System.BLL
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IRepository<Attachment> _repoAttatchment;
 
-        public HelperBll(IWebHostEnvironment webHostEnvironment , IRepository<Attachment> repoAttatchment)
+        public HelperBll(IWebHostEnvironment webHostEnvironment, IRepository<Attachment> repoAttatchment)
         {
             _webHostEnvironment = webHostEnvironment;
             _repoAttatchment = repoAttatchment;
         }
-        public string GenerateBarcode(string generateBarcode , string FolderName)
+        public string GenerateBarcode(string generateBarcode, string FolderName)
         {
             if (!string.IsNullOrEmpty(generateBarcode))
             {
@@ -35,12 +35,12 @@ namespace ERP_System.BLL
                 // Styling a Barcode and adding annotation text
                 barcode.ChangeBarCodeColor(Color.Black);
                 barcode.SetMargins(10);
-                string path = _webHostEnvironment.WebRootPath+ FolderName;
+                string path = _webHostEnvironment.WebRootPath + FolderName;
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
-                string filePath = _webHostEnvironment.WebRootPath+FolderName+generateBarcode+".png";
+                string filePath = _webHostEnvironment.WebRootPath + FolderName + generateBarcode + ".png";
                 barcode.SaveAsPng(filePath);
                 string fileName = Path.GetFileName(filePath);
                 return fileName;
@@ -49,7 +49,7 @@ namespace ERP_System.BLL
             return "";
         }
 
-        public void UploadFile(Guid ProductId,IFormFile[] files , string FolderName)
+        public void UploadFiles(Guid ProductId, IFormFile[] files, string FolderName)
         {
             string basePath = _webHostEnvironment.WebRootPath;
 
@@ -60,14 +60,14 @@ namespace ERP_System.BLL
                 {
                     Directory.CreateDirectory(basePath + FolderName);
                 }
-               
+
                 for (int i = 0; i < files.Length; i++)
                 {
                     var fileName = Path.GetRandomFileName() + Path.GetExtension(files[i].FileName);
-                    
-                  
-                    var pathh = FolderName+ fileName;
-                    var filePath = basePath +FolderName + fileName;
+
+
+                    var pathh = FolderName + fileName;
+                    var filePath = basePath + FolderName + fileName;
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
 
@@ -92,6 +92,32 @@ namespace ERP_System.BLL
                 }
             }
         }
+
+
+        public string UploadFile(IFormFile file, string FolderName)
+        {
+            string basePath = _webHostEnvironment.WebRootPath;
+
+            if (!Directory.Exists(basePath + FolderName))
+            {
+                Directory.CreateDirectory(basePath + FolderName);
+            }
+
+
+            var fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
+
+            var pathh = FolderName + fileName;
+            var filePath = basePath + FolderName + fileName;
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+
+                file.CopyTo(fileStream);
+            }
+
+            return pathh;
+
+        }
+
 
     }
 }

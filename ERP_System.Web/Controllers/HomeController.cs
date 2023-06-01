@@ -1,6 +1,7 @@
 ﻿
 using ERP_System.BLL;
 using ERP_System.DTO;
+using ERP_System.Tables;
 using ERP_System.Web;
 using ERP_System.Web.Models;
 using Microsoft.AspNetCore.Mvc;
