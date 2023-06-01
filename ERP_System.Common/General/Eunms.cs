@@ -29,5 +29,9 @@ namespace ERP_System.Common.General
     {
         Client , Suppliers 
     }
+    public enum UnitType
+    {
+        BasicUnit=0, SubUnit
+    }
 
 }

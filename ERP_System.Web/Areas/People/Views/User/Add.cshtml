@@ -1,0 +1,121 @@
+﻿@{
+    Layout = "_Layout";
+}
+@if (CurrentForm.CurrentFormPermissionActions.AddHasPermission)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">إضافة مستخدم</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit()">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Name">الاسم</label>
+                                            <input hidden name="id" id="id" value="" class="d-none" />
+                                            <input type="text" required id="Name" name="Name" class="form-control" placeholder="الاسم">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="UserName">اسم المستخدم</label>
+                                            <input type="text" value="" id="UserName" name="UserName" class="form-control" placeholder="اسم المستخدم">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Email">الايميل</label>
+                                            <input type="text" required id="Email" name="Email" class="form-control" placeholder="الايميل">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Password">الباسوورد</label>
+                                            <input type="password" value="" id="Password" name="Password" class="form-control" placeholder="الباسوورد">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="lable" for="UserTypeId">نوع المستخدم</label>
+                                            <select class="Select sAddress form-select" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="lable" for="UserTypeId">المخازن المتاحة</label>
+                                            <select class="choices form-select multiple-remove" multiple="multiple" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")'>
+                                                <option placeholder>حدد المخازن المراد اضافتها لهذا المستخدم</option>
+                                                @*<optgroup label="Figures">
+                                                    <option value="romboid">Romboid</option>
+                                                    <option value="trapeze">Trapeze</option>
+                                                    <option value="triangle">Triangle</option>
+                                                    <option value="polygon">Polygon</option>
+                                                </optgroup>
+                                                <optgroup label="Colors">
+                                                    <option value="red">Red</option>
+                                                    <option value="green">Green</option>
+                                                    <option value="blue">Blue</option>
+                                                    <option value="purple">Purple</option>
+                                                </optgroup>*@
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="lable" for="UserTypeId">نوع المستخدم</label>
+                                            <select class="Select sAddress form-select" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Phone">التليفون</label>
+                                            <input type="text" required id="Phone" name="Phone" class="form-control" placeholder="التليفون">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Address">العنوان</label>
+                                            <input type="text" required id="Address" name="Address" class="form-control" placeholder="العنوان">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 d-flex">
+                                        <div class="form-check">
+                                            <div class="checkbox">
+                                                <input type="checkbox" name="IsActive" id="IsActive" value="true" class="form-check-input" checked>
+                                                <label for="IsActive">الحاله</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 d-flex justify-content-between mt-5">
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
+                                            حفظ
+                                        </button>
+
+                                        @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
+                                        {
+                                            <div class="d-flex align-items-center justify-content-end ps-2">
+                                                <a class="btn btn-outline-primary" href="/People/User/Index">
+                                                    رجوع للقائمة
+                                                    <span class="fa-arrow-left fas"></span>
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts
+    {
+    <partial name="_Scripts" />
+    }

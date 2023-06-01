@@ -3,6 +3,7 @@ using ERP_System.Common;
 using ERP_System.Common.General;
 using ERP_System.DAL;
 using ERP_System.DTO;
+using ERP_System.DTO.Guide;
 using ERP_System.Tables;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,6 +17,8 @@ namespace ERP_System.BLL
     public class UserBll
     {
         #region Fields
+        private const string _spUsers = "[people].[spUsers]";
+
         private readonly IRepository<User> _repoUser;
         private readonly IRepository<UserStock> _repoUserStock;
         private readonly IRepository<UserPermission> _repoUserPermission;
@@ -219,10 +222,26 @@ namespace ERP_System.BLL
                     return resultViewModel;
                 }
 
-                user.PasswordHash = AppConstants.DefaultPassword.EncryptString();
-                user.Salt = AppConstants.EncryptKey;
-                var AllStock = new List<UserStock>();
+                if (string.IsNullOrEmpty(userDTO.Password))
+                {
+                    user.PasswordHash = AppConstants.DefaultPassword.EncryptString();
+                }
+                else
+                {
+                    user.PasswordHash = userDTO.Password.EncryptString();
+                }
 
+                if (userDTO.UserTypeId == Guid.Parse("8484E624-C5A0-463E-986A-66A118D1F2EB"))
+                    user.UserClassification = UserClassification.Client;
+                else if (userDTO.UserTypeId == Guid.Parse("DF5D2D3C-655A-431E-93A3-AC4AF07C8805"))
+                    user.UserClassification = UserClassification.Suppliers;
+
+
+
+
+                user.Salt = AppConstants.EncryptKey;
+
+                var AllStock = new List<UserStock>();
                 if (userDTO.StockIds != null && userDTO.StockIds.Count() > 0)
                 {
                     foreach (var item in userDTO.StockIds)
@@ -265,6 +284,11 @@ namespace ERP_System.BLL
                 tbl.IsActive = user.IsActive;
                 tbl.UserTypeId = user.UserTypeId;
                 tbl.AddedBy = tbl.AddedBy;
+
+                if (user.UserTypeId == Guid.Parse("8484E624-C5A0-463E-986A-66A118D1F2EB"))
+                    tbl.UserClassification = UserClassification.Client;
+                else if (user.UserTypeId == Guid.Parse("DF5D2D3C-655A-431E-93A3-AC4AF07C8805"))
+                    tbl.UserClassification = UserClassification.Suppliers;
 
                 var AllStock = new List<UserStock>();
 
@@ -343,7 +367,13 @@ namespace ERP_System.BLL
         }
 
         #region LoadData
+        public DataTableResponse LoadData(DataTableRequest mdl)
+        {
+            var data = _repoUser.ExecuteStoredProcedure<UserTableDTO>
+                (_spUsers, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
 
+            return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
+        }
         #endregion
         #region Login For Web
         #region  تسجيل الدخول

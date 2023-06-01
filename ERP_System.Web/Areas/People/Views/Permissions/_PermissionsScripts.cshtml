@@ -1,6 +1,6 @@
 ﻿<script>
     let ddlUserType = $('#ddlUserType');
-  
+
     function ShowUserPermission() {
 
         if (ddlUserType.val() == undefined || ddlUserType.val() == '@Guid.Empty') {
@@ -8,7 +8,7 @@
             return;
         }
 
-        $.post('@Url.GetAction("ShowUserPermission")', { userTypeId: ddlUserType.val()} , function (res) {
+        $.post('@Url.GetAction("ShowUserPermission")', { userTypeId: ddlUserType.val() }, function (res) {
 
             $('#tbodyUserPermissions').html('');
 
@@ -22,9 +22,15 @@
     }
 
     function SaveUserPermission() {
+        
         if (ddlUserType.val() == undefined || ddlUserType.val() == '@Guid.Empty') {
-            alertify.alert('@AppConstants.Messages.UserTypeRequiredMessage').setHeader('@AppConstants.Messages.StopTitle');
-
+            Swal.fire({
+                title: `من فضلك اختر نوع المستخدم`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'warning',
+                showConfirmButton: false
+            })
             return;
         }
 
@@ -50,20 +56,25 @@
 
         $.post('@Url.GetAction("SaveUserPermission")', { userTypeId: ddlUserType.val(), mdl: ArrayOfObj }, function (res) {
 
-
-            
-            if (res.status) {
-                window.alert(res.message);
+            if (res.Status) {
+                Swal.fire({
+                    title: `${res.Message}`,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    icon: 'success',
+                    showConfirmButton: false
+                });
                 window.location.href = "@Url.GetAction("Index")";
-
-
-                    }
-                    else {
-                window.alert(res.message);
-                    }
-
-
-
+            }
+            else {
+                Swal.fire({
+                    title: `${res.Message}`,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    icon: 'error',
+                    showConfirmButton: false
+                });
+            }
         });
 
 

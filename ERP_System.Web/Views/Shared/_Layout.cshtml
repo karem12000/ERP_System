@@ -68,23 +68,7 @@
     <script src="~/assets/extensions/apexcharts/apexcharts.min.js"></script>
     <script src="~/assets/js/pages/dashboard.js"></script>
     <script>
-        const element = document.querySelector('.choices.multiple-remove');
-        const example = new Choices(element,
-            {
-                delimiter: ',',
-                editItems: true,
-                maxItemCount: -1,
-                removeItemButton: true,
-            });
-
-        element.addEventListener(
-            'addItem',
-            function (event) {
-                document.querySelector('.choices__input.choices__input--cloned').remove()
-                console.log(event.detail.value);
-            },
-            false,
-        );
+       
     </script>
     <script>
        
@@ -123,7 +107,11 @@
                     let pathName = location.pathname.split("/");
             pathName.pop();
             pathName =pathName.join("/");
+            if (pathName === '') {
+                pathName = '/Home/Index';
+            }
         let linkT;
+
         $.each($(".sidebar-link"), function () {
             linkT = $(this).attr("href").split("/");
             linkT.pop(); 

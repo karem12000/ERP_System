@@ -1,15 +1,14 @@
 ﻿@{
     Layout = "_Layout";
 }
-@model ERP_System.Tables.Unit;
-ahalkscmsdklncksjn
-@*@if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+@model ERP_System.Tables.User;
+@if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
 {
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">تعديل بيانات الوحدة</h4>
+                    <h4 class="card-title">تعديل مستخدم</h4>
                 </div>
                 <div class="card-content">
                     <div class="card-body">
@@ -18,40 +17,46 @@ ahalkscmsdklncksjn
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label for="Name">اسم الوحدة</label>
+                                            <label for="Name">الاسم</label>
                                             <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
-                                            <input type="text" required id="Name" value="@Model.Name" name="Name" class="form-control" placeholder="اسم الوحدة">
+                                            <input type="text" required id="Name" value="@Model.Name" name="Name" class="form-control" placeholder="الاسم">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="lable" for="FocusTypeId">  نوع الوحدة </label>
-                                            <select class="Select sAddress form-select" value="@Model.UnitType" aria-label="اختر النوع" required name="UnitType" id="ddlUnitType">
-                                                <option  value="0">أساسية</option>
-                                                <option value="1">فرعية</option>
+                                            <label for="UserName">اسم المستخدم</label>
+                                            <input type="text" required id="UserName" value="@Model.UserName" name="UserName" class="form-control" placeholder="اسم المستخدم">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Email">الايميل</label>
+                                            <input type="text" required id="Email" value="@Model.Email" name="Email" class="form-control" placeholder="الايميل">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="lable" for="UserTypeId">نوع المستخدم</label>
+                                            <select class="Select sAddress form-select" value="@Model.UserTypeId" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-12 parentDev">
+                                    <div class="col-12">
                                         <div class="form-group">
-                                            <label class="lable" for="FocusTypeId">الوحده الأساسية</label>
-                                            <select class="Select sAddress form-select" aria-label="اختر الوحدة" value="@Model.ParentId" name="ParentUnitId" id="ParentUnitId">
-                                                <option selected value="0">اختر الوحدة الأساسية</option>
-                                            </select>
+                                            <label for="Phone">التليفون</label>
+                                            <input type="text" required id="Phone" value="@Model.Phone" name="Phone" class="form-control" placeholder="التليفون">
                                         </div>
                                     </div>
-                                     <div class="col-12 rateDev d-none">
+                                    <div class="col-12">
                                         <div class="form-group">
-                                            <label class="lable">الوحدة الأساسية </label>
-                                            <label class="lable">  تساوي : </label>
-                                            <input type="number" id="Rate" value="@Model.Rate" name="Rate" placeholder="القيمة">
-                                            <label class="lable">  من الوحدة الفرعية </label>
+                                            <label for="Address">العنوان</label>
+                                            <input type="text" required id="Address" value="@Model.Address" name="Address" class="form-control" placeholder="العنوان">
                                         </div>
                                     </div>
                                     <div class="col-12 d-flex">
                                         <div class="form-check">
                                             <div class="checkbox">
-                                                <input type="checkbox" name="IsActive" id="IsActive" class="form-check-input" checked="@Model.IsActive">
+                                                <input type="checkbox" name="IsActive" id="IsActive" value="@Model.IsActive" class="form-check-input" checked>
                                                 <label for="IsActive">الحاله</label>
                                             </div>
                                         </div>
@@ -63,8 +68,8 @@ ahalkscmsdklncksjn
 
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
-                                            <div class="mb-3 d-flex align-items-center justify-content-end ps-2">
-                                                <a class="btn btn-outline-primary" href="/Guide/Unit/Index">
+                                            <div class="d-flex align-items-center justify-content-end ps-2">
+                                                <a class="btn btn-outline-primary" href="/People/User/Index">
                                                     رجوع للقائمة
                                                     <span class="fa-arrow-left fas"></span>
                                                 </a>
@@ -80,9 +85,7 @@ ahalkscmsdklncksjn
         </div>
     </div>
 }
-*@
 @section Scripts
     {
-
     <partial name="_Scripts" />
-}
+    }

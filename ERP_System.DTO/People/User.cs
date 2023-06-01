@@ -1,4 +1,5 @@
 ﻿using ERP_System.Common;
+using ERP_System.Common.General;
 using ERP_System.Resources;
 using System;
 using System.Collections.Generic;
@@ -65,6 +66,7 @@ namespace ERP_System.DTO
 
         [Required(ErrorMessage = AppConstants.Messages.RequiredMessage)]
         public string Email { get; set; }
+        public string Password { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
         public string PasswordHash { get; set; }
@@ -78,6 +80,23 @@ namespace ERP_System.DTO
         public Guid? UserTypeId { get; set; }
 
         public string UserTypeName { get; set; }
+
+    }
+
+    public class UserTableDTO
+    {
+        public Guid ID { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Address { get; set; }
+        public UserClassification? UserClassification { get; set; }
+        public Guid? UserTypeId { get; set; }
+        public string UserTypeName { get; set; }
+        public string Name { get; set; }
+        public string AddedDate { get; set; }
+        public bool IsActive { get; set; }
+        public int TotalCount { get; set; }
 
     }
     #endregion
