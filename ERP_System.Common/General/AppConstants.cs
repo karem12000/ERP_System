@@ -16,6 +16,10 @@ namespace ERP_System.Common
         }
         public static readonly object[] EmptyValues = { Guid.Empty, string.Empty, null };
 
+        public const string AdminTypeId = "D3C1E01C-BECC-4002-8D0B-2E3266BB2D71" ;
+        public const string SupplierTypeId = "DF5D2D3C-655A-431E-93A3-AC4AF07C8805";
+        public const string ClientTypeId = "8484E624-C5A0-463E-986A-66A118D1F2EB";
+
         public const string _SuperUserIdCookie = "App.Super.ERP_System.UserId";
         public const string _UserIdCookie = "App.ERP_System.UserId";
         public const string LanguageCodeCookie = "App.ERP_System.LanguageCode";

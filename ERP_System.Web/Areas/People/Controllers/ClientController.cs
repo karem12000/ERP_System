@@ -12,41 +12,33 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ERP_System.Web.Areas.People.Controllers
 {
-    public class UserController : Controller
+    public class ClientController : Controller
     {
         #region Fields
 
         private readonly UserBll _userBll;
-        private readonly UserTypeBll _userTypeBll;  
-        private readonly StockBll _stockBll;  
 
-        public UserController(UserBll userBll, UserTypeBll userTypeBll, StockBll stockBll)
+        public ClientController(UserBll userBll)
         {
             _userBll = userBll;
-            _userTypeBll = userTypeBll;
-            _stockBll = stockBll;
         }
         #endregion
 
         #region Actions
        
-        public IActionResult Index(UserClassification userClassification)
+        public IActionResult Index()
         {
-
             return View();
         }
 
         public IActionResult Add()
         {
-            ViewData["UserTypes"] = _userTypeBll.GetSelect();
-            ViewData["Stocks"] = _stockBll.GetSelect();
             return View();
         }
 
         public IActionResult Edit(Guid id)
         {
-            ViewData["UserTypes"] = _userTypeBll.GetSelect();
-
+            
             var item = _userBll.GetById(id);
             if (item != null)
             {
@@ -54,30 +46,25 @@ namespace ERP_System.Web.Areas.People.Controllers
                 return View(item);
             }
             else
-                return Redirect("/Guide/ItemGrpoup/Index");
+                return Redirect("/People/Client/Index");
         }
-        public IActionResult Permissions()
-        {
-            return View();
-        }
+
         public IActionResult Save(UserDTO mdl)
         {
-            mdl.UserClassification = UserClassification.Admin;
-            mdl.UserTypeId = Guid.Parse(AppConstants.AdminTypeId);
-            return Ok(_userBll.Save(mdl));
+            mdl.UserClassification = UserClassification.Client;
+            mdl.UserTypeId = Guid.Parse(AppConstants.ClientTypeId);
+           return Ok(_userBll.Save(mdl));
         }
+
         [HttpPost]
         public IActionResult Delete(Guid id) => Ok(_userBll.Delete(id));
         [HttpPost]
         public IActionResult ChangeStatus(Guid id) => Ok(_userBll.ChangeStatus(id));
 
-        [HttpPost]
-        public IActionResult ResetPassword(Guid id) => Ok(_userBll.ResetPassword(id));
-
-
+       
         #endregion
         #region LoadData
-        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_userBll.LoadData(mdl,null));
+        public IActionResult LoadDataTable(DataTableRequest mdl , UserClassification? classification=UserClassification.Client) => JsonDataTable(_userBll.LoadData(mdl , classification));
 
         #endregion
     }

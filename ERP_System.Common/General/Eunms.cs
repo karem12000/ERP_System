@@ -27,7 +27,7 @@ namespace ERP_System.Common.General
 
     public enum UserClassification
     {
-        Client , Suppliers 
+        Client , Suppliers ,Admin, User
     }
     public enum UnitType
     {

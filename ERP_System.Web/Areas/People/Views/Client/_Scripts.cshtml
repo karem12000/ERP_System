@@ -1,0 +1,214 @@
+﻿<script>
+    $(document).ready(function () {
+
+       LoadTable();
+    });
+
+    let form = $('#frm');
+    function Submit() {
+
+        event.preventDefault();
+
+        Save();
+
+    }
+
+
+    function Save() {
+        if ($('#Name').val() == '' || $('#UserName').val() == '' || $('#Email').val() == '' || $('#ddlUserTypeId').val() == '') {
+            Swal.fire({
+                title: `من فضلك أدخل البيانات الأساسية`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            });
+        } else {
+            $.post('@Url.GetAction("Save")', form.serialize(), function (res) {
+                if (res.Status) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        showConfirmButton: false
+                    }).then((result) => {
+                        window.location.href = "/People/Client/Index";
+                    })
+                }
+                else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    })
+                }
+            });
+        }
+    }
+
+    function Delete(e, id) {
+
+        var btn = $(e);
+        var id = id;
+        Swal.fire({
+            title: 'هل أنت متأكد؟',
+            text: "هل انت متاكد من اجراء العملية",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'الغاء',
+            confirmButtonText: 'نعم ، حذف!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
+
+                    if (res.Status) {
+                        Swal.fire(
+                            'تم الحذف!',
+                            `${res.Message}`,
+                            'success'
+                        )
+                        LoadTable();
+                    }
+                    else {
+                        Swal.fire(
+                            'توقف!',
+                            `${res.Message}`,
+                            'warning'
+                        )
+                    }
+                });
+
+            }
+        })
+
+    }
+
+    function LoadTable() {
+        dt = $('#tbl').DataTable({
+            "columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+
+            "language": _dataTableTranslate,
+            pageLength: 10,
+            scrollX: true,
+            pagijngType: "full_numbers",
+            direction: 'rtl',
+            serverSide: true,
+            processing: true,
+            lengthMenu: [10, 25, 50, 75, 100],
+            sAjaxSource: '@Url.GetAction("LoadDataTable")',
+            sServerMethod: "POST",
+            bPaginate: true,
+            paging: true,
+            dom: 'Blfrtip',
+            buttons: [
+
+            ],
+            search: {},
+            columns: [
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="Name">' + (data.Name == null ? "" : data.Name) + '</label><input hidden name="UserId" class="UserId" value="' + (data.ID) + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="UserName">' + (data.UserName == null ? "" : data.UserName) + '</label><input hidden name="UserName" class="UserName" value="' + (data.UserName == null ? "" : data.UserName) + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+                        return '<label class="Email">' + (data.Email == null ? "" : data.Email) + '</label>  <input hidden name="Email" class="Email" value="' + (data.Email == null ? "" : data.Email) + '" />'
+                    }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+                        return '<label class="UserType">' + (data.UserTypeName == null ? "" : data.UserTypeName) + '</label>  <input hidden name="UserTypeId" class="UserTypeId" value="' + data.UserTypeId + '" />'
+                    }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+                        return '<label class="Phone">' + (data.Phone == null ? "" : data.Phone) + '</label>  <input hidden name="Phone" class="Phone" value="' + (data.Phone == null ? "" : data.Phone) + '" />'
+                    }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+                        return '<label class="Address">' + (data.Address == null ? "" : data.Address) + '</label>  <input hidden name="Address" class="Address" value="' + (data.Address == null ? "" : data.Address) + '" />'
+                    }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="AddedDate">' + (data.AddedDate ?? "") + '</label><input hidden name="groupId" class="groupId" value="' + data.AddedDate + '" /> ' }
+
+                },
+                {
+
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+
+                        return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+                    }
+
+                },
+                {
+
+                    data: null,
+                    bSortable: false,
+                    render: function (data, type, row) {
+                        let btn = `<div class="Event">
+
+    @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+    {
+                                                                        <a class="btn-icon btn btn-warning btn-sm" href="/People/Client/Edit/${data.ID}">
+                                                                        <i class="fas fa-pen"></i>
+
+                                                                        </a>
+
+    }
+
+    @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
+    {
+                                                                                   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.id}')" href="javascript:void(0)">
+                                                             <i class="fas fa-trash-alt"></i>
+
+                                                                       </a>
+    }
+                                               `;
+                        return btn + '</div>';
+                    }
+                }
+
+            ]
+        });
+
+    }
+
+
+
+    $("#IsActive").change(function (e) {
+        var isChecked = $(this).prop("checked");
+        $("#IsActive").val(isChecked);
+    });
+
+</Script>

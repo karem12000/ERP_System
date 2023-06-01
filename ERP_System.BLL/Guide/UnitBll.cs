@@ -25,12 +25,11 @@ namespace ERP_System.BLL.Guide
         }
 
         #region Get
-        public ResultViewModel GetById(Guid id)
+        public Unit GetById(Guid id)
         {
-            var result = new ResultViewModel();
-            result.Status = true;
-            result.Data = _repoUnit.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
-            return result;
+           
+            return _repoUnit.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
+           
         }
 
         public Unit GetByUnitName(string name)

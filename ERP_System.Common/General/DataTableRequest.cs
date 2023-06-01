@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ERP_System.Common.General;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text;
@@ -117,6 +118,7 @@ namespace ERP_System
         }
 
         public Guid? UserID { get; set; }
+        public UserClassification? UserClassification { get; set; }
 
         public SqlParameter[] ToSqlParameter(Guid? UserId = null, Guid? LanguageId = null , params SqlParameter[] sqlParameters)
         {
@@ -133,6 +135,10 @@ namespace ERP_System
             if (UserID != null)
             {
                 _list.Add(new SqlParameter() { ParameterName = "@UserID", Value = UserID });
+            }
+            if (UserClassification != null)
+            {
+                _list.Add(new SqlParameter() { ParameterName = "@UserClassification", Value = UserClassification });
             }
 
             if (LanguageId != null)

@@ -1,7 +1,9 @@
 ﻿<script>
     $(document).ready(function () {
+        
+       
+            LoadTable();
 
-        LoadTable();
         const element = document.querySelector('.choices.multiple-remove');
         const example = new Choices(element,
             {
@@ -197,7 +199,7 @@
     @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
     {
                                                                 <a class="btn-icon btn btn-warning btn-sm" href="/People/User/Edit">
-                                                                <i class="far fa-pen"></i>
+                                                                <i class="fas fa-pen"></i>
 
                                                                 </a>
 
@@ -220,6 +222,8 @@
 
     }
 
+
+    
     $("#IsActive").change(function (e) {
         var isChecked = $(this).prop("checked");
         $("#IsActive").val(isChecked);
