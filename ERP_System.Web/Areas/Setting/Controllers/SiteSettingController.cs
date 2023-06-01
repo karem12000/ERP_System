@@ -16,6 +16,10 @@ namespace ERP_System.Web.Areas.Setting.Controllers
         public IActionResult Index()
         {
             var setting = _settingBll.GetSetting();
+            if (setting == null)
+            {
+                setting = new Tables.Setting();
+            }
             return View(setting);
         }
 

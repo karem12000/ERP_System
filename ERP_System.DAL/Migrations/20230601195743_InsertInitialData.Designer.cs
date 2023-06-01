@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP_System.DAL.Migrations
 {
     [DbContext(typeof(ERP_SystemDbContext))]
-    [Migration("20230531181517_EditUnitTbl")]
-    partial class EditUnitTbl
+    [Migration("20230601195743_InsertInitialData")]
+    partial class InsertInitialData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
