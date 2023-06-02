@@ -25,10 +25,18 @@ namespace ERP_System.BLL.Guide
         }
 
         #region Get
-        public Unit GetById(Guid id)
+        public UnitDTO GetById(Guid id)
         {
            
-            return _repoUnit.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
+            return _repoUnit.GetAllAsNoTracking().Where(p => p.ID == id).Select(c=> new UnitDTO
+            {
+                ID = c.ID,
+                Name = c.Name,
+                IsActive = c.IsActive,
+                ParentId = c.ParentId,
+                Rate = c.Rate,
+                UnitType = c.UnitType
+            }).FirstOrDefault();
            
         }
 

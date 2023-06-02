@@ -27,6 +27,8 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
         public IActionResult Edit(Guid id)
         {
+            ViewData["Units"] = _UnitBll.GetSelect();
+
             var item = _UnitBll.GetById(id);
             if (item != null)
             {

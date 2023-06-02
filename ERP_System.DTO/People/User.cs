@@ -4,6 +4,7 @@ using ERP_System.Resources;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 
 namespace ERP_System.DTO
@@ -79,6 +80,7 @@ namespace ERP_System.DTO
         public UserClassification? UserClassification { get; set; }
         public string? UserClassificationStr => UserClassification?.ToString();
         public Guid[]? StockIds { get; set; }
+        public string StockIdsStr => string.Join(",", StockIds);
 
         public Guid? UserTypeId { get; set; }
 

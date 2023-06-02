@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "_Layout";
 }
-@model ERP_System.Tables.Unit;
+@model ERP_System.DTO.Guide.UnitDTO;
 @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
 {
     <div class="row">
@@ -25,8 +25,8 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label class="lable" for="FocusTypeId">  نوع الوحدة </label>
-                                            <select class="Select sAddress form-select" value="@Model.UnitType" aria-label="اختر النوع" required name="UnitType" id="ddlUnitType">
-                                                <option  value="0">أساسية</option>
+                                            <select class="Select sAddress form-select" value="@Model.UnitTypeValue" aria-label="اختر النوع" required name="UnitType" id="EddlUnitType">
+                                                <option value="0">أساسية</option>
                                                 <option value="1">فرعية</option>
                                             </select>
                                         </div>
@@ -34,12 +34,12 @@
                                     <div class="col-12 parentDev">
                                         <div class="form-group">
                                             <label class="lable" for="FocusTypeId">الوحده الأساسية</label>
-                                            <select class="Select sAddress form-select" aria-label="اختر الوحدة" value="@Model.ParentId" name="ParentUnitId" id="ParentUnitId">
+                                            <select class="Select sAddress form-select" aria-label="اختر الوحدة" value="@Model.ParentId" name="ParentUnitId" id="ParentUnitId" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text")'>
                                                 <option selected value="0">اختر الوحدة الأساسية</option>
                                             </select>
                                         </div>
                                     </div>
-                                     <div class="col-12 rateDev d-none">
+                                     <div class="col-12 rateDev">
                                         <div class="form-group">
                                             <label class="lable">الوحدة الأساسية </label>
                                             <label class="lable">  تساوي : </label>
@@ -84,4 +84,12 @@
     {
 
     <partial name="_Scripts" />
+    <script>
+        $(document).ready(function () {
+            var unitTypeValue = $('#EddlUnitType').attr("value");;
+            $('#EddlUnitType').val(unitTypeValue).trigger('change');
+            unitTypeValue == 0 ? $('.rateDev').hide() : $('.rateDev').show();
+            unitTypeValue == 0 ? $('.parentDev').hide() : $('.parentDev').show();
+        });
+    </script>
 }

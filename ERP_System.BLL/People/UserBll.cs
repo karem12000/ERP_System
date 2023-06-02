@@ -333,7 +333,7 @@ namespace ERP_System.BLL
                 if (_repoUser.Update(tbl))
                 {
                     
-                        _repoUserStock.ExecuteStoredProcedure<int>($"DELETE FROM [People].[UserStocks] us WHERE us.UserId='${tbl.ID}'", null, CommandType.StoredProcedure);
+                        //_repoUserStock.ExecuteStoredProcedure<int>($"DELETE FROM [People].[UserStocks] us WHERE us.UserId='${tbl.ID}'", null, CommandType.StoredProcedure);
                         _repoUserStock.InsertRange(AllStock);
                     
 

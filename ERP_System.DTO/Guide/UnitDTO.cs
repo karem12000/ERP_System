@@ -12,6 +12,7 @@ namespace ERP_System.DTO.Guide
         public double? Rate { get; set; }
         public Guid? ParentId { get; set; }
         public UnitType? UnitType { get; set; }
+        public int? UnitTypeValue => (int)UnitType.Value;
         [Required]
         public string Name { get; set; }
         public bool IsActive { get; set; }

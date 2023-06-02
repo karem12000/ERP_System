@@ -44,7 +44,7 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="lable" for="UserTypeId">المخازن المتاحة</label>
-                                            <select class="choices form-select multiple-remove" name="StockIds" id="StockIds" value="@Model.StockIds" multiple="multiple" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")'>
+                                            <select class="choices form-select multiple-remove" name="StockIds" id="StockIds" value="@Model.StockIdsStr" multiple="multiple" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")'>
                                                 <option placeholder>حدد المخازن المراد اضافتها لهذا المستخدم</option>
                                             </select>
                                         </div>
@@ -97,4 +97,10 @@
 @section Scripts
     {
     <partial name="_Scripts" />
+    <script>
+        $(document).ready(function () {
+            var unitTypeValue = $('#ddlUserTypeId').attr("value");
+            $('#ddlUserTypeId').val(unitTypeValue).trigger('change');
+        });
+    </script>
     }
