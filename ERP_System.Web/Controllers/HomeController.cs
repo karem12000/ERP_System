@@ -24,7 +24,7 @@ namespace ERP.Web.Controllers
 
 
 
-        public HomeController(ILogger<HomeController> logger,UserBll userBll, IHttpContextAccessor httpContextAccessor, SettingBll settingBll)
+        public HomeController(ILogger<HomeController> logger, UserBll userBll, IHttpContextAccessor httpContextAccessor, SettingBll settingBll)
         {
             _logger = logger;
             _userBll = userBll;
@@ -34,9 +34,8 @@ namespace ERP.Web.Controllers
 
         public IActionResult Index()
         {
-            var userId = _httpContextAccessor.UserId();
-            var user = _userBll.GetById(userId);
-            return View(user);
+
+            return View();
         }
 
         public IActionResult ChangePassword() => View();

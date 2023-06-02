@@ -1,5 +1,4 @@
-﻿@model ERP_System.DTO.UserDTO;
-@inject ERP_System.BLL.PageBll _pageBll;
+﻿@inject ERP_System.BLL.PageBll _pageBll;
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -16,7 +15,7 @@
             if (string.IsNullOrEmpty(_pageBll.GetPageName(pageName)))
                 pageName = "نظام المحاسبه ";
             else
-            pageName = "نظام المحاسبه - " + _pageBll.GetPageName(pageName);
+                pageName = "نظام المحاسبه - " + _pageBll.GetPageName(pageName);
 
         }
 
@@ -31,20 +30,20 @@
     <link rel="stylesheet" href="~/new-assets/app.css">
     <link rel="stylesheet" href="~/assets/css/shared/iconly.css" />
     <script>
-       let  mainAppUserId = '@ViewContext.HttpContext.UserId()'
+        let mainAppUserId = '@ViewContext.HttpContext.UserId()'
     </script>
 </head>
 <body dir="rtl">
     <div id="app">
 
-        <vc:aside-bar user="@Model"></vc:aside-bar>
+        <vc:aside-bar></vc:aside-bar>
         <div id="main" class="layout-navbar">
-
-            <partial name="_Header" model="@Model" />
+            <partial name="_Header" />
             <div class="main-content">
-                    <div class="page-heading">
+                <div class="page-heading">
+
                     @RenderBody()
-                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -54,7 +53,7 @@
             &copy; 2023 - ERP.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    
+
 
 
     <script src="~/assets/js/bootstrap.js"></script>
@@ -69,10 +68,10 @@
     <script src="~/assets/extensions/apexcharts/apexcharts.min.js"></script>
     <script src="~/assets/js/pages/dashboard.js"></script>
     <script>
-       
+
     </script>
     <script>
-       
+
         let _dataTableNextText = 'التالي',
             _dataTablePrevText = 'السابق',
             _dataTableSearch = 'بحث',
@@ -103,26 +102,25 @@
     </script>
     <script src="~/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script>
-        $(document).ready(function(){
-
-        $(".sidebar-item").removeClass("active");
-                    let pathName = location.pathname.split("/");
+        $(document).ready(function () {
+            $(".sidebar-item").removeClass("active");
+            let pathName = location.pathname.split("/");
             pathName.pop();
-            pathName =pathName.join("/");
+            pathName = pathName.join("/");
             if (pathName === '') {
                 pathName = '/Home/Index';
             }
-        let linkT;
+            let linkT;
 
-        $.each($(".sidebar-link"), function () {
-            linkT = $(this).attr("href").split("/");
-            linkT.pop(); 
-            linkT = linkT.join("/");
-            if (linkT === pathName){
-                $(this).parent().addClass("active");
-            }
+            $.each($(".sidebar-link"), function () {
+                linkT = $(this).attr("href").split("/");
+                linkT.pop();
+                linkT = linkT.join("/");
+                if (linkT === pathName) {
+                    $(this).parent().addClass("active");
+                }
+            })
         })
-    })
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
