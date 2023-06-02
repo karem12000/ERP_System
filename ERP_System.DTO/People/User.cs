@@ -77,7 +77,7 @@ namespace ERP_System.DTO
         public bool IsActive { get; set; }
         public string AddedDate { get; set; }
         public UserClassification? UserClassification { get; set; }
-        public IEnumerable<Guid>? StockIds { get; set; }
+        public Guid[]? StockIds { get; set; }
 
         public Guid? UserTypeId { get; set; }
 
@@ -96,6 +96,7 @@ namespace ERP_System.DTO
         public Guid? UserTypeId { get; set; }
         public string UserTypeName { get; set; }
         public string Name { get; set; }
+        public string StockNames { get; set; }
         public string AddedDate { get; set; }
         public bool IsActive { get; set; }
         public int TotalCount { get; set; }

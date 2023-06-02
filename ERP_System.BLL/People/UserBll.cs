@@ -71,10 +71,25 @@ namespace ERP_System.BLL
             });
         }
 
-        public User GetById(Guid id)
+        public UserDTO GetById(Guid id)
         {
 
-            return _repoUser.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
+            return _repoUser.GetAllAsNoTracking().Where(p => p.ID == id).Select(x=> new UserDTO
+            {
+                AddedDate = x.CreatedDate.ToString(),
+                Address= x.Address,
+                Email= x.Email,
+                ID= id,
+                IsActive= x.IsActive,
+                IsAdmin= x.IsAdmin,
+                Name= x.Name,
+                PasswordHash= x.PasswordHash,
+                Phone= x.Phone,
+                StockIds = x.UserStocks.Select(c=>c.StockId).ToArray(),
+                UserClassification= x.UserClassification,
+                UserName= x.UserName,
+                UserTypeId= x.UserTypeId
+            }).FirstOrDefault();
         }
         #endregion
 
@@ -236,7 +251,10 @@ namespace ERP_System.BLL
                     user.UserClassification = UserClassification.Client;
                 else if (userDTO.UserTypeId.ToString() == AppConstants.SupplierTypeId)
                     user.UserClassification = UserClassification.Suppliers;
+                else if (userDTO.UserTypeId.ToString() == AppConstants.AdminTypeId)
+                    user.UserClassification = null;
                 else { }
+
 
 
                 user.Salt = AppConstants.EncryptKey;
@@ -290,6 +308,8 @@ namespace ERP_System.BLL
                     tbl.UserClassification = UserClassification.Client;
                 else if (userDTO.UserTypeId.ToString() == AppConstants.SupplierTypeId)
                     tbl.UserClassification = UserClassification.Suppliers;
+                else if (userDTO.UserTypeId.ToString() == AppConstants.AdminTypeId)
+                    user.UserClassification = null;
                 else { }
 
 
@@ -312,11 +332,10 @@ namespace ERP_System.BLL
 
                 if (_repoUser.Update(tbl))
                 {
-                    if (user.UserClassification != UserClassification.Suppliers  && user.UserClassification != UserClassification.Client)
-                    {
+                    
                         _repoUserStock.ExecuteStoredProcedure<int>($"DELETE FROM [People].[UserStocks] us WHERE us.UserId='${tbl.ID}'", null, CommandType.StoredProcedure);
                         _repoUserStock.InsertRange(AllStock);
-                    }
+                    
 
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;

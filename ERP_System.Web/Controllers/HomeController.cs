@@ -1,12 +1,17 @@
 ﻿
+using ERP_System;
 using ERP_System.BLL;
+using ERP_System.BLL.Guide;
 using ERP_System.DTO;
 using ERP_System.Tables;
 using ERP_System.Web;
 using ERP_System.Web.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Dynamic;
 
 namespace ERP.Web.Controllers
 {
@@ -14,16 +19,22 @@ namespace ERP.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserBll _userBll;
+        private readonly SettingBll _settingBll;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public HomeController(ILogger<HomeController> logger,UserBll userBll)
+
+        public HomeController(ILogger<HomeController> logger,UserBll userBll, IHttpContextAccessor httpContextAccessor, SettingBll settingBll)
         {
             _logger = logger;
             _userBll = userBll;
+            _settingBll = settingBll;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IActionResult Index()
         {
+            
             return View();
         }
 

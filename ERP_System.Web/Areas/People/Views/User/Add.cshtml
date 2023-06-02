@@ -48,8 +48,8 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="lable" for="UserTypeId">المخازن المتاحة</label>
-                                            <select class="choices form-select multiple-remove" multiple="multiple" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")'>
+                                            <label class="lable" for="StockIds">المخازن المتاحة</label>
+                                            <select class="choices form-select multiple-remove" name="StockIds" id="StockIds" multiple="multiple" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")'>
                                                 <option placeholder>حدد المخازن المراد اضافتها لهذا المستخدم</option>
                                                 @*<optgroup label="Figures">
                                                     <option value="romboid">Romboid</option>
@@ -63,13 +63,6 @@
                                                     <option value="blue">Blue</option>
                                                     <option value="purple">Purple</option>
                                                 </optgroup>*@
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label class="lable" for="UserTypeId">نوع المستخدم</label>
-                                            <select class="Select sAddress form-select" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
                                             </select>
                                         </div>
                                     </div>

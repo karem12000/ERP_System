@@ -1,4 +1,5 @@
-﻿@model IEnumerable<AsideBarPagesDTO>
+﻿@*@model IEnumerable<AsideBarPagesDTO>*@
+@model SideBarPagesLogoDto;
 @inject ERP_System.BLL.UserBll _userBll;
 @{
     var userid = ViewContext.HttpContext.UserId();
@@ -6,13 +7,13 @@
     var flag = 0;
 }
 
-
 <div id="sidebar" class="active">
     <div class="sidebar-wrapper active">
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
-                    <a href="/Home/Index"><img src="~/assets/images/logo-removebg-preview.png" alt="Logo" srcset="" width="250"/></a>
+                    <a href="/Home/Index"><img src="@Model.Setting.Logo" alt="Logo" srcset="" width="250" style="border-radius: 10px;" /></a>
+                    @*<a href="/Home/Index"><img src="~/assets/images/logo-removebg-preview.png" alt="Logo" srcset="" width="250"/></a>*@
                 </div>
                 <div class="theme-toggle d-flex gap-2  align-items-center mt-2 d-none">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -56,7 +57,7 @@
                     </a>
                 </li>
 
-                    @foreach (var pageItem in Model.Where(p => p.HasPermission))
+                @foreach (var pageItem in Model.AsideBarPagesDTO.Where(p => p.HasPermission))
                     {
                     <li class="sidebar-item ">
                         <a class="sidebar-link" href="/@pageItem.PageRoute">

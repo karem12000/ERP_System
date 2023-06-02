@@ -9,6 +9,7 @@ namespace ERP_System.Tables
 
 
         public virtual UserType UserType { get; set; }
+        public virtual ICollection<UserStock> UserStocks { get; set; }
 
 
         public ICollection<UserPermission> UserPermissionCreated { get; set; }

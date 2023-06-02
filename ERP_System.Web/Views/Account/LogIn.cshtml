@@ -1,8 +1,8 @@
 ﻿@{
     Layout = null;
 }
-@model LogInDTO
 
+@model ERP_System.Tables.Setting;
 <!DOCTYPE html>
 <html lang="ar" class="h-100" style="direction:rtl">
 
@@ -19,56 +19,17 @@
         /**
          * App Direction a global variable to entire application has rtl or ltr only
          * */
-        let  mainAppUserId = '@ViewContext.HttpContext.UserId()'
+        let mainAppUserId = '@ViewContext.HttpContext.UserId()'
+
     </script>
     <style>
-  
+
     </style>
 </head>
 
-<body   style="direction:rtl !important;" >
+<body style="direction:rtl !important;">
 
     <main class="main" id="top">
-         
-       @* <form action="@Url.GetAction("LogIn")" method="post">
-            @Html.AntiForgeryToken()
-            @if (ViewContext.HttpContext.Request.Query != null)
-            {
-                var d = ViewContext.HttpContext.Request.Query
-                .Where(x => x.Key.ToLower() == "returnUrl".ToLower()).Select(x => x.Value).FirstOrDefault();
-                if (!d.ToString().IsEmpty())
-                {
-                    <input type="hidden" value="@d" name="returnUrl" />
-                }
-            }
-
-            <div class="mb-3 text-start">
-                <label class="form-label" for="UserCode">اسم المستخدم</label>
-                <div class="form-icon-container">
-                    <input class="form-control form-icon-input" id="UserCode" name="UserCode" type="text" placeholder="كود المستخدم" /><span class="fas fa-user text-900 fs--1 form-icon"></span>
-                    <span asp-validation-for="UserCode"></span>
-                </div>
-            </div>
-            <div class="mb-3 text-start">
-                <label class="form-label" for="password">كلمة المرور</label>
-                <div class="form-icon-container">
-                    <input class="form-control form-icon-input" id="password" name="password" type="password" placeholder="كلمة المرور" /><span class="fas fa-key text-900 fs--1 form-icon"></span>
-                    <span asp-validation-for="Password"></span>
-                </div>
-            </div>
-            <div class="row flex-between-center mb-7">
-                <div class="col-auto">
-                    <div class="form-check mb-0">
-                        <input class="form-check-input" id="basic-checkbox" type="checkbox" checked="checked" />
-                        <label class="form-check-label mb-0" for="basic-checkbox">تذكرنى</label>
-                    </div>
-                </div>
-                <div class="col-auto"><a class="fs--1 fw-semi-bold" href="/Account/forgotpassword">هل نسيت كلمة السر؟</a></div>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mb-3">تسجيل الدخول</button>
-
-        </form>*@
-         
 
         <div id="auth">
 
@@ -76,7 +37,8 @@
                 <div class="col-xl-4 col-lg-5 col-md-8 col-11 form-auth">
                     <div id="auth-left">
                         <div class="auth-logo">
-                            <a href="index.html"><img src="~/assets/images/logo-removebg-preview.png" alt="Logo"></a>
+                            <a href="#"><img src="@Model.Logo" id="logo" alt="Logo" style="border-radius: 10px;"></a>
+                            @*<a href="#"><img src="~/assets/images/logo-removebg-preview.png" id="logo" alt="Logo"></a>*@
                         </div>
                         <h1 class="auth-title">تسجيل الدخول.</h1>
                         <p class="auth-subtitle mb-3">ادخل اسم المستخدم وكلمة المرور للدخول.</p>
@@ -107,8 +69,8 @@
                                 </div>
                             </div>
                             <div class="form-check form-check-lg d-flex align-items-end">
-                                <input class="form-check-input ms-2" type="checkbox" value="" id="basic-checkbox"  checked="checked">
-                                <label class="form-check-label text-gray-600" for="basic-checkbox" >
+                                <input class="form-check-input ms-2" type="checkbox" value="" id="basic-checkbox" checked="checked">
+                                <label class="form-check-label text-gray-600" for="basic-checkbox">
                                     البقاء مسجلا
                                 </label>
                             </div>

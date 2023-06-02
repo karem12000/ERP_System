@@ -342,7 +342,7 @@ begin
 	end
 GO
 ");
-            migrationBuilder.Sql(@"CREATE proc [People].[spUsers]
+            migrationBuilder.Sql(@"create proc [People].[spUsers]
 @DisplayLength int,
 @DisplayStart int,
 @SortCol int,
@@ -395,6 +395,9 @@ begin
       ,s.[UserClassification]
       ,s.[UserTypeId]
 	  ,(select top 1 ut.Name from [Guide].[UserTypes] ut where ut.ID = s.UserTypeId) UserTypeName
+	  ,	(select STRING_AGG(CONVERT(NVARCHAR(max),gs.Name),'/') from [Guide].[Stocks] gs 
+		inner join [People].[UserStocks] us on us.StockId=gs.ID
+		where gs.IsActive = 1 and gs.IsDeleted = 0 and us.UserId = s.ID) StockNames
       ,s.[Name]
       ,s.[IsActive]
   FROM [People].[Users] s
@@ -410,10 +413,7 @@ begin
     Select *
     from TBL
     where RowNum > @FirstRec and RowNum <= @LastRec
-	end
-
-
-GO");
+	end");
 
         }
         protected override void Down(MigrationBuilder migrationBuilder)

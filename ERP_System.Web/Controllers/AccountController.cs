@@ -1,8 +1,10 @@
 ﻿using ERP_System;
 using ERP_System.BLL;
+using ERP_System.BLL.Guide;
 using ERP_System.Common;
 using ERP_System.DTO;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -13,14 +15,19 @@ namespace ERP_System.Web.Controllers
     public class AccountController : Controller
     {
         private readonly UserBll _userBll;
-        public AccountController(UserBll userBll)
+        private readonly SettingBll _settingBll;
+
+        public AccountController(UserBll userBll , SettingBll settingBll )
         {
             _userBll = userBll;
+            _settingBll = settingBll;
         }
         public IActionResult Login()
         {
             // HttpContext.Response.Redirect("/Account/Index");
-            return View();
+            var setting = _settingBll.GetSetting();
+            
+            return View(setting);
         }
         public IActionResult Index()
         {

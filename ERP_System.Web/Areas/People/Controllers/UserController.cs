@@ -46,6 +46,7 @@ namespace ERP_System.Web.Areas.People.Controllers
         public IActionResult Edit(Guid id)
         {
             ViewData["UserTypes"] = _userTypeBll.GetSelect();
+            ViewData["Stocks"] = _stockBll.GetSelect();
 
             var item = _userBll.GetById(id);
             if (item != null)
@@ -62,8 +63,6 @@ namespace ERP_System.Web.Areas.People.Controllers
         }
         public IActionResult Save(UserDTO mdl)
         {
-            mdl.UserClassification = UserClassification.Admin;
-            mdl.UserTypeId = Guid.Parse(AppConstants.AdminTypeId);
             return Ok(_userBll.Save(mdl));
         }
         [HttpPost]

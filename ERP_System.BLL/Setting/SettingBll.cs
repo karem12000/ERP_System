@@ -69,6 +69,7 @@ namespace ERP_System.BLL.Guide
                     }
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
+                    resultViewModel.Data = tbl;
 
                 }
             }
@@ -91,6 +92,7 @@ namespace ERP_System.BLL.Guide
                 {
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
+                    resultViewModel.Data = tbl;
 
                 }
             }
