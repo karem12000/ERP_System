@@ -34,8 +34,9 @@ namespace ERP.Web.Controllers
 
         public IActionResult Index()
         {
-            
-            return View();
+            var userId = _httpContextAccessor.UserId();
+            var user = _userBll.GetById(userId);
+            return View(user);
         }
 
         public IActionResult ChangePassword() => View();

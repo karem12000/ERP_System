@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Numerics;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ERP_System.DAL.Migrations
 {
@@ -12,13 +13,7 @@ namespace ERP_System.DAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("INSERT [dbo].[__EFMigrationsHistory]([MigrationId], [ProductVersion]) VALUES(N'20230529112601_initDb', N'5.0.13')");
-            migrationBuilder.Sql("INSERT [dbo].[__EFMigrationsHistory]([MigrationId], [ProductVersion]) VALUES(N'20230529133516_editProductTbl', N'5.0.13')");
-            migrationBuilder.Sql("INSERT [dbo].[__EFMigrationsHistory]([MigrationId], [ProductVersion]) VALUES(N'20230531113331_initDb5541', N'5.0.13')");
-            migrationBuilder.Sql("INSERT [dbo].[__EFMigrationsHistory]([MigrationId], [ProductVersion]) VALUES(N'20230531131021_initDb', N'5.0.13')");
-            migrationBuilder.Sql("INSERT [dbo].[__EFMigrationsHistory]([MigrationId], [ProductVersion]) VALUES(N'20230531181517_EditUnitTbl', N'5.0.13')");
-
-
+           
             migrationBuilder.Sql("INSERT [Guide].[UserTypes]([ID], [Name], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', N'مدير النظام', CAST(N'2023-05-29T13:32:04.3970000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT [Guide].[UserTypes]([ID], [Name], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'8484e624-c5a0-463e-986a-66a118d1f2eb', N'العملاء', CAST(N'2023-05-29T13:33:05.2100000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT [Guide].[UserTypes]([ID], [Name], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'df5d2d3c-655a-431e-93a3-ac4af07c8805', N'الموردين', CAST(N'2023-05-29T13:33:26.6000000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
@@ -36,6 +31,7 @@ namespace ERP_System.DAL.Migrations
             migrationBuilder.Sql("INSERT into [Page].[Pages]([ID], [Text], [AreaName], [OrderNo], [IconName], [ControllerName], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'428474bc-78dd-4d51-b514-ac33b3bd4119', N'المبيعات', N'Guide', 6, NULL, N'SaleInvoice', CAST(N'2023-05-29T14:23:02.9000000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT into [Page].[Pages]([ID], [Text], [AreaName], [OrderNo], [IconName], [ControllerName], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'2d7535b1-9e0a-4f8c-892b-d028ed989613', N'المجموعات', N'Guide', 1, N'fas fa-layer-group', N'ItemGrpoup', CAST(N'2023-05-29T14:21:10.9100000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT into [Page].[Pages]([ID], [Text], [AreaName], [OrderNo], [IconName], [ControllerName], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'a7a259be-2b00-4f91-8ba9-e2ae4e6e10b5', N'المستخدمين', N'People', 7, N'fas fa-sharp fa-solid fa-users', N'User', CAST(N'2023-05-29T14:21:53.6100000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
+            migrationBuilder.Sql("INSERT into [Page].[Pages]([ID], [Text], [AreaName], [OrderNo], [IconName], [ControllerName], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'b1ae3420-c251-4768-8d67-3c7b080826d8', N'صلاحيات المستخدمين', N'People', 15, N'fas fa-user-shield', N'Permissions', CAST(N'2023-06-02T13:38:37.7766667' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
 
             migrationBuilder.Sql("INSERT into [Page].[ActionsPages]([ID], [Text], [ActionName], [PageId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'f3d46c1d-8b40-426b-8f16-0ed9ca488b12', N'اضافة', 1, N'2d7535b1-9e0a-4f8c-892b-d028ed989613', CAST(N'2023-05-29T14:25:35.4500000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT into [Page].[ActionsPages]([ID], [Text], [ActionName], [PageId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'e5525d49-0ffc-430a-a384-10f69dff488c', N'العرض', 4, N'54eb4de9-3354-4ab1-ab1a-84b093d30214', CAST(N'2023-05-31T12:19:37.9030000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
@@ -65,6 +61,12 @@ namespace ERP_System.DAL.Migrations
             migrationBuilder.Sql("INSERT into [Page].[ActionsPages]([ID], [Text], [ActionName], [PageId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'4f6bb85a-43f2-4ed7-87e4-ef264170efdb', N'حذف', 3, N'0d0c7a10-2d04-4f62-b0cf-0bf96b6b176b', CAST(N'2023-05-31T01:32:04.7570000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT into [Page].[ActionsPages]([ID], [Text], [ActionName], [PageId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'd2011900-b929-4243-b4ca-f36575c54d8f', N'حذف', 3, N'2a38ccb7-3d8d-42b1-b405-82b95529cf92', CAST(N'2023-06-01T14:19:37.1000000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT into [Page].[ActionsPages]([ID], [Text], [ActionName], [PageId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'4a8d7a3c-5f82-4103-8539-fc634ee226ec', N'العرض', 4, N'0d0c7a10-2d04-4f62-b0cf-0bf96b6b176b', CAST(N'2023-05-31T01:32:14.8670000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
+            migrationBuilder.Sql("INSERT into [Page].[ActionsPages]([ID], [Text], [ActionName], [PageId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'8d52ebc0-0019-44f8-a0a1-dd7b600ebece', N'العرض', 4, N'b1ae3420-c251-4768-8d67-3c7b080826d8', CAST(N'2023-06-02T13:39:23.6833333' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
+            migrationBuilder.Sql("INSERT into [Page].[ActionsPages]([ID], [Text], [ActionName], [PageId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'6f892b48-0beb-42f4-b352-bd420c7b8d72', N'اضافة', 1, N'b1ae3420-c251-4768-8d67-3c7b080826d8', CAST(N'2023-06-02T13:39:23.6933333' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
+            migrationBuilder.Sql("INSERT into [Page].[ActionsPages] ([ID],[Text], [ActionName], [PageId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'd2c96142-29d9-46e5-aaa8-d6d47ae8fa1f', N'تعديل', 2, N'b1ae3420-c251-4768-8d67-3c7b080826d8', CAST(N'2023-06-02T13:39:23.6966667' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
+            migrationBuilder.Sql("INSERT into [Page].[ActionsPages]([ID], [Text], [ActionName], [PageId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'f25bc116-cf01-41e7-879f-8a775abd2888', N'حذف', 3, N'b1ae3420-c251-4768-8d67-3c7b080826d8', CAST(N'2023-06-02T13:39:23.7000000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
+
+
 
             migrationBuilder.Sql("INSERT into [People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'4466d663-11b7-46e8-8086-026fb58cc379', N'f635961a-1a75-4878-a1dd-a4c1130845cf', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-06-01T14:19:59.2920199' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT into [People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'08f7c882-4995-413c-90e1-084898f38119', N'43ae699a-55f6-43ca-aaa1-53c3e4956792', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-06-01T14:19:59.2673710' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
@@ -94,6 +96,10 @@ namespace ERP_System.DAL.Migrations
             migrationBuilder.Sql("INSERT into [People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'c9ec9dda-7e0c-417d-a2b3-e36151203c14', N'9ce6bdca-17c6-43e8-9072-670e269ce5b8', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-05-31T01:32:50.2048315' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT into [People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'04df5afb-df5a-470d-8ca4-e4acfcc8a8ec', N'4a8d7a3c-5f82-4103-8539-fc634ee226ec', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-05-31T01:32:50.2725935' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT into [People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'2112699b-2983-42a2-91a2-ff35ab920888', N'ab5a5c01-426e-4a80-87a8-43274db628d2', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-06-01T13:13:47.7237282' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
+            migrationBuilder.Sql("INSERT into [People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'c50a6b28-21fd-4e6c-9ed8-5081b475fa6f', N'8d52ebc0-0019-44f8-a0a1-dd7b600ebece', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-06-02T13:41:20.1714565' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
+            migrationBuilder.Sql("INSERT into [People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'cf8ebed4-657c-4c18-af89-78698ca88bbd', N'6f892b48-0beb-42f4-b352-bd420c7b8d72', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-06-02T13:41:20.1530205' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
+            migrationBuilder.Sql("INSERT into [People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'5fa48470-0d4b-4e90-859a-0d7eaccf56a0', N'd2c96142-29d9-46e5-aaa8-d6d47ae8fa1f', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-06-02T13:41:20.1731741' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
+            migrationBuilder.Sql("INSERT into [People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'25cf7ae7-0149-4a42-8125-405a896ce2d1', N'f25bc116-cf01-41e7-879f-8a775abd2888', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-06-02T13:41:20.1748929' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
 
             migrationBuilder.Sql(@"CREATE proc[Guide].[spItemGroups]
             @DisplayLength int,
@@ -418,14 +424,7 @@ begin
         }
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("Delete from [dbo].[__EFMigrationsHistory] where [MigrationId] = N'20230529112601_initDb'");
-            migrationBuilder.Sql("Delete from [dbo].[__EFMigrationsHistory] where [MigrationId] = N'20230529133516_editProductTbl'");
-            migrationBuilder.Sql("Delete from [dbo].[__EFMigrationsHistory] where [MigrationId] = N'20230531113331_initDb5541'");
-            migrationBuilder.Sql("Delete from [dbo].[__EFMigrationsHistory] where [MigrationId] = N'20230531131021_initDb'");
-            migrationBuilder.Sql("Delete from [dbo].[__EFMigrationsHistory] where [MigrationId] = N'20230531181517_EditUnitTbl'");
-
-
-
+            
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'4466d663-11b7-46e8-8086-026fb58cc379'");
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'08f7c882-4995-413c-90e1-084898f38119'");
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'c9ada347-0bfa-4390-8237-0b04c980aeb3'");
@@ -454,6 +453,10 @@ begin
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'c9ec9dda-7e0c-417d-a2b3-e36151203c14'");
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'04df5afb-df5a-470d-8ca4-e4acfcc8a8ec'");
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'2112699b-2983-42a2-91a2-ff35ab920888'");
+            migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'c50a6b28-21fd-4e6c-9ed8-5081b475fa6f'");
+            migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'cf8ebed4-657c-4c18-af89-78698ca88bbd'");
+            migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'5fa48470-0d4b-4e90-859a-0d7eaccf56a0'");
+            migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'25cf7ae7-0149-4a42-8125-405a896ce2d1'");
 
 
             migrationBuilder.Sql("Delete from [Page].[ActionsPages] where ID=N'f3d46c1d-8b40-426b-8f16-0ed9ca488b12'");
@@ -484,6 +487,10 @@ begin
             migrationBuilder.Sql("Delete from [Page].[ActionsPages] where ID=N'4f6bb85a-43f2-4ed7-87e4-ef264170efdb'");
             migrationBuilder.Sql("Delete from [Page].[ActionsPages] where ID=N'd2011900-b929-4243-b4ca-f36575c54d8f'");
             migrationBuilder.Sql("Delete from [Page].[ActionsPages] where ID=N'4a8d7a3c-5f82-4103-8539-fc634ee226ec'");
+            migrationBuilder.Sql("Delete from [Page].[ActionsPages] where ID=N'8d52ebc0-0019-44f8-a0a1-dd7b600ebece'");
+            migrationBuilder.Sql("Delete from [Page].[ActionsPages] where ID=N'6f892b48-0beb-42f4-b352-bd420c7b8d72'");
+            migrationBuilder.Sql("Delete from [Page].[ActionsPages] where ID=N'd2c96142-29d9-46e5-aaa8-d6d47ae8fa1f'");
+            migrationBuilder.Sql("Delete from [Page].[ActionsPages] where ID=N'f25bc116-cf01-41e7-879f-8a775abd2888'");
 
 
             migrationBuilder.Sql("Delete from [Page].[Pages] where ID=N'0d0c7a10-2d04-4f62-b0cf-0bf96b6b176b'");
@@ -497,6 +504,7 @@ begin
             migrationBuilder.Sql("Delete from [Page].[Pages] where ID=N'428474bc-78dd-4d51-b514-ac33b3bd4119'");
             migrationBuilder.Sql("Delete from [Page].[Pages] where ID=N'2d7535b1-9e0a-4f8c-892b-d028ed989613'");
             migrationBuilder.Sql("Delete from [Page].[Pages] where ID=N'a7a259be-2b00-4f91-8ba9-e2ae4e6e10b5'");
+            migrationBuilder.Sql("Delete from [Page].[Pages] where ID=N'b1ae3420-c251-4768-8d67-3c7b080826d8'");
 
 
             migrationBuilder.Sql("Delete from [People].[Users]    where ID='80968c16-15d8-4533-b771-5285299edcb6'");

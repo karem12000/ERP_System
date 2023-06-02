@@ -1,4 +1,5 @@
-﻿@inject ERP_System.BLL.PageBll _pageBll;
+﻿@model ERP_System.DTO.UserDTO;
+@inject ERP_System.BLL.PageBll _pageBll;
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -36,13 +37,12 @@
 <body dir="rtl">
     <div id="app">
 
-        <vc:aside-bar></vc:aside-bar>
+        <vc:aside-bar user="@Model"></vc:aside-bar>
         <div id="main" class="layout-navbar">
-        
-            <partial name="_Header"/>
+
+            <partial name="_Header" model="@Model" />
             <div class="main-content">
                     <div class="page-heading">
-
                     @RenderBody()
                     </div>
             </div>

@@ -9,5 +9,6 @@ namespace ERP_System.DTO
     {
         public Setting Setting { get; set; }
         public IEnumerable<AsideBarPagesDTO> AsideBarPagesDTO { get; set; }
+        public UserDTO UserData { get; set; }
     }
 }
