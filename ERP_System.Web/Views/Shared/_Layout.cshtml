@@ -1,4 +1,5 @@
 ﻿@inject ERP_System.BLL.PageBll _pageBll;
+@inject ERP_System.BLL.Guide.SettingBll _settingBll;
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -8,15 +9,17 @@
         @{
             string pageName = Url.ActionContext.RouteData.Values["controller"].ToString();
             string siteName = "نظام المحاسبه ";
+            var setting = _settingBll.GetSetting();
+            if (setting != null)
+            {
+                siteName = setting.SiteName;
+            }
 
             if (Url.ActionContext.RouteData.Values["action"].ToString() == "ChangePassword")
             {
                 pageName = (Url.ActionContext.RouteData.Values["action"].ToString());
             }
-            if (string.IsNullOrEmpty(siteName))
-            {
-                siteName = "نظام المحاسبه ";
-            }
+           
             if (string.IsNullOrEmpty(_pageBll.GetPageName(pageName)))
                 pageName = siteName;
             else

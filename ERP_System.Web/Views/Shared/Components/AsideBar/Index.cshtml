@@ -1,11 +1,5 @@
-﻿@model SideBarPagesLogoDto;
-@inject ERP_System.BLL.UserBll _userBll;
-<title>
-    @{
-        ViewData["Title"] = "Home Title";
-        ViewBag.User = Model.UserData;
-    }
-</title>
+﻿@model IEnumerable<AsideBarPagesDTO>
+@inject ERP_System.BLL.Guide.SettingBll _settingBll;
 @{
     var userid = ViewContext.HttpContext.UserId();
     string userName = string.Empty;
@@ -16,16 +10,24 @@
     <div class="sidebar-wrapper active">
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
-                <div class="logo">
-                    @if(Model.Setting != null)
+                @{
+                    var setting = _settingBll.GetSetting();
+                    if (setting != null)
                     {
-                        <a href="/Home/Index"><img src="@Model.Setting.Logo" style="border-radius: 10px;" alt="Logo" srcset="" width="250" /></a>
+                        if (setting.Logo != null)
+                        {
+                            <div class="logo">
+                                <a href="/Home/Index"><img src="@setting.Logo" style="border-radius: 10px;" alt="Logo" srcset="" width="250" /></a>
+                            </div>
+                        }
                     }
                     else
                     {
-                        <a href="/Home/Index"><img src="~/assets/images/logo-removebg-preview.png" style="border-radius: 10px;" alt="Logo" srcset="" width="250" /></a>
+                        <div class="logo">
+                            <a href="/Home/Index"><img src="~/assets/images/logo-removebg-preview.png" style="border-radius: 10px;" alt="Logo" srcset="" width="250" /></a>
+                        </div>
                     }
-                </div>
+                }
                 <div class="theme-toggle d-flex gap-2  align-items-center mt-2 d-none">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                          aria-hidden="true" role="img" class="iconify iconify--system-uicons" width="20"
@@ -68,7 +70,7 @@
                     </a>
                 </li>
 
-                @foreach (var pageItem in Model.AsideBarPagesDTO.Where(p => p.HasPermission))
+                @foreach (var pageItem in Model.Where(p => p.HasPermission))
                 {
                     <li class="sidebar-item ">
                         <a class="sidebar-link" href="/@pageItem.PageRoute">

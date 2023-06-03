@@ -1,7 +1,7 @@
 ﻿@{
     Layout = null;
 }
-@model ERP_System.Tables.Setting;
+@inject ERP_System.BLL.Guide.SettingBll _settingBll;
 <!DOCTYPE html>
 <html lang="ar" class="h-100" style="direction:rtl">
 
@@ -36,15 +36,23 @@
                 <div class="col-xl-4 col-lg-5 col-md-8 col-11 form-auth">
                     <div id="auth-left">
                         <div class="auth-logo">
-                            @if(Model != null)
-                            {
-
-                                <a href="#"><img src="@Model.Logo" id="logo" alt="Logo" style="border-radius: 10px;"></a>
-                            }
-                            else
-                            {
-                                <a href="#"><img src="~/assets/images/logo-removebg-preview.png" style="border-radius: 10px;" id="logo" alt="Logo"></a>
-
+                            @{
+                                var setting = _settingBll.GetSetting();
+                                if (setting != null)
+                                {
+                                    if (setting.Logo != null)
+                                    {
+                                        <div class="logo">
+                                            <a href="/Home/Index"><img src="@setting.Logo" style="border-radius: 10px;" alt="Logo" srcset="" width="250" /></a>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="logo">
+                                        <a href="/Home/Index"><img src="~/assets/images/logo-removebg-preview.png" style="border-radius: 10px;" alt="Logo" srcset="" width="250" /></a>
+                                    </div>
+                                }
                             }
                         </div>
                         <h1 class="auth-title">تسجيل الدخول.</h1>

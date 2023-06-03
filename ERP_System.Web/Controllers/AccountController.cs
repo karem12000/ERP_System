@@ -26,14 +26,8 @@ namespace ERP_System.Web.Controllers
         public IActionResult Login()
         {
             // HttpContext.Response.Redirect("/Account/Index");
-            var setting = _settingBll.GetSetting();
-            if (setting == null)
-            {
-                setting = new Setting();
-                setting.Logo = "";
-            }
             
-            return View(setting);
+            return View();
         }
         public IActionResult Index()
         {

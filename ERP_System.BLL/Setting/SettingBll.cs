@@ -48,6 +48,7 @@ namespace ERP_System.BLL.Guide
             if (data != null)
             {
                 var tbl = data;
+                tbl.SiteName = settingDto.SiteName;
                 var oldLogo = _webHostEnvironment.WebRootPath +data.Logo;
                 tbl.AddedBy = data.AddedBy;
                 tbl.ModifiedDate = AppDateTime.Now;
