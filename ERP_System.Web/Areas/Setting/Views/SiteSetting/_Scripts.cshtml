@@ -24,9 +24,6 @@
     }
 
     function Save() {
-
-
-
         let frm = new FormData();
 
         frm.append("ID", document.getElementById('id').value);
@@ -58,6 +55,7 @@
                         icon: 'success',
                         showConfirmButton: false
                     }).then((result) => {
+                       location.reload();
                     })
                 },
                 error: function (res) {

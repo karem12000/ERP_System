@@ -247,11 +247,11 @@ namespace ERP_System.BLL
                 }
 
 
-                if (userDTO.UserTypeId.ToString()==AppConstants.ClientTypeId)
+                if (userDTO.UserTypeId.ToString()==AppConstants.ClientTypeId.ToLower())
                     user.UserClassification = UserClassification.Client;
-                else if (userDTO.UserTypeId.ToString() == AppConstants.SupplierTypeId)
+                else if (userDTO.UserTypeId.ToString() == AppConstants.SupplierTypeId.ToLower())
                     user.UserClassification = UserClassification.Suppliers;
-                else if (userDTO.UserTypeId.ToString() == AppConstants.AdminTypeId)
+                else if (userDTO.UserTypeId.ToString() == AppConstants.AdminTypeId.ToLower())
                     user.UserClassification = null;
                 else { }
 
@@ -304,11 +304,11 @@ namespace ERP_System.BLL
                 tbl.UserTypeId = user.UserTypeId;
                 tbl.AddedBy = tbl.AddedBy;
 
-                if (userDTO.UserTypeId.ToString() == AppConstants.ClientTypeId)
+                if (userDTO.UserTypeId.ToString() == AppConstants.ClientTypeId.ToLower())
                     tbl.UserClassification = UserClassification.Client;
-                else if (userDTO.UserTypeId.ToString() == AppConstants.SupplierTypeId)
+                else if (userDTO.UserTypeId.ToString() == AppConstants.SupplierTypeId.ToLower())
                     tbl.UserClassification = UserClassification.Suppliers;
-                else if (userDTO.UserTypeId.ToString() == AppConstants.AdminTypeId)
+                else if (userDTO.UserTypeId.ToString() == AppConstants.AdminTypeId.ToLower())
                     user.UserClassification = null;
                 else { }
 
@@ -332,9 +332,9 @@ namespace ERP_System.BLL
 
                 if (_repoUser.Update(tbl))
                 {
-                    
-                        //_repoUserStock.ExecuteStoredProcedure<int>($"DELETE FROM [People].[UserStocks] us WHERE us.UserId='${tbl.ID}'", null, CommandType.StoredProcedure);
-                        _repoUserStock.InsertRange(AllStock);
+
+                    _repoUserStock.ExecuteSQLQuery<int>("DELETE FROM [People].[UserStocks] WHERE UserId='"+tbl.ID+"'",CommandType.Text);
+                    _repoUserStock.InsertRange(AllStock);
                     
 
                     resultViewModel.Status = true;

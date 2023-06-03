@@ -3,22 +3,23 @@
        
             LoadTable();
 
-        const element = document.querySelector('.choices.multiple-remove');
-        const example = new Choices(element,
-            {
-                delimiter: ',',
-                editItems: true,
-                maxItemCount: -1,
-                removeItemButton: true,
-            });
+       
+        //const element = document.querySelector('.choices.multiple-remove');
+        //const example = new Choices(element,
+        //    {
+        //        delimiter: ',',
+        //        editItems: true,
+        //        maxItemCount: -1,
+        //        removeItemButton: true,
+        //    });
 
-        element.addEventListener(
-            'addItem',
-            function (event) {
-                document.querySelector('.choices__input.choices__input--cloned').remove()
-            },
-            false,
-        );
+        //element.addEventListener(
+        //    'addItem',
+        //    function (event) {
+        //        document.querySelector('.choices__input.choices__input--cloned').remove()
+        //    },
+        //    false,
+        //);
     });
 
     let form = $('#frm');

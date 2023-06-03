@@ -56,6 +56,15 @@
 
 @section Scripts
     {
-
     <partial name="_Scripts" />
+    <script>
+        $(document).ready(function () {
+            var isActive = $('#IsActive').attr("checked");
+            if (isActive === 'checked') {
+                $('#IsActive').val('true');
+            } else {
+                $('#IsActive').val('false');
+            }
+        });
+    </script>
 }

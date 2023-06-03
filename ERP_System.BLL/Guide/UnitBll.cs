@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using ERP_System.Tables;
 using AutoMapper;
+using ERP_System.Common.General;
 
 namespace ERP_System.BLL.Guide
 {
@@ -48,6 +49,16 @@ namespace ERP_System.BLL.Guide
         public IQueryable<SelectListDTO> GetSelect()
         {
             var data = _repoUnit.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted).Select(p => new SelectListDTO()
+            {
+                Value = p.ID,
+                Text = p.Name
+            });
+            return data.Distinct();
+
+        }
+        public IQueryable<SelectListDTO> GetMainUnitSelect()
+        {
+            var data = _repoUnit.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted && x.UnitType==UnitType.BasicUnit).Select(p => new SelectListDTO()
             {
                 Value = p.ID,
                 Text = p.Name

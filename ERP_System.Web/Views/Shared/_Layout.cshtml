@@ -7,15 +7,20 @@
     <title>
         @{
             string pageName = Url.ActionContext.RouteData.Values["controller"].ToString();
+            string siteName = "نظام المحاسبه ";
+
             if (Url.ActionContext.RouteData.Values["action"].ToString() == "ChangePassword")
             {
                 pageName = (Url.ActionContext.RouteData.Values["action"].ToString());
             }
-
+            if (string.IsNullOrEmpty(siteName))
+            {
+                siteName = "نظام المحاسبه ";
+            }
             if (string.IsNullOrEmpty(_pageBll.GetPageName(pageName)))
-                pageName = "نظام المحاسبه ";
+                pageName = siteName;
             else
-                pageName = "نظام المحاسبه - " + _pageBll.GetPageName(pageName);
+                pageName = siteName +" - " + _pageBll.GetPageName(pageName);
 
         }
 
@@ -29,6 +34,7 @@
     <link rel="stylesheet" href="~/assets/extensions/sweetalert2/sweetalert2.min.css">
     <link rel="stylesheet" href="~/new-assets/app.css">
     <link rel="stylesheet" href="~/assets/css/shared/iconly.css" />
+
     <script>
         let mainAppUserId = '@ViewContext.HttpContext.UserId()'
     </script>
@@ -64,9 +70,11 @@
     <script src="~/assets/js/pages/datatables.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-responsive/2.4.1/dataTables.responsive.min.js" integrity="sha512-9BgeOjT7sU+CPMlXJrq1Shzkx2spfWhhxEnUJ7Ab9b5bSPGCzT8DaT1a/qUfrTBtgJetJwnI81ilCJkXFZRGPA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="~/assets/extensions/choices.js/public/assets/scripts/choices.js"></script>
+
     <!-- Need: Apexcharts -->
     <script src="~/assets/extensions/apexcharts/apexcharts.min.js"></script>
     <script src="~/assets/js/pages/dashboard.js"></script>
+
     <script>
 
     </script>

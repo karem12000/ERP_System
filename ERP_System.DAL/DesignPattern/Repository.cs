@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Protocols;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -233,6 +234,31 @@ namespace ERP_System.DAL
             cmd.CommandType = commandType;
             var reader = cmd.ExecuteReader();
 
+            DataTable tbl = new DataTable();
+            tbl.Load(reader, LoadOption.PreserveChanges);
+            sqlConnection.Close();
+            return ConvertDataTable<U>(tbl);
+        }
+
+        public List<U> ExecuteSQLQuery<U>(string query, CommandType commandType = CommandType.Text)
+        {
+            SqlConnection sqlConnection = new SqlConnection(_db.Database.GetDbConnection().ConnectionString);
+            SqlCommand cmd = new SqlCommand(query, sqlConnection);
+            cmd.CommandTimeout = 60 * 5;
+            if (sqlConnection.State != ConnectionState.Open)
+                sqlConnection.Open();
+
+            cmd.CommandType = commandType;
+            var reader = cmd.ExecuteReader();
+
+            Type[] supportedType = { typeof(string) };
+            if (supportedType.Contains(typeof(U)))
+            {
+                if (reader.Read())
+                {
+                    return new[] { reader.GetFieldValue<U>(0) }.ToList();
+                }
+            }
             DataTable tbl = new DataTable();
             tbl.Load(reader, LoadOption.PreserveChanges);
             sqlConnection.Close();

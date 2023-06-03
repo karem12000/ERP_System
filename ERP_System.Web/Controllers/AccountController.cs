@@ -3,6 +3,7 @@ using ERP_System.BLL;
 using ERP_System.BLL.Guide;
 using ERP_System.Common;
 using ERP_System.DTO;
+using ERP_System.Tables;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,11 @@ namespace ERP_System.Web.Controllers
         {
             // HttpContext.Response.Redirect("/Account/Index");
             var setting = _settingBll.GetSetting();
+            if (setting == null)
+            {
+                setting = new Setting();
+                setting.Logo = "";
+            }
             
             return View(setting);
         }

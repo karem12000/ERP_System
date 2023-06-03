@@ -34,7 +34,6 @@ namespace ERP.Web.Controllers
 
         public IActionResult Index()
         {
-
             return View();
         }
 

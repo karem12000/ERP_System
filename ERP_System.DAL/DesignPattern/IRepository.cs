@@ -84,6 +84,7 @@ namespace ERP_System.DAL
         /// <param name="commandType">Query or StoredProcedure default is StoredProcedure</param>
         /// <returns></returns> 
         List<U> ExecuteStoredProcedure<U>(string query, SqlParameter[] parameters = null, CommandType commandType = CommandType.StoredProcedure);
+        List<U> ExecuteSQLQuery<U>(string query, CommandType commandType = CommandType.Text);
 
         #endregion
 

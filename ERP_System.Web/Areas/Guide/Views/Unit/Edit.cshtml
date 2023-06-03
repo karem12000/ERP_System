@@ -90,6 +90,14 @@
             $('#EddlUnitType').val(unitTypeValue).trigger('change');
             unitTypeValue == 0 ? $('.rateDev').hide() : $('.rateDev').show();
             unitTypeValue == 0 ? $('.parentDev').hide() : $('.parentDev').show();
+
+            var isActive = $('#IsActive').attr("checked");
+            if (isActive === 'checked') {
+                $('#IsActive').val('true');
+            } else {
+                $('#IsActive').val('false');
+            }
         });
+
     </script>
 }

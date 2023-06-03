@@ -35,7 +35,9 @@
                                             <input type="text" required id="Email" value="@Model.Email" name="Email" class="form-control" placeholder="الايميل">
                                         </div>
                                     </div>
-
+                                    <div class="col-6">
+                                        الجزء الخاص بالمخازن
+                                    </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="Phone">التليفون</label>
@@ -83,4 +85,14 @@
 @section Scripts
     {
     <partial name="_Scripts" />
+    <script>
+        $(document).ready(function () {
+            var isActive = $('#IsActive').attr("checked");
+            if (isActive === 'checked') {
+                $('#IsActive').val('true');
+            } else {
+                $('#IsActive').val('false');
+            }
+        });
+    </script>
     }

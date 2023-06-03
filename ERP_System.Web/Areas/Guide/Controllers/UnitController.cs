@@ -21,13 +21,13 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         }
         public IActionResult Add()
         {
-            ViewData["Units"] = _UnitBll.GetSelect();
+            ViewData["Units"] = _UnitBll.GetMainUnitSelect();
             return View();
         }
 
         public IActionResult Edit(Guid id)
         {
-            ViewData["Units"] = _UnitBll.GetSelect();
+            ViewData["Units"] = _UnitBll.GetMainUnitSelect();
 
             var item = _UnitBll.GetById(id);
             if (item != null)
