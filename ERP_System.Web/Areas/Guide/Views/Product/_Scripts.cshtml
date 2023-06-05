@@ -1,0 +1,262 @@
+﻿<script>
+
+    $(document).ready(function () {
+        LoadTable();
+    })
+
+    let form = $('#frm');
+
+    function Submit() {
+        event.preventDefault();
+        Save();
+    }
+
+
+    function LoadTable() {
+        $('#tbl').DataTable().destroy();
+
+        dt = $('#tbl').DataTable({
+            "columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+
+            "language": _dataTableTranslate,
+            pageLength: 10,
+            pagijngType: "full_numbers",
+            direction: 'rtl',
+            serverSide: true,
+            scrollX: true,
+            processing: true,
+            lengthMenu: [10, 25, 50, 75, 100],
+            sAjaxSource: '@Url.GetAction("LoadDataTable")',
+            sServerMethod: "POST",
+            bPaginate: true,
+            paging: true,
+            dom: 'Blfrtip',
+            buttons: [
+
+
+            ],
+            search: {},
+            columns: [
+
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '</label><a target="_blank" href="' + data.BarCodePath + '" >' + (data.BarCodeText ?? "") + '</a> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="ProductName">' + (data.Name ?? "") + '</label><input hidden name="ProductId" class="ProductId" value="' + data.ID + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="GroupName">' + (data.GroupName ?? "") + '</label><input hidden name="GroupId" class="GroupId" value="' + data.GroupId + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="StockName">' + (data.StockName ?? "") + '</label><input hidden name="StockId" class="StockId" value="' + data.StockId + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="UnitName">' + (data.UnitName ?? "") + '</label><input hidden name="UnitId" class="UnitId" value="' + data.UnitId + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="QtyInStock">' + (data.QtyInStock ?? "") + '</label><input hidden name="QtyInStock" class="QtyInStock" value="' + data.QtyInStock + '" /> ' }
+
+                },
+                {
+
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+
+                        return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+                    }
+
+                },
+                {
+
+                    data: null,
+                    bSortable: false,
+                    render: function (data, type, row) {
+                        let btn = `<div class="Event">
+
+
+
+    @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+    {
+                                                                                                                <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/Product/Edit/${data.ID}" >
+                                                                                         <i class="fas fa-pen"></i>
+
+                                                                                        </a>
+
+    }
+
+    @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
+    {
+                                                                                                   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                                                       <i class="fas fa-trash-alt"></i>
+
+                                                                                       </a>
+    }
+                                                       `;
+                        return btn + '</div>';
+                    }
+                }
+            ]
+        });
+
+    }
+
+    function file_changed() {
+        var selectedFile = document.querySelectorAll('input[type="file"]')[0].files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(selectedFile);
+    }
+
+    function resetForm() {
+        $('#id').val('');
+        $('#Name').val('');
+        $('#BarCodeText').val('');
+        $('#QtyInStock').val('');
+        $('#Price').val('');
+        $('#IsActive').val('true');
+        $('#IsActive').attr('checked');
+        $('#ddlStockId').val('0').trigger('change');
+        $('#ddlGroupId').val('0').trigger('change');
+        $('#ddlUnitId').val('0').trigger('change');
+    }
+
+    function Save() {
+        if ($('#ddlStockId').val() == '0' || $('#ddlGroupId').val() == '0' || $('#BarCodeText').val() == '' || $('#Name').val() == '' || $('#ddlUnitId').val() == '0') {
+            Swal.fire({
+                title: `من فضلك أدخل البيانات`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            })
+        } else {
+            let frm = new FormData();
+            debugger
+            frm.append("ID", document.getElementById('id').value);
+            frm.append("StockId", document.querySelector("#ddlStockId").value);
+            frm.append("GroupId", document.querySelector("#ddlGroupId").value);
+            frm.append("UnitId", document.querySelector("#ddlUnitId").value);
+            frm.append("BarCodeText", document.getElementById('BarCodeText').value);
+            frm.append("Name", document.getElementById('Name').value);
+            frm.append("QtyInStock", document.getElementById('QtyInStock').value);
+            frm.append("Price", document.getElementById('Price').value);
+            frm.append("IsActive", document.getElementById('IsActive').value);
+            frm.append("Image", document.getElementById('Image').value);
+            console.log(frm);
+            $.ajax({
+                url: '@Url.GetAction("Save")',
+                method: "POST",
+                contentType: false,
+                processData: false,
+                data: frm,
+                success: function (res) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        showConfirmButton: false
+                    }).then((result) => {
+                        resetForm();
+                        window.location.href = "/Guide/Product/Index";
+                    })
+                },
+                error: function (res) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    })
+                }
+            });
+            //$.post('@Url.GetAction("Save")', form.serialize(), function (res) {
+            //    if (res.Status) {
+            //        Swal.fire({
+            //            title: `${res.Message}`,
+            //            timer: 2000,
+            //            timerProgressBar: true,
+            //            icon: 'success',
+            //            showConfirmButton: false
+            //        }).then((result) => {
+
+            //        })
+
+            //    }
+            //    else {
+            //        Swal.fire({
+            //            title: `${res.Message}`,
+            //            timer: 2000,
+            //            timerProgressBar: true,
+            //            icon: 'error',
+            //            showConfirmButton: false
+            //        })
+            //    }
+            //});
+        }
+
+    }
+
+    function Delete(e, id) {
+
+        var btn = $(e);
+        var id = id;
+        Swal.fire({
+            title: 'هل أنت متأكد؟',
+            text: "هل انت متاكد من اجراء العملية",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'الغاء',
+            confirmButtonText: 'نعم ، حذف!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (res.Status) {
+                    Swal.fire({
+                        title: `تم الحذف`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        showConfirmButton: false
+                    }).then(() => {
+                        LoadTable();
+                    });
+                }
+            }
+            else {
+                Swal.fire({
+                    title: `خطأ في الحذف`,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    icon: 'warning',
+                    showConfirmButton: false
+                });
+            }
+            });
+        }
+
+    $("#IsActive").change(function (e) {
+        var isChecked = $(this).prop("checked");
+        $("#IsActive").val(isChecked);
+    });
+</script>

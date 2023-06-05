@@ -82,6 +82,7 @@ namespace ERP_System.DAL.Migrations
                     BarCodeText = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BarCodePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     QtyInStock = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),

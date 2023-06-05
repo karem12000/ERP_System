@@ -5,16 +5,20 @@
 @if (CurrentForm.CurrentFormPermissionActions.AddHasPermission)
 {
     <div class="mb-3 d-flex align-items-center justify-content-end ps-2">
-        <a class="btn btn-outline-primary" href="/Guide/Product/Add">
+        <a class="btn btn-outline-primary" href="/Guide/SaleInvoice/Add">
             إضافة جديد
             <span class="fa-fw select-all fas"></span>
         </a>
     </div>
 }
+
 @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
 {
     <partial name="_DataTable" />
 }
-@section Scripts{
+
+@section Scripts
+    {
+
     <partial name="_Scripts" />
 }

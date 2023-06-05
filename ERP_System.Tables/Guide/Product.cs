@@ -14,6 +14,7 @@ namespace ERP_System.Tables
         public string? BarCodeText { get; set; }
         public string? BarCodePath { get; set; }
         public decimal? QtyInStock { get; set; }
+        public string Image { get; set; }
 
         [ForeignKey(nameof(Group))]
         public Guid? GroupId { get; set; }

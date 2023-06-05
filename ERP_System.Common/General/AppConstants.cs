@@ -70,6 +70,7 @@ namespace ERP_System.Common
             public const string ChangedStatusSuccess = "تم تغيير الحالة بنجاح";
             public const string ChangedStatusFailed = "حدث خطا اثناء تغيير الحالة";
             public const string NameAlreadyExists = "الاسم موجود من قبل";
+            public const string BarCodeAlreadyExists = "الباركود مستخدم من قبل";
             
             public const string NameRequired = "الاسم مطلوب";
             public const string PreparationSuccess = "تمت عملية تجهيز النظام بنجاح";

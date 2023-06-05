@@ -44,7 +44,6 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
         #region LoadData
         public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_stockBll.LoadData(mdl));
-
         #endregion
 
     }

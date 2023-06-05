@@ -55,7 +55,7 @@ namespace ERP_System.Web.Areas.People.Controllers
                 return View(item);
             }
             else
-                return Redirect("/Guide/ItemGrpoup/Index");
+                return Redirect("/People/User/Index");
         }
         public IActionResult Permissions()
         {

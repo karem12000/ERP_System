@@ -18,7 +18,7 @@ namespace ERP_System.BLL.Guide
 {
     public class InvoiceBll
     {
-        private const string _spInvoices = "Guide.[spInvoices]";
+        private const string _spInvoices = "[Guide].[spSales]";
         private readonly IRepository<Invoice> _repoInvoice;
         private readonly IRepository<Product> _repoProduct;
         private readonly IRepository<InvoiceDetail> _repoInvoiceDetail;
@@ -70,8 +70,16 @@ namespace ERP_System.BLL.Guide
             return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= fromDate.Value.Date && x.InvoiceDate.Date <= toDate.Value.Date).Where(x => !x.IsDeleted && x.IsActive);
 
         }
+        public DataTableResponse LoadData(DataTableRequest mdl , InvoiceType invoiceType)
+        {
+            mdl.InvoiceType = invoiceType;
+            var data = _repoInvoice.ExecuteStoredProcedure<InvoicesTableDTO>
+                (_spInvoices, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
 
+            return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
+        }
 
+       
         #endregion
         #region Save 
         public ResultViewModel Save(InvoiceDTO InvoiceDTO)

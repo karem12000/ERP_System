@@ -15,6 +15,7 @@ namespace ERP_System.BLL.Guide
     public class StockBll
     {
         private const string _spStock = "[Guide].[spStocks]";
+
         private readonly IRepository<Stock> _repoStock;
         private readonly IRepository<UserStock> _repoUserStock;
         private readonly IMapper _mapper;
@@ -40,6 +41,16 @@ namespace ERP_System.BLL.Guide
                 Text = p.Name
             });
             return data.Distinct();
+        }
+
+        public IQueryable<SelectListDTO> GetStocksSelectByUserId(Guid? userId)
+        {
+            var data = _repoStock.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted && x.UserStocks.Any(x=>x.UserId==userId)).Select(p => new SelectListDTO()
+            {
+                Value = p.ID,
+                Text = p.Name
+            });
+            return data.Distinct();
 
         }
 
@@ -58,6 +69,8 @@ namespace ERP_System.BLL.Guide
 
             return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
         }
+
+       
         #endregion
         #region Save 
         public ResultViewModel Save(StockDto stockDto)

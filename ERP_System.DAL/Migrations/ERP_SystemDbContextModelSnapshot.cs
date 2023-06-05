@@ -387,6 +387,9 @@ namespace ERP_System.DAL.Migrations
                     b.Property<Guid?>("GroupId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -1227,7 +1230,7 @@ namespace ERP_System.DAL.Migrations
                         .IsRequired();
 
                     b.HasOne("ERP_System.Tables.User", "User")
-                        .WithMany()
+                        .WithMany("UserStocks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1388,6 +1391,8 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("UserStockDeleted");
 
                     b.Navigation("UserStockModified");
+
+                    b.Navigation("UserStocks");
 
                     b.Navigation("UserTypeCreated");
 

@@ -153,21 +153,21 @@
 
     @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
     {
-                                                                                                                                <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/Unit/Edit/${data.ID}" >
-                                                                                                 <i class="fas fa-pen"></i>
+                                                                                                                                        <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/Unit/Edit/${data.ID}" >
+                                                                                                         <i class="fas fa-pen"></i>
 
-                                                                                                </a>
+                                                                                                        </a>
 
     }
 
     @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
     {
-                                                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
-                                                                                               <i class="fas fa-trash-alt"></i>
+                                                                                                                   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                                                                       <i class="fas fa-trash-alt"></i>
 
-                                                                                               </a>
+                                                                                                       </a>
     }
-                                                           `;
+                                                               `;
                         return btn + '</div>';
                     }
                 }
@@ -181,7 +181,7 @@
         $.post('@Url.GetAction("GetById")', { "id": id }, function (data) {
             if (data.Data != null) {
                 let unit = data.Data;
-                $.post("/Guide/Unit/Edit",{'mdl':unit});
+                $.post("/Guide/Unit/Edit", { 'mdl': unit });
             } else {
                 Swal.fire({
                     title: `خطأ`,
@@ -212,19 +212,25 @@
                 $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
 
                     if (res.Status) {
-                        Swal.fire(
-                            'تم الحذف!',
-                            `${res.Message}`,
-                            'success'
-                        )
-                        LoadTable();
+                        Swal.fire({
+                            title: `تم الحذف`,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            showConfirmButton: false
+                        }).then(()=>{
+                            LoadTable();
+                        });
                     }
                     else {
-                        Swal.fire(
-                            'توقف!',
-                            `${res.Message}`,
-                            'warning'
-                        )
+
+                        Swal.fire({
+                            title: `خطأ في الحذف`,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            icon: 'warning',
+                            showConfirmButton: false
+                        });
                     }
                 });
 

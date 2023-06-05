@@ -41,4 +41,20 @@ namespace ERP_System.DTO.Guide
         public decimal? PricePerQty => RequiredQty * PricePerUnit;
 
     }
+
+    public class InvoicesTableDTO
+    {
+        public Guid? ID { get; set; }
+
+        public int InvoiceNumber { get; set; }
+
+        public decimal? TotalPrice { get; set; }
+        public DateTime InvoiceDate { get; set; }
+        public InvoiceType? InvoiceType { get; set; }
+        public string? ResourceName { get; set; }
+        public string? BuyerName { get; set; }
+        public bool? IsActive { get; set; }
+        public int TotalCount { get; set; }
+
+    }
 }

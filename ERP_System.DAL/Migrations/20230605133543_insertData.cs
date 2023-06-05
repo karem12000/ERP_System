@@ -1,19 +1,12 @@
-﻿using ERP_System.Tables;
-using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Numerics;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static System.Net.Mime.MediaTypeNames;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ERP_System.DAL.Migrations
 {
-    public partial class InsertInitialData : Migration
+    public partial class insertData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-           
+
             migrationBuilder.Sql("INSERT [Guide].[UserTypes]([ID], [Name], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', N'مدير النظام', CAST(N'2023-05-29T13:32:04.3970000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT [Guide].[UserTypes]([ID], [Name], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'8484e624-c5a0-463e-986a-66a118d1f2eb', N'العملاء', CAST(N'2023-05-29T13:33:05.2100000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT [Guide].[UserTypes]([ID], [Name], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'df5d2d3c-655a-431e-93a3-ac4af07c8805', N'الموردين', CAST(N'2023-05-29T13:33:26.6000000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
@@ -458,10 +451,182 @@ begin
     where RowNum > @FirstRec and RowNum <= @LastRec
 	end");
 
+
+            migrationBuilder.Sql(@"CREATE proc [Guide].[spProduct]
+            @DisplayLength int,
+            @DisplayStart int,
+            @SortCol int,
+            @SortDir nvarchar(10),
+            @Search nvarchar(255) = NULL
+
+            as
+            begin
+                Declare @FirstRec int, @LastRec int
+                Set @FirstRec = @DisplayStart;
+            Set @LastRec = @DisplayStart + @DisplayLength;
+
+            With TBL as
+            (
+                 Select ROW_NUMBER() over(order by
+        
+                     case when(@SortCol = 0 and @SortDir = 'asc')
+
+
+                     then p.ID
+
+
+                 end asc,
+                             case when(@SortCol = 0 and @SortDir = 'desc')
+
+
+                     then p.ID
+
+
+                 end desc,
+        		               case when(@SortCol = 1 and @SortDir = 'asc')
+
+
+                     then p.[Name]
+
+
+                 end asc,
+                             case when(@SortCol = 1 and @SortDir = 'desc')
+
+
+                     then p.[Name]
+
+
+                 end desc,
+        		   
+		
+		               case when(@SortCol = 4 and @SortDir = 'asc')
+
+
+                     then p.[CreatedDate]
+
+
+                 end asc,
+                             case when(@SortCol = 4 and @SortDir = 'desc')
+
+
+                     then p.[CreatedDate]
+
+
+                 end desc
+
+              )
+                 as RowNum,
+                     COUNT(*) over() as TotalCount
+                  ,format(p.[CreatedDate], 'yyyy/MM/dd')AddedDate,
+                  p.[ID]
+                  ,p.[Name]
+                  ,p.[AddedBy]
+                  ,p.[IsActive]
+				  ,p.Price
+				  ,p.BarCodeText
+                  ,p.[Image]
+				  ,CONCAT('\ProductsBarCode\', p.BarCodePath)  BarCodePath
+                  , p.QtyInStock
+                  , p.GroupId
+                  , (select top 1 ig.Name from[Guide].[ItemGrpoups] ig where ig.ID = p.GroupId) GroupName
+				  ,p.UnitId
+				  ,(select top 1 u.Name from[Guide].[Units] u where u.ID = p.UnitId) UnitName
+				  ,(select top 1 sp.StockId from[Guide].[StockProducts] sp where sp.ProductId = p.ID) StockId
+				  ,(select top 1 s.Name from[Guide].[Stocks] s
+                  where s.ID = (select top 1 sp.StockId from[Guide].[StockProducts] sp where sp.ProductId = p.ID)) StockName
+              FROM[Guide].[Products] p
+
+
+                where(@Search IS NULL  Or p.[Name] like '%' + @Search + '%') and p.IsDeleted = 0)
+				 	
+                Select*
+                from TBL
+                where RowNum > @FirstRec and RowNum <= @LastRec
+
+                end
+GO");
+
+            migrationBuilder.Sql(@"create proc [Guide].[spSales]
+                        @DisplayLength int,
+                        @DisplayStart int,
+                        @SortCol int,
+                        @SortDir nvarchar(10),
+            @Search nvarchar(255) = NULL,
+			@InvoiceType int = NULL
+
+            as
+            begin
+                Declare @FirstRec int, @LastRec int
+                Set @FirstRec = @DisplayStart;
+                        Set @LastRec = @DisplayStart + @DisplayLength;
+
+                        With TBL as
+                        (
+                             Select ROW_NUMBER() over(order by
+        
+                     case when(@SortCol = 0 and @SortDir = 'asc')
+        
+                                 then s.ID
+        
+                             end asc,
+                             case when(@SortCol = 0 and @SortDir = 'desc')
+        
+                                 then s.ID
+        
+                             end desc,
+        		               case when(@SortCol = 1 and @SortDir = 'asc')
+        
+                                 then s.[InvoiceDate]
+        
+                             end asc,
+                             case when(@SortCol = 1 and @SortDir = 'desc')
+        
+                                 then s.[InvoiceDate]
+        
+                             end desc,
+        		   
+		
+		               case when(@SortCol = 4 and @SortDir = 'asc')
+        
+                                 then s.[CreatedDate]
+        
+                             end asc,
+                             case when(@SortCol = 4 and @SortDir = 'desc')
+        
+                                 then s.[CreatedDate]
+        
+                             end desc
+
+                          )
+                             as RowNum,
+                     COUNT(*) over() as TotalCount
+                  ,format(s.[CreatedDate], 'yyyy/MM/dd')AddedDate,
+                  s.[ID]
+				  ,s.[InvoiceNumber]
+				  ,s.[TotalPrice]
+				  ,s.[InvoiceDate]
+				  ,s.[InvoiceType]
+				  ,s.[ResourceName]
+				  ,s.[BuyerName]
+                  ,s.[AddedBy]
+                  ,s.[IsActive]
+              FROM [Guide].[Invoices] s
+             
+				where(@Search IS NULL  Or s.[InvoiceNumber] like '%' + @Search + '%'
+				and (s.[InvoiceType] = @InvoiceType or @InvoiceType=null)
+				) and s.IsDeleted = 0)
+				 	
+                Select*
+                from TBL
+                where RowNum > @FirstRec and RowNum <= @LastRec
+
+                end
+GO");
+
         }
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            
+
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'4466d663-11b7-46e8-8086-026fb58cc379'");
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'08f7c882-4995-413c-90e1-084898f38119'");
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'c9ada347-0bfa-4390-8237-0b04c980aeb3'");
@@ -580,7 +745,12 @@ begin
             migrationBuilder.Sql("Delete from [Guide].[UserTypes] where ID='8484e624-c5a0-463e-986a-66a118d1f2eb'");
             migrationBuilder.Sql("Delete from [Guide].[UserTypes] where ID='df5d2d3c-655a-431e-93a3-ac4af07c8805'");
 
-            migrationBuilder.Sql("Delete PROCEDURE []");
+            migrationBuilder.Sql("Delete PROCEDURE [Guide].[spSales]");
+            migrationBuilder.Sql("Delete PROCEDURE [Guide].[spProduct]");
+            migrationBuilder.Sql("Delete PROCEDURE [Guide].[spItemGroups]");
+            migrationBuilder.Sql("Delete PROCEDURE [Guide].[spStocks]");
+            migrationBuilder.Sql("Delete PROCEDURE [Guide].[spUnits]");
+            migrationBuilder.Sql("Delete PROCEDURE [People].[spUsers]");
         }
     }
 }

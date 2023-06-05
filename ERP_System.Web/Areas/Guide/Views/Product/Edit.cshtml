@@ -1,0 +1,126 @@
+﻿@{
+    Layout = "_Layout";
+}
+@model ERP_System.DTO.Guide.ProductDTO;
+@if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">تعديل صنف</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit()">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group col-12">
+                                            <label class="lable" for="StockId">  المخزن </label>
+                                            <select class="Select sAddress form-select" value="@Model.StockId" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
+                                                <option selected value="0">اختر المخزن</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-12">
+                                            <label class="lable" for="GroupId">  المجموعة </label>
+                                            <select class="Select sAddress form-select" value="@Model.GroupId" aria-label="اختر المجموعة" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Groups"] , "Value", "Text")' name="GroupId" id="ddlGroupId">
+                                                <option selected value="0">اختر المجموعة</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group col-12">
+                                            <label for="BarCode">باركود الصنف</label>
+                                            <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
+                                            <input type="text" required id="BarCodeText" value="@Model.BarCodeText" name="BarCodeText" class="form-control" placeholder="باركود الصنف">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group col-12">
+                                            <label for="BarCode">اسم الصنف</label>
+                                            <input type="text" required name="Name" id="Name" value="@Model.Name" class="form-control" placeholder="اسم الصنف">
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label for="Quantity">الكمية</label>
+                                            <input type="number" id="QtyInStock" name="QtyInStock" value="@Model.QtyInStock" class="form-control" placeholder="الكمية بالمخزن">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 ">
+                                        <div class="form-group col-6">
+                                            <label class="lable" for="GroupId"> الوحدة </label>
+                                            <select class="Select sAddress form-select" value="@Model.UnitId" aria-label="اختر الوحدة" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text")' name="UnitId" id="ddlUnitId">
+                                                <option selected value="0">اختر الوحدة</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label for="Price">السعر</label>
+                                            <input type="number" id="Price" name="Price" value="@Model.Price" class="form-control" placeholder="سعر الوحدة">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 d-flex">
+                                        <div class="form-check">
+                                            <div class="checkbox">
+                                                <input type="checkbox" name="IsActive" id="IsActive"  class="form-check-input" checked="@Model.IsActive">
+                                                <label for="IsActive">الحاله</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="form-group">
+                                            <label for="Image">صورة الصنف</label>
+                                            <input type="file" onchange="file_changed()" id="Image" name="Image" accept=".jpg, .jpeg, .png" class="form-control" placeholder="صورة المنتج">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 d-flex justify-content-between mt-5">
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
+                                            حفظ
+                                        </button>
+
+                                        @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
+                                        {
+                                            <div class="d-flex align-items-center justify-content-end ps-2">
+                                                <a class="btn btn-outline-primary" href="/Guide/Product/Index">
+                                                    رجوع للقائمة
+                                                    <span class="fa-arrow-left fas"></span>
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts
+    {
+
+    <partial name="_Scripts" />
+     <script>
+        $(document).ready(function () {
+            debugger
+            var stockId = $('#ddlStockId').attr("value");;
+            $('#ddlStockId').val(stockId).trigger('change');
+
+            var groupId = $('#ddlGroupId').attr("value");;
+            $('#ddlGroupId').val(groupId).trigger('change');
+
+            var unitId = $('#ddlUnitId').attr("value");;
+            $('#ddlUnitId').val(unitId).trigger('change');
+
+            var isActive = $('#IsActive').attr("checked");
+            if (isActive === 'checked') {
+                $('#IsActive').val('true');
+            }else{
+                $('#IsActive').val('false');
+            }
+        });
+    </script>
+}

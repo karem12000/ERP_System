@@ -1,0 +1,210 @@
+﻿
+<script>
+    $(document).ready(function () {
+        LoadTable();
+
+    });
+
+    let form = $('#frm');
+    function Submit() {
+        event.preventDefault();
+        Save();
+
+    }
+
+    function resetForm(){
+        $('#Name').val('');
+        $('#id').val('');
+
+    }
+
+    function Save() {
+        if ($('#Name').val() == '') {
+            Swal.fire({
+                title: `من فضلك أدخل الاسم`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            })
+        } else {
+            $.post('@Url.GetAction("Save")', form.serialize(), function (res) {
+                if (res.Status) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        showConfirmButton: false
+                    }).then((result) => {
+                        resetForm();
+                        window.location.href = "/Guide/Stock/Index";
+                    })
+
+                }
+                else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    })
+                }
+            });
+        }
+
+    }
+
+    
+
+
+    function LoadTable() {
+        $('#tbl').DataTable().destroy();
+
+        dt = $('#tbl').DataTable({
+            "columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+
+            "language": _dataTableTranslate,
+            pageLength: 10,
+            pagijngType: "full_numbers",
+            direction: 'rtl',
+            serverSide: true,
+            scrollX: true,
+            processing: true,
+            lengthMenu: [10, 25, 50, 75, 100],
+            sAjaxSource: '@Url.GetAction("LoadDataTable")',
+            sServerMethod: "POST",
+            bPaginate: true,
+            paging: true,
+            dom: 'Blfrtip',
+            buttons: [
+
+
+            ],
+            search: {},
+            columns: [
+
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="StockName">efsf</label><input hidden name="StockId" class="StockId" value="sef" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="StockAddress">sdfef</label><input hidden name="StockAddress" class="StockAddress" value="sdf" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="StockPhone">sdfvsdf</label><input hidden name="phone" class="phone" value="dfvsdf" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="ManagerName">sdffv</label><input hidden name="managerName" class="managerName" value="dfvsdv" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="AddedDate"></label><input hidden name="addedDate" class="addedDate" value="xzc" /> ' }
+
+                },
+                {
+
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+
+                        return '<label class="align-center  statesact   "> <span>sedad</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+                    }
+
+                },
+
+
+                {
+
+                    data: null,
+                    bSortable: false,
+                    render: function (data, type, row) {
+                        let btn = `<div class="Event">
+
+
+
+    @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+    {
+                                                                                                <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/SaleInvoice/Edit" >
+                                                                                 <i class="fas fa-pen"></i>
+
+                                                                                </a>
+
+    }
+
+    @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
+    {
+                                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'515616')" href="javascript:void(0)">
+                                                                               <i class="fas fa-trash-alt"></i>
+
+                                                                               </a>
+    }
+                                                   `;
+                        return btn + '</div>';
+                    }
+                }
+            ]
+        });
+
+    }
+
+
+    function Delete(e, id) {
+
+        var btn = $(e);
+        var id = id;
+        Swal.fire({
+            title: 'هل أنت متأكد؟',
+            text: "هل انت متاكد من اجراء العملية",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'الغاء',
+            confirmButtonText: 'نعم ، حذف!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
+
+                    if (res.Status) {
+                        Swal.fire(
+                            'تم الحذف!',
+                            `${res.Message}`,
+                            'success'
+                        )
+                        LoadTable();
+                    }
+                    else {
+                        Swal.fire(
+                            'توقف!',
+                            `${res.Message}`,
+                            'warning'
+                        )
+                    }
+                });
+
+            }
+        })
+
+    }
+
+    $("#IsActive").change(function (e) {
+        var isChecked = $(this).prop("checked");
+        $("#IsActive").val(isChecked);
+    });
+
+</script>

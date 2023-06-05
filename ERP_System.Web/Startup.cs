@@ -38,6 +38,7 @@ namespace ERP_System.Web
         {
             services.RegisterServices();
             services.AddRazorPages().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null) .AddViewLocalization();
+         
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ERP_System", Version = "v1.0.0" });
@@ -150,7 +151,6 @@ namespace ERP_System.Web
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-
             app.UseStaticFiles();
 
             app.UseRouting();

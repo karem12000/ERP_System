@@ -46,8 +46,13 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-6">
-                                       الجزء الخاص بالمخازن
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="StockIds">المخازن</label>
+                                            <select class="choices form-select multiple-remove" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockIds" id="StockIds" multiple="multiple">
+                                                <option placeholder>اختر المخازن</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">

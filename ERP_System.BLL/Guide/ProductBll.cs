@@ -19,37 +19,46 @@ namespace ERP_System.BLL.Guide
 {
     public class ProductBll
     {
-        private const string _spProduct = "Guide.[spProducts]";
+        private const string _spProduct = "[Guide].[spProduct]";
+        private const string _spStock = "[Guide].[spStocks]";
+
         private readonly IRepository<Product> _repoProduct;
         private readonly IRepository<Attachment> _repoAttatchment;
+        private readonly IRepository<StockProduct> _stockProduct;
         private readonly IMapper _mapper;
         private readonly HelperBll _helperBll;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductBll(IRepository<Attachment> repoAttatchment, IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll)
+        public ProductBll(IRepository<Attachment> repoAttatchment, IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll, IRepository<StockProduct> stockProduct)
         {
             _repoProduct = repoProduct;
             _mapper = mapper;
             _helperBll = helperBll;
             _repoAttatchment = repoAttatchment;
             _webHostEnvironment = webHostEnvironment;
+            _stockProduct = stockProduct;
         }
 
         #region Get
         public ProductDTO GetById(Guid id)
         {
-            return _repoProduct.GetAllAsNoTracking().Include(p => p.Attachments.Any(x => x.IsActive && !x.IsDeleted)).Include(x => x.Unit).Where(p => p.ID == id).Select(x => new ProductDTO
+            return _repoProduct.GetAllAsNoTracking().Include(p => p.Attachments).Include(x => x.Unit).Include(x=>x.StockProducts).ThenInclude(x=>x.Stock).Where(p => p.ID == id).Select(x => new ProductDTO
             {
                 ID = x.ID,
                 Name = x.Name,
                 BarCodeText = x.BarCodeText,
+                BarCodePath = x.BarCodePath,
                 GroupId = x.GroupId,
                 Price = x.Price,
                 QtyInStock = x.QtyInStock,
                 ProductImages = x.Attachments.ToList(),
                 UnitId = x.UnitId,
                 UnitName = x.Unit.Name,
-                GroupName = x.Group.Name
+                GroupName = x.Group.Name,
+                StockId = x.StockProducts.FirstOrDefault().StockId,
+                StockName = x.StockProducts.FirstOrDefault().Stock.Name,
+                IsActive = x.IsActive,
+                ImagePath = x.Image
             }).FirstOrDefault();
 
         }
@@ -69,7 +78,8 @@ namespace ERP_System.BLL.Guide
                 ProductImages = x.Attachments.ToList(),
                 UnitId = x.UnitId,
                 UnitName = x.Unit.Name,
-                GroupName = x.Group.Name
+                GroupName = x.Group.Name,
+                ImagePath = x.Image
             }).FirstOrDefault();
 
             if (data != null)
@@ -102,7 +112,8 @@ namespace ERP_System.BLL.Guide
                     ProductImages = p.Attachments.ToList(),
                     UnitId = p.UnitId,
                     UnitName = p.Unit.Name,
-                    GroupName = p.Group.Name
+                    GroupName = p.Group.Name,
+                    ImagePath = p.Image
                 }).FirstOrDefault();
 
             if (data != null)
@@ -143,8 +154,9 @@ namespace ERP_System.BLL.Guide
                     ProductImages = x.Attachments.ToList(),
                     UnitId = x.UnitId,
                     UnitName = x.Unit.Name,
-                    GroupName = x.Group.Name
-
+                    GroupName = x.Group.Name,
+                    ImagePath = x.Image
+                    
                 });
         }
         public IQueryable<ProductDTO> GetAll()
@@ -162,11 +174,21 @@ namespace ERP_System.BLL.Guide
                     ProductImages = x.Attachments.ToList(),
                     UnitId = x.UnitId,
                     UnitName = x.Unit.Name,
-                    GroupName = x.Group.Name
+                    GroupName = x.Group.Name,
+                    ImagePath = x.Image
+
                 });
         }
 
-       
+        public DataTableResponse LoadData(DataTableRequest mdl)
+        {
+            var data = _repoProduct.ExecuteStoredProcedure<ProductTableDTO>
+                (_spProduct, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
+
+            return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
+        }
+
+      
         #endregion
         #region Save 
         public ResultViewModel Save(ProductDTO productDto)
@@ -178,12 +200,23 @@ namespace ERP_System.BLL.Guide
             var data = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == productDto.ID).FirstOrDefault();
             if (data != null)
             {
-
-                if (_repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.ID != data.ID && p.Name.Trim().ToLower() == productDto.Name.Trim().ToLower()).FirstOrDefault() != null)
+                var existMdl = _repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted && p.IsActive)
+                    .Where(p => p.ID != data.ID && p.Name.Trim().ToLower() == productDto.Name.Trim().ToLower())
+                    .Where(p=>p.GroupId == productDto.GroupId).FirstOrDefault();
+                if (existMdl != null)
                 {
                     resultViewModel.Message = AppConstants.Messages.NameAlreadyExists;
                     return resultViewModel;
 
+                }
+
+                var existBarCode = _repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted && p.IsActive)
+                    .Where(p => p.ID != data.ID && p.BarCodeText.Trim().ToLower() == productDto.BarCodeText.Trim().ToLower())
+                    .Where(p => p.GroupId == productDto.GroupId).FirstOrDefault();
+                if (existBarCode != null)
+                {
+                    resultViewModel.Message = AppConstants.Messages.BarCodeAlreadyExists;
+                    return resultViewModel;
                 }
 
                 var tbl = _mapper.Map<Product>(productDto);
@@ -208,12 +241,24 @@ namespace ERP_System.BLL.Guide
                 {
                     tbl.ModifiedBy = _repoProduct.UserId;
                 }
+                if (productDto.Image != null && productDto.Image.Length > 0)
+                {
+                    tbl.Image =  _helperBll.UploadFile(productDto.Image, ImagesFoldeName);
+                }
                 if (_repoProduct.Update(tbl))
                 {
-                    if (productDto.images != null && productDto.images.Length > 0)
+                    if (productDto.StockId != Guid.Empty)
                     {
-                        _helperBll.UploadFiles(tbl.ID, productDto.images, ImagesFoldeName);
+                        _stockProduct.ExecuteSQLQuery<int>("DELETE FROM [Guide].[StockProducts] WHERE ProductId='" + tbl.ID + "'", CommandType.Text);
+
+                        var newStockProduct = new StockProduct
+                        {
+                            StockId = productDto.StockId,
+                            ProductId = tbl.ID
+                        };
+                        _stockProduct.Insert(newStockProduct);
                     }
+                   
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
 
@@ -228,6 +273,7 @@ namespace ERP_System.BLL.Guide
                 }
 
                 var tbl = _mapper.Map<Product>(productDto);
+                
                 if (!string.IsNullOrEmpty(productDto.BarCodeText))
                 {
                     tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
@@ -237,12 +283,22 @@ namespace ERP_System.BLL.Guide
                 {
                     tbl.AddedBy = _repoProduct.UserId;
                 }
+                if (productDto.Image != null && productDto.Image.Length > 0)
+                {
+                    tbl.Image = _helperBll.UploadFile(productDto.Image, ImagesFoldeName);
+                }
                 if (_repoProduct.Insert(tbl))
                 {
-                    if (productDto.images != null && productDto.images.Length > 0)
+                    if (productDto.StockId != Guid.Empty)
                     {
-                        _helperBll.UploadFiles(tbl.ID, productDto.images, ImagesFoldeName);
+                        var newStockProduct = new StockProduct
+                        {
+                            StockId = productDto.StockId,
+                            ProductId = tbl.ID
+                        };
+                        _stockProduct.Insert(newStockProduct);
                     }
+
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
 
