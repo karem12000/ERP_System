@@ -231,7 +231,7 @@ namespace ERP_System.DAL.Migrations
             end
 GO");
 
-migrationBuilder.Sql(@"CREATE proc [Guide].[spProduct]
+            migrationBuilder.Sql(@"CREATE proc [Guide].[spProduct]
             @DisplayLength int,
             @DisplayStart int,
             @SortCol int,
@@ -323,7 +323,7 @@ migrationBuilder.Sql(@"CREATE proc [Guide].[spProduct]
                 end
 GO");
 
-migrationBuilder.Sql(@"create proc [Guide].[spSales]
+            migrationBuilder.Sql(@"create proc [Guide].[spSales]
                         @DisplayLength int,
                         @DisplayStart int,
             @SortCol int,
@@ -415,7 +415,7 @@ migrationBuilder.Sql(@"create proc [Guide].[spSales]
 GO");
 
 
-migrationBuilder.Sql(@"CREATE proc[Guide].[spStocks]
+            migrationBuilder.Sql(@"CREATE proc[Guide].[spStocks]
                         @DisplayLength int,
                         @DisplayStart int,
             @SortCol int,
@@ -512,7 +512,7 @@ migrationBuilder.Sql(@"CREATE proc[Guide].[spStocks]
                 end
 GO");
 
-migrationBuilder.Sql(@" CREATE proc [Guide].[spUnits]
+            migrationBuilder.Sql(@" CREATE proc [Guide].[spUnits]
 @DisplayLength int,
 @DisplayStart int,
 @SortCol int,
@@ -597,7 +597,7 @@ begin
     end
 GO");
 
-migrationBuilder.Sql(@"create proc [People].[spUsers]
+            migrationBuilder.Sql(@"create proc [People].[spUsers]
 @DisplayLength int,
             @DisplayStart int,
 @SortCol int,

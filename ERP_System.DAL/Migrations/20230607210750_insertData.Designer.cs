@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP_System.DAL.Migrations
 {
     [DbContext(typeof(ERP_SystemDbContext))]
-    [Migration("20230606122110_insertData")]
+    [Migration("20230607210750_insertData")]
     partial class insertData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -385,6 +385,9 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("GroupId")
                         .HasColumnType("uniqueidentifier");
