@@ -52,6 +52,8 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         public IActionResult Save(ProductDTO mdl) => Ok(_ProductBll.Save(mdl));
         public IActionResult GetProductsByGroupId(Guid id) => Ok(_ProductBll.GetAllByGroupId(id));
         public IActionResult GetAllUnits() => Ok(_unitBll.GetSelect());
+        public IActionResult GetUserStocks() => Ok(_stockBll.GetStocksSelectByUserId(_httpContextAccessor.UserId()));
+        public IActionResult GetItemGroups() => Ok(_itemGroupBll.GetSelect());
         public IActionResult GetProductById(Guid id) => Ok(_ProductBll.GetById(id));
         public IActionResult GetByProductBarCode(string text) => Ok(_ProductBll.GetByProductBarCode(text));
 

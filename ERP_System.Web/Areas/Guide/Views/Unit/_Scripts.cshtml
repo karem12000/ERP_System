@@ -5,19 +5,21 @@
     });
 
     let form = $('#frm');
-    function Submit() {
+    function Submit(type) {
         event.preventDefault();
-        Save();
+        Save(type);
 
     }
 
     function resetForm() {
         $('#Name').val('');
         $('#id').val('');
+        $('#IsActive').val('true');
+        $('#IsActive').prop('checked', true);
 
     }
 
-    function Save() {
+    function Save(type) {
 
         if ($('#Name').val() == '') {
             Swal.fire({
@@ -38,8 +40,12 @@
                         icon: 'success',
                         showConfirmButton: false
                     }).then((result) => {
+                        if (type === 'add') {
+                            resetForm();
+                        } else {
+                            window.location.href = "/Guide/Unit/Index";
+                        }
                         resetForm();
-                        //window.location.href = "/Guide/Unit/Index";
                     })
 
                 }
@@ -88,30 +94,6 @@
                     render: function (data, type, row) { return '<label class="Name">' + (data.Name ?? "") + '</label><input hidden name="UnitID" class="UnitID" value="' + data.ID + '" /> ' }
 
                 },
-                //{
-                //    data: null,
-                //    bSortable: true,
-                //    render: function (data, type, row) {
-                //        if (data.UnitType == 0) {
-                //            return '<label class="UnitType">أساسية</label><input hidden name="UnitType" class="UnitType" value="' + (data.UnitType) + '" /> '
-                //        } else {
-                //            return '<label class="UnitType">فرعية</label><input hidden name="UnitType" class="UnitType" value="' + (data.UnitType) + '" /> '
-                //        }
-                //    }
-
-                //},
-                //{
-                //    data: null,
-                //    bSortable: true,
-                //    render: function (data, type, row) { return '<label class="ParentName">' + (data.ParentName == null ? "" : data.ParentName) + '</label><input hidden name="ParentId" class="ParentId" value="' + (data.ParentId == null ? null : data.ParentId) + '" /> ' }
-
-                //},
-                //{
-                //    data: null,
-                //    bSortable: true,
-                //    render: function (data, type, row) { return '<label class="Rate">' + (data.Rate == null ? "" : data.Rate) + '</label><input hidden name="Rate" class="Rate" value="' + (data.Rate == null ? null : data.Rate) + '" /> ' }
-
-                //},
                 {
                     data: null,
                     bSortable: true,
@@ -140,21 +122,21 @@
 
     @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
     {
-                                                                                                                                                <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/Unit/Edit/${data.ID}" >
-                                                                                                                 <i class="fas fa-pen"></i>
+                                                                                                                                                        <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/Unit/Edit/${data.ID}" >
+                                                                                                                         <i class="fas fa-pen"></i>
 
-                                                                                                                </a>
+                                                                                                                        </a>
 
     }
 
     @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
     {
-                                                                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
-                                                                                                               <i class="fas fa-trash-alt"></i>
+                                                                                                                                   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                                                                                       <i class="fas fa-trash-alt"></i>
 
-                                                                                                               </a>
+                                                                                                                       </a>
     }
-                                                                   `;
+                                                                       `;
                         return btn + '</div>';
                     }
                 }

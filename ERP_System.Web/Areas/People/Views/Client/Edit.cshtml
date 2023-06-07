@@ -17,7 +17,7 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="Name">الاسم</label>
+                                            <label for="Name">الاسم<span style="color:red;"> * </span></label>
                                             <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
                                             <input hidden name="UserTypeId" id="UserTypeId" value="@Model.UserTypeId" class="d-none" />
                                             <input type="text" required id="Name" value="@Model.Name" name="Name" class="form-control" placeholder="الاسم">
@@ -25,18 +25,15 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="UserName">اسم المستخدم</label>
+                                            <label for="UserName">اسم المستخدم<span style="color:red;"> * </span></label>
                                             <input type="text" required id="UserName" value="@Model.UserName" name="UserName" class="form-control" placeholder="اسم المستخدم">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="Email">الايميل</label>
+                                            <label for="Email">الايميل<span style="color:red;"> * </span></label>
                                             <input type="text" required id="Email" value="@Model.Email" name="Email" class="form-control" placeholder="الايميل">
                                         </div>
-                                    </div>
-                                    <div class="col-6">
-                                        الجزء الخاص بالمخازن
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
@@ -48,6 +45,18 @@
                                         <div class="form-group">
                                             <label for="Address">العنوان</label>
                                             <input type="text" required id="Address" value="@Model.Address" name="Address" class="form-control" placeholder="العنوان">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="StockIds">المخازن</label>
+                                            <input type="text" hidden id="StockIdsStr" value="@Model.StockIdsStr">
+                                          
+                                            <select class="js-example-rtl Select sAddress form-select"
+                                                aria-label="اختر المخازن"
+                                                asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"], "Value", "Text")'
+                                                name="StockIds" id="StockIds" multiple="multiple">
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-12 d-flex">
@@ -87,6 +96,16 @@
     <partial name="_Scripts" />
        <script>
         $(document).ready(function () {
+             $('.js-example-rtl').select2({
+                multiple: true,
+                dir: "rtl",
+            });
+
+              var userStocks = $('#StockIdsStr').val().toLowerCase().split(',');
+            $('#StockIds').val(userStocks).trigger('change');
+
+
+
             var isActive = $('#IsActive').attr("checked");
             if (isActive === 'checked') {
                 $('#IsActive').val('true');

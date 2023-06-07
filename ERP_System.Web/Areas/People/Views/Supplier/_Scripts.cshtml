@@ -2,6 +2,10 @@
     $(document).ready(function () {
 
        LoadTable();
+         $('.js-example-rtl').select2({
+            multiple: true,
+            dir: "rtl",
+        });
     });
 
     let form = $('#frm');
@@ -65,21 +69,26 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
-
                     if (res.Status) {
-                        Swal.fire(
-                            'تم الحذف!',
-                            `${res.Message}`,
-                            'success'
-                        )
-                        LoadTable();
+                        Swal.fire({
+                            title: `تم الحذف`,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            showConfirmButton: false
+                        }).then(() => {
+                            LoadTable();
+                        });
                     }
                     else {
-                        Swal.fire(
-                            'توقف!',
-                            `${res.Message}`,
-                            'warning'
-                        )
+
+                        Swal.fire({
+                            title: `خطأ في الحذف`,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            icon: 'warning',
+                            showConfirmButton: false
+                        });
                     }
                 });
 

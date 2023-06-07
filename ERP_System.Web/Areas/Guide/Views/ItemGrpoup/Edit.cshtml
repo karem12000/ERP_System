@@ -12,7 +12,7 @@
                 </div>
                 <div class="card-content">
                     <div class="card-body">
-                        <form class="form form-horizontal" id="frm" onsubmit="Submit()">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit('edit')">
                             <div class="form-body">
                                 <div class="row">
                                     <div class="col-12">
@@ -31,7 +31,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-12 d-flex justify-content-between mt-5">
-                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('edit')">
                                             حفظ
                                         </button>
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
