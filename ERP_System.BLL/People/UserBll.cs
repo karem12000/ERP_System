@@ -88,7 +88,8 @@ namespace ERP_System.BLL
                 StockIds = x.UserStocks.Select(c=>c.StockId).ToArray(),
                 UserClassification= x.UserClassification,
                 UserName= x.UserName,
-                UserTypeId= x.UserTypeId
+                UserTypeId= x.UserTypeId,
+                StockIdsStr = string.Join(',',x.UserStocks.Select(c=>c.StockId).ToArray())
             }).FirstOrDefault();
         }
         #endregion

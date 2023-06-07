@@ -9,10 +9,10 @@ namespace ERP_System.DTO.Guide
     public class UnitDTO
     {
         public Guid ID { get; set; }
-        public double? Rate { get; set; }
-        public Guid? ParentId { get; set; }
-        public UnitType? UnitType { get; set; }
-        public int? UnitTypeValue => (int)UnitType.Value;
+        //public double? Rate { get; set; }
+        //public Guid? ParentId { get; set; }
+        //public UnitType? UnitType { get; set; }
+        //public int? UnitTypeValue => (int)UnitType.Value;
         [Required]
         public string Name { get; set; }
         public bool IsActive { get; set; }
@@ -21,10 +21,10 @@ namespace ERP_System.DTO.Guide
     {
 
         public Guid ID { get; set; }
-        public Guid? ParentId { get; set; }
-        public double? Rate { get; set; }
-        public string ParentName { get; set; }
-        public int UnitType { get; set; }
+        //public Guid? ParentId { get; set; }
+        //public double? Rate { get; set; }
+        //public string ParentName { get; set; }
+        //public int UnitType { get; set; }
         public string Name { get; set; }
         public string AddedDate { get; set; }
         public bool IsActive { get; set; }

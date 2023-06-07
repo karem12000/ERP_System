@@ -2,24 +2,10 @@
     $(document).ready(function () {
        
             LoadTable();
-
-       
-        //const element = document.querySelector('.choices.multiple-remove');
-        //const example = new Choices(element,
-        //    {
-        //        delimiter: ',',
-        //        editItems: true,
-        //        maxItemCount: -1,
-        //        removeItemButton: true,
-        //    });
-
-        //element.addEventListener(
-        //    'addItem',
-        //    function (event) {
-        //        document.querySelector('.choices__input.choices__input--cloned').remove()
-        //    },
-        //    false,
-        //);
+        $('.js-example-rtl').select2({
+            multiple: true,
+            dir: "rtl",
+        });
     });
 
     let form = $('#frm');
@@ -68,7 +54,6 @@
     }
 
     function Delete(e, id) {
-
         var btn = $(e);
         var id = id;
         Swal.fire({

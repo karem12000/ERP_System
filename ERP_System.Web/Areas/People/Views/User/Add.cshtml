@@ -16,20 +16,20 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="Name">الاسم</label>
+                                            <label for="Name">الاسم<span style="color:red;"> * </span></label>
                                             <input hidden name="id" id="id" value="" class="d-none" />
                                             <input type="text" required id="Name" name="Name" class="form-control" placeholder="الاسم">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="UserName">اسم المستخدم</label>
+                                            <label for="UserName">اسم المستخدم<span style="color:red;"> * </span></label>
                                             <input type="text" value="" id="UserName" name="UserName" class="form-control" placeholder="اسم المستخدم">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="Email">الايميل</label>
+                                            <label for="Email">الايميل<span style="color:red;"> * </span></label>
                                             <input type="text" required id="Email" name="Email" class="form-control" placeholder="الايميل">
                                         </div>
                                     </div>
@@ -41,16 +41,8 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="lable" for="UserTypeId">نوع المستخدم</label>
+                                            <label class="lable" for="UserTypeId">نوع المستخدم<span style="color:red;"> * </span></label>
                                             <select class="Select sAddress form-select" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label for="StockIds">المخازن</label>
-                                            <select class="choices form-select multiple-remove" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockIds" id="StockIds" multiple="multiple">
-                                                <option placeholder>اختر المخازن</option>
                                             </select>
                                         </div>
                                     </div>
@@ -66,6 +58,21 @@
                                             <input type="text" required id="Address" name="Address" class="form-control" placeholder="العنوان">
                                         </div>
                                     </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="StockIds">المخازن</label>
+                                         @*   <select class="choices form-select multiple-remove" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockIds" id="StockIds" multiple="multiple">
+                                                <option placeholder>اختر المخازن</option>
+                                            </select>*@
+                                            <select class="js-example-rtl Select sAddress form-select"
+                                                aria-label="اختر المخازن"
+                                                asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"], "Value", "Text")'
+                                                name="StockIds" id="StockIds" multiple="multiple">
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                  
                                     <div class="col-12 d-flex">
                                         <div class="form-check">
                                             <div class="checkbox">

@@ -78,13 +78,11 @@ namespace ERP_System.DAL.Migrations
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Price = table.Column<double>(type: "float", nullable: false),
                     BarCodeText = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BarCodePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     QtyInStock = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -151,6 +149,37 @@ namespace ERP_System.DAL.Migrations
                         principalTable: "Products",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductUnits",
+                schema: "Guide",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductUnits", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_ProductUnits_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalSchema: "Guide",
+                        principalTable: "Products",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -329,9 +358,6 @@ namespace ERP_System.DAL.Migrations
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Rate = table.Column<double>(type: "float", nullable: true),
-                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UnitType = table.Column<int>(type: "int", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -586,9 +612,33 @@ namespace ERP_System.DAL.Migrations
                 column: "ModifiedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_UnitId",
+                name: "IX_ProductUnits_AddedBy",
                 schema: "Guide",
-                table: "Products",
+                table: "ProductUnits",
+                column: "AddedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductUnits_DeletedBy",
+                schema: "Guide",
+                table: "ProductUnits",
+                column: "DeletedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductUnits_ModifiedBy",
+                schema: "Guide",
+                table: "ProductUnits",
+                column: "ModifiedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductUnits_ProductId",
+                schema: "Guide",
+                table: "ProductUnits",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductUnits_UnitId",
+                schema: "Guide",
+                table: "ProductUnits",
                 column: "UnitId");
 
             migrationBuilder.CreateIndex(
@@ -888,16 +938,6 @@ namespace ERP_System.DAL.Migrations
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Products_Units_UnitId",
-                schema: "Guide",
-                table: "Products",
-                column: "UnitId",
-                principalSchema: "Guide",
-                principalTable: "Units",
-                principalColumn: "ID",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
                 name: "FK_Products_Users_AddedBy",
                 schema: "Guide",
                 table: "Products",
@@ -991,6 +1031,46 @@ namespace ERP_System.DAL.Migrations
                 name: "FK_Attachments_Users_ModifiedBy",
                 schema: "Guide",
                 table: "Attachments",
+                column: "ModifiedBy",
+                principalSchema: "People",
+                principalTable: "Users",
+                principalColumn: "ID",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ProductUnits_Units_UnitId",
+                schema: "Guide",
+                table: "ProductUnits",
+                column: "UnitId",
+                principalSchema: "Guide",
+                principalTable: "Units",
+                principalColumn: "ID",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ProductUnits_Users_AddedBy",
+                schema: "Guide",
+                table: "ProductUnits",
+                column: "AddedBy",
+                principalSchema: "People",
+                principalTable: "Users",
+                principalColumn: "ID",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ProductUnits_Users_DeletedBy",
+                schema: "Guide",
+                table: "ProductUnits",
+                column: "DeletedBy",
+                principalSchema: "People",
+                principalTable: "Users",
+                principalColumn: "ID",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ProductUnits_Users_ModifiedBy",
+                schema: "Guide",
+                table: "ProductUnits",
                 column: "ModifiedBy",
                 principalSchema: "People",
                 principalTable: "Users",
@@ -1324,6 +1404,10 @@ namespace ERP_System.DAL.Migrations
                 schema: "Guide");
 
             migrationBuilder.DropTable(
+                name: "ProductUnits",
+                schema: "Guide");
+
+            migrationBuilder.DropTable(
                 name: "Settings",
                 schema: "Setting");
 
@@ -1344,6 +1428,10 @@ namespace ERP_System.DAL.Migrations
                 schema: "Guide");
 
             migrationBuilder.DropTable(
+                name: "Units",
+                schema: "Guide");
+
+            migrationBuilder.DropTable(
                 name: "Products",
                 schema: "Guide");
 
@@ -1357,10 +1445,6 @@ namespace ERP_System.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "ItemGrpoups",
-                schema: "Guide");
-
-            migrationBuilder.DropTable(
-                name: "Units",
                 schema: "Guide");
 
             migrationBuilder.DropTable(

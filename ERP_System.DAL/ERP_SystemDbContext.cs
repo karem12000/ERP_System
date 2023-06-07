@@ -78,6 +78,10 @@ namespace ERP_System.DAL
             modelBuilder.Entity<User>().HasMany(x => x.ProductCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
             modelBuilder.Entity<User>().HasMany(x => x.ProductModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
             modelBuilder.Entity<User>().HasMany(x => x.ProductDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+            
+            modelBuilder.Entity<User>().HasMany(x => x.ProductUnitCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.ProductUnitModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.ProductUnitDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
 
             modelBuilder.Entity<User>().HasMany(x => x.UnitCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
             modelBuilder.Entity<User>().HasMany(x => x.UnitModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
@@ -121,6 +125,7 @@ namespace ERP_System.DAL
         public DbSet<StockProduct> StockProducts { get; set; }
         public DbSet<ItemGrpoup> ItemGrpoups { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ProductUnit> ProductUnit { get; set; }
         public DbSet<Unit> Units { get; set; }
 
 

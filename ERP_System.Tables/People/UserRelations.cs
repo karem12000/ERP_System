@@ -70,6 +70,10 @@ namespace ERP_System.Tables
         public ICollection<Product> ProductModified { get; set; }
         public ICollection<Product> ProductDeleted { get; set; }
 
+        public ICollection<ProductUnit> ProductUnitCreated { get; set; }
+        public ICollection<ProductUnit> ProductUnitModified { get; set; }
+        public ICollection<ProductUnit> ProductUnitDeleted { get; set; }
+
         public ICollection<Unit> UnitCreated { get; set; }
         public ICollection<Unit> UnitModified { get; set; }
         public ICollection<Unit> UnitDeleted { get; set; }

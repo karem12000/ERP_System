@@ -15,49 +15,89 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit()">
                             <div class="form-body">
                                 <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group col-6">
-                                            <label class="lable" for="StockId">  المخزن </label>
-                                            <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
-                                                <option selected value="0">اختر المخزن</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-6">
-                                            <label class="lable" for="GroupId">  المجموعة </label>
-                                            <select class="Select sAddress form-select" aria-label="اختر المجموعة" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Groups"] , "Value", "Text")' name="GroupId" id="ddlGroupId">
-                                                <option selected value="0">اختر المجموعة</option>
-                                            </select>
-                                        </div>
-
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
+                                        <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
+                                            <option selected value="0">اختر المخزن</option>
+                                        </select>
                                     </div>
 
+                                    <div class="form-group col-6 d-flex align-items-end">
+                                        <button type="button" class="btn btn-primary btn-icon mx-1" onclick="window.alert('s');"><i class="fas fa-plus"></i></button>
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="GroupId">  المجموعة<span style="color:red;"> * </span> </label>
+                                        <select class="Select sAddress form-select" aria-label="اختر المجموعة" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Groups"] , "Value", "Text")' name="GroupId" id="ddlGroupId">
+                                            <option selected value="0">اختر المجموعة</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-6 d-flex align-items-end">
+                                        <button type="button" class="btn btn-primary btn-icon mx-1" onclick="window.alert('s');"><i class="fas fa-plus"></i></button>
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label for="BarCode">باركود الصنف<span style="color:red;"> * </span></label>
+                                        <input hidden name="id" id="id" value="" class="d-none" />
+                                        <input type="text" required id="BarCodeText" name="BarCodeText" class="form-control" placeholder="باركود الصنف">
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label for="Name"><span style="color:red;"> * </span>اسم الصنف</label>
+                                        <input type="text" required id="Name" name="Name" class="form-control" placeholder="اسم الصنف">
+                                    </div>
+
+
+                                    <div class="form-group col-6">
+                                        <label for="Quantity">الكمية</label>
+                                        <input type="number" id="QtyInStock" name="QtyInStock" class="form-control" placeholder="الكمية بالمخزن" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label for="Images">صورة الصنف</label>
+                                        <input type="file" onchange="file_changed()" id="Image" name="Image" accept=".jpg, .jpeg, .png" class="form-control" placeholder="صورة المنتج">
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="table-container">
+                                            <label for="Units">الوحدات ( يجب إدخال الوحدات بالترتيب من الأصغر إلي الأكبر )</label>
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>الوحدة</th>
+                                                        <th>القيمة</th>
+                                                        <th>السعر</th>
+                                                        <th>التحكم</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="UnitsTbl">
+                                                    <tr>
+                                                        <td>
+                                                            <input class="form-control ID" type="hidden" value="0" />
+                                                            <select class="Select sAddress form-select UnitId" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text")' name="UnitId" id="ddlUnitId">
+                                                                <option selected value="0">اختر الوحدة</option>
+                                                            </select>
+                                                        </td>
+                                                        <td><input type="number" class="form-control Rate" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="number" class="form-control Price" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <button type="button" class="btn btn-primary btn-icon addRow mx-2"><i class="fas fa-plus"></i></button>
+                                                                <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                            </div>
+                                                        </td>
+
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                     <div class="col-12">
-                                        <div class="form-group col-6">
-                                            <label for="BarCode">باركود الصنف</label>
-                                            <input hidden name="id" id="id" value="" class="d-none" />
-                                            <input type="text" required id="BarCodeText" name="BarCodeText" class="form-control" placeholder="باركود الصنف">
-                                        </div>
-                                        <div class="form-group col-6">
-                                            <label for="Name">اسم الصنف</label>
-                                            <input type="text" required id="Name" name="Name" class="form-control" placeholder="اسم الصنف">
-                                        </div>
-                                    </div>
-                                    <div class="col-12 ">
-                                        <div class="form-group col-6">
-                                            <label class="lable" for="GroupId"> الوحدة </label>
-                                            <select class="Select sAddress form-select" aria-label="اختر الوحدة" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text")' name="UnitId" id="ddlUnitId">
-                                                <option selected value="0">اختر الوحدة</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-6">
-                                            <label for="Quantity">الكمية</label>
-                                            <input type="number" id="QtyInStock" name="QtyInStock" class="form-control" placeholder="الكمية بالمخزن">
-                                        </div>
-                                    </div>
-                                    <div class="col-12 ">
-                                        <div class="form-group col-6">
-                                            <label for="Price">السعر</label>
-                                            <input type="number" id="Price" name="Price" class="form-control" placeholder="سعر الوحدة">
+                                        <div class="form-group">
+                                            <label for="Images">وصف الصنف</label>
+                                            <textarea id="Description" name="Description" class="form-control">
+
+                                                            </textarea>
                                         </div>
                                     </div>
                                     <div class="col-12 d-flex">
@@ -68,12 +108,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-8">
-                                        <div class="form-group">
-                                            <label for="Images">صورة الصنف</label>
-                                            <input type="file" onchange="file_changed()" id="Image" name="Image" accept=".jpg, .jpeg, .png" class="form-control" placeholder="صورة المنتج">
-                                        </div>
-                                    </div>
+
                                     <div class="col-sm-12 d-flex justify-content-between mt-5">
                                         <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
                                             حفظ

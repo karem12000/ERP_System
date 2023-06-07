@@ -80,6 +80,7 @@ namespace ERP_System.DTO
         public UserClassification? UserClassification { get; set; }
         public string? UserClassificationStr => UserClassification?.ToString();
         public Guid[]? StockIds { get; set; }
+        public string StockIdsStr { get; set; }
 
         public Guid? UserTypeId { get; set; }
 

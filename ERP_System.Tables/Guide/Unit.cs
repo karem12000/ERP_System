@@ -11,11 +11,11 @@ namespace ERP_System.Tables
     public class Unit : BaseEntity
     {
         public string Name { get; set; }
-        public double? Rate { get; set; }
-        public Guid? ParentId { get; set; }
-        public UnitType? UnitType { get; set; }
-        public ICollection<Product> Products { get; set; }
+        //public double? Rate { get; set; } = 0;
+        //public Guid? ParentId { get; set; } = null;
+        //public UnitType? UnitType { get; set; } = null;
 
+        public ICollection<ProductUnit> ProductUnits { get; set; }
 
     }
 }

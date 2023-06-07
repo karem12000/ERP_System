@@ -33,10 +33,7 @@ namespace ERP_System.BLL.Guide
             {
                 ID = c.ID,
                 Name = c.Name,
-                IsActive = c.IsActive,
-                ParentId = c.ParentId,
-                Rate = c.Rate,
-                UnitType = c.UnitType
+                IsActive = c.IsActive
             }).FirstOrDefault();
            
         }
@@ -56,16 +53,16 @@ namespace ERP_System.BLL.Guide
             return data.Distinct();
 
         }
-        public IQueryable<SelectListDTO> GetMainUnitSelect()
-        {
-            var data = _repoUnit.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted && x.UnitType==UnitType.BasicUnit).Select(p => new SelectListDTO()
-            {
-                Value = p.ID,
-                Text = p.Name
-            });
-            return data.Distinct();
+        //public IQueryable<SelectListDTO> GetMainUnitSelect()
+        //{
+        //    var data = _repoUnit.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted && x.UnitType==UnitType.BasicUnit).Select(p => new SelectListDTO()
+        //    {
+        //        Value = p.ID,
+        //        Text = p.Name
+        //    });
+        //    return data.Distinct();
 
-        }
+        //}
 
         public IQueryable<Unit> GetAll()
         {
@@ -132,11 +129,6 @@ namespace ERP_System.BLL.Guide
 
                 }
             }
-
-
-
-
-
             return resultViewModel;
         }
         #endregion

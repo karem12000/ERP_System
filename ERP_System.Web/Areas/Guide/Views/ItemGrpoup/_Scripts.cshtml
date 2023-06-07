@@ -37,7 +37,7 @@
                         showConfirmButton: false
                     }).then((result) => {
                         resetForm();
-                        window.location.href = "/Guide/ItemGrpoup/Index";
+                        //window.location.href = "/Guide/ItemGrpoup/Index";
                     })
 
                 }
@@ -167,19 +167,16 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
-
                     if (res.Status) {
                         Swal.fire(
                             'تم الحذف!',
-                            `${res.Message}`,
                             'success'
                         )
                         LoadTable();
                     }
                     else {
                         Swal.fire(
-                            'توقف!',
-                            `${res.Message}`,
+                            'خطأ في الحذف!',
                             'warning'
                         )
                     }

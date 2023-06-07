@@ -15,7 +15,7 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit()">
                             <div class="form-body">
                                 <div class="row">
-                                    <div class="col-12">
+                                   @* <div class="col-12">
                                         <div class="form-group">
                                             <label class="lable" for="UnitType">  نوع الوحده </label>
                                             <select class="Select sAddress form-select" aria-label="اختر النوع" required name="UnitType" id="ddlUnitType">
@@ -23,15 +23,15 @@
                                                 <option value="1">فرعية</option>
                                             </select>
                                         </div>
-                                    </div>
+                                    </div>*@
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label for="Name">اسم الوحدة</label>
+                                            <label for="Name">اسم الوحدة<span style="color:red;"> * </span></label>
                                             <input hidden name="id" id="id" value="" class="d-none" />
                                             <input type="text" required id="Name" name="Name" class="form-control" placeholder="اسم الوحدة">
                                         </div>
                                     </div>
-                                    <div class="col-12 parentDev d-none">
+                                   @* <div class="col-12 parentDev d-none">
                                         <div class="form-group">
                                             <label class="lable" for="ParentId">الوحده الأساسية</label>
                                             <select class="Select sAddress form-select" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text")' name="ParentId" id="ParentId">
@@ -46,7 +46,7 @@
                                             <input type="number" id="Rate" name="Rate" placeholder="القيمة">
                                             <label class="lable">  من الوحدة الفرعية </label>
                                         </div>
-                                    </div>
+                                    </div>*@
                                     <div class="col-12 d-flex">
                                         <div class="form-check">
                                             <div class="checkbox">

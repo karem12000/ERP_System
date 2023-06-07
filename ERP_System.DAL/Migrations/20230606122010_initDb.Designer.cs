@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP_System.DAL.Migrations
 {
     [DbContext(typeof(ERP_SystemDbContext))]
-    [Migration("20230605133543_insertData")]
-    partial class insertData
+    [Migration("20230606122010_initDb")]
+    partial class initDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -407,14 +407,8 @@ namespace ERP_System.DAL.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
                     b.Property<decimal?>("QtyInStock")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid?>("UnitId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ID");
 
@@ -426,9 +420,64 @@ namespace ERP_System.DAL.Migrations
 
                     b.HasIndex("ModifiedBy");
 
+                    b.ToTable("Products", "Guide");
+                });
+
+            modelBuilder.Entity("ERP_System.Tables.ProductUnit", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AddedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("UnitId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AddedBy");
+
+                    b.HasIndex("DeletedBy");
+
+                    b.HasIndex("ModifiedBy");
+
+                    b.HasIndex("ProductId");
+
                     b.HasIndex("UnitId");
 
-                    b.ToTable("Products", "Guide");
+                    b.ToTable("ProductUnits", "Guide");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.Setting", b =>
@@ -614,15 +663,6 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double?>("Rate")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("UnitType")
-                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -1040,10 +1080,6 @@ namespace ERP_System.DAL.Migrations
                         .WithMany("ProductModified")
                         .HasForeignKey("ModifiedBy");
 
-                    b.HasOne("ERP_System.Tables.Unit", "Unit")
-                        .WithMany("Products")
-                        .HasForeignKey("UnitId");
-
                     b.Navigation("CreatedUser");
 
                     b.Navigation("DeletedUser");
@@ -1051,6 +1087,37 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("ModifiedUser");
+                });
+
+            modelBuilder.Entity("ERP_System.Tables.ProductUnit", b =>
+                {
+                    b.HasOne("ERP_System.Tables.User", "CreatedUser")
+                        .WithMany("ProductUnitCreated")
+                        .HasForeignKey("AddedBy");
+
+                    b.HasOne("ERP_System.Tables.User", "DeletedUser")
+                        .WithMany("ProductUnitDeleted")
+                        .HasForeignKey("DeletedBy");
+
+                    b.HasOne("ERP_System.Tables.User", "ModifiedUser")
+                        .WithMany("ProductUnitModified")
+                        .HasForeignKey("ModifiedBy");
+
+                    b.HasOne("ERP_System.Tables.Product", "Product")
+                        .WithMany("ProductUnits")
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("ERP_System.Tables.Unit", "Unit")
+                        .WithMany("ProductUnits")
+                        .HasForeignKey("UnitId");
+
+                    b.Navigation("CreatedUser");
+
+                    b.Navigation("DeletedUser");
+
+                    b.Navigation("ModifiedUser");
+
+                    b.Navigation("Product");
 
                     b.Navigation("Unit");
                 });
@@ -1295,6 +1362,8 @@ namespace ERP_System.DAL.Migrations
 
                     b.Navigation("InvoiceDetails");
 
+                    b.Navigation("ProductUnits");
+
                     b.Navigation("StockProducts");
                 });
 
@@ -1305,7 +1374,7 @@ namespace ERP_System.DAL.Migrations
 
             modelBuilder.Entity("ERP_System.Tables.Unit", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("ProductUnits");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.User", b =>
@@ -1351,6 +1420,12 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("ProductDeleted");
 
                     b.Navigation("ProductModified");
+
+                    b.Navigation("ProductUnitCreated");
+
+                    b.Navigation("ProductUnitDeleted");
+
+                    b.Navigation("ProductUnitModified");
 
                     b.Navigation("SettingCreated");
 

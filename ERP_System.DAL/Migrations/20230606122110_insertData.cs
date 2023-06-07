@@ -1,4 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using ERP_System.Common.General;
+using ERP_System.Tables;
+using Microsoft.EntityFrameworkCore.Migrations;
+using static System.Net.Mime.MediaTypeNames;
+using System.Collections.Generic;
+using System.Net;
+using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml.Linq;
+using System;
 
 namespace ERP_System.DAL.Migrations
 {
@@ -6,7 +15,6 @@ namespace ERP_System.DAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.Sql("INSERT [Guide].[UserTypes]([ID], [Name], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', N'مدير النظام', CAST(N'2023-05-29T13:32:04.3970000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT [Guide].[UserTypes]([ID], [Name], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'8484e624-c5a0-463e-986a-66a118d1f2eb', N'العملاء', CAST(N'2023-05-29T13:33:05.2100000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT [Guide].[UserTypes]([ID], [Name], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'df5d2d3c-655a-431e-93a3-ac4af07c8805', N'الموردين', CAST(N'2023-05-29T13:33:26.6000000' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
@@ -126,11 +134,6 @@ namespace ERP_System.DAL.Migrations
             migrationBuilder.Sql("INSERT[People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'04df5afb-df5a-470d-8ca4-e4acfcc8a8ec', N'4a8d7a3c-5f82-4103-8539-fc634ee226ec', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-05-31T01:32:50.2725935' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
             migrationBuilder.Sql("INSERT[People].[UserPermissions]([ID], [PageActionId], [UserTypeId], [CreatedDate], [AddedBy], [ModifiedDate], [ModifiedBy], [IsDeleted], [IsActive], [DeletedDate], [DeletedBy]) VALUES(N'2112699b-2983-42a2-91a2-ff35ab920888', N'ab5a5c01-426e-4a80-87a8-43274db628d2', N'd3c1e01c-becc-4002-8d0b-2e3266bb2d71', CAST(N'2023-06-01T13:13:47.7237282' AS DateTime2), NULL, NULL, NULL, 0, 1, NULL, NULL)");
 
-
-
-
-
-
             migrationBuilder.Sql(@"CREATE proc[Guide].[spItemGroups]
             @DisplayLength int,
             @DisplayStart int,
@@ -142,48 +145,60 @@ namespace ERP_System.DAL.Migrations
             begin
             Declare @FirstRec int, @LastRec int
             Set @FirstRec = @DisplayStart;
-                Set @LastRec = @DisplayStart + @DisplayLength;
+            Set @LastRec = @DisplayStart + @DisplayLength;
 
-                With TBL as
-                (
-                     Select ROW_NUMBER() over(order by
+            With TBL as
+            (
+                 Select ROW_NUMBER() over(order by
             
              case when(@SortCol = 0 and @SortDir = 'asc')
-            
-                         then ID
-            
-                     end asc,
+
+
+                     then ID
+
+
+                 end asc,
                      case when(@SortCol = 0 and @SortDir = 'desc')
-            
-                         then ID
-            
-                     end desc,
+
+
+                     then ID
+
+
+                 end desc,
             		   case when(@SortCol = 1 and @SortDir = 'asc')
-            
-                         then Name
-            
-                     end asc,
+
+
+                     then Name
+
+
+                 end asc,
                      case when(@SortCol = 1 and @SortDir = 'desc')
-            
-                         then Name
-            
-                     end desc,
+
+
+                     then Name
+
+
+                 end desc,
             		   
 		    
 		       case when(@SortCol = 4 and @SortDir = 'asc')
-            
-                         then[CreatedDate]
-            
-                     end asc,
+
+
+                     then[CreatedDate]
+
+
+                 end asc,
                      case when(@SortCol = 4 and @SortDir = 'desc')
-            
-                         then[CreatedDate]
-            
-                     end desc
 
-                  )
 
-                     as RowNum,
+                     then[CreatedDate]
+
+
+                 end desc
+
+              )
+
+                 as RowNum,
              COUNT(*) over() as TotalCount
                 ,format( [CreatedDate],'yyyy/MM/dd')AddedDate,
                 [ID]
@@ -195,7 +210,7 @@ namespace ERP_System.DAL.Migrations
                 ,[IsActive]
                 ,[DeletedDate]
                 ,[DeletedBy]
-                FROM[Guide].[ItemGrpoups]
+            FROM[Guide].[ItemGrpoups]
 
 
 
@@ -214,245 +229,9 @@ namespace ERP_System.DAL.Migrations
             where RowNum > @FirstRec and RowNum <= @LastRec
 
             end
-            GO");
+GO");
 
-            migrationBuilder.Sql(@"CREATE proc[Guide].[spStocks]
-                        @DisplayLength int,
-                        @DisplayStart int,
-                        @SortCol int,
-                        @SortDir nvarchar(10),
-            @Search nvarchar(255) = NULL,
-            @UserId uniqueidentifier
-
-            as
-            begin
-                Declare @FirstRec int, @LastRec int
-                Set @FirstRec = @DisplayStart;
-                        Set @LastRec = @DisplayStart + @DisplayLength;
-
-                        With TBL as
-                        (
-                             Select ROW_NUMBER() over(order by
-        
-                     case when(@SortCol = 0 and @SortDir = 'asc')
-        
-                                 then s.ID
-        
-                             end asc,
-                             case when(@SortCol = 0 and @SortDir = 'desc')
-        
-                                 then s.ID
-        
-                             end desc,
-        		               case when(@SortCol = 1 and @SortDir = 'asc')
-        
-                                 then s.[Name]
-        
-                             end asc,
-                             case when(@SortCol = 1 and @SortDir = 'desc')
-        
-                                 then s.[Name]
-        
-                             end desc,
-        		   
-		
-		               case when(@SortCol = 4 and @SortDir = 'asc')
-        
-                                 then s.[CreatedDate]
-        
-                             end asc,
-                             case when(@SortCol = 4 and @SortDir = 'desc')
-        
-                                 then s.[CreatedDate]
-        
-                             end desc
-
-                          )
-
-                             as RowNum,
-                     COUNT(*) over() as TotalCount
-                  ,format(s.[CreatedDate], 'yyyy/MM/dd')AddedDate,
-                  s.[ID]
-                  ,s.[Name]
-                  ,s.[AddedBy]
-                  ,s.[IsActive]
-	              ,s.[Address]
-                  ,s.[Phone]
-                   ,s.[ManagerName]
-              FROM[Guide].Stocks s
-              inner join[People].[UserStocks] us on us.[StockId] = s.ID
-
-
-                     where(@Search IS NULL
-                             Or s.[Name] like '%' + @Search + '%'
-                             ) and s.IsDeleted = 0
-
-
-                             AND us.UserId = @UserId
-				 
-				               )
-				 					
-
-    
-                Select*
-                from TBL
-                where RowNum > @FirstRec and RowNum <= @LastRec
-
-                end
-
-                GO");
-
-            migrationBuilder.Sql(@"
-                CREATE proc [Guide].[spUnits]
-@DisplayLength int,
-@DisplayStart int,
-@SortCol int,
-@SortDir nvarchar(10),
-@Search nvarchar(255) = NULL
-
-as
-begin
-    Declare @FirstRec int, @LastRec int
-    Set @FirstRec = @DisplayStart;
-    Set @LastRec = @DisplayStart + @DisplayLength;
-  
-    With TBL as
-    (
-         Select ROW_NUMBER() over (order by
-        
-         case when (@SortCol = 0 and @SortDir='asc')
-             then ID
-         end asc,
-         case when (@SortCol = 0 and @SortDir='desc')
-             then ID
-         end desc,
-		   case when (@SortCol = 1 and @SortDir='asc')
-             then Name
-         end asc,
-         case when (@SortCol = 1 and @SortDir='desc')
-             then Name
-         end desc,
-		   
-		
-		   case when (@SortCol = 4 and @SortDir='asc')
-             then [CreatedDate]
-         end asc,
-         case when (@SortCol = 4 and @SortDir='desc')
-             then [CreatedDate]
-         end desc
-
-      )
-		
-         as RowNum,
-         COUNT(*) over() as TotalCount
-      ,format( [CreatedDate],'yyyy/MM/dd')AddedDate,
-      [ID]
-      ,[Name]
-	  ,[ParentId]
-	  ,(select top 1 uu.Name from [Guide].[Units] uu where uu.ID= u.ParentId) ParentName
-	  ,[UnitType]
-	  ,[Rate]
-      ,[AddedBy]
-      ,[ModifiedDate]
-      ,[ModifiedBy]
-      ,[IsDeleted]
-      ,[IsActive]
-      ,[DeletedDate]
-      ,[DeletedBy]
-  FROM [Guide].[Units] u
-
-    
-         where (@Search IS NULL
-                 Or [Name] like '%' + @Search + '%'
-                 ) and IsDeleted=0
-				 
-				 
-				 
-				   )
-				 					
-
-    
-    Select *
-    from TBL
-    where RowNum > @FirstRec and RowNum <= @LastRec
-	end
-GO
-");
-            migrationBuilder.Sql(@"create proc [People].[spUsers]
-@DisplayLength int,
-@DisplayStart int,
-@SortCol int,
-@SortDir nvarchar(10),
-@Search nvarchar(255) = NULL,
-@UserClassification int = Null
-
-as
-begin
-    Declare @FirstRec int, @LastRec int
-    Set @FirstRec = @DisplayStart;
-    Set @LastRec = @DisplayStart + @DisplayLength;
-  
-    With TBL as
-    (
-         Select ROW_NUMBER() over (order by
-        
-         case when (@SortCol = 0 and @SortDir='asc')
-             then s.ID
-         end asc,
-         case when (@SortCol = 0 and @SortDir='desc')
-             then s.ID
-         end desc,
-		   case when (@SortCol = 1 and @SortDir='asc')
-             then s.[Name]
-         end asc,
-         case when (@SortCol = 1 and @SortDir='desc')
-             then s.[Name]
-         end desc,
-		   
-		
-		   case when (@SortCol = 4 and @SortDir='asc')
-             then s.[CreatedDate]
-         end asc,
-         case when (@SortCol = 4 and @SortDir='desc')
-             then s.[CreatedDate]
-         end desc
-
-      )
-		
-         as RowNum,
-         COUNT(*) over() as TotalCount
-      ,format(s.[CreatedDate],'yyyy/MM/dd')AddedDate
-	  ,s.ID
-      ,s.[UserName]
-      ,s.[Email]
-      ,s.[Phone]
-      ,s.[Address]
-      ,s.[UserImage]
-      ,s.[UserClassification]
-      ,s.[UserTypeId]
-	  ,(select top 1 ut.Name from [Guide].[UserTypes] ut where ut.ID = s.UserTypeId) UserTypeName
-	  ,	(select STRING_AGG(CONVERT(NVARCHAR(max),gs.Name),'/') from [Guide].[Stocks] gs 
-		inner join [People].[UserStocks] us on us.StockId=gs.ID
-		where gs.IsActive = 1 and gs.IsDeleted = 0 and us.UserId = s.ID) StockNames
-      ,s.[Name]
-      ,s.[IsActive]
-  FROM [People].[Users] s
-  
-  
-
-  where (@Search IS NULL
-                 Or s.[Name] like '%' + @Search + '%'
-                 ) and s.IsDeleted=0
-				 and (@UserClassification is null or s.UserClassification = @UserClassification)
-				   )
-        
-    Select *
-    from TBL
-    where RowNum > @FirstRec and RowNum <= @LastRec
-	end");
-
-
-            migrationBuilder.Sql(@"CREATE proc [Guide].[spProduct]
+migrationBuilder.Sql(@"CREATE proc [Guide].[spProduct]
             @DisplayLength int,
             @DisplayStart int,
             @SortCol int,
@@ -522,15 +301,13 @@ begin
                   ,p.[Name]
                   ,p.[AddedBy]
                   ,p.[IsActive]
-				  ,p.Price
 				  ,p.BarCodeText
                   ,p.[Image]
+                  ,p.[Description]
 				  ,CONCAT('\ProductsBarCode\', p.BarCodePath)  BarCodePath
-                  , p.QtyInStock
-                  , p.GroupId
+            , p.QtyInStock
+            , p.GroupId
                   , (select top 1 ig.Name from[Guide].[ItemGrpoups] ig where ig.ID = p.GroupId) GroupName
-				  ,p.UnitId
-				  ,(select top 1 u.Name from[Guide].[Units] u where u.ID = p.UnitId) UnitName
 				  ,(select top 1 sp.StockId from[Guide].[StockProducts] sp where sp.ProductId = p.ID) StockId
 				  ,(select top 1 s.Name from[Guide].[Stocks] s
                   where s.ID = (select top 1 sp.StockId from[Guide].[StockProducts] sp where sp.ProductId = p.ID)) StockName
@@ -546,59 +323,71 @@ begin
                 end
 GO");
 
-            migrationBuilder.Sql(@"create proc [Guide].[spSales]
+migrationBuilder.Sql(@"create proc [Guide].[spSales]
                         @DisplayLength int,
                         @DisplayStart int,
-                        @SortCol int,
+            @SortCol int,
                         @SortDir nvarchar(10),
             @Search nvarchar(255) = NULL,
-			@InvoiceType int = NULL
+            @InvoiceType int = NULL
 
             as
             begin
                 Declare @FirstRec int, @LastRec int
                 Set @FirstRec = @DisplayStart;
-                        Set @LastRec = @DisplayStart + @DisplayLength;
+            Set @LastRec = @DisplayStart + @DisplayLength;
 
-                        With TBL as
-                        (
-                             Select ROW_NUMBER() over(order by
+            With TBL as
+            (
+                 Select ROW_NUMBER() over(order by
         
                      case when(@SortCol = 0 and @SortDir = 'asc')
-        
-                                 then s.ID
-        
-                             end asc,
+
+
+                     then s.ID
+
+
+                 end asc,
                              case when(@SortCol = 0 and @SortDir = 'desc')
-        
-                                 then s.ID
-        
-                             end desc,
+
+
+                     then s.ID
+
+
+                 end desc,
         		               case when(@SortCol = 1 and @SortDir = 'asc')
-        
-                                 then s.[InvoiceDate]
-        
-                             end asc,
+
+
+                     then s.[InvoiceDate]
+
+
+                 end asc,
                              case when(@SortCol = 1 and @SortDir = 'desc')
-        
-                                 then s.[InvoiceDate]
-        
-                             end desc,
+
+
+                     then s.[InvoiceDate]
+
+
+                 end desc,
         		   
 		
 		               case when(@SortCol = 4 and @SortDir = 'asc')
-        
-                                 then s.[CreatedDate]
-        
-                             end asc,
-                             case when(@SortCol = 4 and @SortDir = 'desc')
-        
-                                 then s.[CreatedDate]
-        
-                             end desc
 
-                          )
-                             as RowNum,
+
+                     then s.[CreatedDate]
+
+
+                 end asc,
+                             case when(@SortCol = 4 and @SortDir = 'desc')
+
+
+                     then s.[CreatedDate]
+
+
+                 end desc
+
+              )
+                 as RowNum,
                      COUNT(*) over() as TotalCount
                   ,format(s.[CreatedDate], 'yyyy/MM/dd')AddedDate,
                   s.[ID]
@@ -610,11 +399,13 @@ GO");
 				  ,s.[BuyerName]
                   ,s.[AddedBy]
                   ,s.[IsActive]
-              FROM [Guide].[Invoices] s
-             
-				where(@Search IS NULL  Or s.[InvoiceNumber] like '%' + @Search + '%'
-				and (s.[InvoiceType] = @InvoiceType or @InvoiceType=null)
-				) and s.IsDeleted = 0)
+              FROM[Guide].[Invoices] s
+
+
+                where(@Search IS NULL  Or s.[InvoiceNumber] like '%' + @Search + '%'
+
+                and(s.[InvoiceType] = @InvoiceType or @InvoiceType = null)
+                ) and s.IsDeleted = 0)
 				 	
                 Select*
                 from TBL
@@ -623,10 +414,282 @@ GO");
                 end
 GO");
 
+
+migrationBuilder.Sql(@"CREATE proc[Guide].[spStocks]
+                        @DisplayLength int,
+                        @DisplayStart int,
+            @SortCol int,
+                        @SortDir nvarchar(10),
+            @Search nvarchar(255) = NULL,
+            @UserId uniqueidentifier
+
+            as
+            begin
+                Declare @FirstRec int, @LastRec int
+                Set @FirstRec = @DisplayStart;
+            Set @LastRec = @DisplayStart + @DisplayLength;
+
+            With TBL as
+            (
+                 Select ROW_NUMBER() over(order by
+        
+                     case when(@SortCol = 0 and @SortDir = 'asc')
+
+
+                     then s.ID
+
+
+                 end asc,
+                             case when(@SortCol = 0 and @SortDir = 'desc')
+
+
+                     then s.ID
+
+
+                 end desc,
+        		               case when(@SortCol = 1 and @SortDir = 'asc')
+
+
+                     then s.[Name]
+
+
+                 end asc,
+                             case when(@SortCol = 1 and @SortDir = 'desc')
+
+
+                     then s.[Name]
+
+
+                 end desc,
+        		   
+		
+		               case when(@SortCol = 4 and @SortDir = 'asc')
+
+
+                     then s.[CreatedDate]
+
+
+                 end asc,
+                             case when(@SortCol = 4 and @SortDir = 'desc')
+
+
+                     then s.[CreatedDate]
+
+
+                 end desc
+
+              )
+
+                 as RowNum,
+                     COUNT(*) over() as TotalCount
+                  ,format(s.[CreatedDate], 'yyyy/MM/dd')AddedDate,
+                  s.[ID]
+                  ,s.[Name]
+                  ,s.[AddedBy]
+                  ,s.[IsActive]
+	              ,s.[Address]
+                  ,s.[Phone]
+                   ,s.[ManagerName]
+              FROM[Guide].Stocks s
+              inner join[People].[UserStocks] us on us.[StockId] = s.ID
+
+
+                     where(@Search IS NULL
+                             Or s.[Name] like '%' + @Search + '%'
+                             ) and s.IsDeleted = 0
+
+
+                             AND us.UserId = @UserId
+				 
+				               )
+				 					
+
+    
+                Select*
+                from TBL
+                where RowNum > @FirstRec and RowNum <= @LastRec
+
+                end
+GO");
+
+migrationBuilder.Sql(@" CREATE proc [Guide].[spUnits]
+@DisplayLength int,
+@DisplayStart int,
+@SortCol int,
+@SortDir nvarchar(10),
+@Search nvarchar(255) = NULL
+
+as
+begin
+    Declare @FirstRec int, @LastRec int
+    Set @FirstRec = @DisplayStart;
+            Set @LastRec = @DisplayStart + @DisplayLength;
+
+            With TBL as
+            (
+                 Select ROW_NUMBER() over(order by
+        
+         case when(@SortCol = 0 and @SortDir = 'asc')
+        
+                     then ID
+        
+                 end asc,
+                 case when(@SortCol = 0 and @SortDir = 'desc')
+        
+                     then ID
+        
+                 end desc,
+        		   case when(@SortCol = 1 and @SortDir = 'asc')
+        
+                     then Name
+        
+                 end asc,
+                 case when(@SortCol = 1 and @SortDir = 'desc')
+        
+                     then Name
+        
+                 end desc,
+        		   
+		
+		   case when(@SortCol = 4 and @SortDir = 'asc')
+        
+                     then[CreatedDate]
+        
+                 end asc,
+                 case when(@SortCol = 4 and @SortDir = 'desc')
+        
+                     then[CreatedDate]
+        
+                 end desc
+
+              )
+
+                 as RowNum,
+         COUNT(*) over() as TotalCount
+      ,format( [CreatedDate],'yyyy/MM/dd')AddedDate,
+      [ID]
+      ,[Name]
+      ,[AddedBy]
+      ,[ModifiedDate]
+      ,[ModifiedBy]
+      ,[IsDeleted]
+      ,[IsActive]
+      ,[DeletedDate]
+      ,[DeletedBy]
+            FROM[Guide].[Units] u
+
+
+
+         where(@Search IS NULL
+                 Or[Name] like '%' + @Search + '%'
+                 ) and IsDeleted = 0
+				 
+				 
+				 
+				   )
+				 					
+
+    
+    Select*
+    from TBL
+    where RowNum > @FirstRec and RowNum <= @LastRec
+
+    end
+GO");
+
+migrationBuilder.Sql(@"create proc [People].[spUsers]
+@DisplayLength int,
+            @DisplayStart int,
+@SortCol int,
+@SortDir nvarchar(10),
+@Search nvarchar(255) = NULL,
+@UserClassification int = Null
+
+as
+begin
+    Declare @FirstRec int, @LastRec int
+    Set @FirstRec = @DisplayStart;
+            Set @LastRec = @DisplayStart + @DisplayLength;
+
+            With TBL as
+            (
+                 Select ROW_NUMBER() over(order by
+        
+         case when(@SortCol = 0 and @SortDir = 'asc')
+        
+                     then s.ID
+        
+                 end asc,
+                 case when(@SortCol = 0 and @SortDir = 'desc')
+        
+                     then s.ID
+        
+                 end desc,
+        		   case when(@SortCol = 1 and @SortDir = 'asc')
+        
+                     then s.[Name]
+        
+                 end asc,
+                 case when(@SortCol = 1 and @SortDir = 'desc')
+        
+                     then s.[Name]
+        
+                 end desc,
+        		   
+		
+		   case when(@SortCol = 4 and @SortDir = 'asc')
+        
+                     then s.[CreatedDate]
+        
+                 end asc,
+                 case when(@SortCol = 4 and @SortDir = 'desc')
+        
+                     then s.[CreatedDate]
+        
+                 end desc
+
+              )
+
+                 as RowNum,
+         COUNT(*) over() as TotalCount
+      ,format(s.[CreatedDate], 'yyyy/MM/dd')AddedDate
+	  ,s.ID
+      ,s.[UserName]
+      ,s.[Email]
+      ,s.[Phone]
+      ,s.[Address]
+      ,s.[UserImage]
+      ,s.[UserClassification]
+      ,s.[UserTypeId]
+	  ,(select top 1 ut.Name from[Guide].[UserTypes] ut where ut.ID = s.UserTypeId) UserTypeName
+	  ,	(select STRING_AGG(CONVERT(NVARCHAR(max), gs.Name), '/') from[Guide].[Stocks] gs
+        inner join[People].[UserStocks] us on us.StockId = gs.ID
+
+        where gs.IsActive = 1 and gs.IsDeleted = 0 and us.UserId = s.ID) StockNames
+      ,s.[Name]
+      ,s.[IsActive]
+  FROM[People].[Users] s
+
+
+
+
+  where(@Search IS NULL
+                 Or s.[Name] like '%' + @Search + '%'
+                 ) and s.IsDeleted = 0
+
+                 and(@UserClassification is null or s.UserClassification = @UserClassification)
+				   )
+        
+    Select*
+    from TBL
+    where RowNum > @FirstRec and RowNum <= @LastRec
+
+    end
+GO");
         }
+
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'4466d663-11b7-46e8-8086-026fb58cc379'");
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'08f7c882-4995-413c-90e1-084898f38119'");
             migrationBuilder.Sql("Delete from [People].[UserPermissions] where ID=N'c9ada347-0bfa-4390-8237-0b04c980aeb3'");
@@ -745,9 +808,9 @@ GO");
             migrationBuilder.Sql("Delete from [Guide].[UserTypes] where ID='8484e624-c5a0-463e-986a-66a118d1f2eb'");
             migrationBuilder.Sql("Delete from [Guide].[UserTypes] where ID='df5d2d3c-655a-431e-93a3-ac4af07c8805'");
 
-            migrationBuilder.Sql("Delete PROCEDURE [Guide].[spSales]");
-            migrationBuilder.Sql("Delete PROCEDURE [Guide].[spProduct]");
             migrationBuilder.Sql("Delete PROCEDURE [Guide].[spItemGroups]");
+            migrationBuilder.Sql("Delete PROCEDURE [Guide].[spProduct]");
+            migrationBuilder.Sql("Delete PROCEDURE [Guide].[spSales]");
             migrationBuilder.Sql("Delete PROCEDURE [Guide].[spStocks]");
             migrationBuilder.Sql("Delete PROCEDURE [Guide].[spUnits]");
             migrationBuilder.Sql("Delete PROCEDURE [People].[spUsers]");

@@ -25,11 +25,12 @@ namespace ERP_System.BLL.Guide
         private readonly IRepository<Product> _repoProduct;
         private readonly IRepository<Attachment> _repoAttatchment;
         private readonly IRepository<StockProduct> _stockProduct;
+        private readonly IRepository<ProductUnit> _productUnit;
         private readonly IMapper _mapper;
         private readonly HelperBll _helperBll;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductBll(IRepository<Attachment> repoAttatchment, IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll, IRepository<StockProduct> stockProduct)
+        public ProductBll(IRepository<Attachment> repoAttatchment, IRepository<ProductUnit> productUnit, IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll, IRepository<StockProduct> stockProduct)
         {
             _repoProduct = repoProduct;
             _mapper = mapper;
@@ -37,28 +38,34 @@ namespace ERP_System.BLL.Guide
             _repoAttatchment = repoAttatchment;
             _webHostEnvironment = webHostEnvironment;
             _stockProduct = stockProduct;
+            _productUnit= productUnit;
         }
 
         #region Get
         public ProductDTO GetById(Guid id)
         {
-            return _repoProduct.GetAllAsNoTracking().Include(p => p.Attachments).Include(x => x.Unit).Include(x=>x.StockProducts).ThenInclude(x=>x.Stock).Where(p => p.ID == id).Select(x => new ProductDTO
+            return _repoProduct.GetAllAsNoTracking().Include(p => p.Attachments).Include(x=>x.StockProducts).ThenInclude(x=>x.Stock).Where(p => p.ID == id).Select(x => new ProductDTO
             {
                 ID = x.ID,
                 Name = x.Name,
                 BarCodeText = x.BarCodeText,
                 BarCodePath = x.BarCodePath,
                 GroupId = x.GroupId,
-                Price = x.Price,
                 QtyInStock = x.QtyInStock,
                 ProductImages = x.Attachments.ToList(),
-                UnitId = x.UnitId,
-                UnitName = x.Unit.Name,
                 GroupName = x.Group.Name,
                 StockId = x.StockProducts.FirstOrDefault().StockId,
                 StockName = x.StockProducts.FirstOrDefault().Stock.Name,
                 IsActive = x.IsActive,
-                ImagePath = x.Image
+                ImagePath = x.Image,
+                Description = x.Description,
+                GetProductUnits = x.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).OrderBy(c=>c.Rate).Select(c=> new ProductUnitsDTO
+                {
+                    ID= c.ID, 
+                    Price= c.Price,
+                    Rate= c.Rate,
+                    UnitId = c.UnitId
+                }).ToArray()
             }).FirstOrDefault();
 
         }
@@ -67,19 +74,24 @@ namespace ERP_System.BLL.Guide
         {
             var resultView = new ResultViewModel();
             resultView.Status = false;
-            var data = _repoProduct.GetAllAsNoTracking().Include(x => x.Unit).Where(p => p.Name == text || p.BarCodeText.Trim().ToLower() == text.Trim().ToLower() && p.IsActive && !p.IsDeleted).Select(x => new
+            var data = _repoProduct.GetAllAsNoTracking().Where(p => p.Name == text || p.BarCodeText.Trim().ToLower() == text.Trim().ToLower() && p.IsActive && !p.IsDeleted).Select(x => new
             {
                 ID = x.ID,
                 Name = x.Name,
                 BarCodeText = x.BarCodeText,
                 QtyInStock = x.QtyInStock ==null? 0 : x.QtyInStock,
                 GroupId = x.GroupId,
-                Price = x.Price,
                 ProductImages = x.Attachments.ToList(),
-                UnitId = x.UnitId,
-                UnitName = x.Unit.Name,
                 GroupName = x.Group.Name,
-                ImagePath = x.Image
+                ImagePath = x.Image,
+                Description = x.Description,
+                GetProductUnits = x.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
+                {
+                    ID = c.ID,
+                    Price = c.Price,
+                    Rate = c.Rate,
+                    UnitId = c.UnitId
+                }).ToArray()
             }).FirstOrDefault();
 
             if (data != null)
@@ -99,7 +111,7 @@ namespace ERP_System.BLL.Guide
             var resultView = new ResultViewModel();
             resultView.Status = false;
 
-            var data = _repoProduct.GetAllAsNoTracking().Include(p => p.Group).Include(p => p.Unit)
+            var data = _repoProduct.GetAllAsNoTracking().Include(p => p.Group)
                 .Where(p => p.BarCodeText.Trim().ToLower() == barcode.Trim().ToLower() && p.IsActive && !p.IsDeleted)
                 .Select(p => new ProductDTO
                 {
@@ -107,13 +119,18 @@ namespace ERP_System.BLL.Guide
                     Name = p.Name,
                     BarCodeText = p.BarCodeText,
                     GroupId = p.GroupId,
-                    Price = p.Price,
                     QtyInStock = p.QtyInStock,
                     ProductImages = p.Attachments.ToList(),
-                    UnitId = p.UnitId,
-                    UnitName = p.Unit.Name,
                     GroupName = p.Group.Name,
-                    ImagePath = p.Image
+                    ImagePath = p.Image,
+                    Description = p.Description,
+                    GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
+                    {
+                        ID = c.ID,
+                        Price = c.Price,
+                        Rate = c.Rate,
+                        UnitId = c.UnitId
+                    }).ToArray()
                 }).FirstOrDefault();
 
             if (data != null)
@@ -149,14 +166,19 @@ namespace ERP_System.BLL.Guide
                     Name = x.Name,
                     BarCodeText = x.BarCodeText,
                     GroupId = x.GroupId,
-                    Price = x.Price,
                     QtyInStock = x.QtyInStock,
                     ProductImages = x.Attachments.ToList(),
-                    UnitId = x.UnitId,
-                    UnitName = x.Unit.Name,
+                    Description= x.Description,
                     GroupName = x.Group.Name,
-                    ImagePath = x.Image
-                    
+                    ImagePath = x.Image,
+                    GetProductUnits = x.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
+                    {
+                        ID = c.ID,
+                        Price = c.Price,
+                        Rate = c.Rate,
+                        UnitId = c.UnitId
+                    }).ToArray()
+
                 });
         }
         public IQueryable<ProductDTO> GetAll()
@@ -169,13 +191,18 @@ namespace ERP_System.BLL.Guide
                     Name = x.Name,
                     BarCodeText = x.BarCodeText,
                     GroupId = x.GroupId,
-                    Price = x.Price,
                     QtyInStock = x.QtyInStock,
                     ProductImages = x.Attachments.ToList(),
-                    UnitId = x.UnitId,
-                    UnitName = x.Unit.Name,
                     GroupName = x.Group.Name,
-                    ImagePath = x.Image
+                    ImagePath = x.Image,
+                    Description = x.Description,
+                    GetProductUnits = x.ProductUnits.Where(c=>c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
+                    {
+                        ID = c.ID,
+                        Price = c.Price,
+                        Rate = c.Rate,
+                        UnitId = c.UnitId
+                    }).ToArray()
 
                 });
         }
@@ -220,6 +247,7 @@ namespace ERP_System.BLL.Guide
                 }
 
                 var tbl = _mapper.Map<Product>(productDto);
+               
                 if (string.IsNullOrEmpty(productDto.BarCodeText))
                 {
                     tbl.BarCodePath = data.BarCodePath;
@@ -247,9 +275,28 @@ namespace ERP_System.BLL.Guide
                 }
                 if (_repoProduct.Update(tbl))
                 {
+                    if (productDto.ProductUnits != null && productDto.ProductUnits.Length > 0)
+                    {
+                        _productUnit.ExecuteSQLQuery<int>("UPDATE [Guide].[ProductUnits] SET [IsDeleted] = 1 WHERE [ProductId]='" + tbl.ID + "'", CommandType.Text);
+
+                        var NewRecords = new List<ProductUnit>();
+                        foreach (var unit in productDto.ProductUnits)
+                        {
+                            var newR = new ProductUnit
+                            {
+                                Price = unit.Price,
+                                Rate = unit.Rate,
+                                UnitId = unit.UnitId,
+                                ProductId = tbl.ID
+                            };
+                            NewRecords.Add(newR);
+                        }
+                        _productUnit.InsertRange(NewRecords);
+                    }
+
                     if (productDto.StockId != Guid.Empty)
                     {
-                        _stockProduct.ExecuteSQLQuery<int>("DELETE FROM [Guide].[StockProducts] WHERE ProductId='" + tbl.ID + "'", CommandType.Text);
+                        _stockProduct.ExecuteSQLQuery<int>("UPDATE [Guide].[StockProducts] SET [IsDeleted] = 1  WHERE ProductId='" + tbl.ID + "'", CommandType.Text);
 
                         var newStockProduct = new StockProduct
                         {
@@ -287,8 +334,26 @@ namespace ERP_System.BLL.Guide
                 {
                     tbl.Image = _helperBll.UploadFile(productDto.Image, ImagesFoldeName);
                 }
+
+               
                 if (_repoProduct.Insert(tbl))
                 {
+                    if (productDto.ProductUnits != null && productDto.ProductUnits.Length > 0)
+                    {
+                        var NewRecords = new List<ProductUnit>();
+                        foreach (var unit in productDto.ProductUnits)
+                        {
+                            var newR = new ProductUnit
+                            {
+                                Price = unit.Price,
+                                Rate = unit.Rate,
+                                UnitId = unit.UnitId,
+                                ProductId = tbl.ID
+                            };
+                            NewRecords.Add(newR);
+                        }
+                        _productUnit.InsertRange(NewRecords);
+                    }
                     if (productDto.StockId != Guid.Empty)
                     {
                         var newStockProduct = new StockProduct

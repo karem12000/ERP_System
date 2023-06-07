@@ -64,7 +64,7 @@ namespace ERP_System.BLL.Guide
 
                 if (_repoSetting.Update(tbl))
                 {
-                    if (oldLogo != null)
+                    if (data.Logo != null)
                     {
                         File.Delete(oldLogo);
                     }

@@ -30,7 +30,8 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             var userId = _httpContextAccessor.UserId();
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
             ViewData["Groups"] = _itemGroupBll.GetSelect();
-            ViewData["Units"] = _unitBll.GetMainUnitSelect();
+            ViewData["Units"] = _unitBll.GetSelect();
+
             return View();
         }
         public IActionResult Edit(Guid id)
@@ -38,7 +39,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             var userId = _httpContextAccessor.UserId();
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
             ViewData["Groups"] = _itemGroupBll.GetSelect();
-            ViewData["Units"] = _unitBll.GetMainUnitSelect();
+            ViewData["Units"] = _unitBll.GetSelect();
             var item = _ProductBll.GetById(id);
             if (item != null)
             {
@@ -50,6 +51,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         }
         public IActionResult Save(ProductDTO mdl) => Ok(_ProductBll.Save(mdl));
         public IActionResult GetProductsByGroupId(Guid id) => Ok(_ProductBll.GetAllByGroupId(id));
+        public IActionResult GetAllUnits() => Ok(_unitBll.GetSelect());
         public IActionResult GetProductById(Guid id) => Ok(_ProductBll.GetById(id));
         public IActionResult GetByProductBarCode(string text) => Ok(_ProductBll.GetByProductBarCode(text));
 
