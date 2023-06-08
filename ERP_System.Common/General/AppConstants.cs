@@ -54,12 +54,18 @@ namespace ERP_System.Common
         {
            
             public const string SavedSuccess = "تمت عملية الحفظ بنجاح";
+            public const string SendCodeSuccessfully = "تم إرسال الكود بنجاح";
+            public const string SendCodeFailed = "خطأ في إرسال الكود ";
+            public const string CCodeNotMatched = "الكود غير مطابق ";
+            public const string PasswordSavedSuccess = "تم تغيير كلمة المرور بنجاح";
+            public const string PasswordSavedFailed = "خطأ في تغيير كلمة المرور ";
             public const string SavedFailed = "حدث خطا";
             public const string RequiredMessage = "هذا الحقل مطلوب";
             public const string EnterRequiredFields = "من فضلك أدخل الحقول المطلوبة";
             public const string UserTypeRequiredMessage = "نوع المستخدم مطلوب";
             public const string StopTitle = "توقف";
             public const string ProductByBarCodeNotFound = "لايوجد منتج بهذا الباركود";
+            public const string UserNotFound = "لايوجد مستخدم بهذا الاسم";
             public const string ProductByNameNotFound = "لايوجد منتج بهذا الاسم";
 
 

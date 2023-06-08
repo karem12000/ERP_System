@@ -141,7 +141,7 @@ namespace ERP_System.BLL
         }
         #endregion
         #region Forget Password
-        public ResultDTO SendCode(UserSendCodeParameters para)
+        public ResultDTO OldSendCode(UserSendCodeParameters para)
         {
             ResultDTO result = new ResultDTO();
             var data = _repoUser.GetAll().Where(p => (p.UserName.ToLower() == para.Username.ToLower() || p.Email.ToLower() == para.Username.ToLower())).FirstOrDefault();
@@ -176,7 +176,43 @@ namespace ERP_System.BLL
             return result;
 
         }
-        public ResultDTO ForgetPassword(UserForgetPasswordParameters para)
+
+        public ResultViewModel SendCode(UserSendCodeParameters para)
+        {
+            ResultViewModel result = new ResultViewModel();
+            result.Status = false;
+            var data = _repoUser.GetAll().Where(p => (p.UserName.ToLower() == para.Username.ToLower() || p.Email.ToLower() == para.Username.ToLower())).FirstOrDefault();
+            if (data != null)
+            {
+                var _SendBll = _repoUser.HttpContextAccessor.HttpContext.RequestServices.GetService(typeof(SendBll)) as SendBll;
+                string Code = new Random((int)DateTime.Now.Ticks).Next(11111, 99999) + "";
+                if (_SendBll.SendMail("كود تعيين كلمة المرور", data.UserName, $"كود التحقق  {Code}", data.Email))
+                {
+                    data.ResetPasswordDate = AppDateTime.Now;
+                    data.CodeOfReset = Code;
+                    if (_repoUser.Update(data))
+                    {
+                        result.Status = true;
+                        result.Message = AppConstants.Messages.SendCodeSuccessfully;
+                    }
+                    else
+                    {
+                        result.Message = AppConstants.Messages.SendCodeFailed;
+                    }
+                }
+                else
+                {
+                    result.Message = AppConstants.Messages.UserNotFound;
+                }
+            }
+            else
+            {
+                result.Message = AppConstants.Messages.UserNotFound;
+            }
+            return result;
+
+        }
+        public ResultDTO OldForgetPassword(UserForgetPasswordParameters para)
         {
             ResultDTO result = new ResultDTO();
             var data = _repoUser.GetAll().Where(p => (p.UserName.ToLower() == para.Username.ToLower() || p.Email.ToLower() == para.Username.ToLower())).FirstOrDefault();
@@ -207,6 +243,45 @@ namespace ERP_System.BLL
             else
             {
                 result.Message = "لايوجد مستخدم بهذا الاسم";
+
+            }
+            return result;
+
+        }
+
+        public ResultViewModel ForgetPassword(UserForgetPasswordParameters para)
+        {
+            ResultViewModel result = new ResultViewModel();
+            result.Status = false;
+            var data = _repoUser.GetAll().Where(p => (p.UserName.ToLower() == para.Username.ToLower() || p.Email.ToLower() == para.Username.ToLower())).FirstOrDefault();
+            if (data != null)
+            {
+                if (data.CodeOfReset != para.Code)
+                {
+                    result.Message =AppConstants.Messages.CCodeNotMatched;
+
+                }
+                else
+                {
+                    data.PasswordHash = para.NewPassword.EncryptString();
+                    data.CodeOfReset = null;
+                    data.ResetPasswordDate = null;
+                    if (_repoUser.Update(data))
+                    {
+
+                        result.Status = true;
+                        result.Message = AppConstants.Messages.PasswordSavedSuccess;
+                    }
+                    else
+                    {
+                        result.Message = AppConstants.Messages.PasswordSavedFailed;
+                    }
+                }
+            }
+            else
+            {
+
+                result.Message = AppConstants.Messages.UserNotFound;
 
             }
             return result;

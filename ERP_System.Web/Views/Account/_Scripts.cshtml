@@ -9,7 +9,8 @@
         obj["Username"] = UserCode;
         if (UserCode !== "") {
             $.post('@Url.GetAction("SendCode")', { 'para': obj }, function (res) {
-                if (res.data.Successed) {
+                console.log(res);
+                if (res.Status == true) {
                     $('#UserCode').fadeOut("slow", function () {
                         $('#UserCode').addClass('d-none');
                         $("#Text").html('تم إرسال رسالة إلكترونية تحتوي على رمز تحقق إلى الايميل');
@@ -17,12 +18,25 @@
                             HandleStartTimer();
                         });
                     });
+                } else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    });
                 }
-
             });
         }
         else {
-            $("#ErrorMes1").fadeIn();
+            Swal.fire({
+                title: `من فضلك أدخل اسم المستخدم أو الإيميل`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'warning',
+                showConfirmButton: false
+            });
         }
     }
 
@@ -35,7 +49,7 @@
             if (Min === 1) {
                 $('.sectimerbtn').removeAttr("disabled");
                 $('.sectimerbtn').html("إعادة إرسال");
-                $('.sectimerbtn').attr("onclick", "HandleStartTimer()");
+                $('.sectimerbtn').attr("onclick", "ReSendCode()");
                 clearInterval(timer);
             }
             Min = Min - 1;
@@ -52,24 +66,88 @@
         obj["Username"] = UserCode;
         obj["NewPassword"] = Password;
         obj["Code"] = Code;
-
-        if (Code !== "" && Code.length >= 4 && Password.length >= 3 && Password === CPassword) {
+        if (Code !== "" && Password === CPassword) {
+            Swal.fire({
+                title: `من فضلك أدخل الكود`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'warning',
+                showConfirmButton: false
+            });
+        } else if (Password.trim() === CPassword.trim()) {
+            Swal.fire({
+                title: `تأكيد كلمة المرور غير متطابق`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'warning',
+                showConfirmButton: false
+            });
+        } else {
             $.post('@Url.GetAction("ForgetPassword")', { 'para': obj }, function (res) {
-                if (res.data.successed) {
-
+                if (res.Status) {
                     $('#UserCode').fadeOut("slow", function () {
                         $('#UserCode').addClass('d-none');
-                        $("#Text").html('تم تغيير كلمة المرور بنجاح');
-                        window.location.href = "/Account/login";
+                        Swal.fire({
+                            title: 'تم تغيير كلمة المرور بنجاح',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            showConfirmButton: false
+                        }).then((result) => {
+                            window.location.href = "/Account/login";
+                        });
                     });
 
+                } else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    });
                 }
 
             });
         }
+    }
+
+    function ReSendCode() {
+        var obj = new Object();
+        let UserCode = $('#Code').val();
+        obj["Username"] = UserCode;
+        if (UserCode !== "") {
+            $.post('@Url.GetAction("SendCode")', { 'para': obj }, function (res) {
+                if (res.Status == true) {
+                    Swal.fire({
+                        title: `تم إعادة إرسال الكود`,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        showConfirmButton: false
+                    }).then(() => {
+                        HandleStartTimer();
+                    });
+                } else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
         else {
-            $("#ErrorMes2").fadeIn();
+            Swal.fire({
+                title: `خطأ في إرسال الكود`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            });
         }
     }
-   
+
 </script>

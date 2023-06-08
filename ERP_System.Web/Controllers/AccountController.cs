@@ -90,40 +90,40 @@ namespace ERP_System.Web.Controllers
 
             }
             var data = _userBll.SendCode(para);
-            if (data.data != null)
-            {
+            return Ok(data);
+            //if (data.Status)
+            //{
+            //    return StatusCode(AppConstants.StatusCodes.Success, data);
+            //}
 
-                return StatusCode(AppConstants.StatusCodes.Success, data);
 
-            }
-
-
-            return StatusCode(AppConstants.StatusCodes.Error, data);
+            //return StatusCode(AppConstants.StatusCodes.Error, data);
         }
         [HttpPost, AllowAnonymous]
         public IActionResult ForgetPassword(UserForgetPasswordParameters para)
         {
-            ResultDTO result = new ResultDTO();
+            //ResultDTO result = new ResultDTO();
 
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Select(x => x.Value.Errors)
-                          .Where(y => y.Count > 0)
-                          .ToList();
-                result.Message = AppConstants.Messages.EnterRequiredFields;
-                return StatusCode(AppConstants.StatusCodes.Error, result);
+            //if (!ModelState.IsValid)
+            //{
+            //    var errors = ModelState.Select(x => x.Value.Errors)
+            //              .Where(y => y.Count > 0)
+            //              .ToList();
+            //    result.Message = AppConstants.Messages.EnterRequiredFields;
+            //    return StatusCode(AppConstants.StatusCodes.Error, result);
 
-            }
+            //}
             var data = _userBll.ForgetPassword(para);
-            if (data.data != null)
-            {
+            return Ok(data);
+            //if (data.data != null)
+            //{
 
-                return StatusCode(AppConstants.StatusCodes.Success, data);
+            //    return StatusCode(AppConstants.StatusCodes.Success, data);
 
-            }
+            //}
 
 
-            return StatusCode(AppConstants.StatusCodes.Error, data);
+            //return StatusCode(AppConstants.StatusCodes.Error, data);
         }
 
         #endregion
