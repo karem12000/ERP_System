@@ -8,7 +8,7 @@ namespace ERP_System.DTO
     public class LogInDTO
     {
         [Required(ErrorMessage = AppConstants.Messages.RequiredMessage)]
-        public string UserCode { get; set; }
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = AppConstants.Messages.RequiredMessage)]
         public string Password { get; set; }

@@ -59,6 +59,7 @@ namespace ERP_System.Common
             public const string CCodeNotMatched = "الكود غير مطابق ";
             public const string PasswordSavedSuccess = "تم تغيير كلمة المرور بنجاح";
             public const string PasswordSavedFailed = "خطأ في تغيير كلمة المرور ";
+            public const string UserNamePasswordNotCorrect = "خطأ في اسم المستخدم أو كلمة المرور ";
             public const string SavedFailed = "حدث خطا";
             public const string RequiredMessage = "هذا الحقل مطلوب";
             public const string EnterRequiredFields = "من فضلك أدخل الحقول المطلوبة";

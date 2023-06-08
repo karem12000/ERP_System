@@ -2,6 +2,7 @@
     Layout = null;
 }
 @inject ERP_System.BLL.Guide.SettingBll _settingBll;
+@model ERP_System.DTO.UserDTO;
 <!DOCTYPE html>
 <html lang="ar" class="h-100" style="direction:rtl">
 
@@ -14,6 +15,10 @@
     <link rel="stylesheet" href="~/assets/css/main/app.css">
     <link rel="stylesheet" href="~/assets/css/pages/auth.css">
     <link rel="stylesheet" href="~/new-assets/app.css">
+
+
+    <script src="~/assets/extensions/jquery/jquery.min.js"></script>
+    <partial name="_Scripts" />
     <script>
         /**
          * App Direction a global variable to entire application has rtl or ltr only
@@ -64,39 +69,74 @@
                         <h1 class="auth-title">تسجيل الدخول.</h1>
                         <p class="auth-subtitle mb-3">ادخل اسم المستخدم وكلمة المرور للدخول.</p>
 
-                        <form action="@Url.GetAction("LogIn")" method="post">
 
-                            @Html.AntiForgeryToken()
-                            @if (ViewContext.HttpContext.Request.Query != null)
-                            {
-                                var d = ViewContext.HttpContext.Request.Query
-                                .Where(x => x.Key.ToLower() == "returnUrl".ToLower()).Select(x => x.Value).FirstOrDefault();
-                                if (!d.ToString().IsEmpty())
+
+                            <form action="@Url.GetAction("LogIn")" method="post">
+                                @if (ViewBag.Status == 0)
                                 {
-                                    <input type="hidden" value="@d" name="returnUrl" />
+                                <div class="alert alert-danger">خطا في اسم المستخدم وكلمة المرور</div>
                                 }
-                            }
 
-                            <div class="form-group position-relative has-icon-left mb-4">
-                                <input type="text" id="UserCode" name="UserCode" class="form-control form-control-xl" placeholder="اسم المستخدم">
-                                <div class="form-control-icon">
-                                    <i class="bi bi-person"></i>
+                                @Html.AntiForgeryToken()
+
+                                <div class="form-group position-relative has-icon-left mb-4">
+                                    @*<input type="text" id="UserCode" name="UserCode" class="form-control form-control-xl" placeholder="اسم المستخدم">*@
+                                    @Html.TextBoxFor(u=>u.UserName , new {@class="form-control form-control-xl", placeholder="اسم المستخدم"})
+                                    <div class="form-control-icon">
+                                        <i class="bi bi-person"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group position-relative has-icon-left mb-4">
-                                <input type="password" id="password" name="password" class="form-control form-control-xl" placeholder="كلمة المرور">
-                                <div class="form-control-icon">
-                                    <i class="bi bi-shield-lock"></i>
+                                <div class="form-group position-relative has-icon-left mb-4">
+                                    @*<input type="password" id="password" name="password" class="form-control form-control-xl" placeholder="كلمة المرور">*@
+                                    @Html.PasswordFor(u=>u.Password , new {@class="form-control form-control-xl", placeholder="كلمة المرور"})
+
+                                    <div class="form-control-icon">
+                                        <i class="bi bi-shield-lock"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-check form-check-lg d-flex align-items-end">
-                                <input class="form-check-input ms-2" type="checkbox" value="" id="basic-checkbox" checked="checked">
-                                <label class="form-check-label text-gray-600" for="basic-checkbox">
-                                    البقاء مسجلا
-                                </label>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block btn-lg shadow-lg mt-4">تسجيل الدخول</button>
-                        </form>
+                                <div class="form-check form-check-lg d-flex align-items-end">
+                                    <input class="form-check-input ms-2" type="checkbox" value="" id="basic-checkbox" checked="checked">
+                                    <label class="form-check-label text-gray-600" for="basic-checkbox">
+                                        البقاء مسجلا
+                                    </label>
+                                </div>
+                                <button type="submit" id="submitBtn" class="btn btn-primary btn-block btn-lg shadow-lg mt-4">تسجيل الدخول</button>
+                            </form>
+                        
+
+                        @* <form action="@Url.GetAction("LogIn")" method="post">
+
+                        @Html.AntiForgeryToken()
+                        @if (ViewContext.HttpContext.Request.Query != null)
+                        {
+                        var d = ViewContext.HttpContext.Request.Query
+                        .Where(x => x.Key.ToLower() == "returnUrl".ToLower()).Select(x => x.Value).FirstOrDefault();
+                        if (!d.ToString().IsEmpty())
+                        {
+                        <input type="hidden" value="@d" name="returnUrl" />
+                        }
+                        }
+
+                        <div class="form-group position-relative has-icon-left mb-4">
+                        <input type="text" id="UserCode" name="UserCode" class="form-control form-control-xl" placeholder="اسم المستخدم">
+                        <div class="form-control-icon">
+                        <i class="bi bi-person"></i>
+                        </div>
+                        </div>
+                        <div class="form-group position-relative has-icon-left mb-4">
+                        <input type="password" id="password" name="password" class="form-control form-control-xl" placeholder="كلمة المرور">
+                        <div class="form-control-icon">
+                        <i class="bi bi-shield-lock"></i>
+                        </div>
+                        </div>
+                        <div class="form-check form-check-lg d-flex align-items-end">
+                        <input class="form-check-input ms-2" type="checkbox" value="" id="basic-checkbox" checked="checked">
+                        <label class="form-check-label text-gray-600" for="basic-checkbox">
+                        البقاء مسجلا
+                        </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg shadow-lg mt-4">تسجيل الدخول</button>
+                        </form>*@
                         <div class="text-center mt-5 text-lg fs-4">
                             <p><a class="font-bold" href="/Account/ForgotPassword">نسيت كلمة المرور؟</a>.</p>
                         </div>

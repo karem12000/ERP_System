@@ -479,12 +479,32 @@ namespace ERP_System.BLL
         #endregion
         #region Login For Web
         #region  تسجيل الدخول
-        public User LogInWeb(LogInDTO mdl)
+        public User LogInWeb2(LogInDTO mdl)
         {
-            if (mdl != null && !mdl.UserCode.IsEmpty() && !mdl.Password.IsEmpty())
+            if (mdl != null && !mdl.UserName.IsEmpty() && !mdl.Password.IsEmpty())
             {
                 var pass = mdl.Password.EncryptString();
-                var user = _repoUser.GetAll().Where(c => c.IsActive == true && !c.IsDeleted && (c.UserName == mdl.UserCode || c.Email == mdl.UserCode) && c.PasswordHash == pass).FirstOrDefault();
+                var user = _repoUser.GetAll().Where(c => c.IsActive == true && !c.IsDeleted && (c.UserName == mdl.UserName || c.Email == mdl.UserName) && c.PasswordHash == pass).FirstOrDefault();
+                if (user != null)
+                {
+                    return user;
+                }
+            }
+
+            return null;
+        }
+        public UserDTO LogInWeb(LogInDTO mdl)
+        {
+            if (mdl != null && !mdl.UserName.IsEmpty() && !mdl.Password.IsEmpty())
+            {
+                var pass = mdl.Password.EncryptString();
+                var user = _repoUser.GetAll().Where(c => c.IsActive == true && !c.IsDeleted && (c.UserName == mdl.UserName || c.Email == mdl.UserName) && c.PasswordHash == pass)
+                    .Select(x=> new UserDTO
+                    {
+                        UserName = x.UserName,
+                        ID = x.ID,
+                        Email = x.Email
+                    }).FirstOrDefault();
                 if (user != null)
                 {
                     return user;

@@ -39,9 +39,10 @@ namespace ERP_System.Web.Controllers
         [HttpPost]
         public IActionResult LogIn(LogInDTO mdl, string returnUrl)
         {
+            var user = new UserDTO();
             if (ModelState.IsValid)
             {
-                var user = _userBll.LogInWeb(mdl);
+                 user = _userBll.LogInWeb(mdl);
                 if (user != null)
                 {
                     HttpContext.Response.Cookies.AppendCookie(AppConstants._UserIdCookie, user.ID.ToString(), true);
@@ -53,9 +54,17 @@ namespace ERP_System.Web.Controllers
                     return Redirect("~/Home/Index");
                     //return RedirectToAction("Index", "Home", new { user = user });
                 }
+                else
+                {
+                    ViewBag.Status = 0;
+                }
+            }
+            else
+            {
+                ViewBag.Status = 0;
             }
 
-            return View(mdl);
+            return View(user);
         }
         [HttpPost]
         public JsonResult ChangeOldPassword(ChangePasswordDTO mdl) => Json(_userBll.ChangeOldPasswordWeb(mdl));
