@@ -1,0 +1,75 @@
+﻿<script>
+    var timer;
+    let Min = 60;
+
+
+    function HandleSend() {
+        var obj = new Object();
+        let UserCode = $('#Code').val();
+        obj["Username"] = UserCode;
+        if (UserCode !== "") {
+            $.post('@Url.GetAction("SendCode")', { 'para': obj }, function (res) {
+                if (res.data.Successed) {
+                    $('#UserCode').fadeOut("slow", function () {
+                        $('#UserCode').addClass('d-none');
+                        $("#Text").html('تم إرسال رسالة إلكترونية تحتوي على رمز تحقق إلى الايميل');
+                        $('#EmailCode').fadeIn("slow", function () {
+                            HandleStartTimer();
+                        });
+                    });
+                }
+
+            });
+        }
+        else {
+            $("#ErrorMes1").fadeIn();
+        }
+    }
+
+    function HandleStartTimer() {
+        Min = 60;
+        $('.sectimerbtn').attr("disabled", "disabled");
+        $('.sectimerbtn').html('');
+        $('.sectimerbtn').html('<small id="SecTimer">60</small> ثانية لإعادة الإرسال');
+        timer = setInterval(function () {
+            if (Min === 1) {
+                $('.sectimerbtn').removeAttr("disabled");
+                $('.sectimerbtn').html("إعادة إرسال");
+                $('.sectimerbtn').attr("onclick", "HandleStartTimer()");
+                clearInterval(timer);
+            }
+            Min = Min - 1;
+            $("#SecTimer").html(Min);
+        }, 1000);
+    }
+
+    function HandleSendCode() {
+        let Code = $("#ECode").val();
+        let Password = $("#Password").val();
+        let CPassword = $("#CPassword").val();
+        let UserCode = $("#Code").val();
+        var obj = new Object();
+        obj["Username"] = UserCode;
+        obj["NewPassword"] = Password;
+        obj["Code"] = Code;
+
+        if (Code !== "" && Code.length >= 4 && Password.length >= 3 && Password === CPassword) {
+            $.post('@Url.GetAction("ForgetPassword")', { 'para': obj }, function (res) {
+                if (res.data.successed) {
+
+                    $('#UserCode').fadeOut("slow", function () {
+                        $('#UserCode').addClass('d-none');
+                        $("#Text").html('تم تغيير كلمة المرور بنجاح');
+                        window.location.href = "/Account/login";
+                    });
+
+                }
+
+            });
+        }
+        else {
+            $("#ErrorMes2").fadeIn();
+        }
+    }
+   
+</script>

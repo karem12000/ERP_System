@@ -97,21 +97,21 @@
 
     @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
     {
-                                                                                                                                                                                                                        <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/Product/Edit/${data.ID}" >
-                                                                                                                                                                                                 <i class="fas fa-pen"></i>
+                                                                                                                                                                                                                                        <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/Product/Edit/${data.ID}" >
+                                                                                                                                                                                                                 <i class="fas fa-pen"></i>
 
-                                                                                                                                                                                                </a>
+                                                                                                                                                                                                                </a>
 
     }
 
     @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
     {
-                                                                                                                                                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
-                                                                                                                                                                                               <i class="fas fa-trash-alt"></i>
+                                                                                                                                                                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                                                                                                                                                                               <i class="fas fa-trash-alt"></i>
 
-                                                                                                                                                                                               </a>
+                                                                                                                                                                                                               </a>
     }
-                                                                                                           `;
+                                                                                                                   `;
                         return btn + '</div>';
                     }
                 }
@@ -260,22 +260,22 @@
         $.post('@Url.GetAction("GetAllUnits")', function (res) {
             let rowId = Math.floor(Math.random() * 500) + 1;
             $("#UnitsTbl").append(` <tr>
-                                     <td >
-                                                        <input class="form-control ID" type="hidden" value="0"/>
-                                                    <select id="rowId-${rowId}" class="Select sAddress form-select UnitId" aria-label="اختر الوحدة" required  name="UnitId"  id="ddlUnitId">
-                                                    <option selected value="0">اختر الوحدة</option>
-                                            </select>
-                                            </td>
-                                                <td><input class="form-control Rate" type="number" value="${obj.Rate}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/></td>
-                                                    <td><input class="form-control Price" type="number" value="${obj.Price}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/></td>
-                                        <td>
-                                            <div class="d-flex">
-                                            <button type="button" class="btn btn-primary btn-icon addRow mx-2"><i class="fas fa-plus"></i></button>
-                                            <button type="button" class="btn btn-danger btn-icon removeRow mx-1" data-id="${obj.id}"><i class="fas fa-minus"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `);
+                                             <td >
+                                                                <input class="form-control ID" type="hidden" value="0"/>
+                                                            <select id="rowId-${rowId}" class="Select sAddress form-select UnitId" aria-label="اختر الوحدة" required  name="UnitId"  id="ddlUnitId">
+                                                            <option selected value="0">اختر الوحدة</option>
+                                                    </select>
+                                                    </td>
+                                                        <td><input class="form-control Rate" type="number" value="${obj.Rate}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/></td>
+                                                            <td><input class="form-control Price" type="number" value="${obj.Price}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/></td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                    <button type="button" class="btn btn-primary btn-icon addRow mx-2"><i class="fas fa-plus"></i></button>
+                                                    <button type="button" class="btn btn-danger btn-icon removeRow mx-1" data-id="${obj.id}"><i class="fas fa-minus"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `);
             let selectedUnits = [];
             $.each($("#UnitsTbl .UnitId"), function () {
                 selectedUnits.push($(this).val())
@@ -332,12 +332,12 @@
             if (res) {
                 $('#ddlStockId').empty();
                 $('#ddlStockId').append('<option value="0">اختر المخزن</option>');
-                for(i=0;i<res.length;i++){
+                for (i = 0; i < res.length; i++) {
                     $('#ddlStockId').append('<option value="' + res[i].Value + '">' + res[i].Text + '</option>');
                 }
             }
         });
-        
+
 
     }
 

@@ -10,9 +10,9 @@ namespace ERP_System.BLL
     {
         public bool SendMail(string subject,string name, string body,string email)
         {
-            var fromAddress = new MailAddress("EmailAddress", "Pass");
+            var fromAddress = new MailAddress("erpsystem21@gmail.com", "qwverlmffciucvyb");
             var toAddress = new MailAddress(email, name);
-            const string fromPassword = "Pass";
+            const string fromPassword = "qwverlmffciucvyb";
 
             var smtp = new SmtpClient
             {
