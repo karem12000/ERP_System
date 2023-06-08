@@ -6,9 +6,9 @@
 
     let form = $('#frm');
 
-    function Submit() {
+    function Submit(type) {
         event.preventDefault();
-        Save();
+        Save(type);
     }
 
 
@@ -135,10 +135,12 @@
         $('#IsActive').attr('checked');
         $('#ddlStockId').val('0').trigger('change');
         $('#ddlGroupId').val('0').trigger('change');
-        $('#ddlUnitId').val('0').trigger('change');
+        $("#UnitsTbl").empty();
+        UnitAddNew({ "id": "0", "Rate": "", "Price": "" });
+        //$('#ddlUnitId').val('0').trigger('change');
     }
 
-    function Save() {
+    function Save(type) {
 
         if ($('#ddlStockId').val() == '0' || $('#ddlGroupId').val() == '0' || $('#BarCodeText').val() == '' || $('#Name').val() == '' || $('#ddlUnitId').val() == '0') {
             Swal.fire({
@@ -163,7 +165,7 @@
             frm.append("Description", document.getElementById('Description').value);
 
 
-
+            
             let Units = [];
             $.each($("#UnitsTbl >tr"), function (key, value) {
                 let IdF = $(value).children("td").children(".ID").val().trim();
@@ -171,7 +173,8 @@
                     UnitId = $(value).children("td").children(".UnitId").val().trim(),
                     Rate = $(value).children("td").children(".Rate").val().trim(),
                     Price = $(value).children("td").children(".Price").val().trim();
-                if (UnitId) {
+                if (UnitId!=='0') 
+                {
                     Units.push({ ID: ID, UnitId: UnitId, Rate: Rate, Price: Price });
                 }
             })
@@ -191,8 +194,11 @@
                         icon: 'success',
                         showConfirmButton: false
                     }).then((result) => {
-                        resetForm();
-                        window.location.href = "/Guide/Product/Index";
+                        if (type === 'add') {
+                            resetForm();
+                        } else {
+                            window.location.href = "/Guide/Product/Index";
+                        }
                     })
                 },
                 error: function (res) {
