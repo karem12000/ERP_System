@@ -507,7 +507,7 @@ namespace ERP_System.BLL
                     }).FirstOrDefault();
                 if (user != null)
                 {
-                    if(user.ScreenId != Guid.Empty)
+                    if(user.ScreenId != null && user.ScreenId != Guid.Empty)
                     {
                         var page = _repoPage.GetById(user.ScreenId);
                         user.AreaName = page.AreaName;
