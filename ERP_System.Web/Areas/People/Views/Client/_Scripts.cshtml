@@ -2,26 +2,33 @@
     $(document).ready(function () {
 
        LoadTable();
-        $('.js-example-rtl').select2({
-                multiple: true,
-                dir: "rtl",
-            });
-
-
+       
     });
 
     let form = $('#frm');
-    function Submit() {
+    function Submit(type) {
 
         event.preventDefault();
 
-        Save();
+        Save(type);
 
     }
 
+    function resetForm(){
+        $('#Name').val('');
+        $('#id').val('');
+        $('#companyName').val('');
+        $('#Phone').val('');
+        $('#Address').val('');
+        $('#ProcessAmount').val('');
+        $('#ddlProcessType').val('0').trigger('change');
+        $('#IsActive').val('true');
+        $('#IsActive').prop('checked', true);
 
-    function Save() {
-        if ($('#Name').val() == '' || $('#UserName').val() == '' || $('#Email').val() == '' || $('#ddlUserTypeId').val() == '') {
+    }
+
+    function Save(type) {
+        if ($('#Name').val() == '') {
             Swal.fire({
                 title: `من فضلك أدخل البيانات الأساسية`,
                 timer: 2000,
@@ -39,7 +46,11 @@
                         icon: 'success',
                         showConfirmButton: false
                     }).then((result) => {
-                        window.location.href = "/People/Client/Index";
+                         if(type==='add'){
+                            resetForm();
+                        }else{
+                            window.location.href = "/People/Client/Index";
+                        }
                     })
                 }
                 else {
@@ -100,6 +111,8 @@
     }
 
     function LoadTable() {
+        $('#tbl').DataTable().destroy();
+
         dt = $('#tbl').DataTable({
             "columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
 
@@ -130,23 +143,7 @@
                 {
                     data: null,
                     bSortable: true,
-                    render: function (data, type, row) { return '<label class="UserName">' + (data.UserName == null ? "" : data.UserName) + '</label><input hidden name="UserName" class="UserName" value="' + (data.UserName == null ? "" : data.UserName) + '" /> ' }
-
-                },
-                {
-                    data: null,
-                    bSortable: true,
-                    render: function (data, type, row) {
-                        return '<label class="Email">' + (data.Email == null ? "" : data.Email) + '</label>  <input hidden name="Email" class="Email" value="' + (data.Email == null ? "" : data.Email) + '" />'
-                    }
-
-                },
-                {
-                    data: null,
-                    bSortable: true,
-                    render: function (data, type, row) {
-                        return '<label class="UserType">' + (data.UserTypeName == null ? "" : data.UserTypeName) + '</label>  <input hidden name="UserTypeId" class="UserTypeId" value="' + data.UserTypeId + '" />'
-                    }
+                    render: function (data, type, row) { return '<label class="companyName">' + (data.companyName == null ? "" : data.companyName) + '</label><input hidden name="companyName" class="companyName" value="' + (data.companyName == null ? "" : data.companyName) + '" /> ' }
 
                 },
                 {
@@ -161,7 +158,32 @@
                     data: null,
                     bSortable: true,
                     render: function (data, type, row) {
-                        return '<label class="Address">' + (data.Address == null ? "" : data.Address) + '</label>  <input hidden name="Address" class="Address" value="' + (data.Address == null ? "" : data.Address) + '" />'
+                        return '<label class="Address">' + (data.Address == null ? "" : data.Address) + '</label>  <input hidden name="Address" class="Address" value="' + data.Address + '" />'
+                    }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+                        if(data.ProcessType == 1){
+                            return '<label class="ProcessType">مدين</label>  <input hidden name="ProcessType" class="ProcessType" value="' + data.ProcessType + '" />'
+                        }
+                        else if(data.ProcessType == 2){
+                        return '<label class="ProcessType">دائن</label>  <input hidden name="ProcessType" class="ProcessType" value="' + data.ProcessType + '" />'
+
+                        }else{
+                        return '<label class="ProcessType">غير معرف</label>  <input hidden name="ProcessType" class="ProcessType" value="' + null + '" />'
+
+                        }
+                    }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+                        return '<label class="ProcessAmount">' + (data.ProcessAmount == null ? "0" : data.ProcessAmount) + '</label>  <input hidden name="ProcessAmount" class="ProcessAmount" value="' + (data.ProcessAmount == null ? "0" : data.ProcessAmount) + '" />'
                     }
 
                 },
@@ -188,7 +210,6 @@
                     bSortable: false,
                     render: function (data, type, row) {
                         let btn = `<div class="Event">
-
     @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
     {
                                                                         <a class="btn-icon btn btn-warning btn-sm" href="/People/Client/Edit/${data.ID}">
@@ -197,7 +218,6 @@
                                                                         </a>
 
     }
-
     @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
     {
                                                                                    <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
@@ -215,11 +235,19 @@
 
     }
 
-
+    function ProcessTypeChanged(){
+        var selected = $('#ddlProcessType').val();
+        if(selected=='0'){
+            $('#processAmoutDev').hide();
+        }else{
+            $('#processAmoutDev').show();
+        }
+    }
 
     $("#IsActive").change(function (e) {
         var isChecked = $(this).prop("checked");
         $("#IsActive").val(isChecked);
+        console.log(isChecked);
     });
 
 </Script>

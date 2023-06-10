@@ -1,4 +1,5 @@
 ﻿using ERP_System.Common;
+using ERP_System.Common.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,6 +11,7 @@ namespace ERP_System.Tables
     public class UserType:BaseEntity
     {
         public string Name { get; set; }
+        public UserClassification? Type { get; set; }
         public virtual ICollection<User> Users { get; set; }
         public ICollection<UserPermission> UserPermissions { get; set; }
 

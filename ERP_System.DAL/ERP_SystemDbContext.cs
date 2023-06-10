@@ -30,11 +30,19 @@ namespace ERP_System.DAL
             modelBuilder.Entity<User>().HasMany(x => x.UserPermissionModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
             modelBuilder.Entity<User>().HasMany(x => x.UserPermissionDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
 
+            modelBuilder.Entity<User>().HasMany(x => x.SupplierCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.SupplierModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.SupplierDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+
+            modelBuilder.Entity<User>().HasMany(x => x.ClientCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.ClientModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.ClientDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+
 
             #endregion
             #region Pages
 
-     
+
             modelBuilder.Entity<User>().HasMany(x => x.PageCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
             modelBuilder.Entity<User>().HasMany(x => x.PageModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
             modelBuilder.Entity<User>().HasMany(x => x.PageDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
@@ -110,6 +118,8 @@ namespace ERP_System.DAL
         public DbSet<User> Users { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
         public DbSet<UserStock> UserStocks { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<Client> Clients { get; set; }
 
 
 

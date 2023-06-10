@@ -89,7 +89,8 @@ namespace ERP_System.BLL
                 UserClassification= x.UserClassification,
                 UserName= x.UserName,
                 UserTypeId= x.UserTypeId,
-                StockIdsStr = string.Join(',',x.UserStocks.Select(c=>c.StockId).ToArray())
+                StockIdsStr = string.Join(',',x.UserStocks.Select(c=>c.StockId).ToArray()),
+                ScreenId = x.ScreenId
             }).FirstOrDefault();
         }
         #endregion
@@ -300,14 +301,14 @@ namespace ERP_System.BLL
             var tbl = _repoUser.GetAllAsNoTracking().Where(p => p.ID == userDTO.ID).FirstOrDefault();
             if (tbl == null)
             {
-                if (_repoUser.GetAll().Where(p => p.UserName.Trim().ToLower() == userDTO.UserName.Trim().ToLower() && !p.IsDeleted).FirstOrDefault() != null)
+                if (_repoUser.GetAll().Where(p => p.UserName.Trim().ToLower() == userDTO.UserName.Trim().ToLower() && !p.IsDeleted ).FirstOrDefault() != null)
                 {
                     resultViewModel.Message = AppConstants.UserMessages.UsernameAlreadyExists;
                     return resultViewModel;
 
                 }
 
-                if (_repoUser.GetAll().Where(p => p.Email.Trim().ToLower() == userDTO.Email.Trim().ToLower() && !p.IsDeleted).FirstOrDefault() != null)
+                if (_repoUser.GetAll().Where(p => p.Email.Trim().ToLower() == userDTO.Email.Trim().ToLower() && !p.IsDeleted ).FirstOrDefault() != null)
                 {
                     resultViewModel.Message = AppConstants.UserMessages.EmailAlreadyExists;
                     return resultViewModel;
@@ -322,16 +323,13 @@ namespace ERP_System.BLL
                     user.PasswordHash = userDTO.Password.EncryptString();
                 }
 
-
-                if (userDTO.UserTypeId.ToString()==AppConstants.ClientTypeId.ToLower())
-                    user.UserClassification = UserClassification.Client;
-                else if (userDTO.UserTypeId.ToString() == AppConstants.SupplierTypeId.ToLower())
-                    user.UserClassification = UserClassification.Suppliers;
-                else if (userDTO.UserTypeId.ToString() == AppConstants.AdminTypeId.ToLower())
-                    user.UserClassification = null;
+                if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
+                    user.UserClassification = UserClassification.Admin;
+                else if (userDTO.UserTypeId.ToString() == AppConstants.CashierTypeId.ToLower())
+                    user.UserClassification = UserClassification.Cashier;
+                else if (userDTO.UserTypeId.ToString() == AppConstants.UserTypeId.ToLower())
+                    user.UserClassification = UserClassification.User;
                 else { }
-
-
 
                 user.Salt = AppConstants.EncryptKey;
 
@@ -380,12 +378,14 @@ namespace ERP_System.BLL
                 tbl.UserTypeId = user.UserTypeId;
                 tbl.AddedBy = tbl.AddedBy;
 
-                if (userDTO.UserTypeId.ToString() == AppConstants.ClientTypeId.ToLower())
-                    tbl.UserClassification = UserClassification.Client;
-                else if (userDTO.UserTypeId.ToString() == AppConstants.SupplierTypeId.ToLower())
-                    tbl.UserClassification = UserClassification.Suppliers;
-                else if (userDTO.UserTypeId.ToString() == AppConstants.AdminTypeId.ToLower())
-                    user.UserClassification = null;
+               
+
+                if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
+                    tbl.UserClassification = UserClassification.Admin;
+                else if (userDTO.UserTypeId.ToString() == AppConstants.CashierTypeId.ToLower())
+                    tbl.UserClassification = UserClassification.Cashier;
+                else if (userDTO.UserTypeId.ToString() == AppConstants.UserTypeId.ToLower())
+                    tbl.UserClassification = UserClassification.User;
                 else { }
 
 
@@ -468,9 +468,8 @@ namespace ERP_System.BLL
         }
 
         #region LoadData
-        public DataTableResponse LoadData(DataTableRequest mdl, UserClassification? classification )
+        public DataTableResponse LoadData(DataTableRequest mdl)
         {
-            mdl.UserClassification = classification;
             var data = _repoUser.ExecuteStoredProcedure<UserTableDTO>
                 (_spUsers, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
 
@@ -503,10 +502,17 @@ namespace ERP_System.BLL
                     {
                         UserName = x.UserName,
                         ID = x.ID,
-                        Email = x.Email
+                        Email = x.Email,
+                        ScreenId = x.ScreenId,
                     }).FirstOrDefault();
                 if (user != null)
                 {
+                    if(user.ScreenId != Guid.Empty)
+                    {
+                        var page = _repoPage.GetById(user.ScreenId);
+                        user.AreaName = page.AreaName;
+                        user.ControllerName = page.ControllerName;
+                    }
                     return user;
                 }
             }
@@ -573,6 +579,7 @@ namespace ERP_System.BLL
                 ShowPermission = _repoUserPermission.GetAll().Include(p => p.ActionsPage).Where(u => u.ActionsPage.ActionName == ActionEnum.Show && u.UserTypeId == id && u.ActionsPage.PageId == p.ID).Any(),
                 DeletePermission = _repoUserPermission.GetAll().Include(p => p.ActionsPage).Where(u => u.ActionsPage.ActionName == ActionEnum.Delete && u.UserTypeId == id && u.ActionsPage.PageId == p.ID).Any(),
                 EditPermission = _repoUserPermission.GetAll().Include(p => p.ActionsPage).Where(u => u.ActionsPage.ActionName == ActionEnum.Edit && u.UserTypeId == id && u.ActionsPage.PageId == p.ID).Any(),
+                ThrowbackPermission = _repoUserPermission.GetAll().Include(p => p.ActionsPage).Where(u => u.ActionsPage.ActionName == ActionEnum.Throwback && u.UserTypeId == id && u.ActionsPage.PageId == p.ID).Any(),
 
             });
 

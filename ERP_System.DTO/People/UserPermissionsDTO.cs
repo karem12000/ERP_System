@@ -15,7 +15,8 @@ namespace ERP_System.DTO
         public bool EditPermission { get; set; } = false;
         public bool DeletePermission { get; set; } = false;
         public bool ShowPermission { get; set; } = false;
-    
+        public bool ThrowbackPermission { get; set; } = false;
+
 
 
 

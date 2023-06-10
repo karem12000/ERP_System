@@ -17,6 +17,10 @@ namespace ERP_System.Tables
         public string Description { get; set; }
 
 
+        public string NameUnitOfQty { get; set; }
+        public Guid? IdUnitOfQty { get; set; }
+
+        public DateTime? ExpireDate { get; set; }
 
 
         [ForeignKey(nameof(Group))]
@@ -37,8 +41,12 @@ namespace ERP_System.Tables
     [Table(nameof(ProductUnit) + "s", Schema = AppConstants.Areas.Guide)]
     public class ProductUnit : BaseEntity
     {
-        public decimal? Rate { get; set; }
-        public decimal? Price { get; set; }
+        public decimal? ConversionFactor { get; set; }
+        public decimal? PurchasingPrice { get; set; }
+        public decimal? SellingPrice { get; set; }
+        public string UnitBarcodeText { get; set; }
+        public string UnitBarcodePath { get; set; }
+
         [ForeignKey(nameof(Product))]
         public Guid? ProductId { get; set; }
         public virtual Product Product { get; set; }

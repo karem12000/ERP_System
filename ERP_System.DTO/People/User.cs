@@ -72,7 +72,7 @@ namespace ERP_System.DTO
         public string Phone { get; set; }
         public string Address { get; set; }
         public string PasswordHash { get; set; }
-
+        
         public bool IsAdmin { get; set; } = false;
 
         public bool IsActive { get; set; }
@@ -82,6 +82,10 @@ namespace ERP_System.DTO
         public Guid[]? StockIds { get; set; }
         public string StockIdsStr { get; set; }
 
+        public Guid? ScreenId { get; set; }
+        public string ScreenName { get; set; }
+        public string ControllerName { get; set; }
+        public string AreaName { get; set; }
         public Guid? UserTypeId { get; set; }
 
         public string UserTypeName { get; set; }

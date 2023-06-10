@@ -47,12 +47,16 @@ namespace ERP_System.Web.Controllers
                 {
                     HttpContext.Response.Cookies.AppendCookie(AppConstants._UserIdCookie, user.ID.ToString(), true);
 
-                    if (!returnUrl.IsEmpty())
+                    if (!string.IsNullOrEmpty(user.ScreenName) && !string.IsNullOrEmpty(user.AreaName) 
+                        && !string.IsNullOrEmpty(user.ControllerName) && user.ScreenId != Guid.Empty)
                     {
-                        return Redirect(returnUrl);
+                        var route = $"/{user.AreaName}/{user.ControllerName}/Index";
+                        return Redirect(route);
                     }
-                    return Redirect("~/Home/Index");
-                    //return RedirectToAction("Index", "Home", new { user = user });
+                    else
+                    {
+                        return Redirect("~/Home/Index");
+                    }
                 }
                 else
                 {

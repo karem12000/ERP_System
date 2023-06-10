@@ -37,9 +37,15 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label class="lable" for="UserTypeId">نوع المستخدم<span style="color:red;"> * </span></label>
-                                            <select class="Select form-select" value="@Model.UserTypeId" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
+                                            <select class="Select form-select" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text",Model.UserTypeId)' name="UserTypeId" id="ddlUserTypeId">
                                             </select>
                                         </div>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="ScreenId">الشاشة الإفتراضية</label>
+                                        <select class="Select sAddress form-select" aria-label="اختر الشاشة"  asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Pages"] , "Value", "Text",Model.ScreenId)' name="ScreenId" id="ddlScreenId">
+                                            <option selected value="0">اختر الشاشة</option>
+                                        </select>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
@@ -112,8 +118,11 @@
                 dir: "rtl",
             });
 
-            var userTypeId = $('#ddlUserTypeId').attr("value");
-            $('#ddlUserTypeId').val(userTypeId).trigger('change');
+            //var userTypeId = $('#ddlUserTypeId').attr("value");
+            //$('#ddlUserTypeId').val(userTypeId).trigger('change');
+
+            //var screenId = $('#ddlScreenId').attr("value");
+            //$('#ddlScreenId').val(userTypeId).trigger('change');
 
             var userStocks = $('#StockIdsStr').val().toLowerCase().split(',');
             $('#StockIds').val(userStocks).trigger('change');

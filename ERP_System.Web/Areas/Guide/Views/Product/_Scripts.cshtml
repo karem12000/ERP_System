@@ -97,21 +97,21 @@
 
     @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
     {
-                                                                                                                                                                                                                                        <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/Product/Edit/${data.ID}" >
-                                                                                                                                                                                                                 <i class="fas fa-pen"></i>
+                                                                                                                                                                                                                                                                <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/Product/Edit/${data.ID}" >
+                                                                                                                                                                                                                                         <i class="fas fa-pen"></i>
 
-                                                                                                                                                                                                                </a>
+                                                                                                                                                                                                                                        </a>
 
     }
 
     @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
     {
-                                                                                                                                                                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
-                                                                                                                                                                                                               <i class="fas fa-trash-alt"></i>
+                                                                                                                                                                                                                                                   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                                                                                                                                                                                                       <i class="fas fa-trash-alt"></i>
 
-                                                                                                                                                                                                               </a>
+                                                                                                                                                                                                                                       </a>
     }
-                                                                                                                   `;
+                                                                                                                               `;
                         return btn + '</div>';
                     }
                 }
@@ -126,22 +126,24 @@
         reader.readAsDataURL(selectedFile);
     }
 
-    function resetForm() {
+    function resetForm(stockId, groupId) {
         $('#id').val('');
         $('#Name').val('');
         $('#BarCodeText').val('');
         $('#QtyInStock').val('');
         $('#IsActive').val('true');
         $('#IsActive').attr('checked');
-        $('#ddlStockId').val('0').trigger('change');
-        $('#ddlGroupId').val('0').trigger('change');
+        $('#ddlStockId').val(stockId).trigger('change');
+        $('#ddlGroupId').val(groupId).trigger('change');
+        $('#ddlIdUnitOfQty').val('0').trigger('change');
         $("#UnitsTbl").empty();
-        UnitAddNew({ "id": "0", "Rate": "", "Price": "" });
+        UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" });
         //$('#ddlUnitId').val('0').trigger('change');
     }
 
     function Save(type) {
-
+        let groupId = document.querySelector("#ddlGroupId").value;
+        let stockId = document.querySelector("#ddlStockId").value;
         if ($('#ddlStockId').val() == '0' || $('#ddlGroupId').val() == '0' || $('#BarCodeText').val() == '' || $('#Name').val() == '' || $('#ddlUnitId').val() == '0') {
             Swal.fire({
                 title: `من فضلك أدخل البيانات`,
@@ -160,22 +162,23 @@
             frm.append("BarCodeText", document.getElementById('BarCodeText').value);
             frm.append("Name", document.getElementById('Name').value);
             frm.append("QtyInStock", document.getElementById('QtyInStock').value);
+            frm.append("IdUnitOfQty", document.getElementById('ddlIdUnitOfQty').value);
             frm.append("IsActive", document.getElementById('IsActive').value);
             frm.append("Image", document.querySelectorAll('input[type="file"]')[0].files[0]);
             frm.append("Description", document.getElementById('Description').value);
+            frm.append("ExpireDate", document.getElementById('ExpireDate').value);
 
-
-            
             let Units = [];
             $.each($("#UnitsTbl >tr"), function (key, value) {
                 let IdF = $(value).children("td").children(".ID").val().trim();
                 let ID = IdF == '0' ? null : IdF,
                     UnitId = $(value).children("td").children(".UnitId").val().trim(),
-                    Rate = $(value).children("td").children(".Rate").val().trim(),
-                    Price = $(value).children("td").children(".Price").val().trim();
-                if (UnitId!=='0') 
-                {
-                    Units.push({ ID: ID, UnitId: UnitId, Rate: Rate, Price: Price });
+                    ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
+                    PurchasingPrice = $(value).children("td").children(".PurchasingPrice").val().trim();
+                SellingPrice = $(value).children("td").children(".SellingPrice").val().trim();
+                UnitBarcode = $(value).children("td").children(".UnitBarcode").val().trim();
+                if (UnitId !== '0') {
+                    Units.push({ ID: ID, UnitId: UnitId, ConversionFactor: ConversionFactor, PurchasingPrice: PurchasingPrice, SellingPrice: SellingPrice, UnitBarcodeText: UnitBarcode });
                 }
             })
             frm.append("ProductUnitsStr", JSON.stringify(Units));
@@ -195,7 +198,7 @@
                         showConfirmButton: false
                     }).then((result) => {
                         if (type === 'add') {
-                            resetForm();
+                            resetForm(stockId, groupId);
                         } else {
                             window.location.href = "/Guide/Product/Index";
                         }
@@ -266,22 +269,25 @@
         $.post('@Url.GetAction("GetAllUnits")', function (res) {
             let rowId = Math.floor(Math.random() * 500) + 1;
             $("#UnitsTbl").append(` <tr>
-                                             <td >
-                                                                <input class="form-control ID" type="hidden" value="0"/>
-                                                            <select id="rowId-${rowId}" class="Select sAddress form-select UnitId" aria-label="اختر الوحدة" required  name="UnitId"  id="ddlUnitId">
-                                                            <option selected value="0">اختر الوحدة</option>
-                                                    </select>
-                                                    </td>
-                                                        <td><input class="form-control Rate" type="number" value="${obj.Rate}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/></td>
-                                                            <td><input class="form-control Price" type="number" value="${obj.Price}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/></td>
-                                                <td>
-                                                    <div class="d-flex">
-                                                    <button type="button" class="btn btn-primary btn-icon addRow mx-2"><i class="fas fa-plus"></i></button>
-                                                    <button type="button" class="btn btn-danger btn-icon removeRow mx-1" data-id="${obj.id}"><i class="fas fa-minus"></i></button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        `);
+                                                         <td >
+                                                                            <input class="form-control ID" type="hidden" value="0"/>
+                                                                        <select id="rowId-${rowId}" class="Select sAddress form-select UnitId" aria-label="اختر الوحدة" required  name="UnitId"  id="ddlUnitId">
+                                                                        <option selected value="0">اختر الوحدة</option>
+                                                                </select>
+                                                                </td>
+                                                                            <td><input type="number" class="form-control ConversionFactor" value="${obj.ConversionFactor}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                            <td><input type="number" class="form-control PurchasingPrice" min="0" value="${obj.PurchasingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                                <td><input type="number" class="form-control SellingPrice" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                            <td><input type="text" class="form-control UnitBarcode" value="${obj.UnitBarcode}"/></td>
+
+                                                                        <td>
+                                                                <div class="d-flex">
+                                                                <button type="button" class="btn btn-primary btn-icon addRow mx-2"><i class="fas fa-plus"></i></button>
+                                                                <button type="button" class="btn btn-danger btn-icon removeRow mx-1" data-id="${obj.id}"><i class="fas fa-minus"></i></button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    `);
             let selectedUnits = [];
             $.each($("#UnitsTbl .UnitId"), function () {
                 selectedUnits.push($(this).val())
@@ -296,7 +302,7 @@
     }
 
     $("#UnitsTbl").on("click", ".addRow", function () {
-        UnitAddNew({ "id": "0", "Rate": "", "Price": "" })
+        UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" })
     })
 
     $("#UnitsTbl").on("click", ".removeRow", function () {
@@ -319,7 +325,7 @@
                     if ($("#UnitsTbl > tr").length > 1) { $(btn).parent().parent().parent().remove(); }
                     else {
                         $("#UnitsTbl").empty();
-                        UnitAddNew({ "id": "0", "Rate": "", "Price": "" })
+                        UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" })
                     }
                 }
             });
@@ -328,7 +334,7 @@
             if ($("#UnitsTbl > tr").length > 1) { $(btn).parent().parent().parent().remove(); }
             else {
                 $("#UnitsTbl").empty();
-                UnitAddNew({ "id": "0", "Rate": "", "Price": "" })
+                UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" })
             }
         }
     });

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP_System.DAL.Migrations
 {
     [DbContext(typeof(ERP_SystemDbContext))]
-    [Migration("20230607210750_insertData")]
-    partial class insertData
+    [Migration("20230610134212_initDb")]
+    partial class initDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -126,6 +126,65 @@ namespace ERP_System.DAL.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("Attachments", "Guide");
+                });
+
+            modelBuilder.Entity("ERP_System.Tables.Client", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AddedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("ProcessAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("ProcessType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("companyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AddedBy");
+
+                    b.HasIndex("DeletedBy");
+
+                    b.HasIndex("ModifiedBy");
+
+                    b.ToTable("Clients", "People");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.Invoice", b =>
@@ -389,7 +448,13 @@ namespace ERP_System.DAL.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("ExpireDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid?>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("IdUnitOfQty")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Image")
@@ -408,6 +473,9 @@ namespace ERP_System.DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameUnitOfQty")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("QtyInStock")
@@ -435,6 +503,9 @@ namespace ERP_System.DAL.Migrations
                     b.Property<Guid?>("AddedBy")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("ConversionFactor")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -456,14 +527,20 @@ namespace ERP_System.DAL.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Rate")
+                    b.Property<decimal?>("PurchasingPrice")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("SellingPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UnitBarcodePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UnitBarcodeText")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UnitId")
                         .HasColumnType("uniqueidentifier");
@@ -492,6 +569,18 @@ namespace ERP_System.DAL.Migrations
                     b.Property<Guid?>("AddedBy")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CompanyAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyPhone")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -500,6 +589,9 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -634,6 +726,65 @@ namespace ERP_System.DAL.Migrations
                     b.ToTable("StockProducts", "Guide");
                 });
 
+            modelBuilder.Entity("ERP_System.Tables.Supplier", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AddedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("ProcessAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("ProcessType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("companyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AddedBy");
+
+                    b.HasIndex("DeletedBy");
+
+                    b.HasIndex("ModifiedBy");
+
+                    b.ToTable("Suppliers", "People");
+                });
+
             modelBuilder.Entity("ERP_System.Tables.Unit", b =>
                 {
                     b.Property<Guid>("ID")
@@ -736,6 +887,9 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<string>("Salt")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ScreenId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("UseDefaultPassword")
                         .HasColumnType("bit");
@@ -902,6 +1056,9 @@ namespace ERP_System.DAL.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
                     b.HasIndex("AddedBy");
@@ -967,6 +1124,27 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("ModifiedUser");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ERP_System.Tables.Client", b =>
+                {
+                    b.HasOne("ERP_System.Tables.User", "CreatedUser")
+                        .WithMany("ClientCreated")
+                        .HasForeignKey("AddedBy");
+
+                    b.HasOne("ERP_System.Tables.User", "DeletedUser")
+                        .WithMany("ClientDeleted")
+                        .HasForeignKey("DeletedBy");
+
+                    b.HasOne("ERP_System.Tables.User", "ModifiedUser")
+                        .WithMany("ClientModified")
+                        .HasForeignKey("ModifiedBy");
+
+                    b.Navigation("CreatedUser");
+
+                    b.Navigation("DeletedUser");
+
+                    b.Navigation("ModifiedUser");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.Invoice", b =>
@@ -1200,6 +1378,27 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("Stock");
                 });
 
+            modelBuilder.Entity("ERP_System.Tables.Supplier", b =>
+                {
+                    b.HasOne("ERP_System.Tables.User", "CreatedUser")
+                        .WithMany("SupplierCreated")
+                        .HasForeignKey("AddedBy");
+
+                    b.HasOne("ERP_System.Tables.User", "DeletedUser")
+                        .WithMany("SupplierDeleted")
+                        .HasForeignKey("DeletedBy");
+
+                    b.HasOne("ERP_System.Tables.User", "ModifiedUser")
+                        .WithMany("SupplierModified")
+                        .HasForeignKey("ModifiedBy");
+
+                    b.Navigation("CreatedUser");
+
+                    b.Navigation("DeletedUser");
+
+                    b.Navigation("ModifiedUser");
+                });
+
             modelBuilder.Entity("ERP_System.Tables.Unit", b =>
                 {
                     b.HasOne("ERP_System.Tables.User", "CreatedUser")
@@ -1394,6 +1593,12 @@ namespace ERP_System.DAL.Migrations
 
                     b.Navigation("AttatchModified");
 
+                    b.Navigation("ClientCreated");
+
+                    b.Navigation("ClientDeleted");
+
+                    b.Navigation("ClientModified");
+
                     b.Navigation("InvoiceCreated");
 
                     b.Navigation("InvoiceDeleted");
@@ -1447,6 +1652,12 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("StockProductDeleted");
 
                     b.Navigation("StockProductModified");
+
+                    b.Navigation("SupplierCreated");
+
+                    b.Navigation("SupplierDeleted");
+
+                    b.Navigation("SupplierModified");
 
                     b.Navigation("UnitCreated");
 

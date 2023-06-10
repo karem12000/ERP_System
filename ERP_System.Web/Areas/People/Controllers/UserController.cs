@@ -17,14 +17,16 @@ namespace ERP_System.Web.Areas.People.Controllers
         #region Fields
 
         private readonly UserBll _userBll;
+        private readonly PageBll _pageBll;
         private readonly UserTypeBll _userTypeBll;  
         private readonly StockBll _stockBll;  
 
-        public UserController(UserBll userBll, UserTypeBll userTypeBll, StockBll stockBll)
+        public UserController(UserBll userBll, PageBll pageBll, UserTypeBll userTypeBll, StockBll stockBll)
         {
             _userBll = userBll;
             _userTypeBll = userTypeBll;
             _stockBll = stockBll;
+            _pageBll    = pageBll;
         }
         #endregion
 
@@ -40,6 +42,7 @@ namespace ERP_System.Web.Areas.People.Controllers
         {
             ViewData["UserTypes"] = _userTypeBll.GetSelect();
             ViewData["Stocks"] = _stockBll.GetSelect();
+            ViewData["Pages"] = _pageBll.GetSelect();
             return View();
         }
 
@@ -47,11 +50,10 @@ namespace ERP_System.Web.Areas.People.Controllers
         {
             ViewData["UserTypes"] = _userTypeBll.GetSelect();
             ViewData["Stocks"] = _stockBll.GetSelect();
-
+            ViewData["Pages"] = _pageBll.GetSelect();
             var item = _userBll.GetById(id);
             if (item != null)
             {
-
                 return View(item);
             }
             else
@@ -76,7 +78,7 @@ namespace ERP_System.Web.Areas.People.Controllers
 
         #endregion
         #region LoadData
-        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_userBll.LoadData(mdl,null));
+        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_userBll.LoadData(mdl));
 
         #endregion
     }

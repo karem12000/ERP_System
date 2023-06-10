@@ -12,6 +12,11 @@ namespace ERP_System.DTO.Guide
         [Required]
         public string SiteName { get; set; }
         public IFormFile Logo { get; set; }
-        public bool IsActive { get; set; }
+        public IFormFile CompanyImage { get; set; }
+        public string CompanyName { get; set; }
+        public string CompanyPhone { get; set; }
+        public string CompanyAddress { get; set; }
+        public string Description { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

@@ -10,7 +10,7 @@ namespace ERP_System.Common.General
 
     public enum ActionEnum
     {
-        Add = 1, Edit, Delete, Show
+        Add = 1, Edit, Delete, Show, Throwback
     }
     /// <summary>
     /// نوع الفاتورة (بيع و شراء و مرتجع)
@@ -27,11 +27,17 @@ namespace ERP_System.Common.General
 
     public enum UserClassification
     {
-        Client , Suppliers ,Admin, User
+       SuperAdmin=1 , Admin=2, User=3, Cashier=4, Client=5 , Suppliers=6 
     }
-    public enum UnitType
+    public enum ProcessType
     {
-        BasicUnit=0, SubUnit
+        /// <summary>
+        /// مدين
+        /// </summary>
+        Debtor = 1 
+            ///دائن
+        , Creditor = 2
     }
+
 
 }

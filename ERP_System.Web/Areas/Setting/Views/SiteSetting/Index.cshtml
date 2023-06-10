@@ -15,19 +15,50 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit()">
                             <div class="form-body">
                                 <div class="row">
-                                    <div class="col-8">
+                                    <div class="col-6">
                                         <div class="form-group">
-                                            <input type="text" hidden value="@Model.ID=" name="id" id="id"/>
+                                            <input type="text" hidden value="@Model.ID=" name="id" id="id" />
+                                            <label for="CompanyName">اسم الشركة</label>
+                                            <input type="text" id="CompanyName" value="@Model.CompanyName" name="CompanyName" class="form-control" placeholder="اسم الشركة">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="CompanyPhone">تليفون الشركة</label>
+                                            <input type="text" id="CompanyPhone" value="@Model.CompanyPhone" name="CompanyPhone" class="form-control" placeholder="تليفون الشركة">
+                                        </div>
+                                    </div>   
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="CompanyAddress">عنوان الشركة</label>
+                                            <input type="text" id="CompanyAddress" value="@Model.CompanyAddress" name="CompanyAddress" class="form-control" placeholder="عنوان الشركة">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="CompanyImage">لوجو الشركة للطباعة</label>
+                                            <input type="file" onchange="Cfile_changed()" id="CompanyImage" name="CompanyImage" accept=".jpg, .jpeg, .png" class="form-control" placeholder="صورة الشركة للطباعة">
+                                            <img style="width: 200px;height: 200px;margin-top: 15px;display: none;" id="cImg">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="Description">وصف للطباعة</label>
+                                            <textarea id="Description" name="Description" class="form-control">@Model.Description</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
                                             <label for="Name">اسم الموقع</label>
                                             <input type="text" id="SiteName" value="@Model.SiteName" name="SiteName"  class="form-control" placeholder="اسم الموقع">
                                         </div>
                                     </div>
                                     
-                                    <div class="col-8">
+                                    <div class="col-6">
                                         <div class="form-group">
-                                            <label for="Name">اللوجو</label>
-                                            <input type="file" onchange="file_changed()" id="Logo" name="Logo" accept=".jpg, .jpeg, .png" class="form-control" placeholder="لوجو الموقع">
-                                            <img style="width: 200px;height: 200px;margin-top: 15px;display: none;" id="img">
+                                            <label for="Name">لوجو الموقع</label>
+                                            <input type="file" onchange="Sfile_changed()" id="Logo" name="Logo" accept=".jpg, .jpeg, .png" class="form-control" placeholder="لوجو الموقع">
+                                            <img style="width: 200px;height: 200px;margin-top: 15px;display: none;" id="sImg">
                                         </div>
                                     </div>
                                     <div class="col-sm-12 d-flex justify-content-between">

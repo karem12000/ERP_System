@@ -17,14 +17,12 @@ namespace ERP_System.Web.Areas.People.Controllers
     {
         #region Fields
 
-        private readonly UserBll _userBll;
-        private readonly StockBll _stockBll;
+        private readonly SupplierBll _SupplierBll;
 
 
-        public SupplierController(UserBll userBll, StockBll stockBll)
+        public SupplierController(SupplierBll SupplierBll)
         {
-            _userBll = userBll;
-            _stockBll = stockBll;
+            _SupplierBll = SupplierBll;
         }
         #endregion
 
@@ -37,14 +35,12 @@ namespace ERP_System.Web.Areas.People.Controllers
 
         public IActionResult Add()
         {
-            ViewData["Stocks"] = _stockBll.GetSelect();
             return View();
         }
 
         public IActionResult Edit(Guid id)
         {
-            ViewData["Stocks"] = _stockBll.GetSelect();
-            var item = _userBll.GetById(id);
+            var item = _SupplierBll.GetById(id);
             if (item != null)
             {
 
@@ -54,22 +50,19 @@ namespace ERP_System.Web.Areas.People.Controllers
                 return Redirect("/People/Supplier/Index");
         }
 
-        public IActionResult Save(UserDTO mdl)
+        public IActionResult Save(SupplierDTO mdl)
         {
-            mdl.UserClassification = UserClassification.Suppliers;
-            mdl.UserTypeId = Guid.Parse(AppConstants.SupplierTypeId);
-           return Ok(_userBll.Save(mdl));
+           return Ok(_SupplierBll.Save(mdl));
         }
 
         [HttpPost]
-        public IActionResult Delete(Guid id) => Ok(_userBll.Delete(id));
-        [HttpPost]
-        public IActionResult ChangeStatus(Guid id) => Ok(_userBll.ChangeStatus(id));
+        public IActionResult Delete(Guid id) => Ok(_SupplierBll.Delete(id));
+       
 
        
         #endregion
         #region LoadData
-        public IActionResult LoadDataTable(DataTableRequest mdl , UserClassification? classification=UserClassification.Suppliers) => JsonDataTable(_userBll.LoadData(mdl , classification));
+        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_SupplierBll.LoadData(mdl));
 
         #endregion
     }

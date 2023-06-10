@@ -11,55 +11,49 @@
                 </div>
                 <div class="card-content">
                     <div class="card-body">
-                        <form class="form form-horizontal" id="frm" onsubmit="Submit()">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit('type')">
                             <div class="form-body">
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="Name">الاسم<span style="color:red;"> * </span></label>
+                                            <label for="Name">اسم المورد<span style="color:red;"> * </span></label>
                                             <input hidden name="id" id="id" value="" class="d-none" />
                                             <input type="text" required id="Name" name="Name" class="form-control" placeholder="الاسم">
                                         </div>
                                     </div>
-                                    
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="UserName">اسم المستخدم<span style="color:red;"> * </span></label>
-                                            <input type="text" value="" id="UserName" name="UserName" class="form-control" placeholder="اسم المستخدم">
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="Email">الايميل<span style="color:red;"> * </span></label>
-                                            <input type="text" required id="Email" name="Email" class="form-control" placeholder="الايميل">
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="Password">الباسوورد</label>
-                                            <input type="password" value="" id="Password" name="Password" class="form-control" placeholder="الباسوورد">
+                                            <label for="companyName">اسم الشركة</label>
+                                            <input type="text" id="companyName" name="companyName" class="form-control" placeholder="اسم الشركة">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="Phone">التليفون</label>
-                                            <input type="text" required id="Phone" name="Phone" class="form-control" placeholder="التليفون">
+                                            <input type="text" id="Phone" name="Phone" class="form-control" placeholder="التليفون">
                                         </div>
                                     </div>
+
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="Address">العنوان</label>
-                                            <input type="text" required id="Address" name="Address" class="form-control" placeholder="العنوان">
+                                            <input type="text" id="Address" name="Address" class="form-control" placeholder="العنوان">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="ProcessType">نوع المعاملة</label>
+                                        <select onchange="ProcessTypeChanged()" class="Select sAddress form-select" aria-label="اختر نوع المعاملة" name="ProcessType" id="ddlProcessType">
+                                            <option selected value="0">اختر نوع المعاملة</option>
+                                            <option value="1">مدين</option>
+                                            <option value="2">دائن</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6 " id="processAmoutDev">
                                         <div class="form-group">
-                                            <label for="StockIds">المخازن</label>
-                                            <select class="js-example-rtl Select sAddress form-select"
-                                                aria-label="اختر المخازن"
-                                                asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"], "Value", "Text")'
-                                                name="StockIds" id="StockIds" multiple="multiple">
-                                            </select>
+                                            <label for="ProcessAmount">قيمة المعاملة</label>
+                                            <input type="text" id="ProcessAmount" name="ProcessAmount" class="form-control" placeholder="قيمة المعاملة">
                                         </div>
                                     </div>
                                     <div class="col-12 d-flex">
@@ -71,14 +65,14 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-12 d-flex justify-content-between mt-5">
-                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('type')">
                                             حفظ
                                         </button>
 
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
                                             <div class="d-flex align-items-center justify-content-end ps-2">
-                                                <a class="btn btn-outline-primary" href="/People/Supplier/Index">
+                                                <a class="btn btn-outline-primary" href=`@Url.GetAction("Index")`>
                                                     رجوع للقائمة
                                                     <span class="fa-arrow-left fas"></span>
                                                 </a>
@@ -97,4 +91,9 @@
 @section Scripts
     {
     <partial name="_Scripts" />
+    <script>
+        $(document).ready(function () {
+            $('#processAmoutDev').hide();
+        })
+    </script>
     }

@@ -45,7 +45,7 @@ namespace ERP_System.BLL.Guide
 
         public IQueryable<SelectListDTO> GetStocksSelectByUserId(Guid? userId)
         {
-            var data = _repoStock.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted && x.UserStocks.Any(x=>x.UserId==userId)).Select(p => new SelectListDTO()
+            var data = _repoStock.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted && x.UserStocks.Any(x => x.UserId == userId)).Select(p => new SelectListDTO()
             {
                 Value = p.ID,
                 Text = p.Name
@@ -70,7 +70,7 @@ namespace ERP_System.BLL.Guide
             return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
         }
 
-       
+
         #endregion
         #region Save 
         public ResultViewModel Save(StockDto stockDto)
@@ -118,15 +118,32 @@ namespace ERP_System.BLL.Guide
                 }
                 if (_repoStock.Insert(tbl))
                 {
-
-                    var oneStock = new UserStock
+                    var userStock = new List<UserStock>()
                     {
-                        UserId = Guid.Parse("80968C16-15D8-4533-B771-5285299EDCB6"),
-                        StockId = tbl.ID,
-                        AddedBy = _repoStock.UserId
+                        new UserStock
+                        {
+                            UserId = Guid.Parse(AppConstants.SuperAdminTypeId),
+                            StockId = tbl.ID,
+                            AddedBy = _repoStock.UserId
+                        },
+                        new UserStock
+                        {
+                            UserId = Guid.Parse(AppConstants.SubAdminTypeId),
+                            StockId = tbl.ID,
+                            AddedBy = _repoStock.UserId
+                        }
+
                     };
-                    _repoUserStock.Insert(oneStock);
-                         
+                    _repoUserStock.InsertRange(userStock);
+
+                    //var oneStock = new UserStock
+                    //{
+                    //    UserId = Guid.Parse(AppConstants.SuperAdminTypeId),
+                    //    StockId = tbl.ID,
+                    //    AddedBy = _repoStock.UserId
+                    //};
+                    //_repoUserStock.Insert(oneStock);
+
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
 

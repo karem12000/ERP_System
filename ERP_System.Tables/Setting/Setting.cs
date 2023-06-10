@@ -9,6 +9,11 @@ namespace ERP_System.Tables
     public class Setting : BaseEntity
     {
         public string Logo { get; set; }
+        public string CompanyImage { get; set; }
         public string SiteName { get; set; }
+        public string CompanyName { get; set; }
+        public string CompanyPhone { get; set; }
+        public string CompanyAddress { get; set; }
+        public string Description { get; set; }
     }
 }

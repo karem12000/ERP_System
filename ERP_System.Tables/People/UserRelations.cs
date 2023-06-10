@@ -16,6 +16,18 @@ namespace ERP_System.Tables
         public ICollection<UserPermission> UserPermissionModified { get; set; }
         public ICollection<UserPermission> UserPermissionDeleted { get; set; }
 
+
+
+        public ICollection<Supplier> SupplierCreated { get; set; }
+        public ICollection<Supplier> SupplierModified { get; set; }
+        public ICollection<Supplier> SupplierDeleted { get; set; }
+        
+        public ICollection<Client> ClientCreated { get; set; }
+        public ICollection<Client> ClientModified { get; set; }
+        public ICollection<Client> ClientDeleted { get; set; }
+
+
+
         #region Pages
         //public ICollection<Area> AreaCreated { get; set; }
         //public ICollection<Area> AreaModified { get; set; }

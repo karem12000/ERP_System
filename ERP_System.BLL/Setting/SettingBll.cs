@@ -49,7 +49,12 @@ namespace ERP_System.BLL.Guide
             {
                 var tbl = data;
                 tbl.SiteName = settingDto.SiteName;
+                tbl.CompanyName = settingDto.CompanyName;
+                tbl.CompanyPhone = settingDto.CompanyPhone;
+                tbl.CompanyAddress = settingDto.CompanyAddress;
+                tbl.Description = settingDto.Description.Trim();
                 var oldLogo = _webHostEnvironment.WebRootPath +data.Logo;
+                var oldCompanyImage = _webHostEnvironment.WebRootPath +data.CompanyImage;
                 tbl.AddedBy = data.AddedBy;
                 tbl.ModifiedDate = AppDateTime.Now;
                 if (_repoSetting.UserId != Guid.Empty)
@@ -62,11 +67,21 @@ namespace ERP_System.BLL.Guide
                    tbl.Logo = _helperBll.UploadFile(settingDto.Logo ,"/SiteImages/");
                 }
 
+                if (settingDto.CompanyImage != null && settingDto.CompanyImage.Length > 0)
+                {
+                    tbl.CompanyImage = _helperBll.UploadFile(settingDto.CompanyImage, "/SiteImages/");
+                }
+
                 if (_repoSetting.Update(tbl))
                 {
                     if (data.Logo != null && settingDto.Logo !=null)
                     {
                         File.Delete(oldLogo);
+                    }
+
+                    if (data.CompanyImage != null && settingDto.CompanyImage != null)
+                    {
+                        File.Delete(oldCompanyImage);
                     }
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
@@ -78,6 +93,7 @@ namespace ERP_System.BLL.Guide
             {
                
                 var tbl = _mapper.Map<Setting>(settingDto);
+                tbl.Description = tbl.Description.Trim();
                 tbl.IsActive = true;
                 tbl.IsDeleted = false;
                 if (_repoSetting.UserId != Guid.Empty)
@@ -87,6 +103,10 @@ namespace ERP_System.BLL.Guide
                 if (settingDto.Logo != null && settingDto.Logo.Length>0)
                 {
                     tbl.Logo = _helperBll.UploadFile(settingDto.Logo, "/SiteImages/");
+                }
+                if (settingDto.CompanyImage != null && settingDto.CompanyImage.Length > 0)
+                {
+                    tbl.CompanyImage = _helperBll.UploadFile(settingDto.CompanyImage, "/SiteImages/");
                 }
 
                 if (_repoSetting.Insert(tbl))

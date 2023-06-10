@@ -23,6 +23,7 @@ namespace ERP_System.BLL.Guide
         private const string _spStock = "[Guide].[spStocks]";
 
         private readonly IRepository<Product> _repoProduct;
+        private readonly IRepository<Unit> _repoUnit;
         private readonly IRepository<Attachment> _repoAttatchment;
         private readonly IRepository<StockProduct> _stockProduct;
         private readonly IRepository<ProductUnit> _productUnit;
@@ -30,7 +31,7 @@ namespace ERP_System.BLL.Guide
         private readonly HelperBll _helperBll;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductBll(IRepository<Attachment> repoAttatchment, IRepository<ProductUnit> productUnit, IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll, IRepository<StockProduct> stockProduct)
+        public ProductBll(IRepository<Attachment> repoAttatchment, IRepository<Unit> repoUnit, IRepository<ProductUnit> productUnit, IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll, IRepository<StockProduct> stockProduct)
         {
             _repoProduct = repoProduct;
             _mapper = mapper;
@@ -39,6 +40,7 @@ namespace ERP_System.BLL.Guide
             _webHostEnvironment = webHostEnvironment;
             _stockProduct = stockProduct;
             _productUnit= productUnit;
+            _repoUnit= repoUnit;
         }
 
         #region Get
@@ -59,11 +61,16 @@ namespace ERP_System.BLL.Guide
                 IsActive = x.IsActive,
                 ImagePath = x.Image,
                 Description = x.Description,
-                GetProductUnits = x.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).OrderBy(c=>c.Rate).Select(c=> new ProductUnitsDTO
+                IdUnitOfQty = x.IdUnitOfQty,
+                ExpireDateStr = x.ExpireDate==null? null: x.ExpireDate.Value.Date.ToString(),
+                GetProductUnits = x.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).OrderBy(c=>c.ConversionFactor).Select(c=> new ProductUnitsDTO
                 {
                     ID= c.ID, 
-                    Price= c.Price,
-                    Rate= c.Rate,
+                    ConversionFactor= c.ConversionFactor,
+                    PurchasingPrice= c.PurchasingPrice,
+                    SellingPrice= c.SellingPrice,
+                    UnitBarcodePath=string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
+                    UnitBarcodeText= c.UnitBarcodeText,
                     UnitId = c.UnitId
                 }).ToArray()
             }).FirstOrDefault();
@@ -88,8 +95,11 @@ namespace ERP_System.BLL.Guide
                 GetProductUnits = x.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
                 {
                     ID = c.ID,
-                    Price = c.Price,
-                    Rate = c.Rate,
+                    ConversionFactor = c.ConversionFactor,
+                    PurchasingPrice = c.PurchasingPrice,
+                    SellingPrice = c.SellingPrice,
+                    UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
+                    UnitBarcodeText = c.UnitBarcodeText,
                     UnitId = c.UnitId
                 }).ToArray()
             }).FirstOrDefault();
@@ -127,8 +137,11 @@ namespace ERP_System.BLL.Guide
                     GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
                     {
                         ID = c.ID,
-                        Price = c.Price,
-                        Rate = c.Rate,
+                        ConversionFactor = c.ConversionFactor,
+                        PurchasingPrice = c.PurchasingPrice,
+                        SellingPrice = c.SellingPrice,
+                        UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
+                        UnitBarcodeText = c.UnitBarcodeText,
                         UnitId = c.UnitId
                     }).ToArray()
                 }).FirstOrDefault();
@@ -174,8 +187,11 @@ namespace ERP_System.BLL.Guide
                     GetProductUnits = x.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
                     {
                         ID = c.ID,
-                        Price = c.Price,
-                        Rate = c.Rate,
+                        ConversionFactor = c.ConversionFactor,
+                        PurchasingPrice = c.PurchasingPrice,
+                        SellingPrice = c.SellingPrice,
+                        UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
+                        UnitBarcodeText = c.UnitBarcodeText,
                         UnitId = c.UnitId
                     }).ToArray()
 
@@ -199,8 +215,11 @@ namespace ERP_System.BLL.Guide
                     GetProductUnits = x.ProductUnits.Where(c=>c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
                     {
                         ID = c.ID,
-                        Price = c.Price,
-                        Rate = c.Rate,
+                        ConversionFactor = c.ConversionFactor,
+                        PurchasingPrice = c.PurchasingPrice,
+                        SellingPrice = c.SellingPrice,
+                        UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
+                        UnitBarcodeText = c.UnitBarcodeText,
                         UnitId = c.UnitId
                     }).ToArray()
 
@@ -222,6 +241,7 @@ namespace ERP_System.BLL.Guide
         {
             ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
             var BarCodeFoldeName = "\\ProductsBarCode\\";
+            var UnitBarCodeFoldeName = "\\ProductsBarCode\\UnitsBarCode\\";
             var ImagesFoldeName = "\\Images\\Products\\";
 
             var data = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == productDto.ID).FirstOrDefault();
@@ -247,7 +267,14 @@ namespace ERP_System.BLL.Guide
                 }
 
                 var tbl = _mapper.Map<Product>(productDto);
-               
+                if (data.IdUnitOfQty != productDto.IdUnitOfQty)
+                {
+                    if (productDto.IdUnitOfQty != null && productDto.IdUnitOfQty != Guid.Empty)
+                    {
+                        tbl.NameUnitOfQty = _repoUnit.GetById(productDto.IdUnitOfQty).Name;
+                    }
+                }
+
                 if (string.IsNullOrEmpty(productDto.BarCodeText))
                 {
                     tbl.BarCodePath = data.BarCodePath;
@@ -284,11 +311,14 @@ namespace ERP_System.BLL.Guide
                         {
                             var newR = new ProductUnit
                             {
-                                Price = unit.Price,
-                                Rate = unit.Rate,
-                                UnitId = unit.UnitId,
-                                ProductId = tbl.ID
+                                ProductId = tbl.ID,
+                                ConversionFactor = unit.ConversionFactor,
+                                PurchasingPrice = unit.PurchasingPrice,
+                                SellingPrice = unit.SellingPrice,
+                                UnitBarcodeText = unit.UnitBarcodeText,
+                                UnitId = unit.UnitId
                             };
+                            newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
                             NewRecords.Add(newR);
                         }
                         _productUnit.InsertRange(NewRecords);
@@ -320,7 +350,10 @@ namespace ERP_System.BLL.Guide
                 }
 
                 var tbl = _mapper.Map<Product>(productDto);
-                
+                if (productDto.IdUnitOfQty != null && productDto.IdUnitOfQty != Guid.Empty)
+                {
+                    tbl.NameUnitOfQty = _repoUnit.GetById(productDto.IdUnitOfQty).Name;
+                }
                 if (!string.IsNullOrEmpty(productDto.BarCodeText))
                 {
                     tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
@@ -345,11 +378,14 @@ namespace ERP_System.BLL.Guide
                         {
                             var newR = new ProductUnit
                             {
-                                Price = unit.Price,
-                                Rate = unit.Rate,
-                                UnitId = unit.UnitId,
-                                ProductId = tbl.ID
+                                ProductId = tbl.ID,
+                                ConversionFactor = unit.ConversionFactor,
+                                PurchasingPrice = unit.PurchasingPrice,
+                                SellingPrice = unit.SellingPrice,
+                                UnitBarcodeText = unit.UnitBarcodeText,
+                                UnitId = unit.UnitId
                             };
+                            newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
                             NewRecords.Add(newR);
                         }
                         _productUnit.InsertRange(NewRecords);

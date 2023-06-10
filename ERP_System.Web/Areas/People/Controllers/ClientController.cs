@@ -17,18 +17,17 @@ namespace ERP_System.Web.Areas.People.Controllers
     {
         #region Fields
 
-        private readonly UserBll _userBll;
-        private readonly StockBll _stockBll;
+        private readonly ClientBll _ClientBll;
 
-        public ClientController(UserBll userBll , StockBll stockBll)
+
+        public ClientController(ClientBll ClientBll)
         {
-            _userBll = userBll;
-            _stockBll = stockBll;
+            _ClientBll = ClientBll;
         }
         #endregion
 
         #region Actions
-       
+
         public IActionResult Index()
         {
             return View();
@@ -36,15 +35,12 @@ namespace ERP_System.Web.Areas.People.Controllers
 
         public IActionResult Add()
         {
-            //var userId = _httpContextAccessor.UserId();
-            ViewData["Stocks"] = _stockBll.GetSelect();
             return View();
         }
 
         public IActionResult Edit(Guid id)
         {
-            ViewData["Stocks"] = _stockBll.GetSelect();
-            var item = _userBll.GetById(id);
+            var item = _ClientBll.GetById(id);
             if (item != null)
             {
 
@@ -54,22 +50,19 @@ namespace ERP_System.Web.Areas.People.Controllers
                 return Redirect("/People/Client/Index");
         }
 
-        public IActionResult Save(UserDTO mdl)
+        public IActionResult Save(ClientDTO mdl)
         {
-            mdl.UserClassification = UserClassification.Client;
-            mdl.UserTypeId = Guid.Parse(AppConstants.ClientTypeId);
-           return Ok(_userBll.Save(mdl));
+            return Ok(_ClientBll.Save(mdl));
         }
 
         [HttpPost]
-        public IActionResult Delete(Guid id) => Ok(_userBll.Delete(id));
-        [HttpPost]
-        public IActionResult ChangeStatus(Guid id) => Ok(_userBll.ChangeStatus(id));
+        public IActionResult Delete(Guid id) => Ok(_ClientBll.Delete(id));
 
-       
+
+
         #endregion
         #region LoadData
-        public IActionResult LoadDataTable(DataTableRequest mdl , UserClassification? classification=UserClassification.Client) => JsonDataTable(_userBll.LoadData(mdl , classification));
+        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_ClientBll.LoadData(mdl));
 
         #endregion
     }

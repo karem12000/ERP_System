@@ -17,12 +17,12 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit('edit')">
                             <div class="form-body">
                                 <div class="row">
-                                        <div class="form-group col-6">
-                                            <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span> </label>
-                                            <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text" , Model.StockId)' name="StockId" id="ddlStockId">
-                                                <option selected value="0">اختر المخزن</option>
-                                            </select>
-                                        </div>
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span> </label>
+                                        <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text" , Model.StockId)' name="StockId" id="ddlStockId">
+                                            <option selected value="0">اختر المخزن</option>
+                                        </select>
+                                    </div>
 
                                     <div class="form-group col-6 d-flex align-items-end">
                                         @if (CurrentFormByControllerName("Stock").CurrentFormPermissionActions.AddHasPermission)
@@ -33,12 +33,12 @@
                                     </div>
 
 
-                                        <div class="form-group col-6">
-                                            <label class="lable" for="GroupId">  المجموعة<span style="color:red;"> * </span> </label>
-                                            <select class="Select sAddress form-select" aria-label="اختر المجموعة" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Groups"] , "Value", "Text" , Model.GroupId)' name="GroupId" id="ddlGroupId">
-                                                <option selected value="0">اختر المجموعة</option>
-                                            </select>
-                                        </div>
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="GroupId">  المجموعة<span style="color:red;"> * </span> </label>
+                                        <select class="Select sAddress form-select" aria-label="اختر المجموعة" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Groups"] , "Value", "Text" , Model.GroupId)' name="GroupId" id="ddlGroupId">
+                                            <option selected value="0">اختر المجموعة</option>
+                                        </select>
+                                    </div>
 
                                     <div class="form-group col-6 d-flex align-items-end">
                                         @if (CurrentFormByControllerName("ItemGrpoup").CurrentFormPermissionActions.AddHasPermission)
@@ -49,22 +49,34 @@
                                     </div>
 
 
-                                        <div class="form-group col-6">
-                                            <label for="BarCode">باركود الصنف<span style="color:red;"> * </span></label>
-                                            <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
-                                            <input type="text" required value="@Model.BarCodeText" id="BarCodeText" name="BarCodeText" class="form-control" placeholder="باركود الصنف">
-                                        </div>
+                                    <div class="form-group col-6">
+                                        <label for="BarCode">باركود الصنف<span style="color:red;"> * </span></label>
+                                        <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
+                                        <input type="text" required value="@Model.BarCodeText" id="BarCodeText" name="BarCodeText" class="form-control" placeholder="باركود الصنف">
+                                    </div>
 
-                                        <div class="form-group col-6">
-                                            <label for="Name">اسم الصنف<span style="color:red;"> * </span></label>
-                                            <input type="text" required value="@Model.Name" id="Name" name="Name" class="form-control" placeholder="اسم الصنف">
-                                        </div>
+                                    <div class="form-group col-6">
+                                        <label for="Name">اسم الصنف<span style="color:red;"> * </span></label>
+                                        <input type="text" required value="@Model.Name" id="Name" name="Name" class="form-control" placeholder="اسم الصنف">
+                                    </div>
 
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="IdUnitOfQty">وحدة الكمية</label>
+                                        <select class="Select sAddress form-select" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text",Model.IdUnitOfQty)' name="IdUnitOfQty" id="ddlIdUnitOfQty">
+                                            <option selected value="0">اختر الوحدة</option>
+                                        </select>
+                                    </div>
 
-                                        <div class="form-group col-6">
-                                            <label for="Quantity">الكمية</label>
-                                            <input type="number" id="QtyInStock" value="@Model.QtyInStock" name="QtyInStock" class="form-control" placeholder="الكمية بالمخزن" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
-                                        </div>
+                                    <div class="form-group col-6">
+                                        <label for="Quantity">الكمية</label>
+                                        <input type="number" id="QtyInStock" value="@Model.QtyInStock" name="QtyInStock" class="form-control" placeholder="الكمية بالمخزن" min="0" step="0.1" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label for="ExpireDate">تاريخ إنتهاء الصلاحية</label>
+                                        <input hidden id="ExpireDateStr" value="@Model.ExpireDateStr" class="d-none" />
+                                        <input type="date" class="form-control"  name="ExpireDate" id="ExpireDate">
+                                    </div>
 
                                     <div class="col-6">
                                         <div class="form-group">
@@ -80,8 +92,10 @@
                                                 <thead>
                                                     <tr>
                                                         <th>الوحدة</th>
-                                                        <th>القيمة</th>
-                                                        <th>السعر</th>
+                                                        <th>معامل التحويل</th>
+                                                        <th>سعر الشراء</th>
+                                                        <th>سعر البيع</th>
+                                                        <th>الباركود</th>
                                                         <th>التحكم</th>
                                                     </tr>
                                                 </thead>
@@ -99,12 +113,15 @@
                                                                             <option selected value="0">اختر الوحدة</option>
                                                                         </select>
                                                                     </td>
-                                                                    <td><input class="form-control Rate" value="@unit.Rate" type="number" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                    <td><input class="form-control Price" value="@unit.Price" type="number" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" class="form-control ConversionFactor" value="@unit.ConversionFactor" min="0" step="0.1" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" class="form-control PurchasingPrice " value="@unit.PurchasingPrice" min="0" step="0.1" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" class="form-control SellingPrice" value="@unit.SellingPrice" min="0" step="0.1" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="text" value="@unit.UnitBarcodeText" class="form-control UnitBarcode"/></td>
                                                                     <td>
                                                                         <div class="d-flex">
                                                                             <button type="button" class="btn btn-primary btn-icon addRow mx-2"><i class="fas fa-plus"></i></button>
                                                                             <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                                            <a target="_blank" class="btn btn-outline-secondary mx-1" href="@unit.UnitBarcodePath"><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
                                                                         </div>
                                                                     </td>
 
@@ -121,8 +138,10 @@
                                                                         <option selected value="0">اختر الوحدة</option>
                                                                     </select>
                                                                 </td>
-                                                                <td><input class="form-control Rate" type="number" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td><input class="form-control Price" type="number" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                <td><input type="number" class="form-control ConversionFactor"  min="0" step="0.1" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                <td><input type="number" class="form-control PurchasingPrice "  min="0" step="0.1" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                <td><input type="number" class="form-control SellingPrice"  min="0" step="0.1" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                <td><input type="text"  class="form-control UnitBarcode" /></td>
                                                                 <td>
                                                                     <div class="d-flex">
                                                                         <button type="button" class="btn btn-primary btn-icon addRow mx-2"><i class="fas fa-plus"></i></button>
@@ -183,6 +202,13 @@
     <partial name="_Scripts" />
     <script>
         $(document).ready(function () {
+
+            var expireDate = $('#ExpireDateStr').val();
+            if(expireDate){
+                $('#ExpireDate').val(expireDate).trigger('change');
+            }
+
+
             //if($("#UnitsTbl .UnitIdSelect").length){
             //     $.each($("#UnitsTbl .UnitIdSelect"),function(){
             //         $(this).siblings(".UnitId").val($(this).val())

@@ -219,7 +219,6 @@ namespace ERP_System.DAL
         /// <param name="commandType">Query or StoredProcedure default is StoredProcedure</param>
         /// <returns></returns>
         public List<U> ExecuteStoredProcedure<U>(string query, SqlParameter[] parameters = null, CommandType commandType = CommandType.StoredProcedure)
-
         {
             /// in _db.Database.GetDbConnection().ConnectionString if the password didn't get inside connection string
             /// please make sure you add => "Persist Security Info=true;" inside your connection string in appsetting.json

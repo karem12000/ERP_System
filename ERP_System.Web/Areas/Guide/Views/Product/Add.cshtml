@@ -55,10 +55,21 @@
                                         <input type="text" required id="Name" name="Name" class="form-control" placeholder="اسم الصنف">
                                     </div>
 
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="IdUnitOfQty">وحدة الكمية</label>
+                                        <select class="Select sAddress form-select" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text")' name="IdUnitOfQty" id="ddlIdUnitOfQty">
+                                            <option selected value="0">اختر الوحدة</option>
+                                        </select>
+                                    </div>
 
                                     <div class="form-group col-6">
                                         <label for="Quantity">الكمية</label>
                                         <input type="number" id="QtyInStock" name="QtyInStock" class="form-control" placeholder="الكمية بالمخزن" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label for="ExpireDate">تاريخ إنتهاء الصلاحية</label>
+                                        <input type="date" class="form-control" name="ExpireDate" id="ExpireDate">
                                     </div>
 
                                     <div class="form-group col-6">
@@ -73,8 +84,10 @@
                                                 <thead>
                                                     <tr>
                                                         <th>الوحدة</th>
-                                                        <th>القيمة</th>
-                                                        <th>السعر</th>
+                                                        <th>معامل التحويل</th>
+                                                        <th>سعر الشراء</th>
+                                                        <th>سعر البيع</th>
+                                                        <th>الباركود</th>
                                                         <th>التحكم</th>
                                                     </tr>
                                                 </thead>
@@ -86,12 +99,15 @@
                                                                 <option selected value="0">اختر الوحدة</option>
                                                             </select>
                                                         </td>
-                                                        <td><input type="number" class="form-control Rate" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                        <td><input type="number" class="form-control Price" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="number" class="form-control ConversionFactor" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="number" class="form-control PurchasingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="number" class="form-control SellingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="text" class="form-control UnitBarcode"/></td>
                                                         <td>
                                                             <div class="d-flex">
                                                                 <button type="button" class="btn btn-primary btn-icon addRow mx-2"><i class="fas fa-plus"></i></button>
                                                                 <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                                @*<button type="button" class="btn btn-outline-secondary mx-1"><i class="fas fa-sharp fa-solid fa-barcode"></i></button>*@
                                                             </div>
                                                         </td>
 

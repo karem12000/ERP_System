@@ -2,6 +2,7 @@
 using AutoMapper;
 using ERP_System;
 using ERP_System.Common;
+using ERP_System.Common.General;
 using ERP_System.DAL;
 using ERP_System.DTO;
 using ERP_System.DTO.Guide;
@@ -37,7 +38,9 @@ namespace ERP_System.BLL
         }
         public IQueryable<SelectListDTO> GetSelect()
         {
-            return _repoUserType.GetAllAsNoTracking().Where(p => !p.IsDeleted && p.IsActive).Select(p => new SelectListDTO()
+            return _repoUserType.GetAllAsNoTracking().Where(p => !p.IsDeleted && p.IsActive)
+                .Where(p=>p.Type != UserClassification.SuperAdmin)
+                .Select(p => new SelectListDTO()
             {
                 Value = p.ID,
                 Text = p.Name
@@ -48,7 +51,7 @@ namespace ERP_System.BLL
         public IQueryable<UserType> GetAll()
         {
 
-            return _repoUserType.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.IsActive);
+            return _repoUserType.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.IsActive && x.Type != UserClassification.SuperAdmin);
         }
         #endregion
         public ResultViewModel Save(UserTypeDTO UserTypeDTO)

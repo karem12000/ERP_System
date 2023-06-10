@@ -20,6 +20,8 @@ namespace ERP_System.DTO
             CreateMap<StockDto, Stock>().ReverseMap();
             CreateMap<SettingDTO, Setting>().ReverseMap();
             CreateMap<InvoiceDTO, Invoice>().ReverseMap();
+            CreateMap<SupplierDTO, Supplier>().ReverseMap();
+            CreateMap<ClientDTO, Client>().ReverseMap();
 
 
         }

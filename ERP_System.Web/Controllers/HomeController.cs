@@ -36,7 +36,10 @@ namespace ERP.Web.Controllers
         {
             return View();
         }
-
+        public IActionResult CompanyData()
+        {
+            return View();
+        }
         public IActionResult ChangePassword() => View();
 
         public IActionResult Privacy()

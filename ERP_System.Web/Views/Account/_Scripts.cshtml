@@ -66,7 +66,7 @@
         obj["Username"] = UserCode;
         obj["NewPassword"] = Password;
         obj["Code"] = Code;
-        if (Code !== "" && Password === CPassword) {
+        if (Code === "" ) {
             Swal.fire({
                 title: `من فضلك أدخل الكود`,
                 timer: 2000,
@@ -74,7 +74,7 @@
                 icon: 'warning',
                 showConfirmButton: false
             });
-        } else if (Password.trim() === CPassword.trim()) {
+        } else if (Password.trim() !== CPassword.trim()) {
             Swal.fire({
                 title: `تأكيد كلمة المرور غير متطابق`,
                 timer: 2000,

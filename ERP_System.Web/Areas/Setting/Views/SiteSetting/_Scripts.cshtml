@@ -12,9 +12,20 @@
 
     }
 
-    function file_changed() {
+    function Cfile_changed() {
         var selectedFile = document.querySelectorAll('input[type="file"]')[0].files[0];
-        var img = document.getElementById('img')
+        var img = document.getElementById('cImg')
+        var reader = new FileReader();
+        reader.onload = function () {
+            img.style.removeProperty('display');
+            img.src = this.result
+        }
+        reader.readAsDataURL(selectedFile);
+    }
+
+    function Sfile_changed() {
+        var selectedFile = document.querySelectorAll('input[type="file"]')[1].files[0];
+        var img = document.getElementById('sImg')
         var reader = new FileReader();
         reader.onload = function () {
             img.style.removeProperty('display');
@@ -28,7 +39,12 @@
 
         frm.append("ID", document.getElementById('id').value);
         frm.append("SiteName", document.getElementById('SiteName').value);
-        frm.append("Logo", document.querySelectorAll('input[type="file"]')[0].files[0]);
+        frm.append("CompanyName", document.getElementById('CompanyName').value);
+        frm.append("CompanyPhone", document.getElementById('CompanyPhone').value);
+        frm.append("CompanyAddress", document.getElementById('CompanyAddress').value);
+        frm.append("Description", document.getElementById('Description').value);
+        frm.append("Logo", document.querySelectorAll('input[type="file"]')[1].files[0]);
+        frm.append("CompanyImage", document.querySelectorAll('input[type="file"]')[0].files[0]);
 
 
         if ($('#Name').val() == '') {

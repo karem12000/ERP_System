@@ -23,7 +23,7 @@ namespace ERP_System.Tables
         [Required]
         public string PasswordHash { get; set; }
         public string UserImage { get; set; }
-
+       
         public bool IsAdmin { get; set; } = false;
         /// <summary>
         /// هل قام باستخدام الباسورد الافتراضي ام لا
@@ -36,6 +36,12 @@ namespace ERP_System.Tables
 
         public string CodeOfReset { get; set; } = string.Empty;
         public UserClassification? UserClassification { get; set; }
+
+        public Guid? ScreenId { get; set; }
+
+        //public string ScreenName { get; set; }
+        //public string AreaName { get; set; }
+        //public string ControllerName { get; set; }
 
         #endregion
 

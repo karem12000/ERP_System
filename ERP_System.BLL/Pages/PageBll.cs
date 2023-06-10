@@ -27,6 +27,15 @@ namespace ERP_System.BLL
         }
         #endregion
         #region Actions
+        public IQueryable<SelectListDTO> GetSelect()
+        {
+            var data = _repoPage.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted).Select(p => new SelectListDTO()
+            {
+                Value = p.ID,
+                Text = p.Text
+            });
+            return data.Distinct();
+        }
         public string GetPageName( string controllerName) => _repoPage.GetAll().Where(p => p.ControllerName == controllerName).FirstOrDefault()?.Text ?? "";
         //public IEnumerable<UserPermission> GetPagePermission(string controllerName) => _repoUserPermissions.GetAll().Include(p=>p.ActionsPage).ThenInclude(p=>p.Page).Where(p => p.ActionsPage.Page.ControllerName.ToLower() == controllerName.ToLower()&&p.UserTypeId== _userBll.GetById(_repoArea.UserId).UserTypeId) ;
         public IEnumerable<UserPermission> GetPagePermission(string controllerName) => _repoUserPermissions.GetAll().Include(p=>p.ActionsPage).ThenInclude(p=>p.Page).Where(p => p.ActionsPage.Page.ControllerName.ToLower() == controllerName.ToLower()&&p.UserTypeId== _userBll.GetById(_repoPage.UserId).UserTypeId) ;
@@ -60,9 +69,11 @@ namespace ERP_System.BLL
             var data = _repoPage.GetAll().Where(x => x.IsActive && !x.IsDeleted).Include(p => p.ActionsPages).OrderBy(p => p.OrderNo).Select(p => new AsideBarPagesDTO()
             {
 
-                PageRoute = p.ControllerName == "Xero" ? $"{p.AreaName}/{p.ControllerName}/Preparation" : $"{p.AreaName}/{p.ControllerName}/Index",
+                PageRoute = p.ControllerName == "Xero" ? $"{p.AreaName}/{p.ControllerName}/Preparation" : (string.IsNullOrEmpty(p.AreaName)? $"{p.ControllerName}/Index" : $"{p.AreaName}/{p.ControllerName}/Index"),
+                //PageRoute = p.ControllerName == "Xero" ? $"{p.AreaName}/{p.ControllerName}/Preparation" : $"{p.AreaName}/{p.ControllerName}/Index",
                 PageTitle = p.Text,
                 IconName = p.IconName,
+                OrderNo = p.OrderNo,
                 HasPermission = _repoUserPermissions.GetAll().Where(u => u.UserTypeId == _userBll.GetById(_repoPage.UserId).UserTypeId && p.ActionsPages.Contains(u.ActionsPage)).Any()
             });
             var newData = data.Where(p =>p.HasPermission).ToList();

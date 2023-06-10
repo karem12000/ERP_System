@@ -1,51 +1,70 @@
 ﻿@model IEnumerable<UserPermissionsDTO>
-@{ int index = 1;}
+@{
+    int index = 1;
+}
 @foreach (var item in Model)
 {
-<tr>
-    <td>
-        @(index++)
-        <input type="hidden" name="PageId" value="@item.PageId" />
+    <tr>
+        <td>
+            @(index++)
+            <input type="hidden" name="PageId" value="@item.PageId" />
 
-    </td>
+        </td>
 
 
-    <td>@item.PageName</td>
-    <td>
-        @{ string Checked = item.AddPermission ? "checked" : ""; }
-        <label class="switch">
-            <input name="Add" class="Permission" type="checkbox" @Checked>
-            <span class="slider round"></span>
-        </label>
-    </td>
-    <td>
-        @{ string ShowPermission = item.ShowPermission ? "checked" : ""; }
-        <label class="switch">
-            <input name="Show" class="Permission" type="checkbox" @ShowPermission>
-            <span class="slider round"></span>
-        </label>
-    </td>
-    <td>
-        @{ string EditPermission = item.EditPermission ? "checked" : ""; }
-        <label class="switch">
-            <input name="Edit" class="Permission" type="checkbox" @EditPermission>
-            <span class="slider round"></span>
-        </label>
-    </td>
+        <td>@item.PageName</td>
+        <td>
+            @{
+                string Checked = item.AddPermission ? "checked" : "";
+            }
+            <label class="switch">
+                <input name="Add" class="Permission" type="checkbox" @Checked>
+                <span class="slider round"></span>
+            </label>
+        </td>
+        <td>
+            @{
+                string ShowPermission = item.ShowPermission ? "checked" : "";
+            }
+            <label class="switch">
+                <input name="Show" class="Permission" type="checkbox" @ShowPermission>
+                <span class="slider round"></span>
+            </label>
+        </td>
+        <td>
+            @{
+                string EditPermission = item.EditPermission ? "checked" : "";
+            }
+            <label class="switch">
+                <input name="Edit" class="Permission" type="checkbox" @EditPermission>
+                <span class="slider round"></span>
+            </label>
+        </td>
 
-    <td>
-        @{ string DeletePermission = item.DeletePermission ? "checked" : ""; }
-        <label class="switch">
-            <input name="Delete" class="Permission" type="checkbox" @DeletePermission>
-            <span class="slider round"></span>
-        </label>
-    </td>
+        <td>
+            @{
+                string DeletePermission = item.DeletePermission ? "checked" : "";
+            }
+            <label class="switch">
+                <input name="Delete" class="Permission" type="checkbox" @DeletePermission>
+                <span class="slider round"></span>
+            </label>
+        </td>
+        <td>
+            @{
+                string ThrowbackPermission = item.ThrowbackPermission ? "checked" : "";
+            }
+            <label class="switch">
+                <input name="Throwback" class="Permission" type="checkbox" @ThrowbackPermission>
+                <span class="slider round"></span>
+            </label>
+        </td>
 
-    <td>
-        <label class="switch">
-            <input onchange="CheckUnCheckAll(this)" type="checkbox" >
-            <span class="slider round"></span>
-        </label>
-    </td>
-</tr>
+        <td>
+            <label class="switch">
+                <input onchange="CheckUnCheckAll(this)" type="checkbox">
+                <span class="slider round"></span>
+            </label>
+        </td>
+    </tr>
 }
