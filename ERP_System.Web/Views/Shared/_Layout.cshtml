@@ -37,6 +37,7 @@
     <link rel="stylesheet" href="~/new-assets/app.css">
     <link rel="stylesheet" href="~/assets/css/shared/iconly.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/new-assets/loading.css">
 
     
     <script>
@@ -44,6 +45,11 @@
     </script>
 </head>
 <body dir="rtl">
+    <div id="loader">
+        <div class="load">
+            <hr /><hr /><hr /><hr />
+        </div>
+    </div>
     <div id="app">
 
         <vc:aside-bar></vc:aside-bar>
@@ -139,7 +145,10 @@
     </script>
     @await RenderSectionAsync("Scripts", required: false)
     <script>
-     
+        $(window).on('load', function () {
+            var $preloader = $('#loader');
+            $preloader.delay(350).fadeOut('slow');
+        });
     </script>
 </body>
 </html>
