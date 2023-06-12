@@ -32,7 +32,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         }
 
 
-        public IActionResult Save(InvoiceDTO mdl) => Ok(_invoiceBll.Save(mdl));
+        public IActionResult Save(PurchaseInvoiceDTO mdl) => Ok(_invoiceBll.Save(mdl));
         public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
         #region LoadData
         public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_invoiceBll.LoadData(mdl));

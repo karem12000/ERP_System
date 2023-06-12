@@ -28,6 +28,7 @@ namespace ERP_System.DTO.Guide
         public Guid? ID { get; set; }
         public Guid? ProductId { get; set; }
         public string? ProductName { get; set; }
+        public string? ProductBarCode { get; set; }
         public decimal? SalePrice { get; set; }
         public decimal? QtyPrice { get; set; }
         public decimal? TotalQtyPrice => Qty * QtyPrice;

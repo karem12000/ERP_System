@@ -15,7 +15,7 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
                             <div class="form-body">
                                 <div class="row">
-                                     <div class="form-group col-6">
+                                    <div class="form-group col-6">
                                         <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
                                         <input hidden name="id" id="id" value="" class="d-none" />
                                         <select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
@@ -60,37 +60,37 @@
                                                     <tr>
                                                         <th>الباركود<span style="color:red;"> * </span></th>
                                                         <th>اسم المنتج<span style="color:red;"> * </span></th>
-                                                        <th>سعر البيع</th>
                                                         <th>الوحدة<span style="color:red;"> * </span></th>
-                                                        <th>الكمية<span style="color:red;"> * </span></th>
                                                         <th>سعر الوحدة</th>
+                                                        <th>الكمية<span style="color:red;"> * </span></th>
+                                                        <th>سعر البيع</th>
                                                         <th>الإجمالي للصنف</th>
                                                         <th>التحكم</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="InvoiceProductsBody">
                                                     <tr>
-                                                       
+
                                                         <td>
                                                             <input class="form-control ID" type="hidden" value="0" />
                                                             <input class="form-control ProductId" type="hidden" value="0" />
                                                             <input type="text" onkeyup="getProduct(this,event)" required class="form-control ProductBarCode" />
                                                         </td>
                                                         <td><input type="text" required class="form-control ProductName" /></td>
-                                                        <td><input type="number" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SalePrice" /></td>
                                                         <td>
-                                                            <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة"  name="UnitId" id="ddlUnitId">
+                                                            <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
                                                                 <option selected value="0">اختر الوحدة</option>
                                                             </select>
                                                             <input class="form-control ConversionFactor" type="hidden" value="1" />
                                                         </td>
-                                                        <td><input type="number" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                        <td><input type="number" class="form-control QtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                        <td><input type="number" onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+                                                        <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                         <td>
                                                             <div class="d-flex">
                                                                 <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                                <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href="#"><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
+                                                                <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
                                                             </div>
                                                         </td>
 
@@ -99,7 +99,7 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="5"><h5>الإجمالي</h5></td>
-                                                        <td colspan="3"><input disabled type="number" class="form-control TotalPrice" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td colspan="3"><input disabled type="number" class="form-control InvoiceTotalPrice" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -144,10 +144,10 @@
 
     <partial name="_Scripts" />
     <script>
-     $(document).ready(function () {
+        $(document).ready(function () {
 
-         var InvoiceNumber = Math.floor(Math.random() * 1000);
-            $('#InvoiceNumber').val(InvoiceNumber);
-     })
+            var InvoiceNumber = Math.floor(Math.random() * 1000);
+               $('#InvoiceNumber').val(InvoiceNumber);
+        })
     </script>
 }
