@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ERP_System.BLL.Guide
 {
@@ -77,85 +78,103 @@ namespace ERP_System.BLL.Guide
 
         }
 
-        public ResultViewModel GetByBarCodeOrName(string text)
-        {
-            var resultView = new ResultViewModel();
-            resultView.Status = false;
-            var data = _repoProduct.GetAllAsNoTracking().Where(p => p.Name == text || p.BarCodeText.Trim().ToLower() == text.Trim().ToLower() && p.IsActive && !p.IsDeleted).Select(x => new
-            {
-                ID = x.ID,
-                Name = x.Name,
-                BarCodeText = x.BarCodeText,
-                QtyInStock = x.QtyInStock ==null? 0 : x.QtyInStock,
-                GroupId = x.GroupId,
-                ProductImages = x.Attachments.ToList(),
-                GroupName = x.Group.Name,
-                ImagePath = x.Image,
-                Description = x.Description,
-                GetProductUnits = x.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
-                {
-                    ID = c.ID,
-                    ConversionFactor = c.ConversionFactor,
-                    PurchasingPrice = c.PurchasingPrice,
-                    SellingPrice = c.SellingPrice,
-                    UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
-                    UnitBarcodeText = c.UnitBarcodeText,
-                    UnitId = c.UnitId
-                }).ToArray()
-            }).FirstOrDefault();
+        //public ResultViewModel GetByBarCodeOrName(string text)
+        //{
+        //    var resultView = new ResultViewModel();
+        //    resultView.Status = false;
+        //    var data = _repoProduct.GetAllAsNoTracking().Where(p => p.Name == text || p.BarCodeText.Trim().ToLower() == text.Trim().ToLower() || p.ProductUnits.Any(x=>x.UnitBarcodeText.Trim().ToLower() == text.Trim().ToLower()) && p.IsActive && !p.IsDeleted).Select(x => new
+        //    {
+        //        ID = x.ID,
+        //        Name = x.Name,
+        //        BarCodeText = x.BarCodeText,
+        //        QtyInStock = x.QtyInStock ==null? 0 : x.QtyInStock,
+        //        GroupId = x.GroupId,
+        //        ProductImages = x.Attachments.ToList(),
+        //        GroupName = x.Group.Name,
+        //        ImagePath = x.Image,
+        //        Description = x.Description,
+        //        IdUnitOfQty = x.IdUnitOfQty,
+        //        NameUnitOfQty = x.NameUnitOfQty,
+        //        GetProductUnits = x.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
+        //        {
+        //            ID = c.ID,
+        //            ConversionFactor = c.ConversionFactor,
+        //            PurchasingPrice = c.PurchasingPrice,
+        //            SellingPrice = c.SellingPrice,
+        //            UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
+        //            UnitBarcodeText = c.UnitBarcodeText,
+        //            UnitId = c.UnitId
+        //        }).ToArray()
+        //    }).FirstOrDefault();
 
-            if (data != null)
-            {
-                resultView.Status = true;
-                resultView.Data = data;
-            }
-            else
-            {
-                resultView.Message = AppConstants.Messages.ProductByNameNotFound;
-            }
+        //    if (data != null)
+        //    {
+        //        resultView.Status = true;
+        //        resultView.Data = data;
+        //    }
+        //    else
+        //    {
+        //        resultView.Status = false;
+        //        resultView.Message = AppConstants.Messages.ProductByNameNotFound;
+        //    }
 
-            return resultView;
-        }
+        //    return resultView;
+        //}
         public ResultViewModel GetByProductBarCode(string barcode)
         {
             var resultView = new ResultViewModel();
             resultView.Status = false;
-
-            var data = _repoProduct.GetAllAsNoTracking().Include(p => p.Group)
-                .Where(p => p.BarCodeText.Trim().ToLower() == barcode.Trim().ToLower() && p.IsActive && !p.IsDeleted)
-                .Select(p => new ProductDTO
-                {
-                    ID = p.ID,
-                    Name = p.Name,
-                    BarCodeText = p.BarCodeText,
-                    GroupId = p.GroupId,
-                    QtyInStock = p.QtyInStock,
-                    ProductImages = p.Attachments.ToList(),
-                    GroupName = p.Group.Name,
-                    ImagePath = p.Image,
-                    Description = p.Description,
-                    GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
-                    {
-                        ID = c.ID,
-                        ConversionFactor = c.ConversionFactor,
-                        PurchasingPrice = c.PurchasingPrice,
-                        SellingPrice = c.SellingPrice,
-                        UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
-                        UnitBarcodeText = c.UnitBarcodeText,
-                        UnitId = c.UnitId
-                    }).ToArray()
-                }).FirstOrDefault();
-
-            if (data != null)
+            if(barcode != null)
             {
-                resultView.Status = true;
-                resultView.Data = data;
+                var data = _repoProduct.GetAllAsNoTracking().Include(x=>x.ProductUnits).ThenInclude(x=>x.Unit)
+               .Where(p => (p.BarCodeText.Trim().ToLower() == barcode.Trim().ToLower() || p.ProductUnits.Any(x => x.UnitBarcodeText.Trim().ToLower() == barcode.Trim().ToLower())) && p.IsActive && !p.IsDeleted)
+               .Select(p => new ProductDTO
+               {
+                   ID = p.ID,
+                   Name = p.Name,
+                   BarCodeText = p.BarCodeText,
+                   BarCodePath = string.Concat("\\ProductsBarCode\\" , p.BarCodePath),
+                   GroupId = p.GroupId,
+                   QtyInStock = p.QtyInStock,
+                   IdUnitOfQty= p.IdUnitOfQty,
+                   NameUnitOfQty= p.NameUnitOfQty,
+                   GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
+                   {
+                       ID = c.ID,
+                       ConversionFactor = c.ConversionFactor,
+                       PurchasingPrice = c.PurchasingPrice,
+                       SellingPrice = c.SellingPrice,
+                       UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
+                       UnitBarcodeText = c.UnitBarcodeText,
+                       UnitId = c.UnitId,
+                       UnitName = c.Unit.Name
+                   }).ToArray()
+               }).FirstOrDefault();
+
+                if (data != null)
+                {
+                    if (barcode.Trim().ToLower() != data.BarCodeText.Trim().ToLower())
+                    {
+                        var currentProduct = data.GetProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).FirstOrDefault();
+                        data.BarCodeText = currentProduct.UnitBarcodeText;
+                        data.BarCodePath = currentProduct.UnitBarcodePath;
+                        data.IdUnitOfQty = currentProduct.UnitId;
+                        data.NameUnitOfQty = currentProduct.UnitName;
+                        data.SalePrice = currentProduct.SellingPrice;
+                    }
+                    resultView.Status = true;
+                    resultView.Data = data;
+                }
+                else
+                {
+                    resultView.Message = AppConstants.Messages.ProductByNameNotFound;
+                }
             }
             else
             {
-                resultView.Message = AppConstants.Messages.ProductByNameNotFound;
+                resultView.Status = true;
+                resultView.Data = null;
             }
-
             return resultView;
         }
 

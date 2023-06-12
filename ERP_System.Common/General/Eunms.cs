@@ -10,14 +10,14 @@ namespace ERP_System.Common.General
 
     public enum ActionEnum
     {
-        Add = 1, Edit, Delete, Show, Throwback
+        Add = 1, Edit, Delete, Show, PurchaseThrowback, SaleThrowback
     }
     /// <summary>
     /// نوع الفاتورة (بيع و شراء و مرتجع)
     /// </summary>
     public enum InvoiceType
     {
-       Sale=1 , Receipt, SaleThrowBack,ReciptThrowBack
+       Sale=1 , Purchase, SaleThrowBack,PurchaseThrowBack
     }
     public enum AttachmentType
     {

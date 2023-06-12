@@ -8,35 +8,32 @@ using System.Text;
 
 namespace ERP_System.Tables
 {
-    [Table(nameof(Invoice) + "s", Schema = AppConstants.Areas.Guide)]
-    public class Invoice : BaseEntity
+    [Table(nameof(SaleInvoice) + "s", Schema = AppConstants.Areas.Guide)]
+    public class SaleInvoice : BaseEntity
     {
-        public InvoiceType? InvoiceType { get; set; }
         public Guid? StockId { get; set; }
         public string? StockName { get; set; }
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
-        public string? Supplier { get; set; }
         public string? Buyer { get; set; }
         public decimal? TotalPrice { get; set; }
-        public ICollection<InvoiceDetail> InvoiceDetails { get; set; }
+        public ICollection<SaleInvoiceDetail> SaleInvoiceDetail { get; set; }
 
     }
 
-    [Table(nameof(InvoiceDetail) + "s", Schema = AppConstants.Areas.Guide)]
-    public class InvoiceDetail : BaseEntity
+    [Table(nameof(SaleInvoiceDetail) + "s", Schema = AppConstants.Areas.Guide)]
+    public class SaleInvoiceDetail : BaseEntity
     {
         public string? ProductName { get; set; }
         public decimal? SalePrice { get; set; }
         public decimal? QtyPrice { get; set; }
         public decimal? Qty { get; set; }
-
         public string? UnitName { get; set; }
         public Guid? UnitId { get; set; }
 
-        [ForeignKey(nameof(Invoice))]
-        public Guid? InvoiceId { get; set; }
-        public virtual Invoice Invoice { get; set; }
+        [ForeignKey(nameof(SaleInvoice))]
+        public Guid? SaleInvoiceId { get; set; }
+        public virtual SaleInvoice SaleInvoice { get; set; }
 
         [ForeignKey(nameof(Product))]
         public Guid? ProductId { get; set; }

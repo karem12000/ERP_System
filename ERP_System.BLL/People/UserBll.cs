@@ -579,7 +579,8 @@ namespace ERP_System.BLL
                 ShowPermission = _repoUserPermission.GetAll().Include(p => p.ActionsPage).Where(u => u.ActionsPage.ActionName == ActionEnum.Show && u.UserTypeId == id && u.ActionsPage.PageId == p.ID).Any(),
                 DeletePermission = _repoUserPermission.GetAll().Include(p => p.ActionsPage).Where(u => u.ActionsPage.ActionName == ActionEnum.Delete && u.UserTypeId == id && u.ActionsPage.PageId == p.ID).Any(),
                 EditPermission = _repoUserPermission.GetAll().Include(p => p.ActionsPage).Where(u => u.ActionsPage.ActionName == ActionEnum.Edit && u.UserTypeId == id && u.ActionsPage.PageId == p.ID).Any(),
-                ThrowbackPermission = _repoUserPermission.GetAll().Include(p => p.ActionsPage).Where(u => u.ActionsPage.ActionName == ActionEnum.Throwback && u.UserTypeId == id && u.ActionsPage.PageId == p.ID).Any(),
+                PurchaseThrowbackPermission = _repoUserPermission.GetAll().Include(p => p.ActionsPage).Where(u => u.ActionsPage.ActionName == ActionEnum.PurchaseThrowback && u.UserTypeId == id && u.ActionsPage.PageId == p.ID).Any(),
+                SaleThrowbackPermission = _repoUserPermission.GetAll().Include(p => p.ActionsPage).Where(u => u.ActionsPage.ActionName == ActionEnum.SaleThrowback && u.UserTypeId == id && u.ActionsPage.PageId == p.ID).Any(),
 
             });
 

@@ -54,13 +54,21 @@ namespace ERP_System.Tables
 
         #endregion
         #region Guide
-        public ICollection<Invoice> InvoiceCreated { get; set; }
-        public ICollection<Invoice> InvoiceModified { get; set; }
-        public ICollection<Invoice> InvoiceDeleted { get; set; }
+        public ICollection<PurchaseInvoice> PurchaseInvoiceCreated { get; set; }
+        public ICollection<PurchaseInvoice> PurchaseInvoiceModified { get; set; }
+        public ICollection<PurchaseInvoice> PurchaseInvoiceDeleted { get; set; }
         
-        public ICollection<InvoiceDetail> InvoiceDetailCreated { get; set; }
-        public ICollection<InvoiceDetail> InvoiceDetailModified { get; set; }
-        public ICollection<InvoiceDetail> InvoiceDetailDeleted { get; set; }
+        public ICollection<PurchaseInvoiceDetail> PurchaseInvoiceDetailCreated { get; set; }
+        public ICollection<PurchaseInvoiceDetail> PurchaseInvoiceDetailModified { get; set; }
+        public ICollection<PurchaseInvoiceDetail> PurchaseInvoiceDetailDeleted { get; set; }
+        
+        public ICollection<SaleInvoice> SaleInvoiceCreated { get; set; }
+        public ICollection<SaleInvoice> SaleInvoiceModified { get; set; }
+        public ICollection<SaleInvoice> SaleInvoiceDeleted { get; set; }
+        
+        public ICollection<SaleInvoiceDetail> SaleInvoiceDetailCreated { get; set; }
+        public ICollection<SaleInvoiceDetail> SaleInvoiceDetailModified { get; set; }
+        public ICollection<SaleInvoiceDetail> SaleInvoiceDetailDeleted { get; set; }
 
         public ICollection<StockProduct> StockProductCreated { get; set; }
         public ICollection<StockProduct> StockProductModified { get; set; }

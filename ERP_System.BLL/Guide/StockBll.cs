@@ -118,31 +118,16 @@ namespace ERP_System.BLL.Guide
                 }
                 if (_repoStock.Insert(tbl))
                 {
-                    var userStock = new List<UserStock>()
+
+                    var StockForSuperAdmin = new UserStock()
                     {
-                        new UserStock
-                        {
-                            UserId = Guid.Parse(AppConstants.SuperAdminTypeId),
-                            StockId = tbl.ID,
-                            AddedBy = _repoStock.UserId
-                        },
-                        new UserStock
-                        {
-                            UserId = Guid.Parse(AppConstants.SubAdminTypeId),
-                            StockId = tbl.ID,
-                            AddedBy = _repoStock.UserId
-                        }
-
+                        UserId = Guid.Parse(AppConstants.SuperAdminId),
+                        StockId = tbl.ID,
+                        AddedBy = _repoStock.UserId
                     };
-                    _repoUserStock.InsertRange(userStock);
+                    _repoUserStock.Insert(StockForSuperAdmin);
 
-                    //var oneStock = new UserStock
-                    //{
-                    //    UserId = Guid.Parse(AppConstants.SuperAdminTypeId),
-                    //    StockId = tbl.ID,
-                    //    AddedBy = _repoStock.UserId
-                    //};
-                    //_repoUserStock.Insert(oneStock);
+                    
 
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;

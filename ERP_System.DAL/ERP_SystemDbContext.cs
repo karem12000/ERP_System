@@ -53,17 +53,21 @@ namespace ERP_System.DAL
 
             #endregion
             #region Guide
-            modelBuilder.Entity<User>().HasMany(x => x.InvoiceCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
-            modelBuilder.Entity<User>().HasMany(x => x.InvoiceModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
-            modelBuilder.Entity<User>().HasMany(x => x.InvoiceDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.PurchaseInvoiceCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.PurchaseInvoiceModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.PurchaseInvoiceDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
             
-            modelBuilder.Entity<User>().HasMany(x => x.InvoiceDetailCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
-            modelBuilder.Entity<User>().HasMany(x => x.InvoiceDetailModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
-            modelBuilder.Entity<User>().HasMany(x => x.InvoiceDetailDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.PurchaseInvoiceDetailCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.PurchaseInvoiceDetailModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.PurchaseInvoiceDetailDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+            
+            modelBuilder.Entity<User>().HasMany(x => x.SaleInvoiceCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.SaleInvoiceModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.SaleInvoiceDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
 
-             modelBuilder.Entity<User>().HasMany(x => x.InvoiceCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
-            modelBuilder.Entity<User>().HasMany(x => x.InvoiceModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
-            modelBuilder.Entity<User>().HasMany(x => x.InvoiceDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
+             modelBuilder.Entity<User>().HasMany(x => x.SaleInvoiceDetailCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.SaleInvoiceDetailModified).WithOne(x => x.ModifiedUser).HasForeignKey(x => x.ModifiedBy);
+            modelBuilder.Entity<User>().HasMany(x => x.SaleInvoiceDetailDeleted).WithOne(x => x.DeletedUser).HasForeignKey(x => x.DeletedBy);
 
 
             modelBuilder.Entity<User>().HasMany(x => x.StockProductCreated).WithOne(x => x.CreatedUser).HasForeignKey(x => x.AddedBy);
@@ -128,8 +132,12 @@ namespace ERP_System.DAL
         #endregion
 
         #region Guide
-        public DbSet<Invoice> Invoices { get; set; }
-        public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
+        //public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<PurchaseInvoice> PurchaseInvoices { get; set; }
+        public DbSet<PurchaseInvoiceDetail> PurchaseInvoiceDetails { get; set; }
+        public DbSet<SaleInvoice> SaleInvoices { get; set; }
+        public DbSet<SaleInvoiceDetail> SaleInvoiceDetails { get; set; }
+        //public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<StockProduct> StockProducts { get; set; }

@@ -1,0 +1,407 @@
+﻿
+<script>
+    $(document).ready(function () {
+        LoadTable();
+    });
+
+    let form = $('#frm');
+    function Submit(type) {
+        event.preventDefault();
+        Save(type);
+
+    }
+
+    function resetForm(stockId) {
+        $('#Name').val('');
+        $('#id').val('');
+        $('#IsActive').val('true');
+        $('#IsActive').prop('checked', true);
+
+    }
+
+    function getProduct(value, event) {
+
+        if (event.keyCode === 13) {
+            var barcode = value.value;
+            let tBody = $(value).parent().siblings("td");
+            let ID = tBody.children(".ID");
+            let ProductId = tBody.children(".ProductId");
+            let ProductBarCode = tBody.children(".ProductBarCode");
+            let ProductName = tBody.children(".ProductName");
+            let SalePrice = tBody.children(".SalePrice");
+            let UnitId = tBody.children(".UnitId");
+            let ConversionFactor = tBody.children(".ConversionFactor");
+            let Qty = tBody.children(".Qty");
+            let QtyPrice = tBody.children(".QtyPrice");
+            let barCodeBtn = tBody.children(".barCodeBtn");
+            $.get('@Url.GetAction("GetProductByBarCode")', { text: barcode }, function (res) {
+                if (res.Status) {
+                    let data = res.Data;
+
+
+                    //barCodeBtn.attr("href" , data.BarCodePath);
+                    Qty.val('1');
+                    UnitId.empty();
+                    data.GetProductUnits.forEach(function (item) {
+                        UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+                        });
+                    //data.GetProductUnits.each(unit , function(key,value)=>{
+                    //    console.log(key);
+                    //    console.log(value);
+                    //});
+
+                } else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: 'warning',
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+    }
+
+    function getInvoiceTotalPrice() {
+        var TPrice = 0;
+        $('.TotalPrice').val(15);
+    }
+
+
+
+    function Save(type) {
+        let stockId = document.querySelector("#ddlStockId").value;
+        let Products = [];
+        $.each($("#InvoiceProductsBody >tr"), function (key, value) {
+            let IdF = $(value).children("td").children(".ID").val().trim();
+            let ID = IdF == '0' ? null : IdF,
+                ProductId = $(value).children("td").children(".ProductId").val().trim(),
+                ProductBarCode = $(value).children("td").children(".ProductBarCode").val().trim(),
+                ProductName = $(value).children("td").children(".ProductName").val().trim(),
+                SalePrice = $(value).children("td").children(".SalePrice").val().trim(),
+                UnitId = $(value).children("td").children("#ddlUnitId").val().trim(),
+                //QtyPrice = $(value).children("td").children(".QtyPrice").val().trim(),
+                TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim(),
+                Qty = $(value).children("td").children(".Qty").val().trim();
+            if (UnitId !== '0') {
+                Products.push({ ID: ID, UnitId: UnitId, Qty: Qty, ProductId: ProductId, ProductBarCode: ProductBarCode, ProductName: ProductName, SalePrice: SalePrice, QtyPrice: QtyPrice });
+            }
+        });
+        if ($('#ddlStockId').val() == '0' || $('#InvoiceNumber').val() == '' || $('#InvoiceDate').val() == '' || $('#Supplier').val() == '') {
+            Swal.fire({
+                title: `من فضلك أدخل بيانات الفاتورة`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'warning',
+                showConfirmButton: false
+            });
+        }
+        else if (Products.length <= 0) {
+            Swal.fire({
+                title: `من فضلك أدخل بيانات الأصناف`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'warning',
+                showConfirmButton: false
+            });
+        }
+        else {
+            let frm = new FormData();
+            frm.append("ID", document.getElementById('id').value);
+            frm.append("InvoiceType", document.querySelector("#ddlInvoiceType").value);
+            frm.append("StockId", document.querySelector("#ddlStockId").value);
+            frm.append("InvoiceNumber", document.querySelector("#InvoiceNumber").value);
+            frm.append("InvoiceDate", document.querySelector("#InvoiceDate").value);
+            frm.append("Supplier", document.querySelector("#Supplier").value);
+
+            frm.append("InvoiceProductsStr", JSON.stringify(Products));
+
+            $.ajax({
+                url: '@Url.GetAction("Save")',
+                method: "POST",
+                contentType: false,
+                processData: false,
+                data: frm,
+                success: function (res) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: 'success',
+                        showConfirmButton: false
+                    }).then((result) => {
+                        if (type === 'add') {
+                            resetForm(stockId);
+                        }
+                    })
+                },
+                error: function (res) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    })
+                }
+            });
+        }
+
+
+    }
+
+    function Edit(e, id) {
+
+        $('#id').val(id);
+        var item = $(e);
+        var itemName = item.closest('tr').find('.GroupName').html();
+        $('#Name').val(itemName);
+
+    }
+
+
+    function LoadTable() {
+        $('#tbl').DataTable().destroy();
+
+        dt = $('#tbl').DataTable({
+            "columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+
+            "language": _dataTableTranslate,
+            pageLength: 10,
+            pagijngType: "full_numbers",
+            direction: 'rtl',
+            serverSide: true,
+            scrollX: true,
+            processing: true,
+            lengthMenu: [10, 25, 50, 75, 100],
+            sAjaxSource: '@Url.GetAction("LoadDataTable")',
+            sServerMethod: "POST",
+            bPaginate: true,
+            paging: true,
+            dom: 'Blfrtip',
+            buttons: [
+
+
+            ],
+            search: {},
+            columns: [
+
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="InvoiceNumber">' + (data.InvoiceNumber ?? "") + '</label><input hidden name="InvoiceID" class="InvoiceID" value="' + data.ID + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="StockName">' + (data.StockName ?? "") + '</label><input hidden name="StockId" class="StockId" value="' + data.StockId + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="InvoiceDate">' + (data.InvoiceDate ?? "") + '</label><input hidden name="InvoiceDate" class="InvoiceDate" value="' + data.InvoiceDate + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="Supplier">' + (data.Supplier ?? "") + '</label><input hidden name="Supplier" class="Supplier" value="' + data.Supplier + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="ProductsCount">' + (data.ProductsCount ?? "") + '</label><input hidden name="ProductsCount" class="ProductsCount" value="' + data.ProductsCount + '" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="AddedDate">' + (data.AddedDate ?? "") + '</label><input hidden name="groupId" class="groupId" value="' + data.AddedDate + '" /> ' }
+
+                },
+                {
+
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) {
+
+                        return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+                    }
+
+                },
+
+
+                {
+
+                    data: null,
+                    bSortable: false,
+                    render: function (data, type, row) {
+                        let btn = `<div class="Event">
+
+
+
+    @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+    {
+                                                                                                                                <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/PurchaseInvoice/Edit/${data.ID}" >
+                                                                                                                 <i class="fas fa-pen"></i>
+
+                                                                                                                </a>
+
+    }
+
+    @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
+    {
+                                                                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                                                                               <i class="fas fa-trash-alt"></i>
+
+                                                                                                               </a>
+    }
+                                                                   `;
+                        return btn + '</div>';
+                    }
+                }
+            ]
+        });
+
+    }
+
+
+    function Delete(e, id) {
+
+        var btn = $(e);
+        var id = id;
+        Swal.fire({
+            title: 'هل أنت متأكد؟',
+            text: "هل انت متاكد من اجراء العملية",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'الغاء',
+            confirmButtonText: 'نعم ، حذف!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('@Url.GetAction("Delete")', { id: id }, function (res) {
+                    if (res.Status) {
+                        Swal.fire({
+                            title: `تم الحذف`,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            showConfirmButton: false
+                        }).then(() => {
+                            LoadTable();
+                        });
+                    }
+                    else {
+
+                        Swal.fire({
+                            title: `خطأ في الحذف`,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            icon: 'warning',
+                            showConfirmButton: false
+                        });
+                    }
+                });
+
+            }
+        })
+
+    }
+
+    $("#InvoiceProducts").on("click", ".addInvoiceProduct", function () {
+        InvoiceProductsAddNew({
+            "id": "0", "ProductId": "0",
+            "ProductBarCode": "", "ProductName": "", "SalePrice": ""
+            , "UnitId": "0", "Qty": "", "QtyPrice": "", "TotalQtyPrice": ""
+        });
+    })
+    function InvoiceProductsAddNew(obj) {
+
+        let rowId = Math.floor(Math.random() * 500) + 1;
+        $("#InvoiceProductsBody").append(` <tr>
+
+                                                                            <td>
+                                                                                <input class="form-control ID" type="hidden" value="0" />
+                                                                                <input class="form-control ProductId" type="hidden" value="0" />
+                                                                                                        <input  id="rowId-${rowId}" onkeyup="getProduct(this,event)" value="${obj.ProductBarCode}" type="text" required class="form-control ProductBarCode" />
+                                                                            </td>
+                                                                                    <td><input type="text" required value="${obj.ProductName}" class="form-control ProductName" /></td>
+                                                                                    <td><input type="number" min="0" value="${obj.SalePrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SalePrice" /></td>
+                                                                            <td>
+                                                                                <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text")' name="UnitId" id="ddlUnitId">
+                                                                                    <option selected value="0">اختر الوحدة</option>
+                                                                                </select>
+                                                                                 <input class="form-control ConversionFactor" type="hidden" value="1" />
+                                                                            </td>
+                                                                                    <td><input type="number" value="${obj.Qty}" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                                    <td><input type="number" value="${obj.QtyPrice}"  class="form-control QtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                                                <td><input type="number" onkeyup="getInvoiceTotalPrice()" value="${obj.TotalQtyPrice}" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                            <td>
+                                                                                <div class="d-flex">
+                                                                                    <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                                                    <a target="_blank" class="btn btn-outline-secondary mx-1" href="#"><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
+
+                                                                                </div>
+                                                                            </td>
+
+                                                      </tr>
+                                                                                `);
+
+    }
+
+    $("#InvoiceProductsBody").on("click", ".removeRow", function () {
+        let id = $(this).parent().parent().siblings("td").children(".ProductId").val().trim();
+        let btn = $(this);
+
+        if (id != "0" || id != 0) {
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: "هل انت متاكد من اجراء العملية",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'الغاء',
+                confirmButtonText: 'نعم ، احذفها!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    if ($("#InvoiceProductsBody > tr").length > 1) { $(btn).parent().parent().parent().remove(); }
+                    else {
+                        $("#InvoiceProductsBody").empty();
+                        InvoiceProductsAddNew({
+                            "id": "0", "ProductId": "0",
+                            "ProductBarCode": "", "ProductName": "", "SalePrice": ""
+                            , "UnitId": "0", "Qty": "", "QtyPrice": "", "TotalPrice": ""
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            if ($("#InvoiceProductsBody > tr").length > 1) { $(btn).parent().parent().parent().remove(); }
+            else {
+                $("#InvoiceProductsBody").empty();
+                InvoiceProductsAddNew({
+                    "id": "0", "ProductId": "0",
+                    "ProductBarCode": "", "ProductName": "", "SalePrice": ""
+                    , "UnitId": "0", "Qty": "", "QtyPrice": "", "TotalPrice": ""
+                });
+            }
+        }
+    });
+
+
+    $("#IsActive").change(function (e) {
+        var isChecked = $(this).prop("checked");
+        $("#IsActive").val(isChecked);
+    });
+
+</script>

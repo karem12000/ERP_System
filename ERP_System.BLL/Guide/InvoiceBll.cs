@@ -20,16 +20,18 @@ namespace ERP_System.BLL.Guide
     {
         private const string _spInvoices = "[Guide].[spSales]";
         private readonly IRepository<Invoice> _repoInvoice;
+        private readonly IRepository<Unit> _repoUnits;
         private readonly IRepository<Product> _repoProduct;
         private readonly IRepository<InvoiceDetail> _repoInvoiceDetail;
         private readonly IMapper _mapper;
 
-        public InvoiceBll( IRepository<Product> repoProduct, IRepository<Invoice> repoInvoice, IRepository<InvoiceDetail> repoInvoiceDetail, IMapper mapper)
+        public InvoiceBll( IRepository<Product> repoProduct, IRepository<Unit> repoUnits, IRepository<Invoice> repoInvoice, IRepository<InvoiceDetail> repoInvoiceDetail, IMapper mapper)
         {
             _repoInvoice = repoInvoice;
             _mapper = mapper;
             _repoInvoiceDetail = repoInvoiceDetail;
             _repoProduct = repoProduct;
+            _repoUnits = repoUnits;
         }
 
         #region Get
@@ -138,7 +140,7 @@ namespace ERP_System.BLL.Guide
                 if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.InvoiceNumber==InvoiceDTO.InvoiceNumber && p.InvoiceType==InvoiceDTO.InvoiceType
                 && p.InvoiceDate == InvoiceDTO.InvoiceDate).FirstOrDefault() != null)
                 {
-                    resultViewModel.Message = AppConstants.Messages.NameAlreadyExists;
+                    resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
                     return resultViewModel;
                 }
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
@@ -150,22 +152,22 @@ namespace ERP_System.BLL.Guide
                     if (InvoiceDTO.InvoiceType == InvoiceType.Sale || InvoiceDTO.InvoiceType == InvoiceType.SaleThrowBack)
                     {
                         newInvoice.InvoiceType = InvoiceDTO.InvoiceType;
-                        newInvoice.BuyerName = InvoiceDTO.BuyerName;
-                        newInvoice.ResourceName = null;
+                        newInvoice.Buyer = InvoiceDTO.Buyer;
+                        newInvoice.Supplier = null;
 
                     }
-                    else if (InvoiceDTO.InvoiceType == InvoiceType.Receipt || InvoiceDTO.InvoiceType == InvoiceType.ReciptThrowBack)
+                    else if (InvoiceDTO.InvoiceType == InvoiceType.Purchase || InvoiceDTO.InvoiceType == InvoiceType.PurchaseThrowBack)
                     {
                         newInvoice.InvoiceType = InvoiceDTO.InvoiceType;
-                        newInvoice.ResourceName = InvoiceDTO.ResourceName;
-                        newInvoice.BuyerName = null;
+                        newInvoice.Supplier = InvoiceDTO.Supplier;
+                        newInvoice.Buyer = null;
                     }
 
                     var AllDetails = new List<InvoiceDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
                         var product = _repoProduct.GetById(invoiceDetail.ProductId.Value);
-                        if (invoiceDetail.RequiredQty > product.QtyInStock)
+                        if (invoiceDetail.Qty > product.QtyInStock)
                         {
                             resultViewModel.Status = false;
                             resultViewModel.Message = "الكمية المطلوبة من المنتج " + product.Name + " تجاوزت الكميو الموجودة بالمخزن";
@@ -174,22 +176,21 @@ namespace ERP_System.BLL.Guide
                         }
                         else
                         {
-                            product.QtyInStock = product.QtyInStock - invoiceDetail.RequiredQty;
-                            var newInvoiceDetail = new InvoiceDetail()
-                            {
-                                ProductId = invoiceDetail.ProductId,
-                                Qty = invoiceDetail.RequiredQty,
-                                StockId = invoiceDetail.StockId,
-                                GroupName = invoiceDetail.GroupName,
-                                InvoiceId = newInvoice.ID,
-                                PricePerUnit = invoiceDetail.PricePerUnit,
-                                UnitId = invoiceDetail.UnitId,
-                                UnitName = invoiceDetail.UnitName,
-                                StockName = invoiceDetail.StockName,
-                                GroupId = invoiceDetail.GroupId
-                            };
-                            _repoProduct.UpdateWithoutSaveChange(product);
-                            AllDetails.Add(newInvoiceDetail);
+                            product.QtyInStock = product.QtyInStock - invoiceDetail.Qty;
+                            //var newInvoiceDetail = new InvoiceDetail()
+                            //{
+                            //    ProductId = invoiceDetail.ProductId,
+                            //    Qty = invoiceDetail.Qty,
+                            //    StockId = InvoiceDTO.StockId,
+                            //    InvoiceId = newInvoice.ID,
+                            //    PricePerUnit = invoiceDetail.QtyPrice,
+                            //    UnitId = invoiceDetail.UnitId,
+                            //    UnitName = _repoUnits.GetById(invoiceDetail.UnitId).Name,
+                            //    StockName = invoiceDetail.StockName,
+                            //    GroupId = invoiceDetail.GroupId
+                            //};
+                            //_repoProduct.UpdateWithoutSaveChange(product);
+                            //AllDetails.Add(newInvoiceDetail);
                         }
                        
                     }

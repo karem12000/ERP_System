@@ -16,6 +16,7 @@ namespace ERP_System.Common
         }
         public static readonly object[] EmptyValues = { Guid.Empty, string.Empty, null };
 
+        public const string SuperAdminId = "80968C16-15D8-4533-B771-5285299EDCB6";
         public const string SuperAdminTypeId = "d3c1e01c-becc-4002-8d0b-2e3266bb2d71";
         public const string SubAdminTypeId = "5a45d22f-b9f5-4b28-be74-0f1d16ab1efa";
         public const string CashierTypeId = "7b95531a-edcb-4c1f-b7d8-3abeb1aac16d";
@@ -78,6 +79,7 @@ namespace ERP_System.Common
             public const string ChangedStatusSuccess = "تم تغيير الحالة بنجاح";
             public const string ChangedStatusFailed = "حدث خطا اثناء تغيير الحالة";
             public const string NameAlreadyExists = "الاسم موجود من قبل";
+            public const string InvoiceAlreadyExists = "توجد فاتورة بنفس الرقم";
             public const string BarCodeAlreadyExists = "الباركود مستخدم من قبل";
             
             public const string NameRequired = "الاسم مطلوب";

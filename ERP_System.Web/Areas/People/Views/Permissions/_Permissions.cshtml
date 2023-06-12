@@ -52,14 +52,22 @@
         </td>
         <td>
             @{
-                string ThrowbackPermission = item.ThrowbackPermission ? "checked" : "";
+                string PurchaseThrowbackPermission = item.PurchaseThrowbackPermission ? "checked" : "";
             }
             <label class="switch">
-                <input name="Throwback" class="Permission" type="checkbox" @ThrowbackPermission>
+                <input name="PurchaseThrowback" class="Permission" type="checkbox" @PurchaseThrowbackPermission>
                 <span class="slider round"></span>
             </label>
         </td>
-
+        <td>
+            @{
+                string SaleThrowbackPermission = item.SaleThrowbackPermission ? "checked" : "";
+            }
+            <label class="switch">
+                <input name="SaleThrowback" class="Permission" type="checkbox" @SaleThrowbackPermission>
+                <span class="slider round"></span>
+            </label>
+        </td>
         <td>
             <label class="switch">
                 <input onchange="CheckUnCheckAll(this)" type="checkbox">

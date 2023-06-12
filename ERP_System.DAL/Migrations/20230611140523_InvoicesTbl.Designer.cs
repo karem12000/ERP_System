@@ -4,14 +4,16 @@ using ERP_System.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERP_System.DAL.Migrations
 {
     [DbContext(typeof(ERP_SystemDbContext))]
-    partial class ERP_SystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230611140523_InvoicesTbl")]
+    partial class InvoicesTbl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -556,268 +558,6 @@ namespace ERP_System.DAL.Migrations
                     b.HasIndex("UnitId");
 
                     b.ToTable("ProductUnits", "Guide");
-                });
-
-            modelBuilder.Entity("ERP_System.Tables.PurchaseInvoice", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AddedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Buyer")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("InvoiceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("InvoiceNumber")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("StockId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("StockName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Supplier")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AddedBy");
-
-                    b.HasIndex("DeletedBy");
-
-                    b.HasIndex("ModifiedBy");
-
-                    b.ToTable("PurchaseInvoices", "Guide");
-                });
-
-            modelBuilder.Entity("ERP_System.Tables.PurchaseInvoiceDetail", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AddedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ProductName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("PurchaseInvoiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("Qty")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("QtyPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("SalePrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid?>("UnitId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UnitName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AddedBy");
-
-                    b.HasIndex("DeletedBy");
-
-                    b.HasIndex("ModifiedBy");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("PurchaseInvoiceId");
-
-                    b.ToTable("PurchaseInvoiceDetails", "Guide");
-                });
-
-            modelBuilder.Entity("ERP_System.Tables.SaleInvoice", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AddedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Buyer")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("InvoiceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("InvoiceNumber")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("StockId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("StockName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Supplier")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AddedBy");
-
-                    b.HasIndex("DeletedBy");
-
-                    b.HasIndex("ModifiedBy");
-
-                    b.ToTable("SaleInvoices", "Guide");
-                });
-
-            modelBuilder.Entity("ERP_System.Tables.SaleInvoiceDetail", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AddedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ProductName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("Qty")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("QtyPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid?>("SaleInvoiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("SalePrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid?>("UnitId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UnitName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AddedBy");
-
-                    b.HasIndex("DeletedBy");
-
-                    b.HasIndex("ModifiedBy");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SaleInvoiceId");
-
-                    b.ToTable("SaleInvoiceDetails", "Guide");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.Setting", b =>
@@ -1410,15 +1150,15 @@ namespace ERP_System.DAL.Migrations
             modelBuilder.Entity("ERP_System.Tables.Invoice", b =>
                 {
                     b.HasOne("ERP_System.Tables.User", "CreatedUser")
-                        .WithMany()
+                        .WithMany("InvoiceCreated")
                         .HasForeignKey("AddedBy");
 
                     b.HasOne("ERP_System.Tables.User", "DeletedUser")
-                        .WithMany()
+                        .WithMany("InvoiceDeleted")
                         .HasForeignKey("DeletedBy");
 
                     b.HasOne("ERP_System.Tables.User", "ModifiedUser")
-                        .WithMany()
+                        .WithMany("InvoiceModified")
                         .HasForeignKey("ModifiedBy");
 
                     b.Navigation("CreatedUser");
@@ -1431,11 +1171,11 @@ namespace ERP_System.DAL.Migrations
             modelBuilder.Entity("ERP_System.Tables.InvoiceDetail", b =>
                 {
                     b.HasOne("ERP_System.Tables.User", "CreatedUser")
-                        .WithMany()
+                        .WithMany("InvoiceDetailCreated")
                         .HasForeignKey("AddedBy");
 
                     b.HasOne("ERP_System.Tables.User", "DeletedUser")
-                        .WithMany()
+                        .WithMany("InvoiceDetailDeleted")
                         .HasForeignKey("DeletedBy");
 
                     b.HasOne("ERP_System.Tables.Invoice", "Invoice")
@@ -1443,7 +1183,7 @@ namespace ERP_System.DAL.Migrations
                         .HasForeignKey("InvoiceId");
 
                     b.HasOne("ERP_System.Tables.User", "ModifiedUser")
-                        .WithMany()
+                        .WithMany("InvoiceDetailModified")
                         .HasForeignKey("ModifiedBy");
 
                     b.HasOne("ERP_System.Tables.Product", "Product")
@@ -1561,114 +1301,6 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Unit");
-                });
-
-            modelBuilder.Entity("ERP_System.Tables.PurchaseInvoice", b =>
-                {
-                    b.HasOne("ERP_System.Tables.User", "CreatedUser")
-                        .WithMany("PurchaseInvoiceCreated")
-                        .HasForeignKey("AddedBy");
-
-                    b.HasOne("ERP_System.Tables.User", "DeletedUser")
-                        .WithMany("PurchaseInvoiceDeleted")
-                        .HasForeignKey("DeletedBy");
-
-                    b.HasOne("ERP_System.Tables.User", "ModifiedUser")
-                        .WithMany("PurchaseInvoiceModified")
-                        .HasForeignKey("ModifiedBy");
-
-                    b.Navigation("CreatedUser");
-
-                    b.Navigation("DeletedUser");
-
-                    b.Navigation("ModifiedUser");
-                });
-
-            modelBuilder.Entity("ERP_System.Tables.PurchaseInvoiceDetail", b =>
-                {
-                    b.HasOne("ERP_System.Tables.User", "CreatedUser")
-                        .WithMany("PurchaseInvoiceDetailCreated")
-                        .HasForeignKey("AddedBy");
-
-                    b.HasOne("ERP_System.Tables.User", "DeletedUser")
-                        .WithMany("PurchaseInvoiceDetailDeleted")
-                        .HasForeignKey("DeletedBy");
-
-                    b.HasOne("ERP_System.Tables.User", "ModifiedUser")
-                        .WithMany("PurchaseInvoiceDetailModified")
-                        .HasForeignKey("ModifiedBy");
-
-                    b.HasOne("ERP_System.Tables.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("ERP_System.Tables.PurchaseInvoice", "PurchaseInvoice")
-                        .WithMany("PurchaseInvoiceDetail")
-                        .HasForeignKey("PurchaseInvoiceId");
-
-                    b.Navigation("CreatedUser");
-
-                    b.Navigation("DeletedUser");
-
-                    b.Navigation("ModifiedUser");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("PurchaseInvoice");
-                });
-
-            modelBuilder.Entity("ERP_System.Tables.SaleInvoice", b =>
-                {
-                    b.HasOne("ERP_System.Tables.User", "CreatedUser")
-                        .WithMany("SaleInvoiceCreated")
-                        .HasForeignKey("AddedBy");
-
-                    b.HasOne("ERP_System.Tables.User", "DeletedUser")
-                        .WithMany("SaleInvoiceDeleted")
-                        .HasForeignKey("DeletedBy");
-
-                    b.HasOne("ERP_System.Tables.User", "ModifiedUser")
-                        .WithMany("SaleInvoiceModified")
-                        .HasForeignKey("ModifiedBy");
-
-                    b.Navigation("CreatedUser");
-
-                    b.Navigation("DeletedUser");
-
-                    b.Navigation("ModifiedUser");
-                });
-
-            modelBuilder.Entity("ERP_System.Tables.SaleInvoiceDetail", b =>
-                {
-                    b.HasOne("ERP_System.Tables.User", "CreatedUser")
-                        .WithMany("SaleInvoiceDetailCreated")
-                        .HasForeignKey("AddedBy");
-
-                    b.HasOne("ERP_System.Tables.User", "DeletedUser")
-                        .WithMany("SaleInvoiceDetailDeleted")
-                        .HasForeignKey("DeletedBy");
-
-                    b.HasOne("ERP_System.Tables.User", "ModifiedUser")
-                        .WithMany("SaleInvoiceDetailModified")
-                        .HasForeignKey("ModifiedBy");
-
-                    b.HasOne("ERP_System.Tables.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("ERP_System.Tables.SaleInvoice", "SaleInvoice")
-                        .WithMany("SaleInvoiceDetail")
-                        .HasForeignKey("SaleInvoiceId");
-
-                    b.Navigation("CreatedUser");
-
-                    b.Navigation("DeletedUser");
-
-                    b.Navigation("ModifiedUser");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("SaleInvoice");
                 });
 
             modelBuilder.Entity("ERP_System.Tables.Setting", b =>
@@ -1937,16 +1569,6 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("StockProducts");
                 });
 
-            modelBuilder.Entity("ERP_System.Tables.PurchaseInvoice", b =>
-                {
-                    b.Navigation("PurchaseInvoiceDetail");
-                });
-
-            modelBuilder.Entity("ERP_System.Tables.SaleInvoice", b =>
-                {
-                    b.Navigation("SaleInvoiceDetail");
-                });
-
             modelBuilder.Entity("ERP_System.Tables.Stock", b =>
                 {
                     b.Navigation("UserStocks");
@@ -1977,6 +1599,18 @@ namespace ERP_System.DAL.Migrations
 
                     b.Navigation("ClientModified");
 
+                    b.Navigation("InvoiceCreated");
+
+                    b.Navigation("InvoiceDeleted");
+
+                    b.Navigation("InvoiceDetailCreated");
+
+                    b.Navigation("InvoiceDetailDeleted");
+
+                    b.Navigation("InvoiceDetailModified");
+
+                    b.Navigation("InvoiceModified");
+
                     b.Navigation("ItemGroupCreated");
 
                     b.Navigation("ItemGroupDeleted");
@@ -2000,30 +1634,6 @@ namespace ERP_System.DAL.Migrations
                     b.Navigation("ProductUnitDeleted");
 
                     b.Navigation("ProductUnitModified");
-
-                    b.Navigation("PurchaseInvoiceCreated");
-
-                    b.Navigation("PurchaseInvoiceDeleted");
-
-                    b.Navigation("PurchaseInvoiceDetailCreated");
-
-                    b.Navigation("PurchaseInvoiceDetailDeleted");
-
-                    b.Navigation("PurchaseInvoiceDetailModified");
-
-                    b.Navigation("PurchaseInvoiceModified");
-
-                    b.Navigation("SaleInvoiceCreated");
-
-                    b.Navigation("SaleInvoiceDeleted");
-
-                    b.Navigation("SaleInvoiceDetailCreated");
-
-                    b.Navigation("SaleInvoiceDetailDeleted");
-
-                    b.Navigation("SaleInvoiceDetailModified");
-
-                    b.Navigation("SaleInvoiceModified");
 
                     b.Navigation("SettingCreated");
 

@@ -39,7 +39,7 @@ namespace ERP_System.BLL
         public IQueryable<SelectListDTO> GetSelect()
         {
             return _repoUserType.GetAllAsNoTracking().Where(p => !p.IsDeleted && p.IsActive)
-                .Where(p=>p.Type != UserClassification.SuperAdmin)
+                //.Where(p=>p.Type != UserClassification.SuperAdmin)
                 .Select(p => new SelectListDTO()
             {
                 Value = p.ID,
