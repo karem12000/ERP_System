@@ -59,7 +59,7 @@ namespace ERP_System.DTO.Guide
 
         public int InvoiceNumber { get; set; }
 
-        public DateTime InvoiceDate { get; set; }
+        public string InvoiceDate { get; set; }
         public string? Supplier { get; set; }
         public Guid? StockId { get; set; }
         public string? StockName { get; set; }

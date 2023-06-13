@@ -2,6 +2,7 @@
 using ERP_System.DTO.Guide;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace ERP_System.Web.Areas.Guide.Controllers
 {
@@ -31,9 +32,28 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             return View();
         }
 
+        public IActionResult Edit(Guid id)
+        {
+            var userId = _httpContextAccessor.UserId();
+            var invoice = _invoiceBll.GetById(id);
+            ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
+
+            if (invoice != null)
+            {
+
+                return View(invoice);
+            }
+            else
+                return Redirect("/Guide/PurchaseInvoice/Index");
+        }
+
 
         public IActionResult Save(PurchaseInvoiceDTO mdl) => Ok(_invoiceBll.Save(mdl));
         public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
+
+        [HttpPost]
+        public IActionResult Delete(Guid id) => Ok(_invoiceBll.Delete(id));
+
         #region LoadData
         public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_invoiceBll.LoadData(mdl));
 

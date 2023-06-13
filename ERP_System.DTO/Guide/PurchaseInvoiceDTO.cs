@@ -15,9 +15,10 @@ namespace ERP_System.DTO.Guide
         public string? StockName { get; set; }
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
+        public string InvoiceDateStr { get; set; }
         public string? Supplier { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
-
+        public bool IsActive { get; set; }
         public string? InvoiceProductsStr { get; set; }
         public PurchaseInvoiceProductsDTO[] InvoiceDetails => JsonConvert.DeserializeObject<PurchaseInvoiceProductsDTO[]>(InvoiceProductsStr);
         public List<PurchaseInvoiceProductsDTO> GetInvoiceDetails { get; set; }
@@ -34,7 +35,9 @@ namespace ERP_System.DTO.Guide
         public decimal? ItemUnitPrice { get; set; }
         public decimal? Qty { get; set; }
         public decimal? SellingPrice { get; set; }
-        public decimal? TotalQtyPrice => (Qty * ConversionFactor) * ItemUnitPrice;
+        public decimal? TotalQtyPrice =>Math.Round( (Qty.Value * ConversionFactor.Value) * ItemUnitPrice.Value ,2);
+        public List<ProductUnitsDTO> GetProductUnits { get; set; }
+
     }
 
     //public class InvoicesTableDTO

@@ -1,0 +1,207 @@
+﻿@{
+    Layout = "_Layout";
+}
+@model ERP_System.DTO.Guide.PurchaseInvoiceDTO;
+@if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">تعديل فاتورة مشتريات</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit('edit')">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
+                                        <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
+                                        <select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
+                                            <option selected value="1">فاتورة شراء</option>
+                                            @if (CurrentForm.CurrentFormPermissionActions.PurchaseThrowbackHasPermission)
+                                            {
+                                                <option value="2">فاتورة مرتجع شراء</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
+                                        <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text" ,Model.StockId)' name="StockId" id="ddlStockId">
+                                            <option selected value="0">اختر المخزن</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
+                                            <input type="text" required id="InvoiceNumber" value="@Model.InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
+                                            <input type="date" class="form-control" value="@Model.InvoiceDateStr" name="InvoiceDate" id="InvoiceDate">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="Supplier">اسم المورد<span style="color:red;"> * </span></label>
+                                            <input type="text" class="form-control" value="@Model.Supplier" name="Supplier" id="Supplier">
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="col-md-12">
+                                        <div class="table-container" id="InvoiceProducts">
+                                            <label for="Products">الأصناف</label>
+                                            <button type="button" class="btn btn-outline-primary addInvoiceProduct mx-2">إضافة</button>
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>الباركود<span style="color:red;"> * </span></th>
+                                                        <th>اسم المنتج<span style="color:red;"> * </span></th>
+                                                        <th>الوحدة<span style="color:red;"> * </span></th>
+                                                        <th>سعر الوحدة</th>
+                                                        <th>الكمية<span style="color:red;"> * </span></th>
+                                                        <th>سعر البيع</th>
+                                                        <th>الإجمالي للصنف</th>
+                                                        <th>التحكم</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="InvoiceProductsBody">
+
+                                                    @{
+                                                        if (Model.GetInvoiceDetails != null && Model.GetInvoiceDetails.Count() > 0)
+                                                        {
+                                                            foreach (var detail in Model.GetInvoiceDetails)
+                                                            {
+                                                                <tr>
+
+                                                                    <td>
+                                                                        <input class="form-control ID" type="hidden" value="@detail.ID" />
+                                                                        <input class="form-control ProductId" type="hidden" value="@detail.ProductId" />
+                                                                        <input type="text" onkeyup="getProduct(this,event)" value="@detail.ProductBarCode" required class="form-control ProductBarCode" />
+                                                                    </td>
+                                                                    <td><input type="text" required value="@detail.ProductName" class="form-control ProductName" /></td>
+                                                                    <td>
+                                                                        <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+                                                                            @if (detail.GetProductUnits != null && detail.GetProductUnits.Count() > 0)
+                                                                            {
+                                                                                @foreach (var unit in detail.GetProductUnits)
+                                                                                {
+                                                                                    if (detail.UnitId == unit.UnitId)
+                                                                                    {
+                                                                                        <option selected value="@unit.UnitId">@unit.UnitName</option>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <option value="@unit.UnitId">@unit.UnitName</option>
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option selected value="0">اختر الوحدة</option>
+                                                                            }
+                                                                        </select>
+                                                                        <input class="form-control ConversionFactor" type="hidden" value="@detail.ConversionFactor" />
+                                                                    </td>
+                                                                    <td><input type="number" disabled class="form-control ItemUnitPrice" value="@detail.ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" value="@detail.Qty" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" value="@detail.SellingPrice" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+                                                                    <td><input type="number" disabled class="form-control TotalQtyPrice" value="@detail.TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td>
+                                                                        <div class="d-flex">
+                                                                            <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                                            <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
+                                                                        </div>
+                                                                    </td>
+
+                                                                </tr>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+
+                                                                <td>
+                                                                    <input class="form-control ID" type="hidden" value="0" />
+                                                                    <input class="form-control ProductId" type="hidden" value="0" />
+                                                                    <input type="text" onkeyup="getProduct(this,event)" required class="form-control ProductBarCode" />
+                                                                </td>
+                                                                <td><input type="text" required class="form-control ProductName" /></td>
+                                                                <td>
+                                                                    <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+                                                                        <option selected value="0">اختر الوحدة</option>
+                                                                    </select>
+                                                                    <input class="form-control ConversionFactor" type="hidden" value="1" />
+                                                                </td>
+                                                                <td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+                                                                <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                <td>
+                                                                    <div class="d-flex">
+                                                                        <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                                        <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
+                                                                    </div>
+                                                                </td>
+
+                                                            </tr>
+                                                        }
+                                                    }
+
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="5"><h5>الإجمالي</h5></td>
+                                                        <td colspan="3"><input disabled type="number" value="@Model.InvoiceTotalPrice" class="form-control InvoiceTotalPrice" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="col-12 d-flex">
+                                        <div class="form-check">
+                                            <div class="checkbox">
+                                                <input type="checkbox" name="IsActive" id="IsActive" value="@Model.IsActive" class="form-check-input" checked="@Model.IsActive">
+                                                <label for="IsActive">الحاله</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 d-flex justify-content-between mt-5">
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('edit')">
+                                            حفظ
+                                        </button>
+
+                                        @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
+                                        {
+                                            <div class="d-flex align-items-center justify-content-end ps-2">
+                                                <a class="btn btn-outline-primary" href="/Guide/PurchaseInvoice/Index">
+                                                    رجوع للقائمة
+                                                    <span class="fa-arrow-left fas"></span>
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts
+    {
+
+    <partial name="_Scripts" />
+    <script>
+        $(document).ready(function(){
+            let invoiceDate
+        });
+    </script>
+}

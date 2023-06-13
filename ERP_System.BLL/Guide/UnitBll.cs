@@ -17,12 +17,14 @@ namespace ERP_System.BLL.Guide
     {
         private const string _spUnits = "Guide.[spUnits]";
         private readonly IRepository<Unit> _repoUnit;
+        private readonly IRepository<ProductUnit> _repoProductUnit;
         private readonly IMapper _mapper;
 
-        public UnitBll(IRepository<Unit> repoUnit, IMapper mapper)
+        public UnitBll(IRepository<Unit> repoUnit, IMapper mapper , IRepository<ProductUnit> repoProductUnit)
         {
             _repoUnit = repoUnit;
             _mapper = mapper;
+            _repoProductUnit = repoProductUnit;
         }
 
         #region Get
@@ -36,6 +38,18 @@ namespace ERP_System.BLL.Guide
                 IsActive = c.IsActive
             }).FirstOrDefault();
            
+        }
+
+        public List<ProductUnitsDTO> GetAllByProductId(Guid? ProductId)
+        {
+
+            return _repoProductUnit.GetAllAsNoTracking().Where(p => p.ProductId==ProductId && p.IsActive && !p.IsDeleted).Select(c => new ProductUnitsDTO
+            {
+               UnitId = c.UnitId,
+               UnitName = c.Unit.Name,
+               ID= c.ID
+               
+            }).ToList();
         }
 
         public Unit GetByUnitName(string name)

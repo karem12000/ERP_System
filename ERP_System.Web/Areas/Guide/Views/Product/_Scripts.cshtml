@@ -66,7 +66,9 @@
                 {
                     data: null,
                     bSortable: true,
-                    render: function (data, type, row) { return '<label class="UnitName">' + (data.UnitName ?? "") + '</label><input hidden name="UnitId" class="UnitId" value="' + data.UnitId + '" /> ' }
+                    render: function (data, type, row) { 
+                        return '<label class="NameUnitOfQty">' + (data.NameUnitOfQty ?? "") + '</label><input hidden name="IdUnitOfQty" class="IdUnitOfQty" value="' + data.IdUnitOfQty + '" /> '
+                    }
 
                 },
                 {

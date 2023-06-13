@@ -20,20 +20,20 @@ namespace ERP_System.BLL.Guide
     {
         private const string _spInvoices = "[Guide].[spPurchaseInvoice]";
         private readonly IRepository<PurchaseInvoice> _repoInvoice;
-        private readonly IRepository<Unit> _repoUnits;
+        private readonly UnitBll _UnitBll;
         private readonly IRepository<Stock> _repoStock;
         private readonly IRepository<Product> _repoProduct;
         private readonly IRepository<ProductUnit> _repoProductUnit;
         private readonly IRepository<PurchaseInvoiceDetail> _repoInvoiceDetail;
         private readonly IMapper _mapper;
 
-        public PurchaseInvoiceBll(IRepository<Product> repoProduct, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, IRepository<Unit> repoUnits, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
+        public PurchaseInvoiceBll(IRepository<Product> repoProduct, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
         {
             _repoInvoice = repoInvoice;
             _mapper = mapper;
             _repoInvoiceDetail = repoInvoiceDetail;
             _repoProduct = repoProduct;
-            _repoUnits = repoUnits;
+            _UnitBll = UnitBll;
             _repoStock = repoStock;
             _repoProductUnit = repoProductUnit;
         }
@@ -44,37 +44,13 @@ namespace ERP_System.BLL.Guide
             return _repoInvoice.GetAllAsNoTracking().Include(c => c.PurchaseInvoiceDetail).Where(p => p.ID == id).Select(x => new PurchaseInvoiceDTO
             {
                 ID = x.ID,
-                InvoiceDate = x.InvoiceDate,
+                InvoiceDateStr = x.InvoiceDate.Date.ToString(),
+                //InvoiceDate = x.InvoiceDate,
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
                 Supplier = x.Supplier,
-                InvoiceTotalPrice= x.InvoiceTotalPrice,
-                 GetInvoiceDetails= x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
-                 {
-                    ID = c.ID,
-                    ProductId = c.ProductId,
-                    ProductName = c.ProductName,
-                    Qty = c.Qty,
-                    UnitId = c.UnitId,
-                    ConversionFactor= c.ConversionFactor,
-                    ItemUnitPrice= c.ItemUnitPrice,
-                    ProductBarCode= c.ProductBarCode,
-                    SellingPrice = c.SellingPrice
-                }).ToList(),
-
-            }).FirstOrDefault();
-        }
-        public PurchaseInvoiceDTO GetByInvoiceNumber(int? number)
-        {
-            return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new PurchaseInvoiceDTO
-            {
-                ID = x.ID,
-                InvoiceDate = x.InvoiceDate,
-                InvoiceNumber = x.InvoiceNumber,
-                StockId = x.StockId,
-                StockName = x.StockName,
-                Supplier = x.Supplier,
+                IsActive = x.IsActive,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
                 {
@@ -86,7 +62,39 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
-                    SellingPrice = c.SellingPrice
+                    SellingPrice = c.SellingPrice,
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+                }).ToList(),
+                
+
+            }).FirstOrDefault();
+        }
+        public PurchaseInvoiceDTO GetByInvoiceNumber(int? number)
+        {
+            return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new PurchaseInvoiceDTO
+            {
+                ID = x.ID,
+                InvoiceDateStr = x.InvoiceDate.Date.ToString(),
+                InvoiceNumber = x.InvoiceNumber,
+                StockId = x.StockId,
+                StockName = x.StockName,
+                Supplier = x.Supplier,
+                IsActive = x.IsActive,
+
+                InvoiceTotalPrice = x.InvoiceTotalPrice,
+                GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
+                {
+                    ID = c.ID,
+                    ProductId = c.ProductId,
+                    ProductName = c.ProductName,
+                    Qty = c.Qty,
+                    UnitId = c.UnitId,
+                    ConversionFactor = c.ConversionFactor,
+                    ItemUnitPrice = c.ItemUnitPrice,
+                    ProductBarCode = c.ProductBarCode,
+                    SellingPrice = c.SellingPrice,
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+
                 }).ToList(),
 
             }).FirstOrDefault();
@@ -100,11 +108,13 @@ namespace ERP_System.BLL.Guide
                 return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceDate.Date == date.Value.Date && p.IsActive && !p.IsDeleted).Select(x => new PurchaseInvoiceDTO
                 {
                     ID = x.ID,
-                    InvoiceDate = x.InvoiceDate,
+                    InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                     InvoiceNumber = x.InvoiceNumber,
                     StockId = x.StockId,
                     StockName = x.StockName,
                     Supplier = x.Supplier,
+                    IsActive = x.IsActive,
+
                     InvoiceTotalPrice = x.InvoiceTotalPrice,
                     GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
                     {
@@ -116,7 +126,9 @@ namespace ERP_System.BLL.Guide
                         ConversionFactor = c.ConversionFactor,
                         ItemUnitPrice = c.ItemUnitPrice,
                         ProductBarCode = c.ProductBarCode,
-                        SellingPrice = c.SellingPrice
+                        SellingPrice = c.SellingPrice,
+                        GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+
                     }).ToList(),
 
                 }).FirstOrDefault();
@@ -130,11 +142,13 @@ namespace ERP_System.BLL.Guide
             return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date == date.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseInvoiceDTO
             {
                 ID = x.ID,
-                InvoiceDate = x.InvoiceDate,
+                InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
                 Supplier = x.Supplier,
+                IsActive = x.IsActive,
+
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
                 {
@@ -146,7 +160,9 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
-                    SellingPrice = c.SellingPrice
+                    SellingPrice = c.SellingPrice,
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+
                 }).ToList(),
 
             });
@@ -158,11 +174,13 @@ namespace ERP_System.BLL.Guide
             return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= fromDate.Value.Date && x.InvoiceDate.Date <= toDate.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseInvoiceDTO
             {
                 ID = x.ID,
-                InvoiceDate = x.InvoiceDate,
+                InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
                 Supplier = x.Supplier,
+                IsActive = x.IsActive,
+
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
                 {
@@ -174,7 +192,9 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
-                    SellingPrice = c.SellingPrice
+                    SellingPrice = c.SellingPrice,
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+
                 }).ToList(),
 
             });
@@ -196,8 +216,8 @@ namespace ERP_System.BLL.Guide
             ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
 
 
-            var data = _repoInvoice.GetAllAsNoTracking().Include(x => x.PurchaseInvoiceDetail).Where(p => p.ID != InvoiceDTO.ID && p.InvoiceNumber==InvoiceDTO.InvoiceNumber 
-                                                                                                && p.StockId==InvoiceDTO.StockId && p.InvoiceDate.Date==InvoiceDTO.InvoiceDate.Date).FirstOrDefault();
+            var data = _repoInvoice.GetAllAsNoTracking().Include(x => x.PurchaseInvoiceDetail).Where(p => p.ID != InvoiceDTO.ID && p.InvoiceNumber == InvoiceDTO.InvoiceNumber
+                                                                                                && p.StockId == InvoiceDTO.StockId && p.InvoiceDate.Date == InvoiceDTO.InvoiceDate.Date).FirstOrDefault();
             if (data != null)
             {
                 //if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.InvoiceNumber == InvoiceDTO.InvoiceNumber
@@ -266,7 +286,7 @@ namespace ERP_System.BLL.Guide
             else
             {
                 if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.InvoiceNumber == InvoiceDTO.InvoiceNumber
-                && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId==InvoiceDTO.StockId).FirstOrDefault() != null)
+                && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
                 {
                     resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
                     return resultViewModel;
@@ -285,7 +305,7 @@ namespace ERP_System.BLL.Guide
                     var AllDetails = new List<PurchaseInvoiceDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
-                        var productUnit = _repoProductUnit.GetAll().Include(x=>x.Product).Where(x=>x.ProductId==invoiceDetail.ProductId&& x.IsActive && !x.IsDeleted);
+                        var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
                         var product = _repoProduct.GetById(invoiceDetail.ProductId);
                         var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
                         var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
@@ -301,7 +321,7 @@ namespace ERP_System.BLL.Guide
                         else
                         {
                             product.QtyInStock = TotalQtyInStock - reuiredQty;
-
+                            _repoProduct.UpdateWithoutSaveChange(product);
                             var newInvoiceDetail = new PurchaseInvoiceDetail()
                             {
                                 AddedBy = _repoInvoice.UserId,
@@ -309,16 +329,17 @@ namespace ERP_System.BLL.Guide
                                 UnitId = invoiceDetail.UnitId,
                                 ConversionFactor = invoiceDetail.ConversionFactor,
                                 ProductBarCode = invoiceDetail.ProductBarCode,
-                                ProductId= invoiceDetail.ProductId,
-                                ItemUnitPrice= invoiceDetail.ItemUnitPrice,
-                                SellingPrice= invoiceDetail.SellingPrice,
+                                ProductId = invoiceDetail.ProductId,
+                                ItemUnitPrice = invoiceDetail.ItemUnitPrice,
+                                SellingPrice = invoiceDetail.SellingPrice,
                                 Qty = invoiceDetail.Qty,
-                                ID = new Guid(),
-                                TotalQtyPrice= invoiceDetail.TotalQtyPrice,
+                                ID = Guid.NewGuid(),
+                                TotalQtyPrice = invoiceDetail.TotalQtyPrice,
                                 PurchaseInvoiceId = newInvoice.ID,
                                 ProductName = product.Name
                             };
-
+                            //_repoInvoiceDetail.Insert(newInvoiceDetail);
+                            AllDetails.Add(newInvoiceDetail);
                             TotalPrice += newInvoiceDetail.TotalQtyPrice;
                         }
 
@@ -326,13 +347,10 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceTotalPrice = TotalPrice;
                     if (_repoInvoice.Insert(newInvoice))
                     {
-                        _repoProduct.SaveChange();
-                        var saveInvoiceDetaails = _repoInvoiceDetail.InsertRange(AllDetails);
-                        if (saveInvoiceDetaails)
-                        {
-                            resultViewModel.Status = true;
-                            resultViewModel.Message = AppConstants.Messages.SavedSuccess;
-                        }
+                        _repoInvoiceDetail.InsertRange(AllDetails);
+                        resultViewModel.Status = true;
+                        resultViewModel.Message = AppConstants.Messages.SavedSuccess;
+
 
                     }
                 }
