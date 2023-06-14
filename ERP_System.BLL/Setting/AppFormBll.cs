@@ -42,8 +42,8 @@ namespace ERP_System.BLL
                 DeleteHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.Delete).FirstOrDefault() != null ? true : false,
                 EditHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.Edit).FirstOrDefault() != null ? true : false,
                 ShowHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.Show).FirstOrDefault() != null ? true : false,
-               PurchaseThrowbackHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.PurchaseThrowback).FirstOrDefault() != null ? true : false,
-               SaleThrowbackHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.SaleThrowback).FirstOrDefault() != null ? true : false,
+               //PurchaseThrowbackHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.PurchaseThrowback).FirstOrDefault() != null ? true : false,
+               //SaleThrowbackHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.SaleThrowback).FirstOrDefault() != null ? true : false,
             };
             return currentFormDTO;
         }
@@ -60,8 +60,8 @@ namespace ERP_System.BLL
                 EditHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.Edit).FirstOrDefault() != null ? true : false,
 
                 ShowHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.Show).FirstOrDefault() != null ? true : false,
-                PurchaseThrowbackHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.PurchaseThrowback).FirstOrDefault() != null ? true : false,
-                SaleThrowbackHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.SaleThrowback).FirstOrDefault() != null ? true : false,
+                //PurchaseThrowbackHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.PurchaseThrowback).FirstOrDefault() != null ? true : false,
+                //SaleThrowbackHasPermission = PagePermissions.Where(p => p.ActionsPage.ActionName == ActionEnum.SaleThrowback).FirstOrDefault() != null ? true : false,
             };
 
            

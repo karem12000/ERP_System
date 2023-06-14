@@ -1,14 +1,14 @@
 ﻿@{
     Layout = "_Layout";
 }
-@model ERP_System.DTO.Guide.PurchaseInvoiceDTO;
+@model ERP_System.DTO.Guide.PurchaseThrowbackDTO;
 @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
 {
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">تعديل فاتورة مشتريات</h4>
+                    <h4 class="card-title">تعديل مرتجع مشتريات</h4>
                 </div>
                 <div class="card-content">
                     <div class="card-body">
@@ -19,7 +19,7 @@
                                         <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
                                         <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
                                         <select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
-                                            <option selected value="1">فاتورة مشتريات</option>
+                                                <option value="0">مرتجع شراء</option>
                                         </select>
                                     </div>
                                     <div class="form-group col-6">
@@ -173,7 +173,7 @@
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
                                             <div class="d-flex align-items-center justify-content-end ps-2">
-                                                <a class="btn btn-outline-primary" href="/Guide/PurchaseInvoice/Index">
+                                                <a class="btn btn-outline-primary" href="/Guide/PurchaseThrowback/Index">
                                                     رجوع للقائمة
                                                     <span class="fa-arrow-left fas"></span>
                                                 </a>
@@ -195,7 +195,7 @@
 
     <partial name="_Scripts" />
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
             //let invoiceDate
         });
     </script>

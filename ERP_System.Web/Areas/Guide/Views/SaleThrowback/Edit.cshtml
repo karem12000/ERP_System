@@ -1,14 +1,14 @@
 ﻿@{
     Layout = "_Layout";
 }
-@model ERP_System.DTO.Guide.PurchaseInvoiceDTO;
+@model ERP_System.DTO.Guide.SaleThrowbackDTO;
 @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
 {
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">تعديل فاتورة مشتريات</h4>
+                    <h4 class="card-title">تعديل مرتجع مبيعات</h4>
                 </div>
                 <div class="card-content">
                     <div class="card-body">
@@ -19,7 +19,7 @@
                                         <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
                                         <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
                                         <select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
-                                            <option selected value="1">فاتورة مشتريات</option>
+                                            <option selected value="0">مرتجع مبيعات</option>
                                         </select>
                                     </div>
                                     <div class="form-group col-6">
@@ -43,7 +43,7 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="Supplier">اسم المورد<span style="color:red;"> * </span></label>
-                                            <input type="text" class="form-control" value="@Model.Supplier" name="Supplier" id="Supplier">
+                                            <input type="text" class="form-control" value="@Model.Buyer" name="Buyer" id="Buyer">
                                         </div>
                                     </div>
                                     <hr>
@@ -102,8 +102,9 @@
                                                                         </select>
                                                                         <input class="form-control ConversionFactor" type="hidden" value="@detail.ConversionFactor" />
                                                                     </td>
+                                                                    <td><input type="number" disabled class="form-control ItemUnitPrice" value="@detail.ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                     <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" value="@detail.Qty" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                    <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" value="@detail.PurchasingPrice" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" /></td>
+                                                                    <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" value="@detail.SellingPrice" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
                                                                     <td><input type="number" disabled class="form-control TotalQtyPrice" value="@detail.TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                     <td>
                                                                         <div class="d-flex">
@@ -173,7 +174,7 @@
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
                                             <div class="d-flex align-items-center justify-content-end ps-2">
-                                                <a class="btn btn-outline-primary" href="/Guide/PurchaseInvoice/Index">
+                                                <a class="btn btn-outline-primary" href="/Guide/SaleThrowback/Index">
                                                     رجوع للقائمة
                                                     <span class="fa-arrow-left fas"></span>
                                                 </a>
@@ -195,8 +196,6 @@
 
     <partial name="_Scripts" />
     <script>
-        $(document).ready(function(){
-            //let invoiceDate
-        });
+       
     </script>
 }

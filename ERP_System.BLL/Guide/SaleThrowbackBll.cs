@@ -16,22 +16,22 @@ using System.Text.RegularExpressions;
 
 namespace ERP_System.BLL.Guide
 {
-    public class PurchaseInvoiceBll
+    public class SaleThrowbackBll
     {
-        private const string _spInvoices = "[Guide].[spPurchaseInvoice]";
-        private readonly IRepository<PurchaseInvoice> _repoInvoice;
+        private const string _spSaleThrowback = "[Guide].[spSaleThrowback]";
+        private readonly IRepository<SaleThrowback> _repoSaleThrowback;
         private readonly UnitBll _UnitBll;
         private readonly IRepository<Stock> _repoStock;
         private readonly IRepository<Product> _repoProduct;
         private readonly IRepository<ProductUnit> _repoProductUnit;
-        private readonly IRepository<PurchaseInvoiceDetail> _repoInvoiceDetail;
+        private readonly IRepository<SaleThrowbackDetail> _repoSaleThrowbackDetail;
         private readonly IMapper _mapper;
 
-        public PurchaseInvoiceBll(IRepository<Product> repoProduct, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
+        public SaleThrowbackBll(IRepository<Product> repoProduct, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<SaleThrowback> repoSaleThrowback, IRepository<SaleThrowbackDetail> repoSaleThrowbackDetail, IMapper mapper)
         {
-            _repoInvoice = repoInvoice;
+            _repoSaleThrowback = repoSaleThrowback;
             _mapper = mapper;
-            _repoInvoiceDetail = repoInvoiceDetail;
+            _repoSaleThrowbackDetail = repoSaleThrowbackDetail;
             _repoProduct = repoProduct;
             _UnitBll = UnitBll;
             _repoStock = repoStock;
@@ -39,9 +39,9 @@ namespace ERP_System.BLL.Guide
         }
 
         #region Get
-        public PurchaseInvoiceDTO GetById(Guid id)
+        public SaleThrowbackDTO GetById(Guid id)
         {
-            return _repoInvoice.GetAllAsNoTracking().Include(c => c.PurchaseInvoiceDetail).Where(p => p.ID == id).Select(x => new PurchaseInvoiceDTO
+            return _repoSaleThrowback.GetAllAsNoTracking().Include(c => c.SaleInvoiceDetails).Where(p => p.ID == id).Select(x => new SaleThrowbackDTO
             {
                 ID = x.ID,
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
@@ -49,10 +49,10 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
-                Supplier = x.Supplier,
+                Buyer = x.Buyer,
                 IsActive = x.IsActive,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
-                GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
+                GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
@@ -60,28 +60,29 @@ namespace ERP_System.BLL.Guide
                     Qty = c.Qty,
                     UnitId = c.UnitId,
                     ConversionFactor = c.ConversionFactor,
+                    ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
-                    PurchasingPrice = c.PurchasingPrice,
+                    SellingPrice = c.SellingPrice,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
                 }).ToList(),
 
 
             }).FirstOrDefault();
         }
-        public PurchaseInvoiceDTO GetByInvoiceNumber(int? number)
+        public SaleThrowbackDTO GetByInvoiceNumber(int? number)
         {
-            return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new PurchaseInvoiceDTO
+            return _repoSaleThrowback.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new SaleThrowbackDTO
             {
                 ID = x.ID,
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
-                Supplier = x.Supplier,
+                Buyer = x.Buyer,
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
-                GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
+                GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
@@ -89,8 +90,9 @@ namespace ERP_System.BLL.Guide
                     Qty = c.Qty,
                     UnitId = c.UnitId,
                     ConversionFactor = c.ConversionFactor,
+                    ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
-                    PurchasingPrice = c.PurchasingPrice,
+                    SellingPrice = c.SellingPrice,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
                 }).ToList(),
@@ -99,22 +101,22 @@ namespace ERP_System.BLL.Guide
         }
 
 
-        public PurchaseInvoiceDTO GetByInvoiceDate(DateTime? date)
+        public SaleThrowbackDTO GetByInvoiceDate(DateTime? date)
         {
             if (date != null)
             {
-                return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceDate.Date == date.Value.Date && p.IsActive && !p.IsDeleted).Select(x => new PurchaseInvoiceDTO
+                return _repoSaleThrowback.GetAllAsNoTracking().Where(p => p.InvoiceDate.Date == date.Value.Date && p.IsActive && !p.IsDeleted).Select(x => new SaleThrowbackDTO
                 {
                     ID = x.ID,
                     InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                     InvoiceNumber = x.InvoiceNumber,
                     StockId = x.StockId,
                     StockName = x.StockName,
-                    Supplier = x.Supplier,
+                    Buyer = x.Buyer,
                     IsActive = x.IsActive,
 
                     InvoiceTotalPrice = x.InvoiceTotalPrice,
-                    GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
+                    GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                     {
                         ID = c.ID,
                         ProductId = c.ProductId,
@@ -122,8 +124,9 @@ namespace ERP_System.BLL.Guide
                         Qty = c.Qty,
                         UnitId = c.UnitId,
                         ConversionFactor = c.ConversionFactor,
+                        ItemUnitPrice = c.ItemUnitPrice,
                         ProductBarCode = c.ProductBarCode,
-                        PurchasingPrice = c.PurchasingPrice,
+                        SellingPrice = c.SellingPrice,
                         GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
                     }).ToList(),
@@ -133,21 +136,21 @@ namespace ERP_System.BLL.Guide
             return null;
         }
 
-        public IQueryable<PurchaseInvoiceDTO> GetAllByDate(DateTime? date)
+        public IQueryable<SaleThrowbackDTO> GetAllByDate(DateTime? date)
         {
 
-            return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date == date.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseInvoiceDTO
+            return _repoSaleThrowback.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date == date.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new SaleThrowbackDTO
             {
                 ID = x.ID,
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
-                Supplier = x.Supplier,
+                Buyer = x.Buyer,
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
-                GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
+                GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
@@ -155,8 +158,9 @@ namespace ERP_System.BLL.Guide
                     Qty = c.Qty,
                     UnitId = c.UnitId,
                     ConversionFactor = c.ConversionFactor,
+                    ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
-                    PurchasingPrice = c.PurchasingPrice,
+                    SellingPrice = c.SellingPrice,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
                 }).ToList(),
@@ -164,21 +168,21 @@ namespace ERP_System.BLL.Guide
             });
 
         }
-        public IQueryable<PurchaseInvoiceDTO> GetAllByDate(DateTime? fromDate, DateTime? toDate)
+        public IQueryable<SaleThrowbackDTO> GetAllByDate(DateTime? fromDate, DateTime? toDate)
         {
 
-            return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= fromDate.Value.Date && x.InvoiceDate.Date <= toDate.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseInvoiceDTO
+            return _repoSaleThrowback.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= fromDate.Value.Date && x.InvoiceDate.Date <= toDate.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new SaleThrowbackDTO
             {
                 ID = x.ID,
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
-                Supplier = x.Supplier,
+                Buyer = x.Buyer,
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
-                GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
+                GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
@@ -186,8 +190,9 @@ namespace ERP_System.BLL.Guide
                     Qty = c.Qty,
                     UnitId = c.UnitId,
                     ConversionFactor = c.ConversionFactor,
+                    ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
-                    PurchasingPrice = c.PurchasingPrice,
+                    SellingPrice = c.SellingPrice,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
                 }).ToList(),
@@ -197,8 +202,8 @@ namespace ERP_System.BLL.Guide
         }
         public DataTableResponse LoadData(DataTableRequest mdl)
         {
-            var data = _repoInvoice.ExecuteStoredProcedure<PurchaseInvoicesTableDTO>
-                (_spInvoices, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
+            var data = _repoSaleThrowback.ExecuteStoredProcedure<SaleInvoicesTableDTO>
+                (_spSaleThrowback, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
 
             return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
         }
@@ -206,15 +211,15 @@ namespace ERP_System.BLL.Guide
 
         #endregion
         #region Save 
-        public ResultViewModel Save(PurchaseInvoiceDTO InvoiceDTO)
+        public ResultViewModel Save(SaleThrowbackDTO InvoiceDTO)
         {
             ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
 
 
-            var data = _repoInvoice.GetAllAsNoTracking().Include(x => x.PurchaseInvoiceDetail).Where(p => p.ID == InvoiceDTO.ID && p.IsActive && !p.IsDeleted).FirstOrDefault();
+            var data = _repoSaleThrowback.GetAllAsNoTracking().Include(x => x.SaleInvoiceDetails).Where(p => p.ID == InvoiceDTO.ID && p.IsActive && !p.IsDeleted).FirstOrDefault();
             if (data != null)
             {
-                if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.ID != data.ID && p.InvoiceNumber == InvoiceDTO.InvoiceNumber
+                if (_repoSaleThrowback.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.ID != data.ID && p.InvoiceNumber == InvoiceDTO.InvoiceNumber
                 && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
                 {
                     resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
@@ -227,11 +232,11 @@ namespace ERP_System.BLL.Guide
                     newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
-                    newInvoice.Supplier = InvoiceDTO.Supplier;
+                    newInvoice.Buyer = InvoiceDTO.Buyer;
                     decimal? TotalPrice = 0;
-                    var oldInvoiceDetails = data.PurchaseInvoiceDetail;
+                    var oldInvoiceDetails = data.SaleInvoiceDetails;
 
-                    var AllDetails = new List<PurchaseInvoiceDetail>();
+                    var AllDetails = new List<SaleThrowbackDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
                         var product = _repoProduct.GetById(invoiceDetail.ProductId.Value);
@@ -243,67 +248,63 @@ namespace ERP_System.BLL.Guide
                             var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
                             var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
                             var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-                            var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
-                            var oldEntireQty = oldDetail.Qty * oldDetail.ConversionFactor;
-                            var EntireQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
+                            var TotalQtyInStock = Math.Round(QtyInStock.Value * ConversionFactor.Value, 2);
+                            var oldTotalThrowbackQty = Math.Round(oldDetail.Qty.Value * oldDetail.ConversionFactor.Value, 2);
+                            var TotalThrowbackQty = Math.Round(invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value, 2);
+
+                            product.QtyInStock = TotalQtyInStock - oldTotalThrowbackQty;
+                            product.QtyInStock = product.QtyInStock + TotalThrowbackQty;
 
 
-                            product.QtyInStock = TotalQtyInStock - oldEntireQty;
-                            product.QtyInStock = TotalQtyInStock + EntireQty;
-                            if (product.QtyInStock<0)
-                            {
-                                resultViewModel.Status = false;
-                                resultViewModel.Message = "الكمية المراد استرجاعها للمنتج " + product.Name + " غير كافية ";
-                                return resultViewModel;
-                            }
-                            else
-                            {
-                                var newInvoiceDetail = new PurchaseInvoiceDetail()
-                                {
-                                    AddedBy = _repoInvoice.UserId,
-                                    IsActive = true,
-                                    UnitId = invoiceDetail.UnitId,
-                                    ConversionFactor = invoiceDetail.ConversionFactor,
-                                    ProductBarCode = invoiceDetail.ProductBarCode,
-                                    ProductId = invoiceDetail.ProductId,
-                                    PurchasingPrice = invoiceDetail.PurchasingPrice,
-                                    Qty = invoiceDetail.Qty,
-                                    ID = Guid.NewGuid(),
-                                    TotalQtyPrice = invoiceDetail.TotalQtyPrice,
-                                    PurchaseInvoiceId = newInvoice.ID,
-                                    ProductName = product.Name
-                                };
-                                AllDetails.Add(newInvoiceDetail);
-
-                                TotalPrice += newInvoiceDetail.TotalQtyPrice;
-                            }
-                        
-
-                        }
-                        else
-                        {
-                            var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                            var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
-                            var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-                            var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
-                            var EntireQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
-
-                            product.QtyInStock = product.QtyInStock + EntireQty;
                             product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
 
-                            var newInvoiceDetail = new PurchaseInvoiceDetail()
+                            var newInvoiceDetail = new SaleThrowbackDetail()
                             {
-                                AddedBy = _repoInvoice.UserId,
+                                AddedBy = _repoSaleThrowback.UserId,
                                 IsActive = true,
                                 UnitId = invoiceDetail.UnitId,
                                 ConversionFactor = invoiceDetail.ConversionFactor,
                                 ProductBarCode = invoiceDetail.ProductBarCode,
                                 ProductId = invoiceDetail.ProductId,
-                                PurchasingPrice = invoiceDetail.PurchasingPrice,
+                                ItemUnitPrice = invoiceDetail.ItemUnitPrice,
+                                SellingPrice = invoiceDetail.SellingPrice,
                                 Qty = invoiceDetail.Qty,
                                 ID = Guid.NewGuid(),
                                 TotalQtyPrice = invoiceDetail.TotalQtyPrice,
-                                PurchaseInvoiceId = newInvoice.ID,
+                                SaleThrowbackId = newInvoice.ID,
+                                ProductName = product.Name
+                            };
+                            AllDetails.Add(newInvoiceDetail);
+
+                            TotalPrice += newInvoiceDetail.TotalQtyPrice;
+
+                        }
+                        else
+                        {
+
+                            var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+                            var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
+                            var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                            var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
+                            var TotalThrowbackQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
+
+                            product.QtyInStock = product.QtyInStock + TotalThrowbackQty;
+                            product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
+
+                            var newInvoiceDetail = new SaleThrowbackDetail()
+                            {
+                                AddedBy = _repoSaleThrowback.UserId,
+                                IsActive = true,
+                                UnitId = invoiceDetail.UnitId,
+                                ConversionFactor = invoiceDetail.ConversionFactor,
+                                ProductBarCode = invoiceDetail.ProductBarCode,
+                                ProductId = invoiceDetail.ProductId,
+                                ItemUnitPrice = invoiceDetail.ItemUnitPrice,
+                                SellingPrice = invoiceDetail.SellingPrice,
+                                Qty = invoiceDetail.Qty,
+                                ID = Guid.NewGuid(),
+                                TotalQtyPrice = invoiceDetail.TotalQtyPrice,
+                                SaleThrowbackId = newInvoice.ID,
                                 ProductName = product.Name
                             };
                             AllDetails.Add(newInvoiceDetail);
@@ -315,11 +316,11 @@ namespace ERP_System.BLL.Guide
 
                     }
                     newInvoice.InvoiceTotalPrice = TotalPrice;
-                    if (_repoInvoice.Insert(newInvoice))
+                    if (_repoSaleThrowback.Update(newInvoice))
                     {
                         _repoProduct.SaveChange();
-                        var deleteInvoiceDetaails = _repoInvoiceDetail.DeleteRange(oldInvoiceDetails);
-                        var saveInvoiceDetaails = _repoInvoiceDetail.InsertRange(AllDetails);
+                        var deleteInvoiceDetaails = _repoSaleThrowbackDetail.DeleteRange(oldInvoiceDetails);
+                        var saveInvoiceDetaails = _repoSaleThrowbackDetail.InsertRange(AllDetails);
                         if (deleteInvoiceDetaails && saveInvoiceDetaails)
                         {
                             resultViewModel.Status = true;
@@ -336,7 +337,7 @@ namespace ERP_System.BLL.Guide
             }
             else
             {
-                if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.InvoiceNumber == InvoiceDTO.InvoiceNumber
+                if (_repoSaleThrowback.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.InvoiceNumber == InvoiceDTO.InvoiceNumber
                 && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
                 {
                     resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
@@ -344,16 +345,16 @@ namespace ERP_System.BLL.Guide
                 }
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
                 {
-                    var newInvoice = new PurchaseInvoice();
+                    var newInvoice = new SaleThrowback();
                     newInvoice.StockId = InvoiceDTO.StockId;
                     newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
-                    newInvoice.Supplier = InvoiceDTO.Supplier;
+                    newInvoice.Buyer = InvoiceDTO.Buyer;
                     decimal? TotalPrice = 0;
 
-                    var AllDetails = new List<PurchaseInvoiceDetail>();
+                    var AllDetails = new List<SaleThrowbackDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
                         var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
@@ -361,36 +362,38 @@ namespace ERP_System.BLL.Guide
                         var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
                         var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
                         var TotalQtyInStock = QtyInStock * ConversionFactor;
-                        var EntrieQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
+                        var TotalThrowbackQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
 
-                        product.QtyInStock = TotalQtyInStock + EntrieQty;
-                        product.QtyInStock = Math.Round((product.QtyInStock.Value/ConversionFactor.Value),2);
+                        product.QtyInStock = TotalQtyInStock + TotalThrowbackQty;
+                        product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
+
                         _repoProduct.UpdateWithoutSaveChange(product);
-                        var newInvoiceDetail = new PurchaseInvoiceDetail()
+                        var newInvoiceDetail = new SaleThrowbackDetail()
                         {
-                            AddedBy = _repoInvoice.UserId,
+                            AddedBy = _repoSaleThrowback.UserId,
                             IsActive = true,
                             UnitId = invoiceDetail.UnitId,
                             ConversionFactor = invoiceDetail.ConversionFactor,
                             ProductBarCode = invoiceDetail.ProductBarCode,
                             ProductId = invoiceDetail.ProductId,
-                            PurchasingPrice = invoiceDetail.PurchasingPrice,
+                            ItemUnitPrice = invoiceDetail.ItemUnitPrice,
+                            SellingPrice = invoiceDetail.SellingPrice,
                             Qty = invoiceDetail.Qty,
                             ID = Guid.NewGuid(),
                             TotalQtyPrice = invoiceDetail.TotalQtyPrice,
-                            PurchaseInvoiceId = newInvoice.ID,
+                            SaleThrowbackId = newInvoice.ID,
                             ProductName = product.Name
                         };
-                        //_repoInvoiceDetail.Insert(newInvoiceDetail);
+                        //_repoSaleThrowbackDetail.Insert(newInvoiceDetail);
                         AllDetails.Add(newInvoiceDetail);
                         TotalPrice += newInvoiceDetail.TotalQtyPrice;
 
 
                     }
                     newInvoice.InvoiceTotalPrice = TotalPrice;
-                    if (_repoInvoice.Insert(newInvoice))
+                    if (_repoSaleThrowback.Insert(newInvoice))
                     {
-                        _repoInvoiceDetail.InsertRange(AllDetails);
+                        _repoSaleThrowbackDetail.InsertRange(AllDetails);
                         resultViewModel.Status = true;
                         resultViewModel.Message = AppConstants.Messages.SavedSuccess;
 
@@ -407,7 +410,7 @@ namespace ERP_System.BLL.Guide
         public ResultViewModel Delete(Guid id)
         {
             ResultViewModel resultViewModel = new ResultViewModel();
-            var tbl = _repoInvoice.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
+            var tbl = _repoSaleThrowback.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
 
             if (tbl == null)
             {
@@ -417,12 +420,12 @@ namespace ERP_System.BLL.Guide
             }
 
             tbl.IsDeleted = true;
-            if (_repoInvoice.UserId != Guid.Empty)
+            if (_repoSaleThrowback.UserId != Guid.Empty)
             {
-                tbl.DeletedBy = _repoInvoice.UserId;
+                tbl.DeletedBy = _repoSaleThrowback.UserId;
             }
             tbl.DeletedDate = AppDateTime.Now;
-            var IsSuceess = _repoInvoice.Update(tbl);
+            var IsSuceess = _repoSaleThrowback.Update(tbl);
 
             resultViewModel.Status = IsSuceess;
             resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;

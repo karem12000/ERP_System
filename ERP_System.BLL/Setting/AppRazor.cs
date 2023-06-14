@@ -44,8 +44,8 @@ namespace ERP_System.BLL
         public bool DeleteHasPermission { get; set; } = false;
         public bool ShowHasPermission { get; set; } = false;
         public bool ChangeStatusHasPermission { get; set; } = false;
-        public bool PurchaseThrowbackHasPermission { get; set; } = false;
-        public bool SaleThrowbackHasPermission { get; set; } = false;
+        //public bool PurchaseThrowbackHasPermission { get; set; } = false;
+        //public bool SaleThrowbackHasPermission { get; set; } = false;
 
     }
 }
