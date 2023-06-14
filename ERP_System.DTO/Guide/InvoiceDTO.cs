@@ -53,21 +53,21 @@ namespace ERP_System.DTO.Guide
 
     }
 
-    public class PurchaseInvoicesTableDTO
-    {
-        public Guid? ID { get; set; }
+    //public class PurchaseInvoicesTableDTO
+    //{
+    //    public Guid? ID { get; set; }
 
-        public int InvoiceNumber { get; set; }
+    //    public int InvoiceNumber { get; set; }
 
-        public string InvoiceDate { get; set; }
-        public string? Supplier { get; set; }
-        public Guid? StockId { get; set; }
-        public string? StockName { get; set; }
+    //    public string InvoiceDate { get; set; }
+    //    public string? Supplier { get; set; }
+    //    public Guid? StockId { get; set; }
+    //    public string? StockName { get; set; }
 
-        public int? ProductsCount { get; set; }
-        public bool? IsActive { get; set; }
-        public string AddedDate { get; set; }
-        public int TotalCount { get; set; }
+    //    public int? ProductsCount { get; set; }
+    //    public bool? IsActive { get; set; }
+    //    public string AddedDate { get; set; }
+    //    public int TotalCount { get; set; }
 
-    }
+    //}
 }

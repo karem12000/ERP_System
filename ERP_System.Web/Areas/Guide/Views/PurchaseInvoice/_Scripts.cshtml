@@ -18,14 +18,16 @@
         $('#ddlStockId').val(stockId).trigger('change');
           var InvoiceNumber = Math.floor(Math.random() * 1000);
             $('#InvoiceNumber').val(InvoiceNumber);
-            $('#InvoiceDate').val('').trigger('change');
             $('#Supplier').val('');
         $('#InvoiceProductsBody').empty();
         InvoiceProductsAddNew({
             "id": "0", "ProductId": "0",
             "ProductBarCode": "", "ProductName": ""
-            , "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+            , "UnitId": "0", "ConversionFactor": "",  "Qty": "", "PurchasingPrice": "", "TotalQtyPrice": ""
         });
+        var date = Date(Date.now());
+        let currentDate = date.toString();
+        $('#InvoiceDate').val(currentDate).trigger('change');
 
         $('#IsActive').val('true');
         $('#IsActive').prop('checked', true);
@@ -43,9 +45,9 @@
             let ProductName = tBody.find(".ProductName");
             let UnitId = tBody.find(".UnitId");
             let ConversionFactor = tBody.find(".ConversionFactor");
-            let ItemUnitPrice = tBody.find(".ItemUnitPrice");
+            //let ItemUnitPrice = tBody.find(".ItemUnitPrice");
             let Qty = tBody.find(".Qty");
-            let SellingPrice = tBody.find(".SellingPrice");
+            let PurchasingPrice = tBody.find(".PurchasingPrice");
             let TotalQtyPrice = tBody.find(".TotalQtyPrice");
             let barCodeBtn = tBody.find(".barCodeBtn");
             let InvoiceTotalPrice = tBody.find(".InvoiceTotalPrice");
@@ -53,10 +55,7 @@
             $.get('@Url.GetAction("GetProductByBarCode")', { text: barcode }, function (res) {
                 if (res.Status) {
                     let data = res.Data;
-                    console.log(data);
                     ProductId.val(data.ID);
-                    console.log(ProductId);
-
                     ProductBarCode.val(data.BarCodeText);
                     ProductName.val(data.Name);
                     UnitId.empty();
@@ -64,15 +63,15 @@
                         if (item.UnitId === data.IdUnitOfQty) {
                             UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
                             ConversionFactor.val(item.ConversionFactor);
-                            ItemUnitPrice.val(item.SellingPrice);
-                            SellingPrice.val(item.SellingPrice);
+                            //ItemUnitPrice.val(item.SellingPrice);
+                            PurchasingPrice.val(item.PurchasingPrice);
                         }
                         else {
                             UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
                         }
                     });
                     Qty.val('1');
-                    let TQP = 1 * SellingPrice.val();
+                    let TQP = 1 * PurchasingPrice.val();
                     TotalQtyPrice.val(TQP);
 
                     barCodeBtn.attr("href", data.BarCodePath);
@@ -93,11 +92,11 @@
         var TPrice = 0;
 
         let tRow = $(value).parent().siblings("td");
-        let SellingPrice = tRow.children(".SellingPrice").val().trim();
+        let PurchasingPrice = tRow.children(".PurchasingPrice").val().trim();
         let ConversionFactor = tRow.children(".ConversionFactor").val().trim();
         let Qty = value.value.trim();
         let TotalQtyPrice = tRow.children(".TotalQtyPrice");
-        let CurrentRowPrice = (Qty * ConversionFactor) * SellingPrice;
+        let CurrentRowPrice = Qty * PurchasingPrice;
       
         TotalQtyPrice.val(CurrentRowPrice);
 
@@ -105,7 +104,7 @@
             let IdF = $(value).children("td").children(".ID").val().trim();
                 ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
                 Qty = $(value).children("td").children(".Qty").val().trim(),
-                SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
+                SellingPrice = $(value).children("td").children(".PurchasingPrice").val().trim(),
                 TPrice += (Qty * ConversionFactor) * SellingPrice;
         });
         console.log(TPrice);
@@ -126,13 +125,13 @@
                 ProductName = $(value).children("td").children(".ProductName").val().trim(),
                 UnitId = $(value).children("td").children(".UnitId").val().trim(),
                 ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
-                ItemUnitPrice = $(value).children("td").children(".ItemUnitPrice").val().trim(),
+                //ItemUnitPrice = $(value).children("td").children(".ItemUnitPrice").val().trim(),
                 Qty = $(value).children("td").children(".Qty").val().trim(),
-                SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
+                PurchasingPrice = $(value).children("td").children(".PurchasingPrice").val().trim(),
                 TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
             if (UnitId !== '0') {
                 Products.push({ ID: ID, ProductId: ProductId, ProductBarCode: ProductBarCode, ProductName: ProductName,
-                    UnitId: UnitId, ConversionFactor: ConversionFactor, ItemUnitPrice: ItemUnitPrice, Qty: Qty, SellingPrice: SellingPrice
+                    UnitId: UnitId, ConversionFactor: ConversionFactor, Qty: Qty, PurchasingPrice: PurchasingPrice
                     , TotalQtyPrice: TotalQtyPrice });
             }
         });
@@ -371,7 +370,7 @@
         InvoiceProductsAddNew({
             "id": "0", "ProductId": "0",
             "ProductBarCode": "", "ProductName": ""
-            , "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+            , "UnitId": "0", "ConversionFactor": "", "Qty": "", "PurchasingPrice": "", "TotalQtyPrice": ""
         });
     })
     function InvoiceProductsAddNew(obj) {
@@ -379,30 +378,29 @@
         let rowId = Math.floor(Math.random() * 500) + 1;
         $("#InvoiceProductsBody").append(` <tr>
 
-                                                                <td>
-                                                                    <input class="form-control ID" type="hidden" value="0" />
-                                                                    <input class="form-control ProductId" type="hidden" value="0" />
-                                                                        <input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
-                                                                </td>
-                                                                        <td><input type="text" required  value="${obj.ProductName}" class="form-control ProductName" /></td>
-                                                                <td>
-                                                                    <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة"  name="UnitId" id="ddlUnitId">
-                                                                        <option selected value="0">اختر الوحدة</option>
-                                                                    </select>
-                                                                            <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
-                                                                </td>
-                                                                            <td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                        <td><input type="number" class="form-control Qty" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                            <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
-                                                                            <td><input type="number" disabled value="${obj.TotalQtyPrice}" onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td>
-                                                                    <div class="d-flex">
-                                                                        <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                                        <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
-                                                                    </div>
-                                                                </td>
+                                                            <td>
+                                                                <input class="form-control ID" type="hidden" value="0" />
+                                                                <input class="form-control ProductId" type="hidden" value="0" />
+                                                                <input type="text" onkeyup="getProduct(this,event)" required  value="${obj.ProductBarCode}" id="rowId-${rowId}" class="form-control ProductBarCode" />
+                                                            </td>
+                                                                <td><input type="text" required value="${obj.ProductName}" class="form-control ProductName" /></td>
+                                                            <td>
+                                                                <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+                                                                    <option selected value="0">اختر الوحدة</option>
+                                                                </select>
+                                                                    <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+                                                            </td>
+                                                                <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty"  value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0"  value="${obj.PurchasingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" /></td>
+                                                                <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" value="${obj.TotalQtyPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                            <td>
+                                                                <div class="d-flex">
+                                                                    <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                                    <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
+                                                                </div>
+                                                            </td>
 
-                                                            </tr>
+                                                        </tr>
                                                             `);
 
 
@@ -432,7 +430,7 @@
                         InvoiceProductsAddNew({
                             "id": "0", "ProductId": "0",
                             "ProductBarCode": "", "ProductName": ""
-                            , "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+                            , "UnitId": "0", "ConversionFactor": "",  "Qty": "", "PurchasingPrice": "", "TotalQtyPrice": ""
                         });
                     }
                 }
@@ -445,7 +443,7 @@
                 InvoiceProductsAddNew({
                     "id": "0", "ProductId": "0",
                     "ProductBarCode": "", "ProductName": ""
-                    , "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+                    , "UnitId": "0", "ConversionFactor": "", "Qty": "", "PurchasingPrice": "", "TotalQtyPrice": ""
                 });
             }
         }

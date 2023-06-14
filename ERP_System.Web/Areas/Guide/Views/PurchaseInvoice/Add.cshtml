@@ -61,9 +61,9 @@
                                                         <th>الباركود<span style="color:red;"> * </span></th>
                                                         <th>اسم المنتج<span style="color:red;"> * </span></th>
                                                         <th>الوحدة<span style="color:red;"> * </span></th>
-                                                        <th>سعر الوحدة</th>
+                                                        @*<th>سعر الوحدة</th>*@
                                                         <th>الكمية<span style="color:red;"> * </span></th>
-                                                        <th>سعر البيع</th>
+                                                        <th>سعر الشراء</th>
                                                         <th>الإجمالي للصنف</th>
                                                         <th>التحكم</th>
                                                     </tr>
@@ -83,9 +83,9 @@
                                                             </select>
                                                             <input class="form-control ConversionFactor" type="hidden" value="1" />
                                                         </td>
-                                                        <td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        @*<td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>*@
                                                         <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                        <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+                                                        <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" /></td>
                                                         <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                         <td>
                                                             <div class="d-flex">
@@ -148,6 +148,11 @@
 
             var InvoiceNumber = Math.floor(Math.random() * 1000);
                $('#InvoiceNumber').val(InvoiceNumber);
+
+            var date = Date(Date.now());
+            let currentDate = date.toLocaleDateString();
+            console.log(currentDate);
+            $('#InvoiceDate').val(currentDate).trigger('change');
         })
     </script>
 }

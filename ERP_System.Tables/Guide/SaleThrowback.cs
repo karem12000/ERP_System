@@ -8,35 +8,39 @@ using System.Text;
 
 namespace ERP_System.Tables
 {
-    [Table(nameof(PurchaseInvoice) + "s", Schema = AppConstants.Areas.Guide)]
-    public class PurchaseInvoice : BaseEntity
+    [Table(nameof(SaleThrowback) + "s", Schema = AppConstants.Areas.Guide)]
+    public class SaleThrowback : BaseEntity
     {
         public Guid? StockId { get; set; }
         public string? StockName { get; set; }
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
-        public string? Supplier { get; set; }
+        public string? Buyer { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
-        public ICollection<PurchaseInvoiceDetail> PurchaseInvoiceDetail { get; set; }
+
+        public ICollection<SaleThrowbackDetail> SaleInvoiceDetails { get; set; }
+
 
     }
-
-    [Table(nameof(PurchaseInvoiceDetail) + "s", Schema = AppConstants.Areas.Guide)]
-    public class PurchaseInvoiceDetail : BaseEntity
+    [Table(nameof(SaleThrowbackDetail) + "s", Schema = AppConstants.Areas.Guide)]
+    public class SaleThrowbackDetail : BaseEntity
     {
-        public Guid? ProductId { get; set; }
         public string? ProductBarCode { get; set; }
+        public Guid? ProductId { get; set; }
         public string? ProductName { get; set; }
         public Guid? UnitId { get; set; }
         public decimal? ConversionFactor { get; set; }
+        public decimal? ItemUnitPrice { get; set; }
         public decimal? Qty { get; set; }
-        public decimal? PurchasingPrice { get; set; }
+        public decimal? SellingPrice { get; set; }
         public decimal? TotalQtyPrice { get; set; }
 
-        [ForeignKey(nameof(PurchaseInvoice))]
-        public Guid? PurchaseInvoiceId { get; set; }
-        public virtual PurchaseInvoice PurchaseInvoice { get; set; }
 
+        [ForeignKey(nameof(SaleThrowback))]
+        public Guid? SaleThrowbackId { get; set; }
+        public virtual SaleThrowback SaleThrowback { get; set; }
 
     }
+
+
 }

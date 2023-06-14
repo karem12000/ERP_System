@@ -8,8 +8,8 @@ using System.Text;
 
 namespace ERP_System.Tables
 {
-    [Table(nameof(PurchaseInvoice) + "s", Schema = AppConstants.Areas.Guide)]
-    public class PurchaseInvoice : BaseEntity
+    [Table(nameof(PurchaseThrowback) + "s", Schema = AppConstants.Areas.Guide)]
+    public class PurchaseThrowback : BaseEntity
     {
         public Guid? StockId { get; set; }
         public string? StockName { get; set; }
@@ -17,12 +17,13 @@ namespace ERP_System.Tables
         public DateTime InvoiceDate { get; set; }
         public string? Supplier { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
-        public ICollection<PurchaseInvoiceDetail> PurchaseInvoiceDetail { get; set; }
+
+        public ICollection<PurchaseThrowbackDetail> PurchaseThrowbackDetails { get; set; }
+
 
     }
-
-    [Table(nameof(PurchaseInvoiceDetail) + "s", Schema = AppConstants.Areas.Guide)]
-    public class PurchaseInvoiceDetail : BaseEntity
+    [Table(nameof(PurchaseThrowbackDetail) + "s", Schema = AppConstants.Areas.Guide)]
+    public class PurchaseThrowbackDetail : BaseEntity
     {
         public Guid? ProductId { get; set; }
         public string? ProductBarCode { get; set; }
@@ -33,10 +34,12 @@ namespace ERP_System.Tables
         public decimal? PurchasingPrice { get; set; }
         public decimal? TotalQtyPrice { get; set; }
 
-        [ForeignKey(nameof(PurchaseInvoice))]
-        public Guid? PurchaseInvoiceId { get; set; }
-        public virtual PurchaseInvoice PurchaseInvoice { get; set; }
 
+        [ForeignKey(nameof(PurchaseThrowback))]
+        public Guid? PurchaseThrowbackId { get; set; }
+        public virtual PurchaseThrowback PurchaseThrowback { get; set; }
 
     }
+
+
 }

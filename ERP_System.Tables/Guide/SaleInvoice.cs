@@ -16,28 +16,29 @@ namespace ERP_System.Tables
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
         public string? Buyer { get; set; }
-        public decimal? TotalPrice { get; set; }
+        public decimal? InvoiceTotalPrice { get; set; }
+
         public ICollection<SaleInvoiceDetail> SaleInvoiceDetail { get; set; }
+
 
     }
 
     [Table(nameof(SaleInvoiceDetail) + "s", Schema = AppConstants.Areas.Guide)]
     public class SaleInvoiceDetail : BaseEntity
     {
+        public string? ProductBarCode { get; set; }
+        public Guid? ProductId { get; set; }
         public string? ProductName { get; set; }
-        public decimal? SalePrice { get; set; }
-        public decimal? QtyPrice { get; set; }
-        public decimal? Qty { get; set; }
-        public string? UnitName { get; set; }
         public Guid? UnitId { get; set; }
+        public decimal? ConversionFactor { get; set; }
+        public decimal? ItemUnitPrice { get; set; }
+        public decimal? Qty { get; set; }
+        public decimal? SellingPrice { get; set; }
+        public decimal? TotalQtyPrice { get; set; }
+
 
         [ForeignKey(nameof(SaleInvoice))]
         public Guid? SaleInvoiceId { get; set; }
         public virtual SaleInvoice SaleInvoice { get; set; }
-
-        [ForeignKey(nameof(Product))]
-        public Guid? ProductId { get; set; }
-        public virtual Product Product { get; set; }
-
     }
 }

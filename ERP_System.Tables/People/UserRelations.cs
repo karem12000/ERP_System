@@ -54,6 +54,22 @@ namespace ERP_System.Tables
 
         #endregion
         #region Guide
+        public ICollection<SaleThrowback> SaleThrowbackCreated { get; set; }
+        public ICollection<SaleThrowback> SaleThrowbackModified { get; set; }
+        public ICollection<SaleThrowback> SaleThrowbackDeleted { get; set; }
+
+        public ICollection<PurchaseThrowback> PurchaseThrowbackCreated { get; set; }
+        public ICollection<PurchaseThrowback> PurchaseThrowbackModified { get; set; }
+        public ICollection<PurchaseThrowback> PurchaseThrowbackDeleted { get; set; }
+
+        public ICollection<SaleThrowbackDetail> SaleThrowbackDetailCreated { get; set; }
+        public ICollection<SaleThrowbackDetail> SaleThrowbackDetailModified { get; set; }
+        public ICollection<SaleThrowbackDetail> SaleThrowbackDetailDeleted { get; set; }
+
+        public ICollection<PurchaseThrowbackDetail> PurchaseThrowbackDetailCreated { get; set; }
+        public ICollection<PurchaseThrowbackDetail> PurchaseThrowbackDetailModified { get; set; }
+        public ICollection<PurchaseThrowbackDetail> PurchaseThrowbackDetailDeleted { get; set; }
+
         public ICollection<PurchaseInvoice> PurchaseInvoiceCreated { get; set; }
         public ICollection<PurchaseInvoice> PurchaseInvoiceModified { get; set; }
         public ICollection<PurchaseInvoice> PurchaseInvoiceDeleted { get; set; }

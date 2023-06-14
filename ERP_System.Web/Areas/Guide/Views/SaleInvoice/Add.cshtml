@@ -8,38 +8,104 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">إضافة مخزن</h4>
+                    <h4 class="card-title">إضافة فاتورة مبيعات</h4>
                 </div>
                 <div class="card-content">
                     <div class="card-body">
-                        <form class="form form-horizontal" id="frm" onsubmit="Submit()">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
                             <div class="form-body">
                                 <div class="row">
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
+                                        <input hidden name="id" id="id" value="" class="d-none" />
+                                        <select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
+                                            <option selected value="1">فاتورة مبيعات</option>
+                                            @if (CurrentForm.CurrentFormPermissionActions.PurchaseThrowbackHasPermission)
+                                            {
+                                                <option value="2">فاتورة مرتجع مبيعات</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
+                                        <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
+                                            <option selected value="0">اختر المخزن</option>
+                                        </select>
+                                    </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="Name">اسم المخزن</label>
-                                            <input hidden name="id" id="id" value="" class="d-none" />
-                                            <input type="text" required id="Name" name="Name" class="form-control" placeholder="اسم المخزن">
+                                            <label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
+                                            <input type="text" required id="InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="Name">عنوان المخزن</label>
-                                            <input type="text" id="Address" name="Address" class="form-control" placeholder="عنوان المخزن">
+                                            <label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
+                                            <input type="date" class="form-control" name="InvoiceDate" id="InvoiceDate">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="Name">تليفون المخزن</label>
-                                            <input type="text" id="Phone" name="Phone" class="form-control" placeholder="تليفون المخزن">
+                                            <label for="Supplier">اسم المشتري<span style="color:red;"> * </span></label>
+                                            <input type="text" class="form-control" name="Buyer" id="Buyer" >
                                         </div>
                                     </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="Name">اسم المسؤول</label>
-                                            <input type="text" id="ManagerName" name="ManagerName" class="form-control" placeholder="اسم المسؤول">
+                                    <hr>
+                                    <div class="col-md-12">
+                                        <div class="table-container" id="InvoiceProducts">
+                                            <label for="Products">الأصناف</label>
+                                            <button type="button" class="btn btn-outline-primary addInvoiceProduct mx-2">إضافة</button>
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>الباركود<span style="color:red;"> * </span></th>
+                                                        <th>اسم المنتج<span style="color:red;"> * </span></th>
+                                                        <th>الوحدة<span style="color:red;"> * </span></th>
+                                                        <th>سعر الوحدة</th>
+                                                        <th>الكمية<span style="color:red;"> * </span></th>
+                                                        <th>سعر البيع</th>
+                                                        <th>الإجمالي للصنف</th>
+                                                        <th>التحكم</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="InvoiceProductsBody">
+                                                    <tr>
+
+                                                        <td>
+                                                            <input class="form-control ID" type="hidden" value="0" />
+                                                            <input class="form-control ProductId" type="hidden" value="0" />
+                                                            <input type="text" onkeyup="getProduct(this,event)" required class="form-control ProductBarCode" />
+                                                        </td>
+                                                        <td><input type="text" required class="form-control ProductName" /></td>
+                                                        <td>
+                                                            <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+                                                                <option selected value="0">اختر الوحدة</option>
+                                                            </select>
+                                                            <input class="form-control ConversionFactor" type="hidden" value="1" />
+                                                        </td>
+                                                        <td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+                                                        <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                                <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
+                                                            </div>
+                                                        </td>
+
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="5"><h5>الإجمالي</h5></td>
+                                                        <td colspan="3"><input disabled type="number" class="form-control InvoiceTotalPrice" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
                                         </div>
                                     </div>
+                                    <hr>
                                     <div class="col-12 d-flex">
                                         <div class="form-check">
                                             <div class="checkbox">
@@ -49,13 +115,14 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-12 d-flex justify-content-between mt-5">
-                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add')">
                                             حفظ
                                         </button>
+
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
                                             <div class="d-flex align-items-center justify-content-end ps-2">
-                                                <a class="btn btn-outline-primary" href="/Guide/Stock/Index">
+                                                <a class="btn btn-outline-primary" href="/Guide/SaleInvoice/Index">
                                                     رجوع للقائمة
                                                     <span class="fa-arrow-left fas"></span>
                                                 </a>
@@ -76,4 +143,16 @@
     {
 
     <partial name="_Scripts" />
+    <script>
+        $(document).ready(function () {
+
+            var InvoiceNumber = Math.floor(Math.random() * 1000);
+            $('#InvoiceNumber').val(InvoiceNumber);
+
+            var date = Date(Date.now());
+            let currentDate = date.toLocaleDateString();
+            console.log(currentDate);
+            $('#InvoiceDate').val(currentDate).trigger('change');
+        })
+    </script>
 }

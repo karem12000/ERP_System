@@ -106,9 +106,8 @@
                                                                         </select>
                                                                         <input class="form-control ConversionFactor" type="hidden" value="@detail.ConversionFactor" />
                                                                     </td>
-                                                                    <td><input type="number" disabled class="form-control ItemUnitPrice" value="@detail.ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                     <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" value="@detail.Qty" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                    <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" value="@detail.SellingPrice" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+                                                                    <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" value="@detail.PurchasingPrice" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" /></td>
                                                                     <td><input type="number" disabled class="form-control TotalQtyPrice" value="@detail.TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                     <td>
                                                                         <div class="d-flex">
@@ -201,7 +200,7 @@
     <partial name="_Scripts" />
     <script>
         $(document).ready(function(){
-            let invoiceDate
+            //let invoiceDate
         });
     </script>
 }
