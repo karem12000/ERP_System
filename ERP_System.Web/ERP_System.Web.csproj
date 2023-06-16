@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DataSets\" />
     <Folder Include="wwwroot\SiteImages\" />
   </ItemGroup>
 

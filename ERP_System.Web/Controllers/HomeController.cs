@@ -6,6 +6,7 @@ using ERP_System.DTO;
 using ERP_System.Tables;
 using ERP_System.Web;
 using ERP_System.Web.Models;
+using IronBarCode;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,17 +20,19 @@ namespace ERP.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserBll _userBll;
+        private readonly HelperBll _helperBll;
         private readonly SettingBll _settingBll;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
 
 
-        public HomeController(ILogger<HomeController> logger, UserBll userBll, IHttpContextAccessor httpContextAccessor, SettingBll settingBll)
+        public HomeController(ILogger<HomeController> logger, HelperBll helperBll, UserBll userBll, IHttpContextAccessor httpContextAccessor, SettingBll settingBll)
         {
             _logger = logger;
             _userBll = userBll;
             _settingBll = settingBll;
             _httpContextAccessor = httpContextAccessor;
+            _helperBll = helperBll;
         }
 
         public IActionResult Index()

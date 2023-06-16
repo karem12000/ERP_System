@@ -14,7 +14,7 @@
     function resetForm(stockId) {
         $('#Name').val('');
         $('#id').val('');
-        $('#ddlInvoiceType').val('1').trigger('change');
+        $('#ddlInvoiceType').val('0').trigger('change');
         $('#ddlStockId').val(stockId).trigger('change');
           var InvoiceNumber = Math.floor(Math.random() * 1000);
             $('#InvoiceNumber').val(InvoiceNumber);
@@ -59,6 +59,8 @@
                     ProductBarCode.val(data.BarCodeText);
                     ProductName.val(data.Name);
                     UnitId.empty();
+                    ID.val('@Guid.NewGuid()');
+
                     data.GetProductUnits.forEach(function (item) {
                         if (item.UnitId === data.IdUnitOfQty) {
                             UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
@@ -90,27 +92,42 @@
 
     function getInvoiceTotalPrice(value) {
         var TPrice = 0;
-
-        let tRow = $(value).parent().siblings("td");
-        let PurchasingPrice = tRow.children(".PurchasingPrice").val().trim();
-        let ConversionFactor = tRow.children(".ConversionFactor").val().trim();
-        let Qty = value.value.trim();
-        let TotalQtyPrice = tRow.children(".TotalQtyPrice");
+        let tRow = $(value).parent().parent();
+        let PurchasingPrice = tRow.find(".PurchasingPrice").val().trim();
+        let ConversionFactor = tRow.find(".ConversionFactor").val().trim();
+        let Qty = tRow.find(".Qty").val().trim();
+        let TotalQtyPrice = tRow.find(".TotalQtyPrice");
         let CurrentRowPrice = Qty * PurchasingPrice;
-      
+
+        let InvoiceTotalPrice = tRow.parent().parent().find(".InvoiceTotalPrice")
+        //let tRow = $(value).parent().siblings("td");
+        //let SellingPrice = tRow.children(".SellingPrice").val().trim();
+        //let ConversionFactor = tRow.children(".ConversionFactor").val().trim();
+        //let Qty = value.value.trim();
+        //let TotalQtyPrice = tRow.children(".TotalQtyPrice");
+        //let CurrentRowPrice = Qty * SellingPrice;
+
         TotalQtyPrice.val(CurrentRowPrice);
 
         $.each($("#InvoiceProductsBody >tr"), function (key, value) {
             let IdF = $(value).children("td").children(".ID").val().trim();
-                ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
+            ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
                 Qty = $(value).children("td").children(".Qty").val().trim(),
-                SellingPrice = $(value).children("td").children(".PurchasingPrice").val().trim(),
-                TPrice += (Qty * ConversionFactor) * SellingPrice;
-        });
-        console.log(TPrice);
+                PurchasingPrice = $(value).children("td").children(".PurchasingPrice").val().trim(),
+                TPrice += Qty * SellingPrice;
 
-        $('.TotalPrice').val(TPrice);
+            console.log(IdF);
+            console.log(ConversionFactor);
+            console.log(Qty);
+            console.log(PurchasingPrice);
+            console.log('************************************');
+            console.log(TPrice);
+
+        });
+        InvoiceTotalPrice.val(TPrice);
+
     }
+
 
 
 
@@ -146,7 +163,7 @@
         }
         else if (Products.length <= 0) {
             Swal.fire({
-                title: `من فضلك أدخل بيانات الأصناف`,
+                title: `من فضلك أدخل بيانات المنتجات`,
                 timer: 2000,
                 timerProgressBar: true,
                 icon: 'warning',
@@ -189,7 +206,7 @@
                 error: function (res) {
                     Swal.fire({
                         title: `${res.Message}`,
-                        timer: 2000,
+                        timer: 4000,
                         timerProgressBar: true,
                         icon: 'error',
                         showConfirmButton: false
@@ -298,7 +315,7 @@
 
     @if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
     {
-                                                                                                                                                        <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/PurchaseInvoice/Edit/${data.ID}" >
+                                                                                                                                                                <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/PurchaseThrowback/Edit/${data.ID}" >
                                                                                                                                          <i class="fas fa-pen"></i>
 
                                                                                                                                         </a>
@@ -390,8 +407,8 @@
                                                                 </select>
                                                                     <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
                                                             </td>
-                                                                <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty"  value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                    <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0"  value="${obj.PurchasingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" /></td>
+                                                                    <td><input type="number" step="0.1" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty"  value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" step="0.1"  onkeyup="getInvoiceTotalPrice(this)" min="0"  value="${obj.PurchasingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" /></td>
                                                                 <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" value="${obj.TotalQtyPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                             <td>
                                                                 <div class="d-flex">

@@ -24,6 +24,24 @@ namespace ERP_System.BLL
             _webHostEnvironment = webHostEnvironment;
             _repoAttatchment = repoAttatchment;
         }
+
+        public GeneratedBarcode GenerateBarcode(string generateBarcode)
+        {
+            if (!string.IsNullOrEmpty(generateBarcode))
+            {
+
+                GeneratedBarcode barcode = IronBarCode.BarcodeWriter.CreateBarcode(generateBarcode, BarcodeWriterEncoding.Code128);
+                barcode.ResizeTo(400, 120);
+                barcode.AddBarcodeValueTextBelowBarcode();
+                // Styling a Barcode and adding annotation text
+                barcode.ChangeBarCodeColor(Color.Black);
+                barcode.SetMargins(10);
+                
+                return barcode;
+
+            }
+            return null;
+        }
         public string GenerateBarcode(string generateBarcode, string FolderName)
         {
             if (!string.IsNullOrEmpty(generateBarcode))
