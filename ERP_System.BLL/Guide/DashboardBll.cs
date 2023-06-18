@@ -21,24 +21,38 @@ namespace ERP_System.BLL.Guide
         private readonly IRepository<User> _repoUser;
         private readonly IRepository<Stock> _repoStock;
         private readonly IRepository<ItemGrpoup> _repoItemGroup;
+        private readonly IRepository<SaleInvoice> _repoSaleInvoice;
+        private readonly IRepository<SaleInvoiceDetail> _repoSaleInvoiceDetail;
+        private readonly IRepository<PurchaseInvoice> _repoPurchaseInvoice;
 
         private readonly IRepository<Product> _repoProduct;
 
-        public DashboardBll( IRepository<Product> repoProduct, IRepository<User> repoUser, IRepository<Stock> repoStock, IRepository<ItemGrpoup> repoItemGroup)
+        public DashboardBll( IRepository<Product> repoProduct, IRepository<SaleInvoiceDetail> repoSaleInvoiceDetail, IRepository<PurchaseInvoice> repoPurchaseInvoice, IRepository<SaleInvoice> repoSaleInvoice ,IRepository<User> repoUser, IRepository<Stock> repoStock, IRepository<ItemGrpoup> repoItemGroup)
         {
             _repoProduct = repoProduct;
             _repoUser = repoUser;
             _repoStock = repoStock;
             _repoItemGroup = repoItemGroup;
+            _repoSaleInvoice = repoSaleInvoice;
+            _repoPurchaseInvoice = repoPurchaseInvoice;
+            _repoSaleInvoiceDetail = repoSaleInvoiceDetail;
         }
-
+        public DashboardDTO DashboardData()
+        {
+           var data = new DashboardDTO();
+            data.ProductsCount = GetProductsCount();
+            data.UsersCount = GetUsersCount();
+            data.StocksCount = GetStocksCount();
+            data.GroupsCount = GetGroupsCount();
+            data.MostSaleProductsCount = GetMostProductsSaleCount();
+            return data;
+        }
         #region Get
         public int GetUsersCount()
         {
             var data = _repoUser.GetAllAsNoTracking().Where(p => p.IsActive && !p.IsDeleted);
             return data.Distinct().Count();
         }
-
         public int GetProductsCount()
         {
             var data = _repoProduct.GetAllAsNoTracking().Where(p => p.IsActive && !p.IsDeleted);
@@ -55,6 +69,20 @@ namespace ERP_System.BLL.Guide
         {
             var data = _repoItemGroup.GetAllAsNoTracking().Where(p => p.IsActive && !p.IsDeleted);
             return data.Distinct().Count();
+        }
+
+        public List<MostSaleProducts> GetMostProductsSaleCount()
+        {
+            var data = (from s in _repoSaleInvoiceDetail.GetAllAsNoTracking()
+                        group s by new { s.ProductId , s.ProductName } into val
+                        select new MostSaleProducts()
+                        {
+                            ProductId = val.Key.ProductId,
+                            ProductName=val.Key.ProductName,
+                            Qty = val.Sum(s => s.Qty)
+                        }).OrderByDescending(i => i.Qty).Take(3).ToList();
+            
+            return data;
         }
 
         #endregion

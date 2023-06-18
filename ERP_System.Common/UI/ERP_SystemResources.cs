@@ -10,9 +10,5 @@
         public string SuccessfullyDone { get; set; }
         public string ValidationCodeRequired { get; set; }
         public string ValidationCodeInCorrect { get; set; }
-        public string EnvironmentalSpecialistRequired { get; set; }
-        public string StationNotExists { get; set; }
-        public string StationRequired { get; set; }
-        public string VisitIdRequired { get; set; }
     }
 }

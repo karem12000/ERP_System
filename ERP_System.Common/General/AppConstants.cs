@@ -47,6 +47,7 @@ namespace ERP_System.Common
             public const string Setting = nameof(Setting);
             public const string People = nameof(People);
             public const string Page = nameof(Page);
+            public const string Report = nameof(Report);
         
 
 

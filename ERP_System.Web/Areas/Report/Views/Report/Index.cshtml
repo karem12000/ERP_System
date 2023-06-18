@@ -1,0 +1,67 @@
+﻿@{
+    Layout = "_Layout";
+}
+@if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">التقارير</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="form-group col-6">
+                                    <label class="lable" for="ReportType">اختر التقرير<span style="color:red;"> * </span> </label>
+                                    <select class="Select sAddress form-select" aria-label="اختر التقرير" required name="ReportType" id="ddlReportType">
+                                        <option selected value="0">اختر التقرير</option>
+                                        <option  value="1">تقرير المبيعات</option>
+                                        <option  value="2">تقرير مرتجع المبيعات</option>
+                                        <option  value="3">تقرير المشتريات</option>
+                                        <option  value="4">تقرير مرتجع المشتريات</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label class="lable" for="PeriodType">اختر المدة<span style="color:red;"> * </span> </label>
+                                    <select class="Select sAddress form-select" onchange="handlePeriodTypeChange();" aria-label="اختر المدة" required name="PeriodType" id="ddlPeriodType">
+                                        <option selected value="0">يومي</option>
+                                        <option  value="1">أسبوعي</option>
+                                        <option  value="2">شهري</option>
+                                        <option  value="3">سنوي</option>
+                                    </select>
+                                </div> 
+                                
+                                <div class="form-group col-6 PeriodDate">
+                                        <label for="FromDate">التاريخ</label>
+                                        <input type="date" class="form-control" name="FromDate" id="FromDate">
+                                </div>
+                                
+                                <div class="form-group col-12">
+                                        <rsweb:ReportViewer ID="rvReportDetail" Visible="true" runat="server" Width="100%" Height="600px"></rsweb:ReportViewer>
+                                </div>
+                                
+                                <div class="col-sm-12 d-flex justify-content-between mt-5">
+                                    <button type="button" class="btn btn-primary me-1 mb-1" onclick="GenerateReport();">
+                                        إنشاء
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts
+    {
+        <script>
+            $(document).ready(function () {
+                console.log('Hi');
+            })
+        </script>
+    <partial name="_Scripts" />
+}

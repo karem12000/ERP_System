@@ -1,0 +1,67 @@
+﻿<script>
+    $(document).ready(function () {
+    })
+
+
+    function handlePeriodTypeChange() {
+        var currentChoice = $('#ddlPeriodType').val();
+        var parentDev = $('.PeriodDate');
+        if (currentChoice == "0") {
+            parentDev.empty();
+            parentDev.append(`
+                                      <label for="FromDate">التاريخ</label>
+                                      <input type="date" class="form-control" name="FromDate" id="FromDate">
+                            `);
+        } else {
+            parentDev.empty();
+            parentDev.append(`
+                                      <div class="form-group">
+                                        <label for="FromDate">التاريخ من : </label>
+                                        <input type="date" class="form-control" name="FromDate" id="FromDate">
+                                      </div>
+                                     <div class="form-group">
+                                        <label for="ToDate">التاريخ إلي : </label>
+                                        <input type="date" class="form-control" name="ToDate" id="ToDate">
+                                      </div>
+                            `);
+        }
+    }
+
+    function GenerateReport() {
+        var currentChoice = $('#ddlPeriodType').val();
+        var currentReport = $('#ddlReportType').val();
+        console.log(currentChoice);
+        console.log(currentReport);
+        var fromDate = "";
+        var toDate = "";
+        if (currentChoice == "0") {
+            fromDate = $("#FromDate").val();
+            toDate = fromDate;
+        } else {
+            fromDate = $("#FromDate").val();
+            toDate = $("#ToDate").val();
+        }
+        if (currentReport=="1") {
+
+            window.location.href = "/Report/Report/GetSaleInvoiceReport?FromDate=" + fromDate + "/ToDate=" + toDate;
+            //$.post("/Report/Report/GetSaleInvoiceReport", { 'FromDate': fromDate, 'ToDate': toDate }, function (res) {
+            //        if (res.Status) {
+            //            if (res.Data) {
+                           
+            //            }
+            //        }
+            //        else {
+
+            //            Swal.fire({
+            //                title: `${res.Message}`,
+            //                timer: 2000,
+            //                timerProgressBar: true,
+            //                icon: 'warning',
+            //                showConfirmButton: false
+            //            });
+            //        }
+            //    });
+        }
+
+    }
+</script>

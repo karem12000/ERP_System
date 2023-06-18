@@ -39,9 +39,9 @@ namespace ERP_System.BLL.Guide
         }
 
         #region Get
-        public PurchaseInvoiceDTO GetById(Guid id)
+        public PurchaseThrowbackDTO GetById(Guid id)
         {
-            return _repoInvoice.GetAllAsNoTracking().Include(c => c.PurchaseThrowbackDetails).Where(p => p.ID == id).Select(x => new PurchaseInvoiceDTO
+            return _repoInvoice.GetAllAsNoTracking().Include(c => c.PurchaseThrowbackDetails).Where(p => p.ID == id).Select(x => new PurchaseThrowbackDTO
             {
                 ID = x.ID,
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
@@ -52,7 +52,7 @@ namespace ERP_System.BLL.Guide
                 Supplier = x.Supplier,
                 IsActive = x.IsActive,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
-                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseInvoiceProductsDTO
+                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
@@ -68,9 +68,9 @@ namespace ERP_System.BLL.Guide
 
             }).FirstOrDefault();
         }
-        public PurchaseInvoiceDTO GetByInvoiceNumber(int? number)
+        public PurchaseThrowbackDTO GetByInvoiceNumber(int? number)
         {
-            return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new PurchaseInvoiceDTO
+            return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new PurchaseThrowbackDTO
             {
                 ID = x.ID,
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
@@ -81,7 +81,7 @@ namespace ERP_System.BLL.Guide
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
-                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseInvoiceProductsDTO
+                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
@@ -99,11 +99,11 @@ namespace ERP_System.BLL.Guide
         }
 
 
-        public PurchaseInvoiceDTO GetByInvoiceDate(DateTime? date)
+        public PurchaseThrowbackDTO GetByInvoiceDate(DateTime? date)
         {
             if (date != null)
             {
-                return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceDate.Date == date.Value.Date && p.IsActive && !p.IsDeleted).Select(x => new PurchaseInvoiceDTO
+                return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceDate.Date == date.Value.Date && p.IsActive && !p.IsDeleted).Select(x => new PurchaseThrowbackDTO
                 {
                     ID = x.ID,
                     InvoiceDateStr = x.InvoiceDate.Date.ToString(),
@@ -114,7 +114,7 @@ namespace ERP_System.BLL.Guide
                     IsActive = x.IsActive,
 
                     InvoiceTotalPrice = x.InvoiceTotalPrice,
-                    GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseInvoiceProductsDTO
+                    GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
                     {
                         ID = c.ID,
                         ProductId = c.ProductId,
@@ -133,10 +133,10 @@ namespace ERP_System.BLL.Guide
             return null;
         }
 
-        public IQueryable<PurchaseInvoiceDTO> GetAllByDate(DateTime? date)
+        public IQueryable<PurchaseThrowbackDTO> GetAllByDate(DateTime? date)
         {
 
-            return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date == date.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseInvoiceDTO
+            return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date == date.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseThrowbackDTO
             {
                 ID = x.ID,
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
@@ -147,7 +147,7 @@ namespace ERP_System.BLL.Guide
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
-                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseInvoiceProductsDTO
+                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
@@ -164,10 +164,10 @@ namespace ERP_System.BLL.Guide
             });
 
         }
-        public IQueryable<PurchaseInvoiceDTO> GetAllByDate(DateTime? fromDate, DateTime? toDate)
+        public IQueryable<PurchaseThrowbackDTO> GetAllByDate(DateTime? fromDate, DateTime? toDate)
         {
 
-            return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= fromDate.Value.Date && x.InvoiceDate.Date <= toDate.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseInvoiceDTO
+            return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= fromDate.Value.Date && x.InvoiceDate.Date <= toDate.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseThrowbackDTO
             {
                 ID = x.ID,
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
@@ -178,7 +178,7 @@ namespace ERP_System.BLL.Guide
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
-                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseInvoiceProductsDTO
+                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,

@@ -21,23 +21,32 @@ namespace ERP.Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly UserBll _userBll;
         private readonly HelperBll _helperBll;
+        private readonly DashboardBll _dashboardBll;
         private readonly SettingBll _settingBll;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
 
 
-        public HomeController(ILogger<HomeController> logger, HelperBll helperBll, UserBll userBll, IHttpContextAccessor httpContextAccessor, SettingBll settingBll)
+        public HomeController(ILogger<HomeController> logger, DashboardBll dashboardBll, HelperBll helperBll, UserBll userBll, IHttpContextAccessor httpContextAccessor, SettingBll settingBll)
         {
             _logger = logger;
             _userBll = userBll;
             _settingBll = settingBll;
             _httpContextAccessor = httpContextAccessor;
             _helperBll = helperBll;
+            _dashboardBll = dashboardBll;
         }
 
         public IActionResult Index()
         {
+            ViewData["Data"] = _dashboardBll.DashboardData();
             return View();
+        }
+
+        public IActionResult GetDashboardData()
+        {
+            var data = _dashboardBll.DashboardData();
+            return View(data);
         }
         public IActionResult CompanyData()
         {
