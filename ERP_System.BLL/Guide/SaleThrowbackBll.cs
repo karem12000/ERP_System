@@ -52,6 +52,7 @@ namespace ERP_System.BLL.Guide
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
+                TotalPaid=x.TotalPaid,
                 GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                 {
                     ID = c.ID,
@@ -80,6 +81,7 @@ namespace ERP_System.BLL.Guide
                 StockName = x.StockName,
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
+                TotalPaid = x.TotalPaid,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
@@ -114,6 +116,7 @@ namespace ERP_System.BLL.Guide
                     StockName = x.StockName,
                     Buyer = x.Buyer,
                     IsActive = x.IsActive,
+                    TotalPaid = x.TotalPaid,
 
                     InvoiceTotalPrice = x.InvoiceTotalPrice,
                     GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
@@ -148,6 +151,7 @@ namespace ERP_System.BLL.Guide
                 StockName = x.StockName,
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
+                TotalPaid = x.TotalPaid,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
@@ -180,6 +184,7 @@ namespace ERP_System.BLL.Guide
                 StockName = x.StockName,
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
+                TotalPaid = x.TotalPaid,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
@@ -219,12 +224,7 @@ namespace ERP_System.BLL.Guide
             var data = _repoSaleThrowback.GetAllAsNoTracking().Include(x => x.SaleInvoiceDetails).Where(p => p.ID == InvoiceDTO.ID && p.IsActive && !p.IsDeleted).FirstOrDefault();
             if (data != null)
             {
-                if (_repoSaleThrowback.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.ID != data.ID && p.InvoiceNumber == InvoiceDTO.InvoiceNumber
-                && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
-                {
-                    resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
-                    return resultViewModel;
-                }
+              
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
                 {
                     var newInvoice = data;
@@ -233,6 +233,7 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                     newInvoice.Buyer = InvoiceDTO.Buyer;
+                    newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
                     decimal? TotalPrice = 0;
                     var oldInvoiceDetails = data.SaleInvoiceDetails;
 
@@ -330,6 +331,7 @@ namespace ERP_System.BLL.Guide
                         {
                             resultViewModel.Status = false;
                             resultViewModel.Message = "خطأ في حفظ تفاصيل الفاتورة";
+
                         }
 
                     }
@@ -337,12 +339,7 @@ namespace ERP_System.BLL.Guide
             }
             else
             {
-                if (_repoSaleThrowback.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.InvoiceNumber == InvoiceDTO.InvoiceNumber
-                && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
-                {
-                    resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
-                    return resultViewModel;
-                }
+              
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
                 {
                     var newInvoice = new SaleThrowback();
@@ -352,6 +349,8 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.Buyer = InvoiceDTO.Buyer;
+                    newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
+
                     decimal? TotalPrice = 0;
 
                     var AllDetails = new List<SaleThrowbackDetail>();
@@ -393,9 +392,11 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceTotalPrice = TotalPrice;
                     if (_repoSaleThrowback.Insert(newInvoice))
                     {
+                        var newInvoiceNumber = newInvoice.InvoiceNumber + 1;
                         _repoSaleThrowbackDetail.InsertRange(AllDetails);
                         resultViewModel.Status = true;
                         resultViewModel.Message = AppConstants.Messages.SavedSuccess;
+                        resultViewModel.Data = newInvoiceNumber;
 
 
                     }

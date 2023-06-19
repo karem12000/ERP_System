@@ -43,13 +43,22 @@
                                     </div>
                                     <div class="col-2">
                                         @*<div class="form-group">
-                <input type="text" class="form-control" name="Supplier" id="Supplier">
-            </div>*@
+                                                <input type="text" class="form-control" name="Supplier" id="Supplier">
+                                            </div>*@
                                         <label for="Supplier">المورد<span style="color:red;"> * </span></label>
                                         <select class="Select sAddress form-select" onchange="handleChangeSupplier()" aria-label="اختر المورد" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Suppliers"] , "Value", "Text")' name="SupplierId" id="ddlSupplierId">
                                             <option selected value="0">اختر المورد</option>
                                         </select>
                                     </div>
+                                        <div class="form-group col-2 d-flex align-items-end">
+                                            @if (CurrentFormByControllerName("Supplier").CurrentFormPermissionActions.AddHasPermission)
+                                            {
+
+                                                <a type="button" href="/People/Supplier/Add" target="_blank" class="btn btn-primary btn-icon mx-1"><i class="fas fa-plus"></i></a>
+
+                                            }
+                                            <button type="button" class="btn btn-success btn-icon mx-1" onclick="RefreshSuppliers()"><i class="fas fa-sync"></i></button>
+                                        </div>
                                     <div class="col-2 SupplierData">
                                         <input type="text" readonly class="form-control" placeholder="مدين أو دائن">
                                         <input type="text" readonly class="form-control" placeholder="1500">
@@ -155,9 +164,9 @@
         $(document).ready(function () {
 
             var InvoiceNumber = Math.floor(Math.random() * 1000);
-               $('#InvoiceNumber').val(InvoiceNumber);
+            $('#InvoiceNumber').val(InvoiceNumber);
 
-           
+
         })
     </script>
 }

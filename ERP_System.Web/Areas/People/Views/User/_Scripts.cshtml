@@ -12,14 +12,28 @@
     let form = $('#frm');
     function Submit() {
 
-        event.preventDefault();
+        event.preventDefault(type);
 
-        Save();
+        Save(type);
+
+    }
+    function resetForm() {
+        $('#Name').val('');
+        $('#id').val('');
+        $('#UserName').val('');
+        $('#Email').val('');
+        $('#Password').val('');
+        $('#ddlUserTypeId').val('0').trigger('change');
+        $('#ddlScreenId').val('0').trigger('change');
+        $('#Phone').val('');
+        $('#Address').val('');
+        $('#StockIds').val('').trigger('change');
+        $('#IsActive').val('true');
+        $('#IsActive').prop('checked', true);
 
     }
 
-
-    function Save() {
+    function Save(type) {
         if ($('#Name').val() == '' || $('#UserName').val() == '' || $('#Email').val() == '' || $('#ddlUserTypeId').val() == '') {
             Swal.fire({
                 title: `من فضلك أدخل البيانات الأساسية`,
@@ -38,7 +52,12 @@
                         icon: 'success',
                         showConfirmButton: false
                     }).then((result) => {
+                        if (type == 'add') {
+                            resetForm();
+                        } else {
+
                         window.location.href = "/People/User/Index";
+                        }
                     })
                 }
                 else {

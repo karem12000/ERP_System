@@ -28,7 +28,7 @@
                                             <option selected value="0">اختر المخزن</option>
                                         </select>
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-2 d-none">
                                         <div class="form-group">
                                             <label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
                                             <input type="text" readonly id="InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
@@ -99,6 +99,10 @@
                                                     </tr>
                                                 </tbody>
                                                 <tfoot>
+                                                    <tr>
+                                                        <td colspan="5"><h5>المبلغ المدفوع</h5></td>
+                                                        <td colspan="3"><input type="number" class="form-control TotalPaid" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                    </tr>
                                                     <tr>
                                                         <td colspan="5"><h5>الإجمالي</h5></td>
                                                         <td colspan="3"><input disabled type="number" class="form-control InvoiceTotalPrice" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>

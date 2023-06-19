@@ -11,7 +11,7 @@
                 </div>
                 <div class="card-content">
                     <div class="card-body">
-                        <form class="form form-horizontal" id="frm" onsubmit="Submit()">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
                             <div class="form-body">
                                 <div class="row">
                                     <div class="col-6">
@@ -43,6 +43,8 @@
                                         <div class="form-group">
                                             <label class="lable" for="UserTypeId">نوع المستخدم<span style="color:red;"> * </span></label>
                                             <select class="Select sAddress form-select" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text")' name="UserTypeId" id="ddlUserTypeId">
+                                                <option selected value="0">اختر نوع المستخدم</option>
+
                                             </select>
                                         </div>
                                     </div>
@@ -85,7 +87,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-12 d-flex justify-content-between mt-5">
-                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add')">
                                             حفظ
                                         </button>
 

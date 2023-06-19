@@ -17,6 +17,8 @@ namespace ERP_System.DTO.Guide
         public string InvoiceDateStr { get; set; }
         public string? Buyer { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
+        public decimal? TotalPaid { get; set; }
+
         public bool IsActive { get; set; }
         public string? InvoiceProductsStr { get; set; }
         public SaleThrowbackProductsDTO[] InvoiceDetails => JsonConvert.DeserializeObject<SaleThrowbackProductsDTO[]>(InvoiceProductsStr);

@@ -61,8 +61,6 @@
         $('#id').val('');
         $('#ddlInvoiceType').val(invoiceType).trigger('change');
         $('#ddlStockId').val(stockId).trigger('change');
-        var InvoiceNumber = Math.floor(Math.random() * 1000);
-        $('#InvoiceNumber').val(InvoiceNumber);
         $('#Buyer').val('');
         $('#InvoiceProductsBody').empty();
         InvoiceProductsAddNew({

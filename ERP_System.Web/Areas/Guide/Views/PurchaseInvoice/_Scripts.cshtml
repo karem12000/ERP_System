@@ -19,7 +19,7 @@
         var supplierId= $('#ddlSupplierId').val();
         $.get('@Url.GetAction("GetSupplierById")', { supplierId: supplierId }, function (res) {
                 if (res.Status) {
-                   
+
                 } else {
                     Swal.fire({
                         title: `${res.Message}`,
@@ -48,6 +48,17 @@
             }
         })
 
+    }
+    function RefreshSuppliers() {
+        $.get('@Url.GetAction("GetSuppliersSelect")', function (res) {
+            if (res) {
+                $('#ddlSupplierId').empty();
+                $('#ddlSupplierId').append('<option value="0">اختر المورد</option>');
+                for (i = 0; i < res.length; i++) {
+                    $('#ddlSupplierId').append('<option value="' + res[i].Value + '">' + res[i].Text + '</option>');
+                }
+            }
+        });
     }
     function CancelProcess() {
         Swal.fire({

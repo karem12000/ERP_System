@@ -17,6 +17,7 @@ namespace ERP_System.Tables
         public DateTime InvoiceDate { get; set; }
         public string? Buyer { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
+        public decimal? TotalPaid { get; set; }
 
         public ICollection<SaleThrowbackDetail> SaleInvoiceDetails { get; set; }
 

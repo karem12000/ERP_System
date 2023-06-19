@@ -24,19 +24,18 @@
             if (result.isConfirmed) {
                 let stockId = document.querySelector("#ddlStockId").value;
                 let invoiceType = document.querySelector("#ddlInvoiceType").value;
-                resetForm(stockId, invoiceType);
+                resetForm(stockId, invoiceNumber);
             }
 
         })
 
     }
-    function resetForm(stockId) {
+    function resetForm(stockId, invoiceNumber) {
         $('#Name').val('');
         $('#id').val('');
         $('#ddlInvoiceType').val('0').trigger('change');
         $('#ddlStockId').val(stockId).trigger('change');
-        var InvoiceNumber = Math.floor(Math.random() * 1000);
-        $('#InvoiceNumber').val(InvoiceNumber);
+        $('#InvoiceNumber').val(invoiceNumber);
         $('#Supplier').val('');
         $('#InvoiceProductsBody').empty();
         InvoiceProductsAddNew({
@@ -44,10 +43,7 @@
             "ProductBarCode": "", "ProductName": ""
             , "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
         });
-        var date = Date(Date.now());
-        let currentDate = date.toString();
-        $('#InvoiceDate').val(currentDate).trigger('change');
-
+       
         $('#IsActive').val('true');
         $('#IsActive').prop('checked', true);
 
@@ -250,13 +246,6 @@
                 SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
                 TPrice += Qty * SellingPrice;
 
-            console.log(IdF);
-            console.log(ConversionFactor);
-            console.log(Qty);
-            console.log(SellingPrice);
-            console.log('************************************');
-            console.log(TPrice);
-
         });
         InvoiceTotalPrice.val(TPrice);
 
@@ -315,6 +304,7 @@
             frm.append("InvoiceNumber", document.querySelector("#InvoiceNumber").value);
             frm.append("InvoiceDate", document.querySelector("#InvoiceDate").value);
             frm.append("Buyer", document.querySelector("#Buyer").value);
+            frm.append("TotalPaid", document.querySelector(".TotalPaid").value);
             frm.append("InvoiceTotalPrice", document.querySelector(".InvoiceTotalPrice").value);
             frm.append("InvoiceProductsStr", JSON.stringify(Products));
 
@@ -333,7 +323,8 @@
                         showConfirmButton: false
                     }).then((result) => {
                         if (type === 'add') {
-                            resetForm(stockId);
+                           var invoiceNumber = res.Data;
+                            resetForm(stockId, invoiceNumber);
                         } else {
                             window.location.href = "/Guide/SaleInvoice/Index";
                         }

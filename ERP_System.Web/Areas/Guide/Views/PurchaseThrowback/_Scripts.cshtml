@@ -89,7 +89,17 @@
             });
         }
     }
-
+     function RefreshSuppliers() {
+        $.get("/People/PurchaseInvoice/GetSuppliersSelect", function (res) {
+            if (res) {
+                $('#ddlSupplierId').empty();
+                $('#ddlSupplierId').append('<option value="0">اختر المورد</option>');
+                for (i = 0; i < res.length; i++) {
+                    $('#ddlSupplierId').append('<option value="' + res[i].Value + '">' + res[i].Text + '</option>');
+                }
+            }
+        });
+    }
     function getInvoiceTotalPrice(value) {
         var TPrice = 0;
         let tRow = $(value).parent().parent();
@@ -413,7 +423,6 @@
                                                             <td>
                                                                 <div class="d-flex">
                                                                     <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                                    <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
                                                                 </div>
                                                             </td>
 

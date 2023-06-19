@@ -46,9 +46,18 @@
                                             <option selected value="0">اختر المورد</option>
                                         </select>
                                     </div>
+                                    <div class="form-group col-2 d-flex align-items-end">
+                                        @if (CurrentFormByControllerName("Supplier").CurrentFormPermissionActions.AddHasPermission)
+                                        {
+
+                                            <a type="button" href="/People/Supplier/Add" target="_blank" class="btn btn-primary btn-icon mx-1"><i class="fas fa-plus"></i></a>
+
+                                        }
+                                        <button type="button" class="btn btn-success btn-icon mx-1" onclick="RefreshSuppliers()"><i class="fas fa-sync"></i></button>
+                                    </div>
                                     <div class="col-2 SupplierData">
-                                        <input type="text" readonly  class="form-control" placeholder="مدين أو دائن">
-                                        <input type="text" readonly  class="form-control" placeholder="1500">
+                                        <input type="text" readonly class="form-control" placeholder="مدين أو دائن">
+                                        <input type="text" readonly class="form-control" placeholder="1500">
                                     </div>
                                     <hr>
                                     <div class="col-md-12">
