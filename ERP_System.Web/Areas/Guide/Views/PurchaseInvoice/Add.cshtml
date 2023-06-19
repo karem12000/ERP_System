@@ -15,36 +15,44 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
                             <div class="form-body">
                                 <div class="row">
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-2">
                                         <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
                                         <input hidden name="id" id="id" value="" class="d-none" />
                                         <select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
                                             <option selected value="0">فاتورة شراء</option>
+                                            <option value="1">فاتورة مرتجع مشتريات</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-2">
                                         <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
                                         <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
                                             <option selected value="0">اختر المخزن</option>
                                         </select>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-2">
                                         <div class="form-group">
                                             <label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
                                             <input type="text" required id="InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-2">
                                         <div class="form-group">
                                             <label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
                                             <input type="date" class="form-control" name="InvoiceDate" id="InvoiceDate">
                                         </div>
                                     </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label for="Supplier">اسم المورد<span style="color:red;"> * </span></label>
-                                            <input type="text" class="form-control" name="Supplier" id="Supplier">
-                                        </div>
+                                    <div class="col-2">
+                                        @*<div class="form-group">
+                <input type="text" class="form-control" name="Supplier" id="Supplier">
+            </div>*@
+                                        <label for="Supplier">المورد<span style="color:red;"> * </span></label>
+                                        <select class="Select sAddress form-select" onchange="handleChangeSupplier()" aria-label="اختر المورد" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Suppliers"] , "Value", "Text")' name="SupplierId" id="ddlSupplierId">
+                                            <option selected value="0">اختر المورد</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-2 SupplierData">
+                                        <input type="text" readonly class="form-control" placeholder="مدين أو دائن">
+                                        <input type="text" readonly class="form-control" placeholder="1500">
                                     </div>
                                     <hr>
                                     <div class="col-md-12">
@@ -72,9 +80,9 @@
                                                             <input class="form-control ProductId" type="hidden" value="0" />
                                                             <input type="text" onkeyup="getProduct(this,event)" required class="form-control ProductBarCode" />
                                                         </td>
-                                                        <td><input type="text" required class="form-control ProductName" /></td>
+                                                        <td><input type="text" onkeyup="getProductByName(this,event)" required class="form-control ProductName" /></td>
                                                         <td>
-                                                            <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+                                                            <select class="Select sAddress form-select UnitId" onchange="handleUnitChange(this,event)" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
                                                                 <option selected value="0">اختر الوحدة</option>
                                                             </select>
                                                             <input class="form-control ConversionFactor" type="hidden" value="1" />
@@ -114,11 +122,15 @@
                                         <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add')">
                                             حفظ
                                         </button>
-
+                                        <div class="col-1">
+                                            <div class="form-group">
+                                                <button type="button" onclick="FinishShift();" class="btn btn-danger" name="btnFinishShift" id="btnFinishShift">إنهاء الخدمة</button>
+                                            </div>
+                                        </div>
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
                                             <div class="d-flex align-items-center justify-content-end ps-2">
-                                                <a class="btn btn-outline-primary" href="/Guide/PurchaseInvoice/Index">
+                                                <a class="btn btn-outline-primary" href="/Guide/PurchaseInvoice/Index?previous=true">
                                                     رجوع للقائمة
                                                     <span class="fa-arrow-left fas"></span>
                                                 </a>

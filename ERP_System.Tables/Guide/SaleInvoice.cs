@@ -13,10 +13,14 @@ namespace ERP_System.Tables
     {
         public Guid? StockId { get; set; }
         public string? StockName { get; set; }
+        
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
         public string? Buyer { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
+        public decimal? InvoiceTotalDiscount { get; set; }
+        public decimal? TotalPaid { get; set; }
+
 
         public ICollection<SaleInvoiceDetail> SaleInvoiceDetail { get; set; }
 
@@ -31,6 +35,8 @@ namespace ERP_System.Tables
         public string? ProductName { get; set; }
         public Guid? UnitId { get; set; }
         public decimal? ConversionFactor { get; set; }
+        public decimal? DiscountPProduct { get; set; }
+
         public decimal? ItemUnitPrice { get; set; }
         public decimal? Qty { get; set; }
         public decimal? SellingPrice { get; set; }

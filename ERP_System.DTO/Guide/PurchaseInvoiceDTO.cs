@@ -16,7 +16,8 @@ namespace ERP_System.DTO.Guide
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
         public string InvoiceDateStr { get; set; }
-        public string? Supplier { get; set; }
+        public Guid? SupplierId { get; set; }
+        public string? SupplierName { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
         public bool IsActive { get; set; }
         public string? InvoiceProductsStr { get; set; }

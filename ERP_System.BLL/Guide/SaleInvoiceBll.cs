@@ -49,7 +49,9 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
+                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
                 Buyer = x.Buyer,
+                TotalPaid = x.TotalPaid,
                 IsActive = x.IsActive,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.SaleInvoiceDetail.Select(c => new SaleInvoiceProductsDTO
@@ -62,6 +64,7 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
+                    DiscountPProduct = c.DiscountPProduct,
                     SellingPrice = c.SellingPrice,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
                 }).ToList(),
@@ -78,7 +81,10 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
+                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
                 Buyer = x.Buyer,
+                TotalPaid = x.TotalPaid,
+
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
@@ -92,6 +98,7 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
+                    DiscountPProduct = c.DiscountPProduct,
                     SellingPrice = c.SellingPrice,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
@@ -112,7 +119,10 @@ namespace ERP_System.BLL.Guide
                     InvoiceNumber = x.InvoiceNumber,
                     StockId = x.StockId,
                     StockName = x.StockName,
+                    InvoiceTotalDiscount = x.InvoiceTotalDiscount,
                     Buyer = x.Buyer,
+                    TotalPaid = x.TotalPaid,
+
                     IsActive = x.IsActive,
 
                     InvoiceTotalPrice = x.InvoiceTotalPrice,
@@ -126,6 +136,7 @@ namespace ERP_System.BLL.Guide
                         ConversionFactor = c.ConversionFactor,
                         ItemUnitPrice = c.ItemUnitPrice,
                         ProductBarCode = c.ProductBarCode,
+                        DiscountPProduct = c.DiscountPProduct,
                         SellingPrice = c.SellingPrice,
                         GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
@@ -146,7 +157,10 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
+                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
                 Buyer = x.Buyer,
+                TotalPaid = x.TotalPaid,
+
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
@@ -160,6 +174,7 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
+                    DiscountPProduct = c.DiscountPProduct,
                     SellingPrice = c.SellingPrice,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
@@ -178,9 +193,10 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
+                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
-
+                TotalPaid = x.TotalPaid,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.SaleInvoiceDetail.Select(c => new SaleInvoiceProductsDTO
                 {
@@ -190,6 +206,7 @@ namespace ERP_System.BLL.Guide
                     Qty = c.Qty,
                     UnitId = c.UnitId,
                     ConversionFactor = c.ConversionFactor,
+                    DiscountPProduct = c.DiscountPProduct,
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
                     SellingPrice = c.SellingPrice,
@@ -219,12 +236,12 @@ namespace ERP_System.BLL.Guide
             var data = _repoInvoice.GetAllAsNoTracking().Include(x => x.SaleInvoiceDetail).Where(p => p.ID == InvoiceDTO.ID  && p.IsActive && !p.IsDeleted).FirstOrDefault();
             if (data != null)
             {
-                if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.ID != data.ID && p.InvoiceNumber == InvoiceDTO.InvoiceNumber
-                && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
-                {
-                    resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
-                    return resultViewModel;
-                }
+                //if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.ID != data.ID && p.InvoiceNumber == InvoiceDTO.InvoiceNumber
+                //&& p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
+                //{
+                //    resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
+                //    return resultViewModel;
+                //}
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
                 {
                     var newInvoice = data;
@@ -233,13 +250,15 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                     newInvoice.Buyer = InvoiceDTO.Buyer;
+                    newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
+                    newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;
                     decimal? TotalPrice = 0;
                     var oldInvoiceDetails = data.SaleInvoiceDetail;
 
                     var AllDetails = new List<SaleInvoiceDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
-                        var product = _repoProduct.GetById(invoiceDetail.ProductId.Value);
+                        var product = _repoProduct.GetAll().Where(x=>x.ID== invoiceDetail.ProductId.Value && x.StockProducts.Any(x=>x.ProductId==invoiceDetail.ProductId)).FirstOrDefault();
 
                         var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
                         if (oldDetail != null)
@@ -271,6 +290,7 @@ namespace ERP_System.BLL.Guide
                                     AddedBy = _repoInvoice.UserId,
                                     IsActive = true,
                                     UnitId = invoiceDetail.UnitId,
+                                    DiscountPProduct = invoiceDetail.DiscountPProduct,
                                     ConversionFactor = invoiceDetail.ConversionFactor,
                                     ProductBarCode = invoiceDetail.ProductBarCode,
                                     ProductId = invoiceDetail.ProductId,
@@ -285,6 +305,7 @@ namespace ERP_System.BLL.Guide
                                 AllDetails.Add(newInvoiceDetail);
 
                                 TotalPrice += newInvoiceDetail.TotalQtyPrice;
+                                TotalPrice -= newInvoiceDetail.DiscountPProduct;
                             }
                         }
                         else
@@ -298,7 +319,7 @@ namespace ERP_System.BLL.Guide
                             }
                             else
                             {
-                                var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+                                var productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
                                 var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
                                 var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
                                 var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
@@ -311,6 +332,7 @@ namespace ERP_System.BLL.Guide
                                 {
                                     AddedBy = _repoInvoice.UserId,
                                     IsActive = true,
+                                    DiscountPProduct = invoiceDetail.DiscountPProduct,
                                     UnitId = invoiceDetail.UnitId,
                                     ConversionFactor = invoiceDetail.ConversionFactor,
                                     ProductBarCode = invoiceDetail.ProductBarCode,
@@ -331,6 +353,7 @@ namespace ERP_System.BLL.Guide
 
 
                     }
+                    TotalPrice -= newInvoice.InvoiceTotalDiscount;
                     newInvoice.InvoiceTotalPrice = TotalPrice;
                     if (_repoInvoice.Update(newInvoice))
                     {
@@ -353,12 +376,12 @@ namespace ERP_System.BLL.Guide
             }
             else
             {
-                if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.InvoiceNumber == InvoiceDTO.InvoiceNumber
-                && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
-                {
-                    resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
-                    return resultViewModel;
-                }
+                //if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.InvoiceNumber == InvoiceDTO.InvoiceNumber
+                //&& p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
+                //{
+                //    resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
+                //    return resultViewModel;
+                //}
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
                 {
                     var newInvoice = new SaleInvoice();
@@ -368,13 +391,15 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.Buyer = InvoiceDTO.Buyer;
+                    newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
+                    newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;
                     decimal? TotalPrice = 0;
 
                     var AllDetails = new List<SaleInvoiceDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
-                        var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                        var product = _repoProduct.GetById(invoiceDetail.ProductId);
+                        var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId)).FirstOrDefault();
+                        var productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
                         var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
                         var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
                         var TotalQtyInStock = QtyInStock * ConversionFactor;
@@ -397,6 +422,7 @@ namespace ERP_System.BLL.Guide
                                 AddedBy = _repoInvoice.UserId,
                                 IsActive = true,
                                 UnitId = invoiceDetail.UnitId,
+                                DiscountPProduct = invoiceDetail.DiscountPProduct,
                                 ConversionFactor = invoiceDetail.ConversionFactor,
                                 ProductBarCode = invoiceDetail.ProductBarCode,
                                 ProductId = invoiceDetail.ProductId,
@@ -411,16 +437,19 @@ namespace ERP_System.BLL.Guide
                             //_repoInvoiceDetail.Insert(newInvoiceDetail);
                             AllDetails.Add(newInvoiceDetail);
                             TotalPrice += newInvoiceDetail.TotalQtyPrice;
+                            TotalPrice -= invoiceDetail.DiscountPProduct;
                         }
 
                     }
+                    TotalPrice -= newInvoice.InvoiceTotalDiscount;
                     newInvoice.InvoiceTotalPrice = TotalPrice;
                     if (_repoInvoice.Insert(newInvoice))
                     {
+                        var lastInvoiceNumber = newInvoice.InvoiceNumber + 1;
                         _repoInvoiceDetail.InsertRange(AllDetails);
                         resultViewModel.Status = true;
                         resultViewModel.Message = AppConstants.Messages.SavedSuccess;
-
+                        resultViewModel.Data = lastInvoiceNumber;
 
                     }
                 }

@@ -16,6 +16,8 @@ namespace ERP_System.DTO.Guide
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
         public string InvoiceDateStr { get; set; }
+        public decimal? InvoiceTotalDiscount { get; set; }
+        public decimal? TotalPaid { get; set; }
         public string? Buyer { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
         public bool IsActive { get; set; }
@@ -30,6 +32,7 @@ namespace ERP_System.DTO.Guide
         public Guid? ProductId { get; set; }
         public string? ProductBarCode { get; set; }
         public string? ProductName { get; set; }
+        public decimal? DiscountPProduct { get; set; }
         public string? Buyer { get; set; }
         public Guid? UnitId { get; set; }
         public decimal? ConversionFactor { get; set; }
@@ -47,7 +50,6 @@ namespace ERP_System.DTO.Guide
         public Guid? ID { get; set; }
 
         public int InvoiceNumber { get; set; }
-
         public string InvoiceDate { get; set; }
         public string? Buyer { get; set; }
         public Guid? StockId { get; set; }

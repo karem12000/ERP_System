@@ -15,35 +15,40 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit('edit')">
                             <div class="form-body">
                                 <div class="row">
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-2">
                                         <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
                                         <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
                                         <select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
                                             <option selected value="0">مرتجع مبيعات</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-2">
                                         <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
                                         <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text" ,Model.StockId)' name="StockId" id="ddlStockId">
                                             <option selected value="0">اختر المخزن</option>
                                         </select>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-2">
                                         <div class="form-group">
                                             <label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
                                             <input type="text" required id="InvoiceNumber" value="@Model.InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-2">
                                         <div class="form-group">
                                             <label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
                                             <input type="date" class="form-control" value="@Model.InvoiceDateStr" name="InvoiceDate" id="InvoiceDate">
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-2">
                                         <div class="form-group">
-                                            <label for="Supplier">اسم المورد<span style="color:red;"> * </span></label>
+                                            <label for="Supplier">اسم العميل<span style="color:red;"> * </span></label>
                                             <input type="text" class="form-control" value="@Model.Buyer" name="Buyer" id="Buyer">
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+                                        <div class="form-group">
+                                            <button type="button" onclick="CancelProcess()" class="btn btn-primary" name="btnCancel" id="btnCancel">إلغاء العملية</button>
                                         </div>
                                     </div>
                                     <hr>
@@ -51,6 +56,8 @@
                                         <div class="table-container" id="InvoiceProducts">
                                             <label for="Products">المنتجات</label>
                                             <button type="button" class="btn btn-outline-primary addInvoiceProduct mx-2">إضافة</button>
+                                            <label id="ProductsCount"> 0 </label>
+
                                             <table class="table">
                                                 <thead>
                                                     <tr>
@@ -78,9 +85,9 @@
                                                                         <input class="form-control ProductId" type="hidden" value="@detail.ProductId" />
                                                                         <input type="text" onkeyup="getProduct(this,event)" value="@detail.ProductBarCode" required class="form-control ProductBarCode" />
                                                                     </td>
-                                                                    <td><input type="text" required value="@detail.ProductName" class="form-control ProductName" /></td>
+                                                                    <td><input type="text" onkeyup="getProductByName(this,event)" required value="@detail.ProductName" class="form-control ProductName" /></td>
                                                                     <td>
-                                                                        <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+                                                                        <select class="Select sAddress form-select UnitId" onchange="handleUnitChange(this,event)" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
                                                                             @if (detail.GetProductUnits != null && detail.GetProductUnits.Count() > 0)
                                                                             {
                                                                                 @foreach (var unit in detail.GetProductUnits)
@@ -109,7 +116,6 @@
                                                                     <td>
                                                                         <div class="d-flex">
                                                                             <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                                            <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
                                                                         </div>
                                                                     </td>
 
@@ -125,9 +131,9 @@
                                                                     <input class="form-control ProductId" type="hidden" value="0" />
                                                                     <input type="text" onkeyup="getProduct(this,event)" required class="form-control ProductBarCode" />
                                                                 </td>
-                                                                <td><input type="text" required class="form-control ProductName" /></td>
+                                                                <td><input type="text" onkeyup="getProductByName(this,event)" required class="form-control ProductName" /></td>
                                                                 <td>
-                                                                    <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+                                                                    <select class="Select sAddress form-select UnitId" onchange="handleUnitChange(this,event)" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
                                                                         <option selected value="0">اختر الوحدة</option>
                                                                     </select>
                                                                     <input class="form-control ConversionFactor" type="hidden" value="1" />
@@ -139,7 +145,6 @@
                                                                 <td>
                                                                     <div class="d-flex">
                                                                         <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                                        <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
                                                                     </div>
                                                                 </td>
 
@@ -174,7 +179,7 @@
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
                                             <div class="d-flex align-items-center justify-content-end ps-2">
-                                                <a class="btn btn-outline-primary" href="/Guide/SaleThrowback/Index">
+                                                <a class="btn btn-outline-primary" href="/Guide/SaleThrowback/Index?previous=true">
                                                     رجوع للقائمة
                                                     <span class="fa-arrow-left fas"></span>
                                                 </a>

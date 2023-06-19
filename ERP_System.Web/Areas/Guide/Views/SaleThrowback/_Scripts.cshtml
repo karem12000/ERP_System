@@ -10,7 +10,26 @@
         Save(type);
 
     }
+    function CancelProcess() {
+        Swal.fire({
+            title: 'إلغاء العملية؟',
+            text: "هل انت متاكد من إلغاء العملية",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'لا',
+            confirmButtonText: 'نعم!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let stockId = document.querySelector("#ddlStockId").value;
+                let invoiceType = document.querySelector("#ddlInvoiceType").value;
+                resetForm(stockId, invoiceType);
+            }
 
+        })
+
+    }
     function resetForm(stockId) {
         $('#Name').val('');
         $('#id').val('');
@@ -33,7 +52,117 @@
         $('#IsActive').prop('checked', true);
 
     }
+    function handleUnitChange(value, event) {
+        var unitId = value.value;
+        let tBody = $(value).parent().parent();
+        let ID = tBody.find(".ID");
+        let ProductId = tBody.find(".ProductId");
+        console.log(ProductId.val());
+        let ProductBarCode = tBody.find(".ProductBarCode");
+        let ProductName = tBody.find(".ProductName");
+        let UnitId = tBody.find(".UnitId");
+        let ConversionFactor = tBody.find(".ConversionFactor");
+        let ItemUnitPrice = tBody.find(".ItemUnitPrice");
+        let Qty = tBody.find(".Qty");
+        let SellingPrice = tBody.find(".SellingPrice");
+        let TotalQtyPrice = tBody.find(".TotalQtyPrice");
+        //let barCodeBtn = tBody.find(".barCodeBtn");
+        $.get('@Url.GetAction("GetProductDataByUnitId")', { unitId: unitId, productId: ProductId.val() }, function (res) {
+                if (res.Status) {
+                    let data = res.Data;
+                    ProductId.val(data.ID);
+                    ProductBarCode.val(data.BarCodeText);
+                    ProductName.val(data.Name);
+                    UnitId.empty();
+                    ID.val('@Guid.NewGuid()');
+                    data.GetProductUnits.forEach(function (item) {
+                        if (item.UnitId === data.IdUnitOfQty) {
+                            UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
+                            ConversionFactor.val(item.ConversionFactor);
+                            ItemUnitPrice.val(item.SellingPrice);
+                            SellingPrice.val(item.SellingPrice);
+                        }
+                        else {
+                            UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+                        }
+                    });
+                    Qty.val('1');
+                    let TQP = 1 * SellingPrice.val();
+                    TotalQtyPrice.val(TQP);
 
+                    //barCodeBtn.attr("href", data.BarCodePath);
+                } else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: 'warning',
+                        showConfirmButton: false
+                    });
+                }
+            });
+    }
+     function getProductByName(value, event) {
+
+        if (event.keyCode === 13) {
+            var name = value.value;
+            let tBody = $(value).parent().parent();
+            let ID = tBody.find(".ID");
+            let ProductId = tBody.find(".ProductId");
+            let ProductBarCode = tBody.find(".ProductBarCode");
+            let ProductName = tBody.find(".ProductName");
+            let UnitId = tBody.find(".UnitId");
+            let ConversionFactor = tBody.find(".ConversionFactor");
+            let ItemUnitPrice = tBody.find(".ItemUnitPrice");
+            let Qty = tBody.find(".Qty");
+            let SellingPrice = tBody.find(".SellingPrice");
+            let TotalQtyPrice = tBody.find(".TotalQtyPrice");
+            //let barCodeBtn = tBody.find(".barCodeBtn");
+            let InvoiceTotalPrice = tBody.find(".InvoiceTotalPrice");
+
+            $.get('@Url.GetAction("GetProductByName")', { text: name }, function (res) {
+                if (res.Status) {
+                    let data = res.Data;
+                    if (ProductId.val()!==0) {
+                        InvoiceProductsAddNew({
+                            "id": "0", "ProductId": "0",
+                            "ProductBarCode": "", "ProductName": ""
+                            , "UnitId": "0", "ConversionFactor": "", "DiscountPProduct": "0", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+                        });
+                    }
+                    ProductId.val(data.ID);
+                    ProductBarCode.val(data.BarCodeText);
+                    ProductName.val(data.Name);
+                    UnitId.empty();
+                    ID.val('@Guid.NewGuid()');
+                    data.GetProductUnits.forEach(function (item) {
+                        if (item.UnitId === data.IdUnitOfQty) {
+                            UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
+                            ConversionFactor.val(item.ConversionFactor);
+                            ItemUnitPrice.val(item.SellingPrice);
+                            SellingPrice.val(item.SellingPrice);
+                        }
+                        else {
+                            UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+                        }
+                    });
+                    Qty.val('1');
+                    let TQP = 1 * SellingPrice.val();
+                    TotalQtyPrice.val(TQP);
+
+                    //barCodeBtn.attr("href", data.BarCodePath);
+                } else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: 'warning',
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+    }
     function getProduct(value, event) {
 
         if (event.keyCode === 13) {
@@ -54,6 +183,11 @@
 
             $.get('@Url.GetAction("GetProductByBarCode")', { text: barcode }, function (res) {
                 if (res.Status) {
+                    InvoiceProductsAddNew({
+                        "id": "0", "ProductId": "0",
+                        "ProductBarCode": "", "ProductName": ""
+                        , "UnitId": "0", "ConversionFactor": "", "DiscountPProduct": "0", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+                    });
                     let data = res.Data;
                     ProductId.val(data.ID);
                     ProductBarCode.val(data.BarCodeText);
@@ -403,9 +537,9 @@
                                                                         <input class="form-control ProductId" type="hidden" value="0" />
                                                                             <input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
                                                                     </td>
-                                                                            <td><input type="text" required  value="${obj.ProductName}" class="form-control ProductName" /></td>
+                                                                            <td><input type="text" required onkeyup="getProductByName(this,event)"   value="${obj.ProductName}" class="form-control ProductName" /></td>
                                                                     <td>
-                                                                        <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة"  name="UnitId" id="ddlUnitId">
+                                                                        <select class="Select sAddress form-select UnitId" onchange="handleUnitChange(this,event)" required aria-label="اختر الوحدة"  name="UnitId" id="ddlUnitId">
                                                                             <option selected value="0">اختر الوحدة</option>
                                                                         </select>
                                                                                 <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
@@ -417,7 +551,6 @@
                                                                     <td>
                                                                         <div class="d-flex">
                                                                             <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                                            <a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
                                                                         </div>
                                                                     </td>
 

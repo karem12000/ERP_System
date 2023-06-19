@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ERP_System.DTO.Report
 {
-    public class SaleReportDTO : BaseReportDTO
+    public class SaleReportDTO 
     {
         public string InvoiceType { get; set; }
         public string InvoiceDate { get; set; }

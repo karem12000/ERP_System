@@ -4,14 +4,16 @@ using ERP_System.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERP_System.DAL.Migrations
 {
     [DbContext(typeof(ERP_SystemDbContext))]
-    partial class ERP_SystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230618222243_UpdatePInvoice")]
+    partial class UpdatePInvoice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -849,9 +851,6 @@ namespace ERP_System.DAL.Migrations
                     b.Property<int>("InvoiceNumber")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("InvoiceTotalDiscount")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal?>("InvoiceTotalPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -872,9 +871,6 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<string>("StockName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("TotalPaid")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
 
@@ -907,9 +903,6 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("DiscountPProduct")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");

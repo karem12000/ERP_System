@@ -21,13 +21,14 @@ namespace ERP_System.BLL.Guide
         private const string _spPurchaseThrowback = "[Guide].[spPurchaseThrowback]";
         private readonly IRepository<PurchaseThrowback> _repoInvoice;
         private readonly UnitBll _UnitBll;
+        private readonly SupplierBll _supplierBll;
         private readonly IRepository<Stock> _repoStock;
         private readonly IRepository<Product> _repoProduct;
         private readonly IRepository<ProductUnit> _repoProductUnit;
         private readonly IRepository<PurchaseThrowbackDetail> _repoInvoiceDetail;
         private readonly IMapper _mapper;
 
-        public PurchaseThrowbackBll(IRepository<Product> repoProduct, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseThrowback> repoInvoice, IRepository<PurchaseThrowbackDetail> repoInvoiceDetail, IMapper mapper)
+        public PurchaseThrowbackBll(IRepository<Product> repoProduct, SupplierBll supplierBll, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseThrowback> repoInvoice, IRepository<PurchaseThrowbackDetail> repoInvoiceDetail, IMapper mapper)
         {
             _repoInvoice = repoInvoice;
             _mapper = mapper;
@@ -36,6 +37,7 @@ namespace ERP_System.BLL.Guide
             _UnitBll = UnitBll;
             _repoStock = repoStock;
             _repoProductUnit = repoProductUnit;
+            _supplierBll = supplierBll;
         }
 
         #region Get
@@ -49,7 +51,8 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
-                Supplier = x.Supplier,
+                SupplierId = x.SupplierId,
+                SupplierName = x.SupplierName,
                 IsActive = x.IsActive,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
@@ -77,7 +80,8 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
-                Supplier = x.Supplier,
+                SupplierId = x.SupplierId,
+                SupplierName = x.SupplierName,
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
@@ -110,7 +114,8 @@ namespace ERP_System.BLL.Guide
                     InvoiceNumber = x.InvoiceNumber,
                     StockId = x.StockId,
                     StockName = x.StockName,
-                    Supplier = x.Supplier,
+                    SupplierId = x.SupplierId,
+                    SupplierName = x.SupplierName,
                     IsActive = x.IsActive,
 
                     InvoiceTotalPrice = x.InvoiceTotalPrice,
@@ -143,7 +148,8 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
-                Supplier = x.Supplier,
+                SupplierId = x.SupplierId,
+                SupplierName = x.SupplierName,
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
@@ -174,7 +180,8 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = x.StockName,
-                Supplier = x.Supplier,
+                SupplierId = x.SupplierId,
+                SupplierName = x.SupplierName,
                 IsActive = x.IsActive,
 
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
@@ -214,6 +221,8 @@ namespace ERP_System.BLL.Guide
             var data = _repoInvoice.GetAllAsNoTracking().Include(x => x.PurchaseThrowbackDetails).Where(p => p.ID == InvoiceDTO.ID && p.IsActive && !p.IsDeleted).FirstOrDefault();
             if (data != null)
             {
+                var Supplier = _supplierBll.GetById(data.SupplierId.Value);
+
                 if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.ID != data.ID && p.InvoiceNumber == InvoiceDTO.InvoiceNumber
                 && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
                 {
@@ -227,8 +236,8 @@ namespace ERP_System.BLL.Guide
                     newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
-                    newInvoice.Supplier = InvoiceDTO.Supplier;
-                    decimal? TotalPrice = 0;
+                    newInvoice.SupplierId = Supplier.ID;
+                    newInvoice.SupplierName = Supplier.Name; decimal? TotalPrice = 0;
                     var oldInvoiceDetails = data.PurchaseThrowbackDetails;
 
                     var AllDetails = new List<PurchaseThrowbackDetail>();
@@ -247,7 +256,7 @@ namespace ERP_System.BLL.Guide
                             var oldRequiredQty = oldDetail.Qty * oldDetail.ConversionFactor;
                             var TotalRequiredQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
 
-                            product.QtyInStock =Math.Round(TotalQtyInStock.Value,2);
+                            product.QtyInStock = Math.Round(TotalQtyInStock.Value, 2);
 
                             if (TotalRequiredQty > product.QtyInStock)
                             {
@@ -278,7 +287,7 @@ namespace ERP_System.BLL.Guide
 
                                 TotalPrice += newInvoiceDetail.TotalQtyPrice;
                             }
-                        
+
 
                         }
                         else
@@ -347,6 +356,8 @@ namespace ERP_System.BLL.Guide
             }
             else
             {
+                var Supplier = _supplierBll.GetById(data.SupplierId.Value);
+
                 if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.InvoiceNumber == InvoiceDTO.InvoiceNumber
                 && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
                 {
@@ -361,7 +372,8 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
-                    newInvoice.Supplier = InvoiceDTO.Supplier;
+                    newInvoice.SupplierId = Supplier.ID;
+                    newInvoice.SupplierName = Supplier.Name;
                     decimal? TotalPrice = 0;
 
                     var AllDetails = new List<PurchaseThrowbackDetail>();

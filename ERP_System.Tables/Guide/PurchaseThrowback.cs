@@ -15,7 +15,8 @@ namespace ERP_System.Tables
         public string? StockName { get; set; }
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
-        public string? Supplier { get; set; }
+        public Guid? SupplierId { get; set; }
+        public string? SupplierName { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
 
         public ICollection<PurchaseThrowbackDetail> PurchaseThrowbackDetails { get; set; }

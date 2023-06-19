@@ -41,7 +41,15 @@ namespace ERP_System.BLL.Guide
                 ProcessTypeInt = p.ProcessType == null ? 0 : (int)p.ProcessType
             }).FirstOrDefault();
         }
-       
+        public IQueryable<SelectListDTO> GetSelect()
+        {
+            var data = _repoSupplier.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted).Select(p => new SelectListDTO()
+            {
+                Value = p.ID,
+                Text = p.Name
+            });
+            return data.Distinct();
+        }
         public DataTableResponse LoadData(DataTableRequest mdl)
         {
             var data = _repoSupplier.ExecuteStoredProcedure<SupplierTableDTO>

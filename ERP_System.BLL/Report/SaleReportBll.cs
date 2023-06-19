@@ -38,49 +38,21 @@ namespace ERP_System.BLL.Guide
 
         #region Get
      
-        public ResultViewModel GetAllByDate(DateTime? fromDate, DateTime? toDate)
+        public List<SaleReportDTO> GetAllByDate(DateTime? fromDate, DateTime? toDate)
         {
-            var result = new ResultViewModel();
-            var data = new SaleReportDataDTO();
-            result.Status = false;
-            var companyData = _repoSetting.GetAllAsNoTracking().Select(x => new BaseReportDTO
-            {
-                CompanyAddress = x.CompanyAddress,
-                CompanyLogo = x.CompanyImage,
-                CompanyName = x.CompanyName,
-                CompanyPhone = x.CompanyPhone,
-                Description = x.Description
-            }).FirstOrDefault();
 
             //var reportData = _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= fromDate.Value.Date && x.InvoiceDate.Date <= toDate.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new SaleReportDTO
             var reportData = _repoInvoice.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.IsActive).Select(x => new SaleReportDTO
             {
                BuyerName =x.Buyer,
-               InvoiceDate = x.InvoiceDate.ToString(),
+               InvoiceDate = x.InvoiceDate.Date.ToString(),
                InvoiceNumber = x.InvoiceNumber.ToString(),
                 InvoiceTotalPrice = x.InvoiceTotalPrice.Value,
                 InvoiceType = "فاتورة مبيعات",
                 StockName = x.StockName
-            }).FirstOrDefault();
-            if (reportData != null)
-            {
-                if(companyData != null)
-                {
-                    data.CompanyAddress = companyData.CompanyAddress;
-                    data.CompanyName = companyData.CompanyName;
-                    data.CompanyPhone = companyData.CompanyPhone;
-                    data.CompanyLogo = companyData.CompanyLogo;
-                }
-                //data.Data.Add(reportData);
-                //data.Data = reportData;
-                result.Status = true;
-                result.Data = reportData;
-            }
-            else
-            {
-                result.Message = "لا توجد فاواتير مبيعات لهذه المدة";
-            }
-            return result;
+            }).ToList();
+           
+            return reportData;
         }
       
 

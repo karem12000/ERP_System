@@ -93,7 +93,7 @@ namespace ERP_System.BLL.Guide
             {
                
                 var tbl = _mapper.Map<Setting>(settingDto);
-                tbl.Description = tbl.Description.Trim();
+                tbl.Description =settingDto.Description;
                 tbl.IsActive = true;
                 tbl.IsDeleted = false;
                 if (_repoSetting.UserId != Guid.Empty)

@@ -21,9 +21,13 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             _invoiceBll= invoiceBll;
             _productBll = productBll;
         }
-        public IActionResult Index()
+        public IActionResult Index(bool previous=false)
         {
-            return View();
+            if(previous)
+                return View();
+            else
+                return Redirect("/Guide/SaleThrowback/Add");
+
         }
         public IActionResult Add()
         {
@@ -50,6 +54,9 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
         public IActionResult Save(SaleThrowbackDTO mdl) => Ok(_invoiceBll.Save(mdl));
         public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
+        public IActionResult GetProductByName(string text) => Ok(_productBll.GetByProductName(text));
+        public IActionResult GetProductDataByUnitId(Guid? productId, Guid? unitId) => Ok(_productBll.GetProductDataByUnitId(productId, unitId));
+
 
         [HttpPost]
         public IActionResult Delete(Guid id) => Ok(_invoiceBll.Delete(id));

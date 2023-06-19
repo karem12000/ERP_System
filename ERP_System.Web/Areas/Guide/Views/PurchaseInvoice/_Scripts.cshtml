@@ -10,11 +10,67 @@
         Save(type);
 
     }
+    function SetInvoiceThroback() {
+        let stockId = document.querySelector("#ddlStockId").value;
+        let invoiceType = 1;
+        resetForm(stockId, invoiceType);
+    }
+    function handleChangeSupplier() {
+        var supplierId= $('#ddlSupplierId').val();
+        $.get('@Url.GetAction("GetSupplierById")', { supplierId: supplierId }, function (res) {
+                if (res.Status) {
+                   
+                } else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        icon: 'warning',
+                        showConfirmButton: false
+                    });
+                }
+            });
+    }
+    function FinishShift() {
+        Swal.fire({
+            title: 'إلغاء الخدمة؟',
+            text: "هل انت متاكد من إلغاء الخدمة",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'لا',
+            confirmButtonText: 'نعم!'
+        }).then((result) => {
+            if (result.isConfirmed) {
 
-    function resetForm(stockId) {
+                window.location.href = "/Account/LogOff";
+            }
+        })
+
+    }
+    function CancelProcess() {
+        Swal.fire({
+            title: 'إلغاء العملية؟',
+            text: "هل انت متاكد من إلغاء العملية",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'لا',
+            confirmButtonText: 'نعم!'
+        }).then((result) => {
+            let stockId = document.querySelector("#ddlStockId").value;
+            let invoiceType = document.querySelector("#ddlInvoiceType").value;
+
+            resetForm(stockId, invoiceType);
+        })
+
+    }
+    function resetForm(stockId,invoiceType) {
         $('#Name').val('');
         $('#id').val('');
-        $('#ddlInvoiceType').val('0').trigger('change');
+        $('#ddlInvoiceType').val(invoiceType).trigger('change');
         $('#ddlStockId').val(stockId).trigger('change');
           var InvoiceNumber = Math.floor(Math.random() * 1000);
             $('#InvoiceNumber').val(InvoiceNumber);
@@ -33,7 +89,113 @@
         $('#IsActive').prop('checked', true);
 
     }
+    function handleUnitChange(value, event) {
+        var unitId = value.value;
+        let tBody = $(value).parent().parent();
+        let ID = tBody.find(".ID");
+        let ProductId = tBody.find(".ProductId");
+        let ProductBarCode = tBody.find(".ProductBarCode");
+        let ProductName = tBody.find(".ProductName");
+        let UnitId = tBody.find(".UnitId");
+        let ConversionFactor = tBody.find(".ConversionFactor");
+        let ItemUnitPrice = tBody.find(".ItemUnitPrice");
+        let Qty = tBody.find(".Qty");
+        let SellingPrice = tBody.find(".SellingPrice");
+        let TotalQtyPrice = tBody.find(".TotalQtyPrice");
+        $.get('@Url.GetAction("GetProductDataByUnitId")', { unitId: unitId, productId: ProductId.val() }, function (res) {
+                if (res.Status) {
+                    let data = res.Data;
+                    ProductId.val(data.ID);
+                    ProductBarCode.val(data.BarCodeText);
+                    ProductName.val(data.Name);
+                    UnitId.empty();
+                    ID.val('@Guid.NewGuid()');
+                    data.GetProductUnits.forEach(function (item) {
+                        if (item.UnitId === data.IdUnitOfQty) {
+                            UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
+                            ConversionFactor.val(item.ConversionFactor);
+                            ItemUnitPrice.val(item.SellingPrice);
+                            SellingPrice.val(item.SellingPrice);
+                        }
+                        else {
+                            UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+                        }
+                    });
+                    Qty.val('1');
+                    let TQP = 1 * SellingPrice.val();
+                    TotalQtyPrice.val(TQP);
+                } else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: 'warning',
+                        showConfirmButton: false
+                    });
+                }
+            });
+    }
+    function getProductByName(value, event) {
 
+        if (event.keyCode === 13) {
+            var name = value.value;
+            let tBody = $(value).parent().parent();
+            let ID = tBody.find(".ID");
+            let ProductId = tBody.find(".ProductId");
+            let ProductBarCode = tBody.find(".ProductBarCode");
+            let ProductName = tBody.find(".ProductName");
+            let UnitId = tBody.find(".UnitId");
+            let ConversionFactor = tBody.find(".ConversionFactor");
+            let ItemUnitPrice = tBody.find(".ItemUnitPrice");
+            let Qty = tBody.find(".Qty");
+            let SellingPrice = tBody.find(".SellingPrice");
+            let TotalQtyPrice = tBody.find(".TotalQtyPrice");
+            //let barCodeBtn = tBody.find(".barCodeBtn");
+            let InvoiceTotalPrice = tBody.find(".InvoiceTotalPrice");
+
+            $.get('@Url.GetAction("GetProductByName")', { text: name }, function (res) {
+                if (res.Status) {
+                    let data = res.Data;
+                    if (ProductId.val()!==0) {
+                        InvoiceProductsAddNew({
+                            "id": "0", "ProductId": "0",
+                            "ProductBarCode": "", "ProductName": ""
+                            , "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+                        });
+                    }
+                    ProductId.val(data.ID);
+                    ProductBarCode.val(data.BarCodeText);
+                    ProductName.val(data.Name);
+                    UnitId.empty();
+                    ID.val('@Guid.NewGuid()');
+                    data.GetProductUnits.forEach(function (item) {
+                        if (item.UnitId === data.IdUnitOfQty) {
+                            UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
+                            ConversionFactor.val(item.ConversionFactor);
+                            ItemUnitPrice.val(item.SellingPrice);
+                            SellingPrice.val(item.SellingPrice);
+                        }
+                        else {
+                            UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+                        }
+                    });
+                    Qty.val('1');
+                    let TQP = 1 * SellingPrice.val();
+                    TotalQtyPrice.val(TQP);
+
+                    //barCodeBtn.attr("href", data.BarCodePath);
+                } else {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        icon: 'warning',
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+    }
     function getProduct(value, event) {
 
         if (event.keyCode === 13) {
@@ -172,23 +334,61 @@
         }
         else {
             let stockId = document.querySelector("#ddlStockId").value;
+            let invoiceType = document.querySelector("#ddlInvoiceType").value;
+
             let frm = new FormData();
             frm.append("ID", document.getElementById('id').value);
             frm.append("InvoiceType", document.querySelector("#ddlInvoiceType").value);
             frm.append("StockId", document.querySelector("#ddlStockId").value);
             frm.append("InvoiceNumber", document.querySelector("#InvoiceNumber").value);
             frm.append("InvoiceDate", document.querySelector("#InvoiceDate").value);
-            frm.append("Supplier", document.querySelector("#Supplier").value);
+            frm.append("SupplierId", document.querySelector("#ddlSupplierId").value);
             frm.append("InvoiceTotalPrice", document.querySelector(".InvoiceTotalPrice").value);
             frm.append("InvoiceProductsStr", JSON.stringify(Products));
+            if (invoiceType === "0") {
+                $.ajax({
+                    url: '@Url.GetAction("Save")',
+                    method: "POST",
+                    contentType: false,
+                    processData: false,
+                    data: frm,
+                    success: function (res) {
+                        $preloader.delay(350).fadeOut('slow');
+                        Swal.fire({
+                            title: `${res.Message}`,
+                            timer: 1500,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            showConfirmButton: false
+                        }).then((result) => {
+                            if (type === 'add') {
+                                resetForm(stockId, invoiceType);
 
-            $.ajax({
-                url: '@Url.GetAction("Save")',
+                            } else {
+                                window.location.href = "/Guide/PurchaseInvoice/Index?previous=false";
+                            }
+                        })
+                    },
+                    error: function (res) {
+                        $preloader.delay(350).fadeOut('slow');
+                        Swal.fire({
+                            title: `${res.Message}`,
+                            timer: 4000,
+                            timerProgressBar: true,
+                            icon: 'error',
+                            showConfirmButton: false
+                        })
+                    }
+                });
+            } else if (invoiceType==="1") {
+                 $.ajax({
+                url: '@Url.GetAction("SaveThrowback")',
                 method: "POST",
                 contentType: false,
                 processData: false,
                 data: frm,
                 success: function (res) {
+                    $preloader.delay(350).fadeOut('slow');
                     Swal.fire({
                         title: `${res.Message}`,
                         timer: 1500,
@@ -197,13 +397,15 @@
                         showConfirmButton: false
                     }).then((result) => {
                         if (type === 'add') {
-                            resetForm(stockId);
+                            resetForm(stockId, invoiceType);
+
                         } else {
-                            window.location.href = "/Guide/PurchaseInvoice/Index";
+                            window.location.href = "/Guide/PurchaseInvoice/Index?previous=false";
                         }
                     })
                 },
                 error: function (res) {
+                    $preloader.delay(350).fadeOut('slow');
                     Swal.fire({
                         title: `${res.Message}`,
                         timer: 4000,
@@ -213,19 +415,13 @@
                     })
                 }
             });
+            }
+
         }
 
 
     }
 
-    function Edit(e, id) {
-
-        $('#id').val(id);
-        var item = $(e);
-        var itemName = item.closest('tr').find('.GroupName').html();
-        $('#Name').val(itemName);
-
-    }
 
 
     function LoadTable() {
@@ -400,7 +596,7 @@
                                                                 <input class="form-control ProductId" type="hidden" value="0" />
                                                                 <input type="text" onkeyup="getProduct(this,event)" required  value="${obj.ProductBarCode}" id="rowId-${rowId}" class="form-control ProductBarCode" />
                                                             </td>
-                                                                <td><input type="text" required value="${obj.ProductName}" class="form-control ProductName" /></td>
+                                                                <td><input type="text" onkeyup="getProduct(this,event)" required value="${obj.ProductName}" class="form-control ProductName" /></td>
                                                             <td>
                                                                 <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
                                                                     <option selected value="0">اختر الوحدة</option>
