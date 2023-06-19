@@ -254,12 +254,15 @@
 
     function getInvoiceTotalPrice(value) {
         var TPrice = 0;
+        var TDiscount = 0;
         let tRow = $(value).parent().parent();
         let SellingPrice = tRow.find(".SellingPrice").val().trim();
+        let DescountPrice = tRow.find(".DiscountPProduct").val().trim();
         let ConversionFactor = tRow.find(".ConversionFactor").val().trim();
         let Qty = tRow.find(".Qty").val().trim();
         let TotalQtyPrice = tRow.find(".TotalQtyPrice");
         let CurrentRowPrice = Qty * SellingPrice;
+        CurrentRowPrice = Qty - DescountPrice;
 
         let InvoiceTotalPrice = tRow.parent().parent().find(".InvoiceTotalPrice");
         let InvoiceTotalDiscountPrice = tRow.parent().parent().find(".InvoiceTotalDiscount");
@@ -271,8 +274,10 @@
             ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
                 Qty = $(value).children("td").children(".Qty").val().trim(),
                 SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
+                DescountPrice = $(value).children("td").children(".DiscountPProduct").val().trim(),
                 TPrice += Qty * SellingPrice;
-
+                TDiscount += DescountPrice;
+            InvoiceTotalDiscountPrice.val(TDiscount);
         });
         TPrice = TPrice - InvoiceTotalDiscountPrice.val();
         InvoiceTotalPrice.val(TPrice);
@@ -665,6 +670,30 @@
     $("#IsActive").change(function (e) {
         var isChecked = $(this).prop("checked");
         $("#IsActive").val(isChecked);
+    });
+
+    const date = new Date();
+
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    if(month < 10){
+        month = `0${month}`
+    }if(day < 10){
+        day = `0${day}`
+    }
+    let currentDate = `${year}-${month}-${day}`;
+    console.log(currentDate); 
+    $("#InvoiceDate").val(currentDate);
+
+
+    $(document).bind('DOMSubtreeModified', function () {
+        if ($('#InvoiceProductsBody tr').length) {
+            $("#ProductsCount").text($("#InvoiceProductsBody tr").length)
+        }
+    });
+    $(document).ready(function () {
+        $("#sidebar").removeClass("active");
     });
 
 </script>

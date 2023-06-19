@@ -14,8 +14,8 @@
                     <div class="card-body">
                         <form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
                             <div class="form-body">
-                                <div class="row">
-                                    <div class="form-group col-2">
+                                <div class="row align-items-end">
+                                    <div class="form-group col-2 mb-0">
                                         <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
                                         <input hidden name="id" id="id" value="" class="d-none" />
                                         <select class="Select sAddress form-select" onchange="SetInvoiceThroback()" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
@@ -23,41 +23,43 @@
                                             <option value="1">فاتورة مرتجع مبيعات</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-2">
+                                    <div class="form-group col-2 mb-0">
                                         <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
                                         <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
                                             <option selected value="0">اختر المخزن</option>
                                         </select>
                                     </div>
                                     <div class="col-2">
-                                        <div class="form-group">
+                                        <div class="form-group mb-0">
                                             <label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
                                             <input type="text" readonly id="InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
                                         </div>
                                     </div>
                                     <div class="col-2">
-                                        <div class="form-group">
+                                        <div class="form-group mb-0">
                                             <label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
-                                            <input type="date" class="form-control" name="InvoiceDate" id="InvoiceDate">
+                                            <input type="date" class="form-control" name="InvoiceDate" id="InvoiceDate" readonly>
                                         </div>
                                     </div>
                                     <div class="col-2">
-                                        <div class="form-group">
+                                        <div class="form-group mb-0">
                                             <label for="Supplier">اسم العميل</label>
                                             <input type="text" class="form-control" name="Buyer" id="Buyer">
                                         </div>
                                     </div>
                                     <div class="col-1">
-                                        <div class="form-group">
+                                        <div class="form-group mb-0">
                                             <button type="button" onclick="CancelProcess()" class="btn btn-primary" name="btnCancel" id="btnCancel">إلغاء العملية</button>
                                         </div>
                                     </div>
                                     <div class="col-1">
-                                        <div class="form-group">
+                                        <div class="form-group mb-0">
                                             <button type="button" onclick="SetInvoiceThroback()" class="btn btn-primary" name="btnThrowback" id="btnThrowback">إضافة مرتجع</button>
                                         </div>
                                     </div>
+                                    </div>
                                     <hr>
+                                    <div class="row">
                                     <div class="col-md-12">
                                         <div class="table-container" id="InvoiceProducts">
                                             <label for="Products">المنتجات  </label>
@@ -97,7 +99,7 @@
                                                         <td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                         <td><input type="number" step="0.1" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                         <td><input type="number" step="0.1" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
-                                                        <td><input type="number" step="0.1" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" value="0" /></td>
+                                                        <td><input type="number" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" /></td>
                                                         <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                         <td>
                                                             <div class="d-flex">
@@ -115,7 +117,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td colspan="5"><h5>الخصم للفاتورة</h5></td>
-                                                        <td colspan="3"><input type="number" class="form-control InvoiceTotalDiscount" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td colspan="3"><input type="number" class="form-control InvoiceTotalDiscount" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="5"><h5>الإجمالي</h5></td>
