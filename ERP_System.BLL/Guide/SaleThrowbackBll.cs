@@ -207,7 +207,7 @@ namespace ERP_System.BLL.Guide
         }
         public DataTableResponse LoadData(DataTableRequest mdl)
         {
-            var data = _repoSaleThrowback.ExecuteStoredProcedure<SaleInvoicesTableDTO>
+            var data = _repoSaleThrowback.ExecuteStoredProcedure<SaleThrowbackTableDTO>
                 (_spSaleThrowback, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
 
             return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };

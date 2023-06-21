@@ -50,10 +50,11 @@ namespace ERP_System.DTO.Guide
         public int InvoiceNumber { get; set; }
 
         public string InvoiceDate { get; set; }
-        public string? Buyer { get; set; }
+        public string Buyer { get; set; }
         public Guid? StockId { get; set; }
-        public string? StockName { get; set; }
-
+        public string StockName { get; set; }
+        public decimal? TotalPaid { get; set; }
+        public decimal? InvoiceTotalPrice { get; set; }
         public int? ProductsCount { get; set; }
         public bool? IsActive { get; set; }
         public string AddedDate { get; set; }

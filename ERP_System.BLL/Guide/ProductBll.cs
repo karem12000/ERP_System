@@ -135,7 +135,7 @@ namespace ERP_System.BLL.Guide
                    BarCodeText = p.BarCodeText,
                    BarCodePath = string.Concat("\\ProductsBarCode\\" , p.BarCodePath),
                    GroupId = p.GroupId,
-                   QtyInStock = p.QtyInStock,
+                   QtyInStock = p.QtyInStock ,
                    IdUnitOfQty= p.IdUnitOfQty,
                    NameUnitOfQty= p.NameUnitOfQty,
                    GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
@@ -206,7 +206,9 @@ namespace ERP_System.BLL.Guide
                        UnitBarcodeText = c.UnitBarcodeText,
                        UnitId = c.UnitId,
                        UnitName = c.Unit.Name
-                   }).ToArray()
+                   }).ToArray(),
+                   GetQtyInStock = p.QtyInStock* p.ProductUnits.Where(x=>x.UnitId==p.IdUnitOfQty).Select(c =>c.ConversionFactor).FirstOrDefault()
+                    
                }).FirstOrDefault();
 
                 if (data != null)
@@ -264,7 +266,9 @@ namespace ERP_System.BLL.Guide
                        UnitBarcodeText = c.UnitBarcodeText,
                        UnitId = c.UnitId,
                        UnitName = c.Unit.Name
-                   }).ToArray()
+                   }).ToArray(),
+                   GetQtyInStock = p.QtyInStock * p.ProductUnits.Where(x => x.UnitId == p.IdUnitOfQty).Select(c => c.ConversionFactor).FirstOrDefault()
+
                }).FirstOrDefault();
 
                 if (data != null)
@@ -328,7 +332,8 @@ namespace ERP_System.BLL.Guide
                         UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
                         UnitBarcodeText = c.UnitBarcodeText,
                         UnitId = c.UnitId
-                    }).ToArray()
+                    }).ToArray(),
+                    GetQtyInStock = x.QtyInStock * x.ProductUnits.Where(xx => xx.UnitId == x.IdUnitOfQty).Select(c => c.ConversionFactor).FirstOrDefault()
 
                 });
         }
@@ -356,7 +361,8 @@ namespace ERP_System.BLL.Guide
                         UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
                         UnitBarcodeText = c.UnitBarcodeText,
                         UnitId = c.UnitId
-                    }).ToArray()
+                    }).ToArray(),
+                    GetQtyInStock = x.QtyInStock * x.ProductUnits.Where(xx => xx.UnitId == x.IdUnitOfQty).Select(c => c.ConversionFactor).FirstOrDefault()
 
                 });
         }

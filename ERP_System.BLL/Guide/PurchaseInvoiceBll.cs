@@ -22,13 +22,14 @@ namespace ERP_System.BLL.Guide
         private readonly IRepository<PurchaseInvoice> _repoInvoice;
         private readonly UnitBll _UnitBll;
         private readonly SupplierBll _supplierBll;
+        private readonly IRepository<Supplier> _repoSupplier;
         private readonly IRepository<Stock> _repoStock;
         private readonly IRepository<Product> _repoProduct;
         private readonly IRepository<ProductUnit> _repoProductUnit;
         private readonly IRepository<PurchaseInvoiceDetail> _repoInvoiceDetail;
         private readonly IMapper _mapper;
 
-        public PurchaseInvoiceBll(IRepository<Product> repoProduct, SupplierBll supplierBll, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
+        public PurchaseInvoiceBll(IRepository<Product> repoProduct, IRepository<Supplier> repoSupplier, SupplierBll supplierBll, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
         {
             _repoInvoice = repoInvoice;
             _mapper = mapper;
@@ -38,6 +39,7 @@ namespace ERP_System.BLL.Guide
             _repoStock = repoStock;
             _repoProductUnit = repoProductUnit;
             _supplierBll = supplierBll;
+            _repoSupplier = repoSupplier;
         }
 
         #region Get
@@ -54,6 +56,7 @@ namespace ERP_System.BLL.Guide
                 SupplierId = x.SupplierId,
                 SupplierName = x.SupplierName,
                 IsActive = x.IsActive,
+                TotalPaid = x.TotalPaid,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
                 {
@@ -81,6 +84,8 @@ namespace ERP_System.BLL.Guide
                 StockId = x.StockId,
                 StockName = x.StockName,
                 SupplierId = x.SupplierId,
+                TotalPaid = x.TotalPaid,
+
                 SupplierName = x.SupplierName,
                 IsActive = x.IsActive,
 
@@ -115,6 +120,8 @@ namespace ERP_System.BLL.Guide
                     StockId = x.StockId,
                     StockName = x.StockName,
                     SupplierId = x.SupplierId,
+                    TotalPaid = x.TotalPaid,
+
                     SupplierName = x.SupplierName,
                     IsActive = x.IsActive,
 
@@ -149,6 +156,8 @@ namespace ERP_System.BLL.Guide
                 StockId = x.StockId,
                 StockName = x.StockName,
                 SupplierId = x.SupplierId,
+                TotalPaid = x.TotalPaid,
+
                 SupplierName = x.SupplierName,
                 IsActive = x.IsActive,
 
@@ -181,6 +190,8 @@ namespace ERP_System.BLL.Guide
                 StockId = x.StockId,
                 StockName = x.StockName,
                 SupplierId = x.SupplierId,
+                TotalPaid = x.TotalPaid,
+
                 SupplierName = x.SupplierName,
                 IsActive = x.IsActive,
 
@@ -221,13 +232,7 @@ namespace ERP_System.BLL.Guide
             var data = _repoInvoice.GetAllAsNoTracking().Include(x => x.PurchaseInvoiceDetail).Where(p => p.ID == InvoiceDTO.ID && p.IsActive && !p.IsDeleted).FirstOrDefault();
             if (data != null)
             {
-                var Supplier = _supplierBll.GetById(data.SupplierId.Value);
-                if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.ID != data.ID && p.InvoiceNumber == InvoiceDTO.InvoiceNumber
-                && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
-                {
-                    resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
-                    return resultViewModel;
-                }
+                var Supplier = _repoSupplier.GetById(data.SupplierId.Value);
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
                 {
                     var newInvoice = data;
@@ -238,7 +243,9 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                     newInvoice.SupplierId = Supplier.ID;
                     newInvoice.SupplierName = Supplier.Name;
-                    
+                    newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
+                    newInvoice.TransactionType = (TransactionType?)InvoiceDTO.TransactionType;
+
                     decimal? TotalPrice = 0;
                     var oldInvoiceDetails = data.PurchaseInvoiceDetail;
 
@@ -261,7 +268,7 @@ namespace ERP_System.BLL.Guide
 
                             product.QtyInStock = TotalQtyInStock - oldEntireQty;
                             product.QtyInStock = TotalQtyInStock + EntireQty;
-                            if (product.QtyInStock<0)
+                            if (product.QtyInStock < 0)
                             {
                                 resultViewModel.Status = false;
                                 resultViewModel.Message = "الكمية المراد استرجاعها للمنتج " + product.Name + " غير كافية ";
@@ -288,7 +295,7 @@ namespace ERP_System.BLL.Guide
 
                                 TotalPrice += newInvoiceDetail.TotalQtyPrice;
                             }
-                        
+
 
                         }
                         else
@@ -328,6 +335,7 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceTotalPrice = TotalPrice;
                     if (_repoInvoice.Insert(newInvoice))
                     {
+                        _repoSupplier.Update(Supplier);
                         _repoProduct.SaveChange();
                         var deleteInvoiceDetaails = _repoInvoiceDetail.DeleteRange(oldInvoiceDetails);
                         var saveInvoiceDetaails = _repoInvoiceDetail.InsertRange(AllDetails);
@@ -347,14 +355,9 @@ namespace ERP_System.BLL.Guide
             }
             else
             {
-                var Supplier = _supplierBll.GetById(data.SupplierId.Value);
+                var Supplier = _repoSupplier.GetById(data.SupplierId.Value);
 
-                if (_repoInvoice.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.InvoiceNumber == InvoiceDTO.InvoiceNumber
-                && p.InvoiceDate == InvoiceDTO.InvoiceDate && p.StockId == InvoiceDTO.StockId).FirstOrDefault() != null)
-                {
-                    resultViewModel.Message = AppConstants.Messages.InvoiceAlreadyExists;
-                    return resultViewModel;
-                }
+              
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
                 {
                     var newInvoice = new PurchaseInvoice();
@@ -364,7 +367,29 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.SupplierId = Supplier.ID;
-                    newInvoice.SupplierName = Supplier.Name; decimal? TotalPrice = 0;
+                    newInvoice.SupplierName = Supplier.Name;
+                    newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
+                    newInvoice.TransactionType = (TransactionType?)InvoiceDTO.TransactionType;
+                    if (InvoiceDTO.TransactionType == 1)
+                    {
+                        if (Supplier.ProcessType != null)
+                        {
+                            if (Supplier.ProcessType == ProcessType.Debtor)
+                            {
+                                Supplier.ProcessAmount += newInvoice.InvoiceTotalPrice;
+                            }
+                            else
+                            {
+                                Supplier.ProcessAmount -= newInvoice.InvoiceTotalPrice;
+                            }
+                        }
+                        else
+                        {
+                            Supplier.ProcessType = ProcessType.Debtor;
+                            Supplier.ProcessAmount = newInvoice.InvoiceTotalPrice;
+                        }
+                    }
+                    decimal? TotalPrice = 0;
 
                     var AllDetails = new List<PurchaseInvoiceDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
@@ -377,7 +402,7 @@ namespace ERP_System.BLL.Guide
                         var EntrieQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
 
                         product.QtyInStock = TotalQtyInStock + EntrieQty;
-                        product.QtyInStock = Math.Round((product.QtyInStock.Value/ConversionFactor.Value),2);
+                        product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
                         _repoProduct.UpdateWithoutSaveChange(product);
                         var newInvoiceDetail = new PurchaseInvoiceDetail()
                         {
@@ -403,6 +428,7 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceTotalPrice = TotalPrice;
                     if (_repoInvoice.Insert(newInvoice))
                     {
+                        _repoSupplier.Update(Supplier);
                         _repoInvoiceDetail.InsertRange(AllDetails);
                         resultViewModel.Status = true;
                         resultViewModel.Message = AppConstants.Messages.SavedSuccess;

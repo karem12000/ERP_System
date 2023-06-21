@@ -17,6 +17,8 @@ namespace ERP_System.Tables
         public DateTime InvoiceDate { get; set; }
         public string? SupplierName { get; set; }
         public Guid? SupplierId { get; set; }
+        public TransactionType? TransactionType { get; set; }
+        public decimal? TotalPaid { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
         public ICollection<PurchaseInvoiceDetail> PurchaseInvoiceDetail { get; set; }
 

@@ -54,7 +54,9 @@ namespace ERP_System.DTO.Guide
         public string? Buyer { get; set; }
         public Guid? StockId { get; set; }
         public string? StockName { get; set; }
-
+        public decimal? TotalPaid { get; set; }
+        public decimal? InvoiceTotalPrice { get; set; }
+        public decimal? InvoiceTotalDiscount { get; set; }
         public int? ProductsCount { get; set; }
         public bool? IsActive { get; set; }
         public string AddedDate { get; set; }

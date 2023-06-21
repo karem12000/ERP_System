@@ -14,7 +14,7 @@ namespace ERP_System.DTO.Guide
         public Guid ID { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; }
-
+        public decimal? GetQtyInStock { get; set; }
         public string ProductUnitsStr { get; set; }
         public string NameUnitOfQty { get; set; }
         public Guid? IdUnitOfQty { get; set; }

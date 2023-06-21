@@ -204,7 +204,7 @@ namespace ERP_System.BLL.Guide
         }
         public DataTableResponse LoadData(DataTableRequest mdl)
         {
-            var data = _repoInvoice.ExecuteStoredProcedure<PurchaseInvoicesTableDTO>
+            var data = _repoInvoice.ExecuteStoredProcedure<PurchaseThrowbackTableDTO>
                 (_spPurchaseThrowback, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
 
             return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
@@ -374,6 +374,25 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.SupplierId = Supplier.ID;
                     newInvoice.SupplierName = Supplier.Name;
+                    if (InvoiceDTO.TransactionType == 1)
+                    {
+                        if (Supplier.ProcessType != null)
+                        {
+                            if (Supplier.ProcessType == ProcessType.Debtor)
+                            {
+                                Supplier.ProcessAmount += newInvoice.InvoiceTotalPrice;
+                            }
+                            else
+                            {
+                                Supplier.ProcessAmount -= newInvoice.InvoiceTotalPrice;
+                            }
+                        }
+                        else
+                        {
+                            Supplier.ProcessType = ProcessType.Debtor;
+                            Supplier.ProcessAmount = newInvoice.InvoiceTotalPrice;
+                        }
+                    }
                     decimal? TotalPrice = 0;
 
                     var AllDetails = new List<PurchaseThrowbackDetail>();

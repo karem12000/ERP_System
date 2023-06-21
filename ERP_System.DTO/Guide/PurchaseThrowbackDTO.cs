@@ -9,8 +9,9 @@ namespace ERP_System.DTO.Guide
 {
     public class PurchaseThrowbackDTO
     {
+
+        public int? TransactionType { get; set; }
         public Guid? ID { get; set; }
-        public InvoiceType? InvoiceType { get; set; }
         public Guid? StockId { get; set; }
         public string? StockName { get; set; }
         public int InvoiceNumber { get; set; }
@@ -19,6 +20,7 @@ namespace ERP_System.DTO.Guide
         public Guid? SupplierId { get; set; }
         public string? SupplierName { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
+        public decimal? TotalPaid { get; set; }
         public bool IsActive { get; set; }
         public string? InvoiceProductsStr { get; set; }
         public PurchaseThrowbackProductsDTO[] InvoiceDetails => JsonConvert.DeserializeObject<PurchaseThrowbackProductsDTO[]>(InvoiceProductsStr);
@@ -41,18 +43,19 @@ namespace ERP_System.DTO.Guide
     }
 
    
-    public class PurchaseThrowbackProductsTableDTO
+    public class PurchaseThrowbackTableDTO
     {
-        public Guid? ID { get; set; }
-
-        public int InvoiceNumber { get; set; }
-
+        public int? TransactionType { get; set; }
         public string InvoiceDate { get; set; }
-        public string? Supplier { get; set; }
+        public string SupplierName { get; set; }
         public Guid? StockId { get; set; }
-        public string? StockName { get; set; }
-
+        public string StockName { get; set; }
+        public decimal? TotalPaid { get; set; }
         public int? ProductsCount { get; set; }
+        public decimal? InvoiceTotalPrice { get; set; }
+        public Guid? ID { get; set; }
+        public int InvoiceNumber { get; set; }
+        public string Supplier { get; set; }
         public bool? IsActive { get; set; }
         public string AddedDate { get; set; }
         public int TotalCount { get; set; }

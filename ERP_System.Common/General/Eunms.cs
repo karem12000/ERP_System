@@ -39,5 +39,15 @@ namespace ERP_System.Common.General
         , Creditor = 2
     }
 
+    public enum TransactionType
+    {
+        /// <summary>
+        /// كاش
+        /// </summary>
+        Cash = 0
+        ///أجل
+        , Delay = 1
+    }
+
 
 }
