@@ -11,22 +11,8 @@
 
     }
     function SetInvoiceThroback() {
-        //let stockId = $("#ddlStockId").val();
-        $('#Name').val('');
-        $('#id').val('');
-        $('#ddlInvoiceType').val('1').trigger('change');
-        $('#ddlStockId').val('0').trigger('change');
-        $('#Buyer').val('');
-        $('#InvoiceProductsBody').empty();
-        InvoiceProductsAddNew({
-            "id": "0", "ProductId": "0",
-            "ProductBarCode": "", "ProductName": ""
-            , "UnitId": "0", "ConversionFactor": "", "DiscountPProduct": "0", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
-        });
-        
-
-        $('#IsActive').val('true');
-        $('#IsActive').prop('checked', true);       
+        let stockId = $("#ddlStockId").val();
+        resetForm(stockId , '1');
     }
     
     function CancelProcess() {
@@ -42,20 +28,7 @@
          }).then((result) => {
              if (result.isConfirmed) {
                  let stockId = document.querySelector("#ddlStockId").value;
-                 $('#Name').val('');
-                 $('#id').val('');
-                 $('#ddlInvoiceType').val('0').trigger('change');
-                 $('#ddlStockId').val(stockId).trigger('change');
-                 $('#Buyer').val('');
-                 $('#InvoiceProductsBody').empty();
-                 InvoiceProductsAddNew({
-                     "id": "0", "ProductId": "0",
-                     "ProductBarCode": "", "ProductName": ""
-                     , "UnitId": "0", "ConversionFactor": "", "DiscountPProduct": "0", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
-                 });
-                 
-                 $('#IsActive').val('true');
-                 $('#IsActive').prop('checked', true);
+                 resetForm(stockId, '0');
              }
             
         })
@@ -79,11 +52,22 @@
         })
 
     }
-    function resetForm(stockId) {
+    function resetForm(stockId,invoiceType) {
         
         $('#Name').val('');
         $('#id').val('');
-        $('#ddlInvoiceType').val('0').trigger('change');
+        if (invoiceType === '0') {
+            $('#ddlInvoiceType').empty();
+            $('#ddlInvoiceType').append(`
+                      <option selected value="0">فاتورة مبيعات</option>
+                `);
+        } else if (invoiceType==='1') {
+            $('#ddlInvoiceType').empty();
+            $('#ddlInvoiceType').append(`
+            <option  value="0">فاتورة مبيعات</option>
+            <option selected value="1">فاتورة مرتجع مبيعات</option>
+        `);
+        } else{}
         $('#ddlStockId').val(stockId).trigger('change');
         $('#Buyer').val('');
         $('#InvoiceProductsBody').empty();
@@ -92,7 +76,7 @@
             "ProductBarCode": "", "ProductName": ""
             , "UnitId": "0", "ConversionFactor": "", "DiscountPProduct": "0", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
         });
-        
+        $("#ProductsCount").text('0')
         $('#IsActive').val('true');
         $('#IsActive').prop('checked', true);
 
@@ -384,7 +368,7 @@
                             showConfirmButton: false
                         }).then((result) => {
                             if (type === 'add') {
-                                resetForm(stockId, invoiceType);
+                                resetForm(stockId, '0');
                                 $('#InvoiceNumber').val(res.Data);
 
                             } else {
@@ -420,7 +404,7 @@
                         showConfirmButton: false
                     }).then((result) => {
                         if (type === 'add') {
-                            resetForm(stockId, invoiceType);
+                            resetForm(stockId, '1');
 
                         } else {
                             window.location.href = "/Guide/SaleInvoice/Index";
@@ -701,9 +685,8 @@
         $(".addInvoiceProduct").on("click", function () {
 
             $("#ProductsCount").text($("#InvoiceProductsBody tr").length)
-        
-        })
-        
+
+        });
     });
 
 </script>
