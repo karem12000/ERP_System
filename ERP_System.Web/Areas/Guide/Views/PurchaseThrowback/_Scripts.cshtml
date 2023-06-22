@@ -159,7 +159,7 @@
                     Qty.val('1');
                     let TQP = 1 * PurchasingPrice.val();
                     TotalQtyPrice.val(TQP);
-                    barCodeBtn.attr("href", data.BarCodePath);
+                    $(".ProductBarCode").get(-1).focus();
                 } else {
                     Swal.fire({
                         title: `${res.Message}`,
@@ -266,6 +266,7 @@
                     Qty.val('1');
                     let TQP = 1 * SellingPrice.val();
                     TotalQtyPrice.val(TQP);
+                    $(".ProductBarCode").get(-1).focus();
                 } else {
                     Swal.fire({
                         title: `${res.Message}`,

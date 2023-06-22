@@ -73,13 +73,13 @@
                     }
                     }
                 } else {
-                    Swal.fire({
-                        title: `${res.Message}`,
-                        timer: 2000,
-                        timerProgressBar: true,
-                        icon: 'warning',
-                        showConfirmButton: false
-                    });
+                    //Swal.fire({
+                    //    title: `${res.Message}`,
+                    //    timer: 2000,
+                    //    timerProgressBar: true,
+                    //    icon: 'warning',
+                    //    showConfirmButton: false
+                    //});
                 }
          });
     }
@@ -160,7 +160,7 @@
                     Qty.val('1');
                     let TQP = 1 * PurchasingPrice.val();
                     TotalQtyPrice.val(TQP);
-                    barCodeBtn.attr("href", data.BarCodePath);
+                    $(".ProductBarCode").get(-1).focus();
                 } else {
                     Swal.fire({
                         title: `${res.Message}`,
@@ -267,6 +267,7 @@
                     Qty.val('1');
                     let TQP = 1 * SellingPrice.val();
                     TotalQtyPrice.val(TQP);
+                    $(".ProductBarCode").get(-1).focus();
                 } else {
                     Swal.fire({
                         title: `${res.Message}`,
@@ -684,7 +685,7 @@
             }
         }
     });
-
+    
     $("#IsActive").change(function (e) {
         var isChecked = $(this).prop("checked");
         $("#IsActive").val(isChecked);

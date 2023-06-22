@@ -123,7 +123,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td colspan="5"><h5>الخصم للفاتورة</h5></td>
-                                                        <td colspan="3"><input type="number" class="form-control InvoiceTotalDiscount" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td colspan="3"><input readonly type="number" class="form-control InvoiceTotalDiscount" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="5"><h5>الإجمالي</h5></td>
@@ -178,10 +178,22 @@
     <script>
         $(document).ready(function () {
             $('#InvoiceNumber').val(1);
+            const date = new Date();
 
+            let day = date.getDate();
+            let month = date.getMonth() + 1;
+            let year = date.getFullYear();
+            if (month < 10) {
+                month = `0${month}`
+            } if (day < 10) {
+                day = `0${day}`
+            }
+            let currentDate = `${year}-${month}-${day}`;
+            $("#InvoiceDate").val(currentDate);
             //var InvoiceNumber = Math.floor(Math.random() * 1000);
             //$('#InvoiceNumber').val(InvoiceNumber);
             //$('.ProductBarCode').focus();
+            $("#sidebar").removeClass("active");
         })
     </script>
 }

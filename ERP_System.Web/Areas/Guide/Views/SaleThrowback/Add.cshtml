@@ -42,7 +42,7 @@
                                     </div>
                                     <div class="col-2">
                                         <div class="form-group">
-                                            <label for="Supplier">اسم العميل</label>
+                                            <label for="Buyer">اسم العميل</label>
                                             <input type="text" class="form-control" name="Buyer" id="Buyer">
                                         </div>
                                     </div>
@@ -81,7 +81,7 @@
                                                         </td>
                                                         <td><input type="text" onkeyup="getProductByName(this,event)" required class="form-control ProductName" /></td>
                                                         <td>
-                                                            <select class="Select sAddress form-select UnitId" onchange="handleUnitChange(this,event)" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+                                                            <select onchange="handleUnitChange(this,event)" class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
                                                                 <option selected value="0">اختر الوحدة</option>
                                                             </select>
                                                             <input class="form-control ConversionFactor" type="hidden" value="1" />
@@ -151,13 +151,24 @@
     <partial name="_Scripts" />
     <script>
         $(document).ready(function () {
+            const date = new Date();
+
+            let day = date.getDate();
+            let month = date.getMonth() + 1;
+            let year = date.getFullYear();
+            if (month < 10) {
+                month = `0${month}`
+            } if (day < 10) {
+                day = `0${day}`
+            }
+            let currentDate = `${year}-${month}-${day}`;
+            $("#InvoiceDate").val(currentDate);
+            $('#InvoiceNumber').val(1);
 
             //var InvoiceNumber = Math.floor(Math.random() * 1000);
-            $('#InvoiceNumber').val("1");
-
-            //var date = Date(Date.now());
-            //let currentDate = date.toLocaleDateString();
-            //$('#InvoiceDate').val(currentDate).trigger('change');
+            //$('#InvoiceNumber').val(InvoiceNumber);
+            //$('.ProductBarCode').focus();
+            $("#sidebar").removeClass("active");
         })
     </script>
 }

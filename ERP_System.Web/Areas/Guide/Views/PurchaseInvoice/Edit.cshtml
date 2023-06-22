@@ -229,6 +229,8 @@
     <partial name="_Scripts" />
     <script>
         $(document).ready(function () {
+            $("#sidebar").removeClass("active");
+
             var transActionType = $('#txtTransactionType').val();
             $('#ddlTransactionType').val(transActionType).trigger('change');
         });

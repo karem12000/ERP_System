@@ -48,7 +48,7 @@
                                     </div>
                                     <div class="col-1">
                                         <div class="form-group">
-                                            <button type="button" onclick="CancelProcess()" class="btn btn-primary" name="btnCancel" id="btnCancel">إلغاء العملية</button>
+                                            <a type="button" href="/Guide/SaleInvoice/Index?previous=true" class="btn btn-primary">إلغاء العملية</a>
                                         </div>
                                     </div>
                                     <hr>
@@ -163,7 +163,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td colspan="5"><h5>الخصم للفاتورة</h5></td>
-                                                        <td colspan="3"><input type="number" value="@Model.InvoiceTotalDiscount" class="form-control InvoiceTotalDiscount" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td colspan="3"><input readonly type="number" value="@Model.InvoiceTotalDiscount" class="form-control InvoiceTotalDiscount" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="5"><h5>الإجمالي</h5></td>
@@ -217,7 +217,7 @@
     <partial name="_Scripts" />
     <script>
         $(document).ready(function () {
-            //let invoiceDate
-        });
+            $("#sidebar").removeClass("active");
+        })
     </script>
 }

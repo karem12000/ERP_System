@@ -239,7 +239,12 @@ namespace ERP_System.BLL.Guide
                     newInvoice.SupplierId = Supplier.ID;
                     newInvoice.SupplierName = Supplier.Name; decimal? TotalPrice = 0;
                     var oldInvoiceDetails = data.PurchaseThrowbackDetails;
-
+                    if (newInvoice.InvoiceTotalPrice < 0)
+                    {
+                        resultViewModel.Status = false;
+                        resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
+                        return resultViewModel;
+                    }
                     var AllDetails = new List<PurchaseThrowbackDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
@@ -349,6 +354,8 @@ namespace ERP_System.BLL.Guide
                         {
                             resultViewModel.Status = false;
                             resultViewModel.Message = "خطأ في حفظ تفاصيل الفاتورة";
+                            return resultViewModel;
+
                         }
 
                     }
@@ -392,6 +399,12 @@ namespace ERP_System.BLL.Guide
                             Supplier.ProcessType = ProcessType.Debtor;
                             Supplier.ProcessAmount = newInvoice.InvoiceTotalPrice;
                         }
+                    }
+                    if (newInvoice.InvoiceTotalPrice < 0)
+                    {
+                        resultViewModel.Status = false;
+                        resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
+                        return resultViewModel;
                     }
                     decimal? TotalPrice = 0;
 

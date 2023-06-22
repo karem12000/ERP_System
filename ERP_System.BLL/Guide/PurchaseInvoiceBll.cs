@@ -245,37 +245,76 @@ namespace ERP_System.BLL.Guide
                     newInvoice.SupplierName = Supplier.Name;
                     newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
                     newInvoice.TransactionType = (TransactionType?)InvoiceDTO.TransactionType;
-
+                    if (newInvoice.InvoiceTotalPrice < 0)
+                    {
+                        resultViewModel.Status = false;
+                        resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
+                        return resultViewModel;
+                    }
                     decimal? TotalPrice = 0;
                     var oldInvoiceDetails = data.PurchaseInvoiceDetail;
 
                     var AllDetails = new List<PurchaseInvoiceDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
-                        var product = _repoProduct.GetById(invoiceDetail.ProductId.Value);
-
-                        var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
-                        if (oldDetail != null)
+                        var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId)).FirstOrDefault();
+                        if (product != null)
                         {
-
-                            var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                            var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
-                            var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-                            var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
-                            var oldEntireQty = oldDetail.Qty * oldDetail.ConversionFactor;
-                            var EntireQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
-
-
-                            product.QtyInStock = TotalQtyInStock - oldEntireQty;
-                            product.QtyInStock = TotalQtyInStock + EntireQty;
-                            if (product.QtyInStock < 0)
+                            var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
+                            if (oldDetail != null)
                             {
-                                resultViewModel.Status = false;
-                                resultViewModel.Message = "الكمية المراد استرجاعها للمنتج " + product.Name + " غير كافية ";
-                                return resultViewModel;
+
+                                var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+                                var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
+                                var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
+                                var oldEntireQty = oldDetail.Qty * oldDetail.ConversionFactor;
+                                var EntireQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
+
+
+                                product.QtyInStock = TotalQtyInStock - oldEntireQty;
+                                product.QtyInStock = TotalQtyInStock + EntireQty;
+                                if (product.QtyInStock < 0)
+                                {
+                                    resultViewModel.Status = false;
+                                    resultViewModel.Message = "الكمية المراد استرجاعها للمنتج " + product.Name + " غير كافية ";
+                                    return resultViewModel;
+                                }
+                                else
+                                {
+                                    var newInvoiceDetail = new PurchaseInvoiceDetail()
+                                    {
+                                        AddedBy = _repoInvoice.UserId,
+                                        IsActive = true,
+                                        UnitId = invoiceDetail.UnitId,
+                                        ConversionFactor = invoiceDetail.ConversionFactor,
+                                        ProductBarCode = invoiceDetail.ProductBarCode,
+                                        ProductId = invoiceDetail.ProductId,
+                                        PurchasingPrice = invoiceDetail.PurchasingPrice,
+                                        Qty = invoiceDetail.Qty,
+                                        ID = Guid.NewGuid(),
+                                        TotalQtyPrice = invoiceDetail.TotalQtyPrice,
+                                        PurchaseInvoiceId = newInvoice.ID,
+                                        ProductName = product.Name
+                                    };
+                                    AllDetails.Add(newInvoiceDetail);
+
+                                    TotalPrice += newInvoiceDetail.TotalQtyPrice;
+                                }
+
+
                             }
                             else
                             {
+                                var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+                                var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
+                                var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
+                                var EntireQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
+
+                                product.QtyInStock = product.QtyInStock + EntireQty;
+                                product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
+
                                 var newInvoiceDetail = new PurchaseInvoiceDetail()
                                 {
                                     AddedBy = _repoInvoice.UserId,
@@ -294,42 +333,16 @@ namespace ERP_System.BLL.Guide
                                 AllDetails.Add(newInvoiceDetail);
 
                                 TotalPrice += newInvoiceDetail.TotalQtyPrice;
+
                             }
-
-
                         }
                         else
                         {
-                            var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                            var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
-                            var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-                            var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
-                            var EntireQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
-
-                            product.QtyInStock = product.QtyInStock + EntireQty;
-                            product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
-
-                            var newInvoiceDetail = new PurchaseInvoiceDetail()
-                            {
-                                AddedBy = _repoInvoice.UserId,
-                                IsActive = true,
-                                UnitId = invoiceDetail.UnitId,
-                                ConversionFactor = invoiceDetail.ConversionFactor,
-                                ProductBarCode = invoiceDetail.ProductBarCode,
-                                ProductId = invoiceDetail.ProductId,
-                                PurchasingPrice = invoiceDetail.PurchasingPrice,
-                                Qty = invoiceDetail.Qty,
-                                ID = Guid.NewGuid(),
-                                TotalQtyPrice = invoiceDetail.TotalQtyPrice,
-                                PurchaseInvoiceId = newInvoice.ID,
-                                ProductName = product.Name
-                            };
-                            AllDetails.Add(newInvoiceDetail);
-
-                            TotalPrice += newInvoiceDetail.TotalQtyPrice;
+                            resultViewModel.Status = false;
+                            resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode;
+                            return resultViewModel;
 
                         }
-
 
                     }
                     newInvoice.InvoiceTotalPrice = TotalPrice;
@@ -348,6 +361,8 @@ namespace ERP_System.BLL.Guide
                         {
                             resultViewModel.Status = false;
                             resultViewModel.Message = "خطأ في حفظ تفاصيل الفاتورة";
+                            return resultViewModel;
+
                         }
 
                     }
@@ -357,7 +372,7 @@ namespace ERP_System.BLL.Guide
             {
                 var Supplier = _repoSupplier.GetById(data.SupplierId.Value);
 
-              
+
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
                 {
                     var newInvoice = new PurchaseInvoice();
@@ -390,39 +405,53 @@ namespace ERP_System.BLL.Guide
                         }
                     }
                     decimal? TotalPrice = 0;
-
+                    if (newInvoice.InvoiceTotalPrice < 0)
+                    {
+                        resultViewModel.Status = false;
+                        resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
+                        return resultViewModel;
+                    }
                     var AllDetails = new List<PurchaseInvoiceDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
                         var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                        var product = _repoProduct.GetById(invoiceDetail.ProductId);
-                        var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
-                        var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-                        var TotalQtyInStock = QtyInStock * ConversionFactor;
-                        var EntrieQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
-
-                        product.QtyInStock = TotalQtyInStock + EntrieQty;
-                        product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
-                        _repoProduct.UpdateWithoutSaveChange(product);
-                        var newInvoiceDetail = new PurchaseInvoiceDetail()
+                        var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId)).FirstOrDefault();
+                        if (product != null)
                         {
-                            AddedBy = _repoInvoice.UserId,
-                            IsActive = true,
-                            UnitId = invoiceDetail.UnitId,
-                            ConversionFactor = invoiceDetail.ConversionFactor,
-                            ProductBarCode = invoiceDetail.ProductBarCode,
-                            ProductId = invoiceDetail.ProductId,
-                            PurchasingPrice = invoiceDetail.PurchasingPrice,
-                            Qty = invoiceDetail.Qty,
-                            ID = Guid.NewGuid(),
-                            TotalQtyPrice = invoiceDetail.TotalQtyPrice,
-                            PurchaseInvoiceId = newInvoice.ID,
-                            ProductName = product.Name
-                        };
-                        //_repoInvoiceDetail.Insert(newInvoiceDetail);
-                        AllDetails.Add(newInvoiceDetail);
-                        TotalPrice += newInvoiceDetail.TotalQtyPrice;
+                            var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
+                            var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                            var TotalQtyInStock = QtyInStock * ConversionFactor;
+                            var EntrieQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
 
+                            product.QtyInStock = TotalQtyInStock + EntrieQty;
+                            product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
+                            _repoProduct.UpdateWithoutSaveChange(product);
+                            var newInvoiceDetail = new PurchaseInvoiceDetail()
+                            {
+                                AddedBy = _repoInvoice.UserId,
+                                IsActive = true,
+                                UnitId = invoiceDetail.UnitId,
+                                ConversionFactor = invoiceDetail.ConversionFactor,
+                                ProductBarCode = invoiceDetail.ProductBarCode,
+                                ProductId = invoiceDetail.ProductId,
+                                PurchasingPrice = invoiceDetail.PurchasingPrice,
+                                Qty = invoiceDetail.Qty,
+                                ID = Guid.NewGuid(),
+                                TotalQtyPrice = invoiceDetail.TotalQtyPrice,
+                                PurchaseInvoiceId = newInvoice.ID,
+                                ProductName = product.Name
+                            };
+                            //_repoInvoiceDetail.Insert(newInvoiceDetail);
+                            AllDetails.Add(newInvoiceDetail);
+                            TotalPrice += newInvoiceDetail.TotalQtyPrice;
+                        }
+                        else
+                        {
+                            resultViewModel.Status = false;
+                            resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode;
+                            return resultViewModel;
+
+                        }
 
                     }
                     newInvoice.InvoiceTotalPrice = TotalPrice;

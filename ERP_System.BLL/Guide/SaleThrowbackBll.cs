@@ -236,11 +236,18 @@ namespace ERP_System.BLL.Guide
                     newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
                     decimal? TotalPrice = 0;
                     var oldInvoiceDetails = data.SaleInvoiceDetails;
-
+                    if (newInvoice.InvoiceTotalPrice < 0)
+                    {
+                        resultViewModel.Status = false;
+                        resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
+                        return resultViewModel;
+                    }
                     var AllDetails = new List<SaleThrowbackDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
                         var product = _repoProduct.GetById(invoiceDetail.ProductId.Value);
+                        if(product != null)
+                        {
 
                         var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
                         if (oldDetail != null)
@@ -313,7 +320,14 @@ namespace ERP_System.BLL.Guide
                             TotalPrice += newInvoiceDetail.TotalQtyPrice;
 
                         }
+                        }
+                        else
+                        {
+                            resultViewModel.Status = false;
+                            resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode;
+                            return resultViewModel;
 
+                        }
 
                     }
                     newInvoice.InvoiceTotalPrice = TotalPrice;
@@ -331,6 +345,7 @@ namespace ERP_System.BLL.Guide
                         {
                             resultViewModel.Status = false;
                             resultViewModel.Message = "خطأ في حفظ تفاصيل الفاتورة";
+                            return resultViewModel;
 
                         }
 
@@ -350,7 +365,12 @@ namespace ERP_System.BLL.Guide
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.Buyer = InvoiceDTO.Buyer;
                     newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
-
+                    if (newInvoice.InvoiceTotalPrice < 0)
+                    {
+                        resultViewModel.Status = false;
+                        resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
+                        return resultViewModel;
+                    }
                     decimal? TotalPrice = 0;
 
                     var AllDetails = new List<SaleThrowbackDetail>();
@@ -358,6 +378,9 @@ namespace ERP_System.BLL.Guide
                     {
                         var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
                         var product = _repoProduct.GetById(invoiceDetail.ProductId);
+                        if(product != null)
+                        {
+
                         var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
                         var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
                         var TotalQtyInStock = QtyInStock * ConversionFactor;
@@ -386,7 +409,14 @@ namespace ERP_System.BLL.Guide
                         //_repoSaleThrowbackDetail.Insert(newInvoiceDetail);
                         AllDetails.Add(newInvoiceDetail);
                         TotalPrice += newInvoiceDetail.TotalQtyPrice;
+                        }
+                        else
+                        {
+                            resultViewModel.Status = false;
+                            resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode;
+                            return resultViewModel;
 
+                        }
 
                     }
                     newInvoice.InvoiceTotalPrice = TotalPrice;
