@@ -48,7 +48,7 @@ namespace ERP_System.BLL.Guide
                 //InvoiceDate = x.InvoiceDate,
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
-                StockName = x.StockName,
+                StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
@@ -57,7 +57,7 @@ namespace ERP_System.BLL.Guide
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
-                    ProductName = c.ProductName,
+                    ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
                     Qty = c.Qty,
                     UnitId = c.UnitId,
                     ConversionFactor = c.ConversionFactor,
@@ -78,7 +78,7 @@ namespace ERP_System.BLL.Guide
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
-                StockName = x.StockName,
+                StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
                 TotalPaid = x.TotalPaid,
@@ -88,7 +88,7 @@ namespace ERP_System.BLL.Guide
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
-                    ProductName = c.ProductName,
+                    ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
                     Qty = c.Qty,
                     UnitId = c.UnitId,
                     ConversionFactor = c.ConversionFactor,
@@ -113,7 +113,7 @@ namespace ERP_System.BLL.Guide
                     InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                     InvoiceNumber = x.InvoiceNumber,
                     StockId = x.StockId,
-                    StockName = x.StockName,
+                    StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
                     Buyer = x.Buyer,
                     IsActive = x.IsActive,
                     TotalPaid = x.TotalPaid,
@@ -123,7 +123,7 @@ namespace ERP_System.BLL.Guide
                     {
                         ID = c.ID,
                         ProductId = c.ProductId,
-                        ProductName = c.ProductName,
+                        ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
                         Qty = c.Qty,
                         UnitId = c.UnitId,
                         ConversionFactor = c.ConversionFactor,
@@ -148,7 +148,7 @@ namespace ERP_System.BLL.Guide
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
-                StockName = x.StockName,
+                StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
                 TotalPaid = x.TotalPaid,
@@ -158,7 +158,7 @@ namespace ERP_System.BLL.Guide
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
-                    ProductName = c.ProductName,
+                    ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
                     Qty = c.Qty,
                     UnitId = c.UnitId,
                     ConversionFactor = c.ConversionFactor,
@@ -181,7 +181,7 @@ namespace ERP_System.BLL.Guide
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
-                StockName = x.StockName,
+                StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
                 TotalPaid = x.TotalPaid,
@@ -191,7 +191,7 @@ namespace ERP_System.BLL.Guide
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
-                    ProductName = c.ProductName,
+                    ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
                     Qty = c.Qty,
                     UnitId = c.UnitId,
                     ConversionFactor = c.ConversionFactor,
@@ -229,7 +229,7 @@ namespace ERP_System.BLL.Guide
                 {
                     var newInvoice = data;
                     newInvoice.StockId = InvoiceDTO.StockId;
-                    newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
+                    //newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
                     newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                     newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                     newInvoice.Buyer = InvoiceDTO.Buyer;
