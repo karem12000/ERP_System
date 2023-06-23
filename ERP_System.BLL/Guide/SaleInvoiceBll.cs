@@ -72,6 +72,13 @@ namespace ERP_System.BLL.Guide
 
             }).FirstOrDefault();
         }
+        public int GetLastInvoiceNumberByDate(DateTime? date)
+        {
+           var invoiceNumber = _repoInvoice.GetAllAsNoTracking().Where(x=>x.InvoiceDate.Date >=date.Value.Date)
+                .OrderByDescending(c=>c.InvoiceDate).Select(c=>c.InvoiceNumber).FirstOrDefault();
+
+            return invoiceNumber;
+        }
         public SaleInvoiceDTO GetByInvoiceNumber(int? number)
         {
             return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new SaleInvoiceDTO

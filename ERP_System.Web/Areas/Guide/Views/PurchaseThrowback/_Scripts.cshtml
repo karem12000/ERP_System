@@ -21,15 +21,26 @@
             }
         });
     }
+    function GetLastInvoiceNumberByDate(date) {
+        $.get('@Url.GetAction("GetLastInvoiceNumberByDate")', { date: date }, function (res) {
+            if (res) {
+                var invoiceNumber = res + 1;
+                $('#InvoiceNumber').val(invoiceNumber);
+            } else {
+                $('#InvoiceNumber').val('1');
+            }
+
+        });
+    }
     function resetForm(stockId, invoiceType) {
-        $('#ddlInvoiceType').val(invoiceType).trigger('change');
+        $('#ddlInvoiceType').val('0').trigger('change');
         $('#id').val('');
         $('#ddlTransactionType').val('0').trigger('change');
         $('#ddlStockId').val(stockId).trigger('change');
-        $('#InvoiceNumber').val('1');
         var date = Date(Date.now());
         let currentDate = date.toString();
         $('#InvoiceDate').val(currentDate).trigger('change');
+        GetLastInvoiceNumberByDate(currentDate);
         $('#ddlSupplierId').val('0').trigger('change');
         $('#InvoiceProductsBody').empty();
         $('.SupplierData').empty();

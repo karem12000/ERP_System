@@ -25,15 +25,49 @@
         let invoiceType = '1';
         resetForm(stockId, invoiceType);
     }
+    function GetLastInvoiceNumberByDate(date) {
+        $.get('@Url.GetAction("GetLastInvoiceNumberByDate")', { date: date }, function (res) {
+            if (res) {
+                var invoiceNumber = res + 1;
+                $('#InvoiceNumber').val(invoiceNumber);
+            } else {
+                $('#InvoiceNumber').val('1');
+            }
+
+        });
+    }
+    function GetLastThrowbackInvoiceNumberByDate(date) {
+        $.get('@Url.GetAction("GetLastThrowbackInvoiceNumberByDate")', { date: date }, function (res) {
+            if (res) {
+                var invoiceNumber = res + 1;
+                $('#InvoiceNumber').val(invoiceNumber);
+            } else {
+                $('#InvoiceNumber').val('1');
+            }
+
+        });
+    }
     function resetForm(stockId, invoiceType) {
-        $('#ddlInvoiceType').val(invoiceType).trigger('change');
         $('#id').val('');
         $('#ddlTransactionType').val('0').trigger('change');
         $('#ddlStockId').val(stockId).trigger('change');
-        $('#InvoiceNumber').val('1');
-        var date = Date(Date.now());
-        let currentDate = date.toString();
-        $('#InvoiceDate').val(currentDate).trigger('change');
+        var invoiceDate = $('#InvoiceDate').val();
+        if (invoiceType === '0') {
+            $('#ddlInvoiceType').empty();
+            $('#ddlInvoiceType').append(`
+                              <option selected value="0">فاتورة مشتريات</option>
+                        `);
+            GetLastInvoiceNumberByDate(invoiceDate);
+        } else if (invoiceType === '1') {
+            $('#ddlInvoiceType').empty();
+            $('#ddlInvoiceType').append(`
+                        <option  value="0">فاتورة مشتريات</option>
+                    <option selected value="1">فاتورة مرتجع مشتريات</option>
+                `);
+            GetLastThrowbackInvoiceNumberByDate(invoiceDate);
+
+        } else { }
+        $('#InvoiceDate').val('').trigger('change');
         $('#ddlSupplierId').val('0').trigger('change');
         $('#InvoiceProductsBody').empty();
         $('.SupplierData').empty();
@@ -44,6 +78,7 @@
             , "UnitId": "0", "ConversionFactor": "", "Qty": "", "QtyInStock": "0", "PurchasingPrice": "", "TotalQtyPrice": ""
         });
 
+        $("#ProductsCount").text('0')
 
         $('#IsActive').val('true');
         $('#IsActive').prop('checked', true);

@@ -39,6 +39,13 @@ namespace ERP_System.BLL.Guide
         }
 
         #region Get
+        public int GetLastInvoiceNumberByDate(DateTime? date)
+        {
+            var invoiceNumber = _repoSaleThrowback.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= date.Value.Date)
+                 .OrderByDescending(c => c.InvoiceDate).Select(c => c.InvoiceNumber).FirstOrDefault();
+
+            return invoiceNumber;
+        }
         public SaleThrowbackDTO GetById(Guid id)
         {
             return _repoSaleThrowback.GetAllAsNoTracking().Include(c => c.SaleInvoiceDetails).Where(p => p.ID == id).Select(x => new SaleThrowbackDTO

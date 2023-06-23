@@ -93,6 +93,7 @@
                                                         <td>
                                                             <div class="d-flex">
                                                                 <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                                @*<a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>*@
                                                             </div>
                                                         </td>
 
@@ -163,8 +164,7 @@
             }
             let currentDate = `${year}-${month}-${day}`;
             $("#InvoiceDate").val(currentDate);
-            $('#InvoiceNumber').val(1);
-
+            GetLastInvoiceNumberByDate(currentDate);
             //var InvoiceNumber = Math.floor(Math.random() * 1000);
             //$('#InvoiceNumber').val(InvoiceNumber);
             //$('.ProductBarCode').focus();

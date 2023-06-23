@@ -182,37 +182,66 @@
                 }
             })
             frm.append("ProductUnitsStr", JSON.stringify(Units));
-
+            var $preloader = $('#loader');
+            $preloader.fadeIn('slow');
             $.ajax({
                 url: '@Url.GetAction("Save")',
                 method: "POST",
                 contentType: false,
                 processData: false,
                 data: frm,
-                success: function (res) {
-                    Swal.fire({
-                        title: `${res.Message}`,
-                        timer: 1500,
-                        timerProgressBar: true,
-                        icon: 'success',
-                        showConfirmButton: false
-                    }).then((result) => {
-                        if (type === 'add') {
-                            resetForm(stockId, groupId);
-                        } else {
-                            window.location.href = "/Guide/Product/Index";
-                        }
-                    })
-                },
-                error: function (res) {
-                    Swal.fire({
-                        title: `${res.Message}`,
-                        timer: 2000,
-                        timerProgressBar: true,
-                        icon: 'error',
-                        showConfirmButton: false
-                    })
+                complete: function (res) {
+                    $preloader.delay(200).fadeOut('slow');
+                    console.log(res)
+                    if (res.responseJSON.Status) {
+                        Swal.fire({
+                            title: `${res.responseJSON.Message}`,
+                            timer: 1500,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            showConfirmButton: false
+                        }).then((result) => {
+                            if (type === 'add') {
+                                resetForm(stockId, groupId);
+                            } else {
+                                window.location.href = "/Guide/Product/Index";
+                            }
+                        })
+                    } else {
+                        $preloader.delay(100).fadeOut('slow');
+                        Swal.fire({
+                            title: `${res.responseJSON.Message}`,
+                            timer: 4000,
+                            timerProgressBar: true,
+                            icon: 'error',
+                            showConfirmButton: false
+                        })
+                    }
                 }
+                //success: function (res) {
+                //    Swal.fire({
+                //        title: `${res.Message}`,
+                //        timer: 1500,
+                //        timerProgressBar: true,
+                //        icon: 'success',
+                //        showConfirmButton: false
+                //    }).then((result) => {
+                //        if (type === 'add') {
+                //            resetForm(stockId, groupId);
+                //        } else {
+                //            window.location.href = "/Guide/Product/Index";
+                //        }
+                //    })
+                //},
+                //error: function (res) {
+                //    Swal.fire({
+                //        title: `${res.Message}`,
+                //        timer: 2000,
+                //        timerProgressBar: true,
+                //        icon: 'error',
+                //        showConfirmButton: false
+                //    })
+                //}
             });
         }
     }

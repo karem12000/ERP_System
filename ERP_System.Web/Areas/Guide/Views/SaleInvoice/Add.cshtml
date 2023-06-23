@@ -177,7 +177,7 @@
     <partial name="_Scripts" />
     <script>
         $(document).ready(function () {
-            $('#InvoiceNumber').val(1);
+            //$('#InvoiceNumber').val(1);
             const date = new Date();
 
             let day = date.getDate();
@@ -190,6 +190,7 @@
             }
             let currentDate = `${year}-${month}-${day}`;
             $("#InvoiceDate").val(currentDate);
+             GetLastInvoiceNumberByDate(currentDate);
             //var InvoiceNumber = Math.floor(Math.random() * 1000);
             //$('#InvoiceNumber').val(InvoiceNumber);
             //$('.ProductBarCode').focus();

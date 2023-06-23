@@ -10,11 +10,12 @@ namespace ERP_System.Web.Areas.Guide.Controllers
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly PurchaseInvoiceBll _invoiceBll;
+        private readonly PurchaseThrowbackBll _ThrowbackBll;
         private readonly StockBll _stockBll;
         private readonly SupplierBll _supplierBll;
         private readonly UnitBll _unitBll;
         private readonly ProductBll _productBll;
-        public PurchaseInvoiceController(IHttpContextAccessor httpContextAccessor, SupplierBll supplierBll, ProductBll productBll, StockBll stockBll , UnitBll unitBll , PurchaseInvoiceBll invoiceBll)
+        public PurchaseInvoiceController(IHttpContextAccessor httpContextAccessor, PurchaseThrowbackBll ThrowbackBll, SupplierBll supplierBll, ProductBll productBll, StockBll stockBll , UnitBll unitBll , PurchaseInvoiceBll invoiceBll)
         {
             _httpContextAccessor= httpContextAccessor;
             _stockBll= stockBll;
@@ -22,6 +23,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             _invoiceBll= invoiceBll;
             _productBll = productBll;
             _supplierBll = supplierBll;
+            _ThrowbackBll= ThrowbackBll;
         }
         public IActionResult Index(bool previous=false)
         {
@@ -50,14 +52,16 @@ namespace ERP_System.Web.Areas.Guide.Controllers
                 return View(invoice);
             }
             else
-                return Redirect("/Guide/PurchaseInvoice/Index");
+                return Redirect("/Guide/PurchaseInvoice/Index?previous=true");
         }
 
 
         public IActionResult Save(PurchaseInvoiceDTO mdl) => Ok(_invoiceBll.Save(mdl));
         public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
         public IActionResult GetProductByName(string text) => Ok(_productBll.GetByProductName(text));
-        public IActionResult GetProductDataByUnitId(Guid? productId, Guid? unitId) => Ok(_productBll.GetProductDataByUnitId(productId, unitId));
+        public IActionResult GetLastInvoiceNumberByDate(DateTime? date) => Ok(_invoiceBll.GetLastInvoiceNumberByDate(date));
+		public IActionResult GetLastThrowbackInvoiceNumberByDate(DateTime? date) => Ok(_ThrowbackBll.GetLastInvoiceNumberByDate(date));
+		public IActionResult GetProductDataByUnitId(Guid? productId, Guid? unitId) => Ok(_productBll.GetProductDataByUnitId(productId, unitId));
         public IActionResult GetSupplierById(Guid supplierId) => Ok(_supplierBll.GetById(supplierId));
         public IActionResult GetSuppliersSelect() => Ok(_supplierBll.GetSelect());
 

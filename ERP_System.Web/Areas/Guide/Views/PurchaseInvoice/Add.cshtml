@@ -20,10 +20,6 @@
                                         <input hidden name="id" id="id" value="" class="d-none" />
                                         <select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
                                             <option selected value="0">فاتورة مشتريات</option>
-                                            @if (CurrentFormByControllerName("PurchaseThrowback").CurrentFormPermissionActions.AddHasPermission)
-                                            {
-                                                <option value="1">فاتورة مرتجع مشتريات</option>
-                                            }
                                         </select>
                                     </div>
                                     <div class="form-group col-2">
@@ -65,9 +61,6 @@
                                         }
                                     </div>
                                     <div class="col-2">
-                                        @*<div class="form-group">
-                <input type="text" class="form-control" name="Supplier" id="Supplier">
-            </div>*@
                                         <label for="Supplier">المورد<span style="color:red;"> * </span></label>
                                         <select class="Select sAddress form-select" onchange="handleChangeSupplier()" aria-label="اختر المورد" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Suppliers"] , "Value", "Text")' name="SupplierId" id="ddlSupplierId">
                                             <option selected value="0">اختر المورد</option>
@@ -201,8 +194,7 @@
             }
             let currentDate = `${year}-${month}-${day}`;
             $("#InvoiceDate").val(currentDate);
-            $('#InvoiceNumber').val(1);
-
+            GetLastInvoiceNumberByDate(currentDate);
             //var InvoiceNumber = Math.floor(Math.random() * 1000);
             //$('#InvoiceNumber').val(InvoiceNumber);
             //$('.ProductBarCode').focus();

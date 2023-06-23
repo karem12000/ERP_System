@@ -50,13 +50,14 @@ namespace ERP_System.Web.Areas.Guide.Controllers
                 return View(invoice);
             }
             else
-                return Redirect("/Guide/PurchaseThrowback/Index");
+                return Redirect("/Guide/PurchaseThrowback/Index?previous=true");
         }
 
 
         public IActionResult Save(PurchaseThrowbackDTO mdl) => Ok(_invoiceBll.Save(mdl));
         public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
         public IActionResult GetProductByName(string text) => Ok(_productBll.GetByProductName(text));
+        public IActionResult GetLastInvoiceNumberByDate(DateTime? date) => Ok(_invoiceBll.GetLastInvoiceNumberByDate(date));
         public IActionResult GetProductDataByUnitId(Guid? productId, Guid? unitId) => Ok(_productBll.GetProductDataByUnitId(productId, unitId));
         public IActionResult GetSupplierById(Guid supplierId) => Ok(_supplierBll.GetById(supplierId));
         public IActionResult GetSuppliersSelect() => Ok(_supplierBll.GetSelect());

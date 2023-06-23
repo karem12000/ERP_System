@@ -20,10 +20,6 @@
                                         <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
                                         <select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
                                             <option selected value="0">فاتورة مشتريات</option>
-                                            @*@if (CurrentFormByControllerName("PurchaseThrowback").CurrentFormPermissionActions.AddHasPermission)
-                                            {
-                                                <option value="1">فاتورة مرتجع مشتريات</option>
-                                            }*@
                                         </select>
                                     </div>
                                     <div class="form-group col-2">
