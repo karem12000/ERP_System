@@ -38,7 +38,9 @@ namespace ERP_System.DTO.Guide
         public Guid? StockId { get; set; }
         public string StockName { get; set; }
         public string Description { get; set; }
-        public decimal? SalePrice { get; set; }
+		public decimal? ConversionFactor { get; set; }
+
+		public decimal? SalePrice { get; set; }
     }
 
     public class ProductTableDTO

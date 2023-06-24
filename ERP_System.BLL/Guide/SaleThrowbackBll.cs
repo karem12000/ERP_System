@@ -252,8 +252,8 @@ namespace ERP_System.BLL.Guide
                     var AllDetails = new List<SaleThrowbackDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
-                        var product = _repoProduct.GetById(invoiceDetail.ProductId.Value);
-                        if(product != null)
+						var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
+						if (product != null)
                         {
 
                         var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
@@ -331,8 +331,8 @@ namespace ERP_System.BLL.Guide
                         else
                         {
                             resultViewModel.Status = false;
-                            resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode;
-                            return resultViewModel;
+							resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد";
+							return resultViewModel;
 
                         }
 
@@ -384,8 +384,8 @@ namespace ERP_System.BLL.Guide
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
                         var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                        var product = _repoProduct.GetById(invoiceDetail.ProductId);
-                        if(product != null)
+						var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
+						if (product != null)
                         {
 
                         var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
@@ -420,8 +420,8 @@ namespace ERP_System.BLL.Guide
                         else
                         {
                             resultViewModel.Status = false;
-                            resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode;
-                            return resultViewModel;
+							resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد";
+							return resultViewModel;
 
                         }
 

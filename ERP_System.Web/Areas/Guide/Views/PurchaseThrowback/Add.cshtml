@@ -1,28 +1,28 @@
 ﻿@{
-    Layout = "_Layout";
+	Layout = "_Layout";
 }
 
 @if (CurrentForm.CurrentFormPermissionActions.AddHasPermission)
 {
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">إضافة مرتجع مشتريات</h4>
-                </div>
-                <div class="card-content">
-                    <div class="card-body">
-                        <form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
-                            <div class="form-body">
-                                <div class="row">
-                                    <div class="form-group col-2">
-                                        <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
-                                        <input hidden name="id" id="id" value="" class="d-none" />
-                                        <select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
-                                             <option value="0">فاتورة مرتجع مشتريات</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-2">
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">إضافة مرتجع مشتريات</h4>
+				</div>
+				<div class="card-content">
+					<div class="card-body">
+						<form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
+							<div class="form-body">
+								<div class="row">
+									<div class="form-group col-2">
+										<label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
+										<input hidden name="id" id="id" value="" class="d-none" />
+										<select class="Select sAddress form-select" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
+											<option value="0">فاتورة مرتجع مشتريات</option>
+										</select>
+									</div>
+                                    <div class="form-group col-1">
                                         <label class="lable" for="TransactionType">نوع المعاملة<span style="color:red;"> * </span></label>
                                         <select class="Select sAddress form-select" aria-label="اختر نوع المعاملة" required name="TransactionType" id="ddlTransactionType">
                                             <option selected value="0">كاش</option>
@@ -35,7 +35,7 @@
                                             <option selected value="0">اختر المخزن</option>
                                         </select>
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-1">
                                         <div class="form-group">
                                             <label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
                                             <input type="text" readonly required id="InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
@@ -52,13 +52,13 @@
                                             <button type="button" onclick="CancelProcess()" class="btn btn-primary" name="btnCancel" id="btnCancel">إلغاء العملية</button>
                                         </div>
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-1">
                                         <label for="Supplier">المورد<span style="color:red;"> * </span></label>
                                         <select class="Select sAddress form-select" onchange="handleChangeSupplier()" aria-label="اختر المورد" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Suppliers"] , "Value", "Text")' name="SupplierId" id="ddlSupplierId">
                                             <option selected value="0">اختر المورد</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-2 d-flex align-items-end">
+                                    <div class="form-group col-1 d-flex align-items-end">
                                         @if (CurrentFormByControllerName("Supplier").CurrentFormPermissionActions.AddHasPermission)
                                         {
                                             <a type="button" href="/People/Supplier/Add" target="_blank" class="btn btn-primary btn-icon mx-1"><i class="fas fa-plus"></i></a>
@@ -66,7 +66,6 @@
                                         <button type="button" class="btn btn-success btn-icon mx-1" onclick="RefreshSuppliers()"><i class="fas fa-sync"></i></button>
                                     </div>
                                     <div class="col-2 SupplierData">
-
                                     </div>
 
                                     <hr>
@@ -74,6 +73,8 @@
                                         <div class="table-container" id="InvoiceProducts">
                                             <label for="Products">المنتجات</label>
                                             <button type="button" class="btn btn-outline-primary addInvoiceProduct mx-2">إضافة</button>
+                                            <label id="ProductsCount"> 0 </label>
+
                                             <table class="table">
                                                 <thead>
                                                     <tr>
@@ -82,7 +83,7 @@
                                                         <th>الوحدة<span style="color:red;"> * </span></th>
                                                         <th>الكمية بالمخزن</th>
                                                         <th>الكمية<span style="color:red;"> * </span></th>
-                                                        <th>سعر الشراء للكمية<span style="color:red;"> * </span></th>
+                                                        <th>سعر الشراء للوحدة<span style="color:red;"> * </span></th>
                                                         <th>الإجمالي للمنتج</th>
                                                         <th>التحكم</th>
                                                     </tr>
@@ -102,7 +103,7 @@
                                                             </select>
                                                             <input class="form-control ConversionFactor" type="hidden" />
                                                         </td>
-                                                        <td><input type="number" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <td><input type="text" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                         <td><input type="number" step="0.1" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                         <td><input type="number" step="0.1" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" /></td>
                                                         <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
@@ -149,7 +150,7 @@
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
                                             <div class="d-flex align-items-center justify-content-end ps-2">
-                                                <a class="btn btn-outline-primary" href="/Guide/PurchaseInvoice/Index?previous=true">
+                                                <a class="btn btn-outline-primary" href="/Guide/PurchaseThrowback/Index?previous=true">
                                                     رجوع للقائمة
                                                     <span class="fa-arrow-left fas"></span>
                                                 </a>
@@ -167,29 +168,24 @@
 }
 
 @section Scripts
-    {
+	{
 
-    <partial name="_Scripts" />
-    <script>
-        $(document).ready(function () {
-            $('#InvoiceNumber').val(1);
-            const date = new Date();
-
-            let day = date.getDate();
-            let month = date.getMonth() + 1;
-            let year = date.getFullYear();
-            if (month < 10) {
-                month = `0${month}`
-            } if (day < 10) {
-                day = `0${day}`
-            }
-            let currentDate = `${year}-${month}-${day}`;
-            $("#InvoiceDate").val(currentDate);
-
-            //var InvoiceNumber = Math.floor(Math.random() * 1000);
-            //$('#InvoiceNumber').val(InvoiceNumber);
-            //$('.ProductBarCode').focus();
-            $("#sidebar").removeClass("active");
-        })
-    </script>
+	<partial name="_Scripts" />
+	<script>
+		$(document).ready(function () {
+			$("#sidebar").removeClass("active");
+			const date = new Date();
+			let day = date.getDate();
+			let month = date.getMonth() + 1;
+			let year = date.getFullYear();
+			if (month < 10) {
+				month = `0${month}`
+			} if (day < 10) {
+				day = `0${day}`
+			}
+			let currentDate = `${year}-${month}-${day}`;
+			$("#InvoiceDate").val(currentDate);
+			GetLastInvoiceNumberByDate(currentDate);
+		})
+	</script>
 }

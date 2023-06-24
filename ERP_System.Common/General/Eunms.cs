@@ -32,10 +32,10 @@ namespace ERP_System.Common.General
     public enum ProcessType
     {
         /// <summary>
-        /// مدين
+        ///له فلوس مدين
         /// </summary>
         Debtor = 1 
-            ///دائن
+            ///دائن عليه فلوس
         , Creditor = 2
     }
 

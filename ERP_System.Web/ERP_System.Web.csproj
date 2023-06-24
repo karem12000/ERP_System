@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\ProductsBarCode\UnitsBarCode\" />
     <Folder Include="wwwroot\SiteImages\" />
   </ItemGroup>
 

@@ -72,7 +72,10 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ProductBarCode = c.ProductBarCode,
                     PurchasingPrice = c.PurchasingPrice,
-                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+
+                    QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+
                 }).ToList(),
 
 
@@ -102,8 +105,9 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ProductBarCode = c.ProductBarCode,
                     PurchasingPrice = c.PurchasingPrice,
-                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
-
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+					QtyInStockStr = string.Join(" - " ,_repoProduct.GetById(c.ProductId).QtyInStock.Value , _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+                    
                 }).ToList(),
 
             }).FirstOrDefault();
@@ -136,7 +140,9 @@ namespace ERP_System.BLL.Guide
                         ConversionFactor = c.ConversionFactor,
                         ProductBarCode = c.ProductBarCode,
                         PurchasingPrice = c.PurchasingPrice,
-                        GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+                        GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+                        QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+
 
                     }).ToList(),
 
@@ -170,7 +176,9 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ProductBarCode = c.ProductBarCode,
                     PurchasingPrice = c.PurchasingPrice,
-                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+                    QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+
 
                 }).ToList(),
 
@@ -202,7 +210,9 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ProductBarCode = c.ProductBarCode,
                     PurchasingPrice = c.PurchasingPrice,
-                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+                    QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+
 
                 }).ToList(),
 
@@ -255,7 +265,7 @@ namespace ERP_System.BLL.Guide
                     var AllDetails = new List<PurchaseThrowbackDetail>();
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
-                        var product = _repoProduct.GetById(invoiceDetail.ProductId.Value);
+                        var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(c => c.ProductId == invoiceDetail.ProductId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
 
                         var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
                         if (oldDetail != null)
@@ -390,21 +400,33 @@ namespace ERP_System.BLL.Guide
                     newInvoice.SupplierName = Supplier.Name;
                     if (InvoiceDTO.TransactionType == 1)
                     {
+                        var supplierAmount = newInvoice.InvoiceTotalPrice - newInvoice.TotalPaid;
                         if (Supplier.ProcessType != null)
                         {
-                            if (Supplier.ProcessType == ProcessType.Debtor)
+                            if (Supplier.ProcessType == ProcessType.Creditor)
                             {
-                                Supplier.ProcessAmount += newInvoice.InvoiceTotalPrice;
+                                Supplier.ProcessAmount -= supplierAmount;
+                                if (Supplier.ProcessAmount < 0)
+                                {
+                                    Supplier.ProcessType = ProcessType.Debtor;
+                                    Supplier.ProcessAmount += Math.Abs(Supplier.ProcessAmount.Value);
+                                }
+
                             }
                             else
                             {
-                                Supplier.ProcessAmount -= newInvoice.InvoiceTotalPrice;
+                                Supplier.ProcessAmount += supplierAmount;
+                                if (Supplier.ProcessAmount < 0)
+                                {
+                                    Supplier.ProcessType = ProcessType.Creditor;
+                                    Supplier.ProcessAmount += Math.Abs(Supplier.ProcessAmount.Value);
+                                }
                             }
                         }
                         else
                         {
-                            Supplier.ProcessType = ProcessType.Debtor;
-                            Supplier.ProcessAmount = newInvoice.InvoiceTotalPrice;
+                            Supplier.ProcessType = ProcessType.Creditor;
+                            Supplier.ProcessAmount = supplierAmount;
                         }
                     }
                     if (newInvoice.InvoiceTotalPrice < 0)
@@ -419,7 +441,7 @@ namespace ERP_System.BLL.Guide
                     foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                     {
                         var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                        var product = _repoProduct.GetById(invoiceDetail.ProductId);
+                        var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(c => c.ProductId == invoiceDetail.ProductId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
                         var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
                         var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
                         var TotalQtyInStock = QtyInStock * ConversionFactor;

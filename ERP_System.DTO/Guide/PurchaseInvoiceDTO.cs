@@ -3,7 +3,9 @@ using ERP_System.Common.General;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
+using System.Xml.Linq;
 
 namespace ERP_System.DTO.Guide
 {
@@ -35,6 +37,8 @@ namespace ERP_System.DTO.Guide
         public Guid? UnitId { get; set; }
         public decimal? ConversionFactor { get; set; }
         public decimal? Qty { get; set; }
+        public decimal? QtyInStock { get; set; }
+        public string QtyInStockStr { get; set; }
         public decimal? PurchasingPrice { get; set; }
         public decimal? TotalQtyPrice =>Math.Round( Qty.Value  * PurchasingPrice.Value ,2);
         public List<ProductUnitsDTO> GetProductUnits { get; set; }
@@ -60,17 +64,18 @@ namespace ERP_System.DTO.Guide
         public Guid? ID { get; set; }
 
         public int InvoiceNumber { get; set; }
-        public int? TransactionType { get; set; }
         public string InvoiceDate { get; set; }
-        public string SupplierName { get; set; }
         public Guid? StockId { get; set; }
         public string StockName { get; set; }
-        public decimal? TotalPaid { get; set; }
         public int? ProductsCount { get; set; }
-        public decimal? InvoiceTotalPrice { get; set; }
         public bool? IsActive { get; set; }
+        public Guid? SupplierId { get; set; }
+        public string SupplierName { get; set; }
+        public int? TransactionType { get; set; }
+        public decimal? TotalPaid { get; set; }
+        public decimal? InvoiceTotalPrice { get; set; }
         public string AddedDate { get; set; }
         public int TotalCount { get; set; }
-
+			
     }
 }
