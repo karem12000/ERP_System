@@ -30,7 +30,7 @@ namespace ERP_System.DTO
         public string Phone { get; set; }
         public string Address { get; set; }
         public string AddedDate { get; set; }
-        public ProcessType? ProcessType { get; set; }
+        public int? ProcessType { get; set; }
         public decimal? ProcessAmount { get; set; }
         public bool IsActive { get; set; }
         public int TotalCount { get; set; }

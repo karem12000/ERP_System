@@ -10,7 +10,7 @@
     });
 
     let form = $('#frm');
-    function Submit() {
+    function Submit(type) {
 
         event.preventDefault(type);
 
@@ -43,7 +43,10 @@
                 showConfirmButton: false
             });
         } else {
+            var $preloader = $('#loader');
+            $preloader.fadeIn('slow');
             $.post('@Url.GetAction("Save")', form.serialize(), function (res) {
+                $preloader.delay(200).fadeOut('slow');
                 if (res.Status) {
                     Swal.fire({
                         title: `${res.Message}`,
@@ -63,7 +66,7 @@
                 else {
                     Swal.fire({
                         title: `${res.Message}`,
-                        timer: 2000,
+                        timer: 4000,
                         timerProgressBar: true,
                         icon: 'error',
                         showConfirmButton: false

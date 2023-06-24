@@ -15,26 +15,26 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit('edit')">
                             <div class="form-body">
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Name">الاسم<span style="color:red;"> * </span></label>
                                             <input hidden name="id" id="id" value="@Model.ID" class="d-none" />
                                             <input type="text" required id="Name" value="@Model.Name" name="Name" class="form-control" placeholder="الاسم">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="UserName">اسم المستخدم<span style="color:red;"> * </span></label>
                                             <input type="text" required id="UserName" value="@Model.UserName" name="UserName" class="form-control" placeholder="اسم المستخدم">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Email">الايميل<span style="color:red;"> * </span></label>
                                             <input type="text" required id="Email" value="@Model.Email" name="Email" class="form-control" placeholder="الايميل">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label class="lable" for="UserTypeId">نوع المستخدم<span style="color:red;"> * </span></label>
                                             <select class="Select form-select" aria-label="اختر النوع" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["UserTypes"] , "Value", "Text",Model.UserTypeId)' name="UserTypeId" id="ddlUserTypeId">
@@ -47,13 +47,13 @@
                                             <option selected value="0">اختر الشاشة</option>
                                         </select>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Phone">التليفون</label>
                                             <input type="text" required id="Phone" value="@Model.Phone" name="Phone" class="form-control" placeholder="التليفون">
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Address">العنوان</label>
                                             <input type="text" required id="Address" value="@Model.Address" name="Address" class="form-control" placeholder="العنوان">

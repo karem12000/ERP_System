@@ -53,9 +53,10 @@
 
 
         });
-
+        var $preloader = $('#loader');
+        $preloader.fadeIn('slow');
         $.post('@Url.GetAction("SaveUserPermission")', { userTypeId: ddlUserType.val(), mdl: ArrayOfObj }, function (res) {
-
+            $preloader.delay(200).fadeOut('slow');
             if (res.Status) {
                 Swal.fire({
                     title: `${res.Message}`,

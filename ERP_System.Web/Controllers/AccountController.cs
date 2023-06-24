@@ -47,8 +47,7 @@ namespace ERP_System.Web.Controllers
                 {
                     HttpContext.Response.Cookies.AppendCookie(AppConstants._UserIdCookie, user.ID.ToString(), true);
 
-                    if (!string.IsNullOrEmpty(user.ScreenName) && !string.IsNullOrEmpty(user.AreaName) 
-                        && !string.IsNullOrEmpty(user.ControllerName) && user.ScreenId != Guid.Empty)
+                    if (user.ScreenId != Guid.Empty && !string.IsNullOrEmpty(user.AreaName) && !string.IsNullOrEmpty(user.ControllerName))
                     {
                         var route = $"/{user.AreaName}/{user.ControllerName}/Index";
                         return Redirect(route);

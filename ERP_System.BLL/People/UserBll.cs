@@ -301,6 +301,7 @@ namespace ERP_System.BLL
             var tbl = _repoUser.GetAllAsNoTracking().Where(p => p.ID == userDTO.ID).FirstOrDefault();
             if (tbl == null)
             {
+                tbl = user;
                 if (_repoUser.GetAll().Where(p => p.UserName.Trim().ToLower() == userDTO.UserName.Trim().ToLower() && !p.IsDeleted ).FirstOrDefault() != null)
                 {
                     resultViewModel.Message = AppConstants.UserMessages.UsernameAlreadyExists;
@@ -322,7 +323,7 @@ namespace ERP_System.BLL
                 {
                     user.PasswordHash = userDTO.Password.EncryptString();
                 }
-
+                
                 if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
                     user.UserClassification = UserClassification.Admin;
                 else if (userDTO.UserTypeId.ToString() == AppConstants.CashierTypeId.ToLower())
@@ -370,14 +371,15 @@ namespace ERP_System.BLL
                     resultViewModel.Message = AppConstants.UserMessages.EmailAlreadyExists;
                     return resultViewModel;
                 }
-
-                tbl.UserName = user.UserName;
-                tbl.Name = user.Name;
-                tbl.Email = user.Email;
-                tbl.IsActive = user.IsActive;
+                tbl.Name = user.Name.Trim();
+                tbl.UserName = user.UserName.Trim();
+                tbl.Email = user.Email.Trim();
                 tbl.UserTypeId = user.UserTypeId;
-                tbl.AddedBy = tbl.AddedBy;
-
+                tbl.ScreenId = user.ScreenId;
+                tbl.Phone = user.Phone.Trim();
+                tbl.Address = user.Address.Trim();
+                tbl.ModifiedDate = DateTime.Now;
+                tbl.ModifiedBy = _repoUser.UserId;
                
 
                 if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())

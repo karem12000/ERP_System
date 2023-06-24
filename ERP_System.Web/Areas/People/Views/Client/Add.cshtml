@@ -53,7 +53,7 @@
                                     <div class="col-6 " id="processAmoutDev">
                                         <div class="form-group">
                                             <label for="ProcessAmount">قيمة المعاملة</label>
-                                            <input type="text" id="ProcessAmount" name="ProcessAmount" class="form-control" placeholder="قيمة المعاملة">
+                                            <input type="number" id="ProcessAmount" step="0.1" class="form-control" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" name="ProcessAmount" placeholder="قيمة المعاملة" />
                                         </div>
                                     </div>
                                     <div class="col-12 d-flex">
