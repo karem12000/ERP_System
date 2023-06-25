@@ -18,7 +18,7 @@ namespace ERP_System.DTO.Guide
         public string ProductUnitsStr { get; set; }
         public string NameUnitOfQty { get; set; }
         public Guid? IdUnitOfQty { get; set; }
-
+        public string QtyInStockStr { get; set; }
         public DateTime? ExpireDate { get; set; }
         public string ExpireDateStr { get; set; }
        

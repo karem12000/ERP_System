@@ -12,7 +12,15 @@
 	$(document).ready(function () {
 		LoadTable();
 	});
-
+	//function handleChangeTransaction() {
+	//	let transactionType = $("#ddlTransactionType").val();
+	//	let TotalPaid = $(".TotalPaid");
+	//	if(transactionType===0)
+	//	TotalPaid.prop('disabled', false);
+	//	else if(transactionType===1)
+	//	TotalPaid.prop('disabled', true);
+	//	else
+	//}
 	function LoadTable() {
 		$('#tbl').DataTable().destroy();
 
@@ -167,12 +175,12 @@
 		$('#ddlSupplierId').val('0').trigger('change');
 		$('.SupplierData').empty();
 		$('.TotalPaid').val('0');
-
+		$('.InvoiceTotalPrice').val('0');
 		$('#InvoiceProductsBody').empty();
 		InvoiceProductsAddNew({
 			"id": "0", "ProductId": "0",
 			"ProductBarCode": "", "ProductName": ""
-			, "UnitId": "0", "ConversionFactor": "", "Qty": "", "PurchasingPrice": "", "TotalQtyPrice": ""
+			, "UnitId": "0", "ConversionFactor": "0", "Qty": "", "PurchasingPrice": "", "TotalQtyPrice": ""
 		});
 		$("#ProductsCount").text('0')
 		$('#IsActive').val('true');
@@ -250,6 +258,7 @@
 				for (i = 0; i < res.length; i++) {
 					$('#ddlSupplierId').append('<option value="' + res[i].Value + '">' + res[i].Text + '</option>');
 				}
+				$('.SupplierData').empty();
 			}
 		});
 	}
@@ -267,7 +276,7 @@
 			let ConversionFactor = tBody.find(".ConversionFactor");
 			//let ItemUnitPrice = tBody.find(".ItemUnitPrice");
 			let Qty = tBody.find(".Qty");
-			//let QtyInStock = tBody.find(".QtyInStock");
+			let QtyInStock = tBody.find(".QtyInStock");
 			let PurchasingPrice = tBody.find(".PurchasingPrice");
 			let TotalQtyPrice = tBody.find(".TotalQtyPrice");
 			//let barCodeBtn = tBody.find(".barCodeBtn");
@@ -289,13 +298,14 @@
 					ProductName.val(data.Name);
 					UnitId.empty();
 					ID.val('@Guid.NewGuid()');
-					//QtyInStock.val(data.GetQtyInStock);
+					QtyInStock.val(data.QtyInStockStr);
 					data.GetProductUnits.forEach(function (item) {
 						if (item.UnitId === data.IdUnitOfQty) {
 							UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
 							ConversionFactor.val(item.ConversionFactor);
 							//ItemUnitPrice.val(item.PurchasingPrice);
-							PurchasingPrice.val(item.PurchasingPrice);
+							PurchasingPrice.val(0);
+							//PurchasingPrice.val(item.PurchasingPrice);
 						}
 						else {
 							UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
@@ -341,21 +351,25 @@
 				ProductBarCode.val(data.BarCodeText);
 				ProductName.val(data.Name);
 				UnitId.empty();
-				ID.val('@Guid.NewGuid()');
 				ConversionFactor.val(data.ConversionFactor);
 				console.log(ConversionFactor.val());
 				data.GetProductUnits.forEach(function (item) {
 					if (item.UnitId === data.IdUnitOfQty) {
 						UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
-						PurchasingPrice.val(item.PurchasingPrice);
+						//PurchasingPrice.val(item.PurchasingPrice);
+						PurchasingPrice.val(0);
 					}
 					else {
 						UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
 					}
 
 				});
-				Qty.val('1');
-				let TQP = 1 * PurchasingPrice.val();
+				var oldQty = Qty.val();
+				if (oldQty == '0' || oldQty == '') {
+					Qty.val('1');
+				} else {
+					Qty.val(oldQty);
+				} let TQP = 1 * PurchasingPrice.val();
 				TotalQtyPrice.val(TQP);
 				getInvoiceTotalPrice(ProductBarCode);
 				//barCodeBtn.attr("href", data.BarCodePath);
@@ -385,7 +399,7 @@
 			let ConversionFactor = tBody.find(".ConversionFactor");
 			//let ItemUnitPrice = tBody.find(".ItemUnitPrice");
 			let Qty = tBody.find(".Qty");
-			//let QtyInStock = tBody.find(".QtyInStock");
+			let QtyInStock = tBody.find(".QtyInStock");
 			let PurchasingPrice = tBody.find(".PurchasingPrice");
 			let TotalQtyPrice = tBody.find(".TotalQtyPrice");
 			//let barCodeBtn = tBody.find(".barCodeBtn");
@@ -406,13 +420,14 @@
 					ProductName.val(data.Name);
 					UnitId.empty();
 					ID.val('@Guid.NewGuid()');
-					//QtyInStock.val(data.QtyInStock);
+					QtyInStock.val(data.QtyInStockStr);
 					data.GetProductUnits.forEach(function (item) {
 						if (item.UnitId === data.IdUnitOfQty) {
 							UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
 							ConversionFactor.val(item.ConversionFactor);
 							//ItemUnitPrice.val(item.PurchasingPrice);
-							PurchasingPrice.val(item.PurchasingPrice);
+							PurchasingPrice.val(0);
+							//PurchasingPrice.val(item.PurchasingPrice);
 						}
 						else {
 							UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
@@ -528,12 +543,11 @@
 					contentType: false,
 					processData: false,
 					data: frm,
-					complete: function (res) {
+					success: function (res) {
 						$preloader.delay(200).fadeOut('slow');
-						console.log(res)
-						if (res.responseJSON.Status) {
+						if (res.Status) {
 							Swal.fire({
-								title: `${res.responseJSON.Message}`,
+								title: `${res.Message}`,
 								timer: 2000,
 								timerProgressBar: true,
 								icon: 'success',
@@ -546,29 +560,67 @@
 								}
 							})
 						} else {
-							$preloader.delay(100).fadeOut('slow');
 							Swal.fire({
-								title: `${res.responseJSON.Message}`,
+								title: `${res.Message}`,
 								timer: 4000,
 								timerProgressBar: true,
 								icon: 'error',
 								showConfirmButton: false
 							})
 						}
+
+					},
+					error: function (res) {
+						$preloader.delay(100).fadeOut('slow');
+						Swal.fire({
+							title: `${res.Message}`,
+							timer: 4000,
+							timerProgressBar: true,
+							icon: 'error',
+							showConfirmButton: false
+						})
 					}
+					//complete: function (res) {
+					//	$preloader.delay(200).fadeOut('slow');
+					//	console.log(res)
+					//	if (res.responseJSON.Status) {
+					//		Swal.fire({
+					//			title: `${res.responseJSON.Message}`,
+					//			timer: 2000,
+					//			timerProgressBar: true,
+					//			icon: 'success',
+					//			showConfirmButton: false
+					//		}).then((result) => {
+					//			if (type === 'add') {
+					//				resetForm(stockId, '0');
+					//			} else {
+					//				window.location.href = "/Guide/PurchaseInvoice/Index?previous=true";
+					//			}
+					//		})
+					//	} else {
+					//		$preloader.delay(100).fadeOut('slow');
+					//		Swal.fire({
+					//			title: `${res.responseJSON.Message}`,
+					//			timer: 4000,
+					//			timerProgressBar: true,
+					//			icon: 'error',
+					//			showConfirmButton: false
+					//		})
+					//	}
+					//}
 				});
 			} else if (invoiceType === "1") {
 				$.ajax({
-					url: '@Url.GetAction("SaveThrowback")',
+					url: '/Guide/PurchaseThrowback/Save',
 					method: "POST",
 					contentType: false,
 					processData: false,
 					data: frm,
-					complete: function (res) {
+					success: function (res) {
 						$preloader.delay(200).fadeOut('slow');
-						if (res.responseJSON.Status) {
+						if (res.Status) {
 							Swal.fire({
-								title: `${res.responseJSON.Message}`,
+								title: `${res.Message}`,
 								timer: 2000,
 								timerProgressBar: true,
 								icon: 'success',
@@ -576,24 +628,61 @@
 							}).then((result) => {
 								if (type === 'add') {
 									resetForm(stockId, '0');
-									//var invoiceDate =$('#InvoiceDate').val();
-									//GetLastInvoiceNumberByDate(invoiceDate);
-
 								} else {
 									window.location.href = "/Guide/PurchaseThrowback/Index?previous=true";
 								}
 							})
 						} else {
-							$preloader.delay(100).fadeOut('slow');
 							Swal.fire({
-								title: `${res.responseJSON.Message}`,
+								title: `${res.Message}`,
 								timer: 4000,
 								timerProgressBar: true,
 								icon: 'error',
 								showConfirmButton: false
 							})
 						}
+
+					},
+					error: function (res) {
+						$preloader.delay(100).fadeOut('slow');
+						Swal.fire({
+							title: `${res.Message}`,
+							timer: 4000,
+							timerProgressBar: true,
+							icon: 'error',
+							showConfirmButton: false
+						})
 					}
+					//complete: function (res) {
+					//	$preloader.delay(200).fadeOut('slow');
+					//	if (res.responseJSON.Status) {
+					//		Swal.fire({
+					//			title: `${res.responseJSON.Message}`,
+					//			timer: 2000,
+					//			timerProgressBar: true,
+					//			icon: 'success',
+					//			showConfirmButton: false
+					//		}).then((result) => {
+					//			if (type === 'add') {
+					//				resetForm(stockId, '0');
+					//				//var invoiceDate =$('#InvoiceDate').val();
+					//				//GetLastInvoiceNumberByDate(invoiceDate);
+
+					//			} else {
+					//				window.location.href = "/Guide/PurchaseThrowback/Index?previous=true";
+					//			}
+					//		})
+					//	} else {
+					//		$preloader.delay(100).fadeOut('slow');
+					//		Swal.fire({
+					//			title: `${res.responseJSON.Message}`,
+					//			timer: 4000,
+					//			timerProgressBar: true,
+					//			icon: 'error',
+					//			showConfirmButton: false
+					//		})
+					//	}
+					//}
 				});
 			}
 
@@ -611,14 +700,14 @@
                     if (SType == 1) {
                         $('.SupplierData').empty();
                         $('.SupplierData').append(`
-                            <input type="text" readonly class="form-control" placeholder="مدين">
+                            <input type="text" readonly class="form-control" placeholder="مدين (له فلوس)">
                             <input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
                         `);
 
                     } else {
                         $('#SupplierData').empty();
                         $('#SupplierData').append(`
-                            <input type="text" readonly class="form-control" placeholder="دائن">
+                            <input type="text" readonly class="form-control" placeholder="دائن (عليه فلوس)">
                             <input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
                         `);
                     }
@@ -692,9 +781,9 @@
 					<input class="form-control ProductId" type="hidden" value="0" />
 					<input type="text" onkeyup="getProduct(this,event)" required  value="${obj.ProductBarCode}" id="rowId-${rowId}" class="form-control ProductBarCode" />
 				</td>
-					<td><input type="text" onkeyup="getProduct(this,event)" required value="${obj.ProductName}" class="form-control ProductName" /></td>
+						<td><input type="text" onkeyup="getProductByName(this,event)" required value="${obj.ProductName}" class="form-control ProductName" /></td>
 				<td>
-					<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+						<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)" name="UnitId" id="ddlUnitId">
 						<option selected value="0">اختر الوحدة</option>
 					</select>
 						<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
@@ -739,7 +828,7 @@
 						InvoiceProductsAddNew({
 							"id": "0", "ProductId": "0",
 							"ProductBarCode": "", "ProductName": ""
-							, "UnitId": "0", "ConversionFactor": "", "Qty": "",  "PurchasingPrice": "", "TotalQtyPrice": ""
+							, "UnitId": "0", "ConversionFactor": "0", "Qty": "",  "PurchasingPrice": "", "TotalQtyPrice": ""
 						});
 					}
 				}
@@ -752,7 +841,7 @@
 				InvoiceProductsAddNew({
 					"id": "0", "ProductId": "0",
 					"ProductBarCode": "", "ProductName": ""
-					, "UnitId": "0", "ConversionFactor": "", "Qty": "",  "PurchasingPrice": "", "TotalQtyPrice": ""
+					, "UnitId": "0", "ConversionFactor": "0", "Qty": "",  "PurchasingPrice": "", "TotalQtyPrice": ""
 				});
 			}
 		}

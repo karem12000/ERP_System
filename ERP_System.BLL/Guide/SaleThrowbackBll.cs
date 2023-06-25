@@ -258,15 +258,14 @@ namespace ERP_System.BLL.Guide
                             if (product != null)
                             {
                                 var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
-                                if (oldDetail != null)
+								var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+								var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
+								var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+								var TotalQtyInStock = Math.Round(QtyInStock.Value * ConversionFactor.Value, 2);
+								if (oldDetail != null)
                                 {
-                                    var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                                    var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
-                                    var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-                                    var TotalQtyInStock = Math.Round(QtyInStock.Value * ConversionFactor.Value, 2);
                                     var oldTotalThrowbackQty = Math.Round(oldDetail.Qty.Value * oldDetail.ConversionFactor.Value, 2);
                                     var TotalThrowbackQty = Math.Round(invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value, 2);
-
                                     product.QtyInStock = TotalQtyInStock - oldTotalThrowbackQty;
                                     product.QtyInStock = product.QtyInStock + TotalThrowbackQty;
 
@@ -274,35 +273,30 @@ namespace ERP_System.BLL.Guide
                                     product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
                                     _repoProduct.Update(product);
 
-                                    //var newInvoiceDetail = new SaleThrowbackDetail()
-                                    //{
-                                    //    AddedBy = _repoSaleThrowback.UserId,
-                                    //    IsActive = true,
-                                    //    UnitId = invoiceDetail.UnitId,
-                                    //    ConversionFactor = invoiceDetail.ConversionFactor,
-                                    //    ProductBarCode = invoiceDetail.ProductBarCode,
-                                    //    ProductId = invoiceDetail.ProductId,
-                                    //    ItemUnitPrice = invoiceDetail.ItemUnitPrice,
-                                    //    SellingPrice = invoiceDetail.SellingPrice,
-                                    //    Qty = invoiceDetail.Qty,
-                                    //    ID = Guid.NewGuid(),
-                                    //    TotalQtyPrice = invoiceDetail.TotalQtyPrice,
-                                    //    SaleThrowbackId = newInvoice.ID,
-                                    //    ProductName = product.Name
-                                    //};
+                                    oldDetail.ID = invoiceDetail.ID.Value;
+                                    oldDetail.ProductBarCode = invoiceDetail.ProductBarCode;
+                                    oldDetail.ProductId = invoiceDetail.ProductId;
+                                    oldDetail.ProductName = invoiceDetail.ProductName;
+                                    oldDetail.UnitId = invoiceDetail.UnitId;
+                                    oldDetail.ItemUnitPrice = invoiceDetail.ItemUnitPrice;
+                                    oldDetail.Qty = invoiceDetail.Qty;
+                                    oldDetail.SellingPrice = invoiceDetail.SellingPrice;
+                                    oldDetail.TotalQtyPrice = invoiceDetail.TotalQtyPrice;
+                                    oldDetail.SaleThrowbackId = newInvoice.ID;
+
                                     AllDetails.Add(oldDetail);
                                     //TotalPrice += oldDetail.TotalQtyPrice;
                                 }
                                 else
                                 {
 
-                                    var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                                    var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
-                                    var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-                                    var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
+                                    //var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+                                    //var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
+                                    //var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                    //var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
                                     var TotalThrowbackQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
 
-                                    product.QtyInStock = product.QtyInStock + TotalThrowbackQty;
+                                    product.QtyInStock =TotalQtyInStock + TotalThrowbackQty;
                                     product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
                                     _repoProduct.Update(product);
 
@@ -331,7 +325,7 @@ namespace ERP_System.BLL.Guide
                             else
                             {
                                 resultViewModel.Status = false;
-                                resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد";
+                                resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد ";
                                 return resultViewModel;
 
                             }
@@ -357,7 +351,11 @@ namespace ERP_System.BLL.Guide
                     }
 
                 }
-               
+                else
+                {
+                    resultViewModel.Message = AppConstants.Messages.SavedFailed;
+                }
+
             }
             else
             {
@@ -421,7 +419,8 @@ namespace ERP_System.BLL.Guide
                             else
                             {
                                 resultViewModel.Status = false;
-                                resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد";
+                                resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد ";
+                                _repoSaleThrowback.Delete(newInvoice);
                                 return resultViewModel;
 
                             }
@@ -431,16 +430,22 @@ namespace ERP_System.BLL.Guide
                         var newInvoiceNumber = newInvoice.InvoiceNumber + 1;
                         if (_repoSaleThrowbackDetail.InsertRange(AllDetails))
                         {
-                            resultViewModel.Status = false;
-                            resultViewModel.Message = "خطأ في حفظ تفاصيل الفاتورة";
-                        }
-                        else
-                        {
                             resultViewModel.Status = true;
                             resultViewModel.Message = AppConstants.Messages.SavedSuccess;
                             resultViewModel.Data = newInvoiceNumber;
                         }
+                        else
+                        {
+                            resultViewModel.Status = false;
+                            resultViewModel.Message = "خطأ في حفظ تفاصيل الفاتورة";
+                            _repoSaleThrowback.Delete(newInvoice);
+                            return resultViewModel;
+                        }
                     }
+                }
+                else
+                {
+                    resultViewModel.Message = AppConstants.Messages.SavedFailed;
                 }
             }
             return resultViewModel;

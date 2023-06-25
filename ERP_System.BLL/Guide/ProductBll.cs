@@ -150,7 +150,9 @@ namespace ERP_System.BLL.Guide
 					   UnitBarcodeText = c.UnitBarcodeText,
 					   UnitId = c.UnitId,
 					   UnitName = c.Unit.Name
-				   }).ToArray()
+				   }).ToArray(),
+				   QtyInStockStr = string.Join(" - ", p.QtyInStock??0, p.NameUnitOfQty??"")
+
 			   }).FirstOrDefault();
 
 				if (data != null)
@@ -210,8 +212,7 @@ namespace ERP_System.BLL.Guide
 					   UnitId = c.UnitId,
 					   UnitName = c.Unit.Name
 				   }).ToArray(),
-				   //GetQtyInStock = p.QtyInStock* p.ProductUnits.Where(x=>x.UnitId==p.IdUnitOfQty).Select(c =>c.ConversionFactor).FirstOrDefault()
-
+				   QtyInStockStr = string.Join(" - ", p.QtyInStock ?? 0, p.NameUnitOfQty ?? "")
 			   }).FirstOrDefault();
 
 				if (data != null)
@@ -271,6 +272,7 @@ namespace ERP_System.BLL.Guide
 					   UnitId = c.UnitId,
 					   UnitName = c.Unit.Name
 				   }).ToArray(),
+				   QtyInStockStr = string.Join(" - ", p.QtyInStock ?? 0, p.NameUnitOfQty ?? "")
 
 			   }).FirstOrDefault();
 

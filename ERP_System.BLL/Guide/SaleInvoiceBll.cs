@@ -273,13 +273,12 @@ namespace ERP_System.BLL.Guide
                             {
 
                                 var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
-                                if (oldDetail != null)
+								var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+								var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
+								var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                var TotalQtyInStock = QtyInStock * ConversionFactor;
+								if (oldDetail != null)
                                 {
-
-                                    var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                                    var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
-                                    var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-                                    var TotalQtyInStock = QtyInStock * ConversionFactor;
                                     var oldRequiredQty = oldDetail.Qty * oldDetail.ConversionFactor;
                                     var reuiredQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
 
@@ -288,7 +287,7 @@ namespace ERP_System.BLL.Guide
                                     if (reuiredQty > TotalQtyInStock)
                                     {
                                         resultViewModel.Status = false;
-                                        resultViewModel.Message = "غير متوفرة " + product.Name + "الكمية المطلوبة من المنتج  ";
+                                        resultViewModel.Message = " غير متوفرة " + product.Name + " الكمية المطلوبة من المنتج  ";
                                         resultViewModel.Data = InvoiceDTO;
                                         return resultViewModel;
                                     }
@@ -298,6 +297,19 @@ namespace ERP_System.BLL.Guide
                                         product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
                                         _repoProduct.Update(product);
                                         _repoInvoiceDetail.Update(oldDetail);
+
+                                        oldDetail.ID = invoiceDetail.ID.Value;
+                                        oldDetail.ProductBarCode = invoiceDetail.ProductBarCode;
+                                        oldDetail.ProductId = invoiceDetail.ProductId;
+                                        oldDetail.ProductName = invoiceDetail.ProductName;
+                                        oldDetail.UnitId = invoiceDetail.UnitId;
+                                        oldDetail.ItemUnitPrice = invoiceDetail.ItemUnitPrice;
+                                        oldDetail.Qty = invoiceDetail.Qty;
+                                        oldDetail.SellingPrice = invoiceDetail.SellingPrice;
+                                        oldDetail.DiscountPProduct = invoiceDetail.DiscountPProduct;
+                                        oldDetail.TotalQtyPrice = invoiceDetail.TotalQtyPrice;
+                                        oldDetail.SaleInvoiceId = newInvoice.ID;
+
 
                                         //var newInvoiceDetail = new SaleInvoiceDetail()
                                         //{
@@ -318,28 +330,28 @@ namespace ERP_System.BLL.Guide
                                         //};
                                         AllDetails.Add(oldDetail);
 
-                                        TotalPrice -= oldDetail.DiscountPProduct??0;
-                                        TotalPrice += oldDetail.TotalQtyPrice;
+                                        //TotalPrice -= oldDetail.DiscountPProduct??0;
+                                        //TotalPrice += oldDetail.TotalQtyPrice;
                                     }
                                 }
                                 else
                                 {
-                                    if (invoiceDetail.Qty > product.QtyInStock)
+                                     var reuiredQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
+                                    if (reuiredQty > TotalQtyInStock)
                                     {
                                         resultViewModel.Status = false;
-                                        resultViewModel.Message = "الكمية المطلوبة من المنتج " + product.Name + " تجاوزت الكميو الموجودة بالمخزن";
-                                        resultViewModel.Data = InvoiceDTO;
+										resultViewModel.Message = " غير متوفرة " + product.Name + " الكمية المطلوبة من المنتج  ";
+										resultViewModel.Data = InvoiceDTO;
                                         return resultViewModel;
                                     }
                                     else
                                     {
-                                        var productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                                        var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
-                                        var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-                                        var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
-                                        var reuiredQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
+                                        //var productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+                                        //var QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
+                                        //var ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                        //var TotalQtyInStock = (QtyInStock * ConversionFactor) + (oldDetail.Qty * oldDetail.ConversionFactor);
 
-                                        product.QtyInStock = product.QtyInStock - reuiredQty;
+                                        product.QtyInStock =TotalQtyInStock - reuiredQty;
                                         product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
                                         _repoProduct.Update(product);
                                         var newInvoiceDetail = new SaleInvoiceDetail()
@@ -361,7 +373,7 @@ namespace ERP_System.BLL.Guide
                                         };
                                         AllDetails.Add(newInvoiceDetail);
 
-                                        TotalPrice += newInvoiceDetail.TotalQtyPrice;
+                                        //TotalPrice += newInvoiceDetail.TotalQtyPrice;
                                     }
                                 }
                                 //newInvoice.InvoiceTotalPrice = TotalPrice;
@@ -370,7 +382,7 @@ namespace ERP_System.BLL.Guide
                             else
                             {
                                 resultViewModel.Status = false;
-                                resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد";
+                                resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد";
                                 return resultViewModel;
 
                             }
@@ -394,7 +406,11 @@ namespace ERP_System.BLL.Guide
                         }
                     }
                 }
-                
+                else
+                {
+                    resultViewModel.Message = AppConstants.Messages.SavedFailed;
+                }
+
             }
             else
             {
@@ -434,8 +450,9 @@ namespace ERP_System.BLL.Guide
                                 if (reuiredQty > TotalQtyInStock)
                                 {
                                     resultViewModel.Status = false;
-                                    resultViewModel.Message = "الكمية المطلوبة من المنتج " + product.Name + " تجاوزت الكمية الموجودة بالمخزن";
+                                    resultViewModel.Message = " الكمية المطلوبة من المنتج " + product.Name + " تجاوزت الكمية الموجودة بالمخزن ";
                                     resultViewModel.Data = InvoiceDTO;
+                                    _repoInvoice.Delete(newInvoice);
                                     return resultViewModel;
                                 }
                                 else
@@ -470,7 +487,9 @@ namespace ERP_System.BLL.Guide
                             else
                             {
                                 resultViewModel.Status = false;
-                                resultViewModel.Message = "لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد";
+                                resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد ";
+                                _repoInvoice.Delete(newInvoice);
+
                                 return resultViewModel;
 
                             }
@@ -486,7 +505,11 @@ namespace ERP_System.BLL.Guide
                     resultViewModel.Data = lastInvoiceNumber;
 
                 }
-               
+                else
+                {
+                    resultViewModel.Message = AppConstants.Messages.SavedFailed;
+                }
+
             }
             return resultViewModel;
         }

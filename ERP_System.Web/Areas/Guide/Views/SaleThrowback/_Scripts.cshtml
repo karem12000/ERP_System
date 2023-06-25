@@ -93,7 +93,6 @@
                 ProductBarCode.val(data.BarCodeText);
                 ProductName.val(data.Name);
                 UnitId.empty();
-                ID.val('@Guid.NewGuid()');
                 data.GetProductUnits.forEach(function (item) {
                     if (item.UnitId === data.IdUnitOfQty) {
                         UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
@@ -105,7 +104,15 @@
                         UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
                     }
                 });
+                var oldQty = Qty.val();
+                if(oldQty==''||oldQty=='1'){
+                    console.log(oldQty);
                 Qty.val('1');
+                }else{
+                    Qty.val(oldQty);
+                    console.log(oldQty);
+
+                }
                 let TQP = 1 * SellingPrice.val();
                 TotalQtyPrice.val(TQP);
                 getInvoiceTotalPrice(ProductBarCode);
@@ -340,12 +347,11 @@
                 contentType: false,
                 processData: false,
                 data: frm,
-                complete: function (res) {
+                success: function (res) {
                     $preloader.delay(200).fadeOut('slow');
-                    console.log(res)
-                    if (res.responseJSON.Status) {
+                    if (res.Status) {
                         Swal.fire({
-                            title: `${res.responseJSON.Message}`,
+                            title: `${res.Message}`,
                             timer: 2000,
                             timerProgressBar: true,
                             icon: 'success',
@@ -353,48 +359,66 @@
                         }).then((result) => {
                             if (type === 'add') {
                                 resetForm(stockId, '0');
+                                //$('#InvoiceNumber').val(res.Data);
                                 var invoiceDate = $('#InvoiceDate').val();
                                 GetLastInvoiceNumberByDate(invoiceDate);
+
                             } else {
-                                    window.location.href = "/Guide/SaleInvoice/Index?previous=true";
+                                window.location.href = "/Guide/SaleThrowback/Index?previous=true";
                             }
                         })
                     } else {
-                        $preloader.delay(100).fadeOut('slow');
                         Swal.fire({
-                            title: `${res.responseJSON.Message}`,
+                            title: `${res.Message}`,
                             timer: 4000,
                             timerProgressBar: true,
                             icon: 'error',
                             showConfirmButton: false
                         })
                     }
+
+                },
+                error: function (res) {
+                    $preloader.delay(100).fadeOut('slow');
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 4000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    })
                 }
-                //success: function (res) {
-                //    Swal.fire({
-                //        title: `${res.Message}`,
-                //        timer: 1500,
-                //        timerProgressBar: true,
-                //        icon: 'success',
-                //        showConfirmButton: false
-                //    }).then((result) => {
-                //        if (type === 'add') {
-                //           var invoiceNumber = res.Data;
-                //            resetForm(stockId, invoiceNumber);
-                //        } else {
-                //            window.location.href = "/Guide/SaleInvoice/Index?previous=true";
-                //        }
-                //    })
-                //},
-                //error: function (res) {
-                //    Swal.fire({
-                //        title: `${res.Message}`,
-                //        timer: 4000,
-                //        timerProgressBar: true,
-                //        icon: 'error',
-                //        showConfirmButton: false
-                //    })
+                //complete: function (res) {
+                //    $preloader.delay(200).fadeOut('slow');
+                //    console.log(res)
+                //    if (res.responseJSON.Status) {
+                //        Swal.fire({
+                //            title: `${res.responseJSON.Message}`,
+                //            timer: 2000,
+                //            timerProgressBar: true,
+                //            icon: 'success',
+                //            showConfirmButton: false
+                //        }).then((result) => {
+                //            if (type === 'add') {
+                //                resetForm(stockId, '0');
+                //                var invoiceDate = $('#InvoiceDate').val();
+                //                GetLastInvoiceNumberByDate(invoiceDate);
+                //            } else {
+                //                window.location.href = "/Guide/SaleThrowback/Index?previous=true";
+                //            }
+                //        })
+                //    } else {
+                //        $preloader.delay(100).fadeOut('slow');
+                //        Swal.fire({
+                //            title: `${res.responseJSON.Message}`,
+                //            timer: 4000,
+                //            timerProgressBar: true,
+                //            icon: 'error',
+                //            showConfirmButton: false
+                //        })
+                //    }
                 //}
+               
             });
         }
 
@@ -572,9 +596,9 @@
                                 <input class="form-control ProductId" type="hidden" value="0" />
                                     <input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
                             </td>
-                                    <td><input type="text" required onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+                                        <td><input type="text" required onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
                             <td>
-                                <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة"  name="UnitId" id="ddlUnitId">
+                                    <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة"onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
                                     <option selected value="0">اختر الوحدة</option>
                                 </select>
                                         <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />

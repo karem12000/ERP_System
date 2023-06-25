@@ -234,7 +234,7 @@
             let ConversionFactor = tBody.find(".ConversionFactor");
             //let ItemUnitPrice = tBody.find(".ItemUnitPrice");
             let Qty = tBody.find(".Qty");
-            //let QtyInStock = tBody.find(".QtyInStock");
+            let QtyInStock = tBody.find(".QtyInStock");
             let PurchasingPrice = tBody.find(".PurchasingPrice");
             let TotalQtyPrice = tBody.find(".TotalQtyPrice");
             //let barCodeBtn = tBody.find(".barCodeBtn");
@@ -256,6 +256,7 @@
                     ProductName.val(data.Name);
                     UnitId.empty();
                     ID.val('@Guid.NewGuid()');
+                    QtyInStock.val(data.QtyInStockStr);
                     //QtyInStock.val(data.GetQtyInStock);
                     data.GetProductUnits.forEach(function (item) {
                         if (item.UnitId === data.IdUnitOfQty) {
@@ -306,7 +307,6 @@
                 ProductBarCode.val(data.BarCodeText);
                 ProductName.val(data.Name);
                 UnitId.empty();
-                ID.val('@Guid.NewGuid()');
                 ConversionFactor.val(data.ConversionFactor);
                 console.log(ConversionFactor.val());
                 data.GetProductUnits.forEach(function (item) {
@@ -319,7 +319,12 @@
                     }
 
                 });
+                var oldQty = Qty.val();
+                if(oldQty===''){
                 Qty.val('1');
+                }else{
+                    Qty.val(oldQty);
+                }
                 let TQP = 1 * PurchasingPrice.val();
                 TotalQtyPrice.val(TQP);
                 getInvoiceTotalPrice(ProductBarCode);
@@ -348,7 +353,7 @@
             let ConversionFactor = tBody.find(".ConversionFactor");
             //let ItemUnitPrice = tBody.find(".ItemUnitPrice");
             let Qty = tBody.find(".Qty");
-            //let QtyInStock = tBody.find(".QtyInStock");
+            let QtyInStock = tBody.find(".QtyInStock");
             let PurchasingPrice = tBody.find(".PurchasingPrice");
             let TotalQtyPrice = tBody.find(".TotalQtyPrice");
             //let barCodeBtn = tBody.find(".barCodeBtn");
@@ -369,6 +374,7 @@
                     ProductName.val(data.Name);
                     UnitId.empty();
                     ID.val('@Guid.NewGuid()');
+                    QtyInStock.val(data.QtyInStockStr);
                     //QtyInStock.val(data.QtyInStock);
                     data.GetProductUnits.forEach(function (item) {
                         if (item.UnitId === data.IdUnitOfQty) {
@@ -488,34 +494,71 @@
                     contentType: false,
                     processData: false,
                     data: frm,
-                    complete: function (res) {
-                        $preloader.delay(200).fadeOut('slow');
-                        console.log(res)
-                        if (res.responseJSON.Status) {
-                            Swal.fire({
-                                title: `${res.responseJSON.Message}`,
-                                timer: 2000,
-                                timerProgressBar: true,
-                                icon: 'success',
-                                showConfirmButton: false
-                            }).then((result) => {
-                                if (type === 'add') {
-                                    resetForm(stockId, '0');
-                                } else {
+                success: function (res) {
+                    $preloader.delay(200).fadeOut('slow');
+                    if (res.Status) {
+                        Swal.fire({
+                            title: `${res.Message}`,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            showConfirmButton: false
+                        }).then((result) => {
+                            if (type === 'add') {
+                                resetForm(stockId, '0');
+                            } else {
                                 window.location.href = "/Guide/PurchaseThrowback/Index?previous=true";
-                                }
-                            })
-                        } else {
-                            $preloader.delay(100).fadeOut('slow');
-                            Swal.fire({
-                                title: `${res.responseJSON.Message}`,
-                                timer: 4000,
-                                timerProgressBar: true,
-                                icon: 'error',
-                                showConfirmButton: false
-                            })
-                        }
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            title: `${res.Message}`,
+                            timer: 4000,
+                            timerProgressBar: true,
+                            icon: 'error',
+                            showConfirmButton: false
+                        })
                     }
+
+                },
+                error: function (res) {
+                    $preloader.delay(100).fadeOut('slow');
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 4000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    })
+                }
+                    //complete: function (res) {
+                    //    $preloader.delay(200).fadeOut('slow');
+                    //    console.log(res)
+                    //    if (res.responseJSON.Status) {
+                    //        Swal.fire({
+                    //            title: `${res.responseJSON.Message}`,
+                    //            timer: 2000,
+                    //            timerProgressBar: true,
+                    //            icon: 'success',
+                    //            showConfirmButton: false
+                    //        }).then((result) => {
+                    //            if (type === 'add') {
+                    //                resetForm(stockId, '0');
+                    //            } else {
+                    //            window.location.href = "/Guide/PurchaseThrowback/Index?previous=true";
+                    //            }
+                    //        })
+                    //    } else {
+                    //        $preloader.delay(100).fadeOut('slow');
+                    //        Swal.fire({
+                    //            title: `${res.responseJSON.Message}`,
+                    //            timer: 4000,
+                    //            timerProgressBar: true,
+                    //            icon: 'error',
+                    //            showConfirmButton: false
+                    //        })
+                    //    }
+                    //}
                 });
         }
     }
@@ -609,9 +652,9 @@
                         <input class="form-control ProductId" type="hidden" value="0" />
                         <input type="text" onkeyup="getProduct(this,event)" required  value="${obj.ProductBarCode}" id="rowId-${rowId}" class="form-control ProductBarCode" />
                     </td>
-                        <td><input type="text" onkeyup="getProduct(this,event)" required value="${obj.ProductName}" class="form-control ProductName" /></td>
+                            <td><input type="text" onkeyup="getProductByName(this,event)" required value="${obj.ProductName}" class="form-control ProductName" /></td>
                     <td>
-                        <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+                            <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)" name="UnitId" id="ddlUnitId">
                             <option selected value="0">اختر الوحدة</option>
                         </select>
                             <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
