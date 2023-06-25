@@ -65,13 +65,12 @@
                 contentType: false,
                 processData: false,
                 data: frm,
-                complete: function (res) {
+                success: function (res) {
                     $preloader.delay(200).fadeOut('slow');
-                    console.log(res)
-                    if (res.responseJSON.Status) {
+                    if (res.Status) {
                         Swal.fire({
-                            title: `${res.responseJSON.Message}`,
-                            timer: 1500,
+                            title: `${res.Message}`,
+                            timer: 2000,
                             timerProgressBar: true,
                             icon: 'success',
                             showConfirmButton: false
@@ -79,36 +78,50 @@
                             location.reload();
                         })
                     } else {
-                        $preloader.delay(100).fadeOut('slow');
                         Swal.fire({
-                            title: `${res.responseJSON.Message}`,
+                            title: `${res.Message}`,
                             timer: 4000,
                             timerProgressBar: true,
                             icon: 'error',
                             showConfirmButton: false
                         })
                     }
+
+                },
+                error: function (res) {
+                    Swal.fire({
+                        title: `${res.Message}`,
+                        timer: 4000,
+                        timerProgressBar: true,
+                        icon: 'error',
+                        showConfirmButton: false
+                    })
                 }
-                //success: function (res) {
-                //    Swal.fire({
-                //        title: `${res.Message}`,
-                //        timer: 1500,
-                //        timerProgressBar: true,
-                //        icon: 'success',
-                //        showConfirmButton: false
-                //    }).then((result) => {
-                //       location.reload();
-                //    })
-                //},
-                //error: function (res) {
-                //    Swal.fire({
-                //        title: `${res.Message}`,
-                //        timer: 2000,
-                //        timerProgressBar: true,
-                //        icon: 'error',
-                //        showConfirmButton: false
-                //    })
+                //complete: function (res) {
+                //    $preloader.delay(200).fadeOut('slow');
+                //    console.log(res)
+                //    if (res.responseJSON.Status) {
+                //        Swal.fire({
+                //            title: `${res.responseJSON.Message}`,
+                //            timer: 1500,
+                //            timerProgressBar: true,
+                //            icon: 'success',
+                //            showConfirmButton: false
+                //        }).then((result) => {
+                //            location.reload();
+                //        })
+                //    } else {
+                //        $preloader.delay(100).fadeOut('slow');
+                //        Swal.fire({
+                //            title: `${res.responseJSON.Message}`,
+                //            timer: 4000,
+                //            timerProgressBar: true,
+                //            icon: 'error',
+                //            showConfirmButton: false
+                //        })
+                //    }
                 //}
+                
             });
         }
     }

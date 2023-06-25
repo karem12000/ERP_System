@@ -219,19 +219,31 @@
                 //    //}
                 //}
                 success: function (res) {
-                    Swal.fire({
-                        title: `${res.Message}`,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        icon: 'success',
-                        showConfirmButton: false
-                    }).then((result) => {
-                        if (type === 'add') {
-                            resetForm(stockId, groupId);
-                        } else {
-                            window.location.href = "/Guide/Product/Index";
-                        }
-                    })
+                    $preloader.delay(200).fadeOut('slow');
+                    if (res.Status) {
+                        Swal.fire({
+                            title: `${res.Message}`,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            icon: 'success',
+                            showConfirmButton: false
+                        }).then((result) => {
+                            if (type === 'add') {
+                                resetForm(stockId, groupId);
+                            } else {
+                                window.location.href = "/Guide/Product/Index";
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            title: `${res.Message}`,
+                            timer: 4000,
+                            timerProgressBar: true,
+                            icon: 'error',
+                            showConfirmButton: false
+                        })
+                    }
+
                 },
                 error: function (res) {
                     Swal.fire({
