@@ -44,7 +44,7 @@ namespace ERP_System.BLL.Guide
         public int GetLastInvoiceNumberByDate(DateTime? date)
         {
             var invoiceNumber = _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= date.Value.Date)
-                 .OrderByDescending(c => c.InvoiceDate).Select(c => c.InvoiceNumber).FirstOrDefault();
+                 .OrderByDescending(c => c.CreatedDate).Select(c => c.InvoiceNumber).FirstOrDefault();
 
             return invoiceNumber;
         }

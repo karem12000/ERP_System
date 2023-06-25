@@ -46,11 +46,11 @@
                                             <input type="text" class="form-control" value="@Model.Buyer" name="Buyer" id="Buyer">
                                         </div>
                                     </div>
-                                    <div class="col-1">
+                                   @* <div class="col-1">
                                         <div class="form-group">
                                             <a type="button" href="/Guide/SaleThrowback/Index?previous=true" class="btn btn-primary">إلغاء العملية</a>
                                         </div>
-                                    </div>
+                                    </div>*@
                                     <hr>
                                     <div class="col-md-12">
                                         <div class="table-container" id="InvoiceProducts">
@@ -109,8 +109,8 @@
                                                                         <input class="form-control ConversionFactor" type="hidden" value="@detail.ConversionFactor" />
                                                                     </td>
                                                                     <td><input type="number" disabled class="form-control ItemUnitPrice" value="@detail.ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                    <td><input type="number" step="0.1" onkeyup="getInvoiceTotalPrice(this)" value="@detail.Qty" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                    <td><input type="number" step="0.1" onkeyup="getInvoiceTotalPrice(this)" min="0" value="@detail.SellingPrice" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+                                                                    <td><input type="number" step="0.01" onkeyup="getInvoiceTotalPrice(this)" value="@detail.Qty" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" step="0.01" onkeyup="getInvoiceTotalPrice(this)" min="0" value="@detail.SellingPrice" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
                                                                     <td><input type="number" disabled class="form-control TotalQtyPrice" value="@detail.TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                     <td>
                                                                         <div class="d-flex">
@@ -138,8 +138,8 @@
                                                                     <input class="form-control ConversionFactor" type="hidden" value="1" />
                                                                 </td>
                                                                 <td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td><input type="number" step="0.1" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td><input type="number" step="0.1" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+                                                                <td><input type="number" step="0.01" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                <td><input type="number" step="0.01" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
                                                                 <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                 <td>
                                                                     <div class="d-flex">

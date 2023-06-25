@@ -46,7 +46,7 @@ namespace ERP_System.BLL.Guide
         public int GetLastInvoiceNumberByDate(DateTime? date)
         {
             var invoiceNumber = _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= date.Value.Date)
-                 .OrderByDescending(c => c.InvoiceDate).Select(c => c.InvoiceNumber).FirstOrDefault();
+                 .OrderByDescending(c => c.CreatedDate).Select(c => c.InvoiceNumber).FirstOrDefault();
 
             return invoiceNumber;
         }
@@ -298,6 +298,8 @@ namespace ERP_System.BLL.Guide
 
                                 product.QtyInStock = TotalQtyInStock - oldEntireQty;
                                 product.QtyInStock = TotalQtyInStock + EntireQty;
+                                _repoProduct.Update(product);
+
                                 if (product.QtyInStock < 0)
                                 {
                                     resultViewModel.Status = false;
@@ -338,6 +340,7 @@ namespace ERP_System.BLL.Guide
 
                                 product.QtyInStock = product.QtyInStock + EntireQty;
                                 product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
+                                _repoProduct.Update(product);
 
                                 var newInvoiceDetail = new PurchaseInvoiceDetail()
                                 {
@@ -459,7 +462,7 @@ namespace ERP_System.BLL.Guide
 							var EntrieQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
                             product.QtyInStock = TotalQtyInStock + EntrieQty;
                             product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
-                            _repoProduct.UpdateWithoutSaveChange(product);
+                            _repoProduct.Update(product);
                             var newInvoiceDetail = new PurchaseInvoiceDetail()
                             {
                                 AddedBy = _repoInvoice.UserId,

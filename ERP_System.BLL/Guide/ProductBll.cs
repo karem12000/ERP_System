@@ -392,8 +392,7 @@ namespace ERP_System.BLL.Guide
 			if (data != null)
 			{
 				var existMdl = _repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted && p.IsActive)
-					.Where(p => p.ID != data.ID && p.Name.Trim().ToLower() == productDto.Name.Trim().ToLower())
-					.Where(p => p.GroupId == productDto.GroupId).FirstOrDefault();
+					.Where(p => p.ID != data.ID && p.Name.Trim().ToLower() == productDto.Name.Trim().ToLower()).FirstOrDefault();
 				if (existMdl != null)
 				{
 					resultViewModel.Message = AppConstants.Messages.NameAlreadyExists;
@@ -402,8 +401,7 @@ namespace ERP_System.BLL.Guide
 				}
 
 				var existBarCode = _repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted && p.IsActive)
-					.Where(p => p.ID != data.ID && p.BarCodeText.Trim().ToLower() == productDto.BarCodeText.Trim().ToLower())
-					.Where(p => p.GroupId == productDto.GroupId).FirstOrDefault();
+					.Where(p => p.ID != data.ID && p.BarCodeText.Trim().ToLower() == productDto.BarCodeText.Trim().ToLower()).FirstOrDefault();
 				if (existBarCode != null)
 				{
 					resultViewModel.Message = AppConstants.Messages.BarCodeAlreadyExists;
@@ -501,9 +499,14 @@ namespace ERP_System.BLL.Guide
 				{
 					resultViewModel.Message = AppConstants.Messages.NameAlreadyExists;
 					return resultViewModel;
-				}
+                }
+                if (_repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.BarCodeText.Trim() == productDto.BarCodeText.Trim()).FirstOrDefault() != null)
+                {
+                    resultViewModel.Message = AppConstants.Messages.BarCodeAlreadyExists;
+                    return resultViewModel;
+                }
 
-				var tbl = _mapper.Map<Product>(productDto);
+                var tbl = _mapper.Map<Product>(productDto);
 				if (productDto.IdUnitOfQty != null && productDto.IdUnitOfQty != Guid.Empty)
 				{
 					tbl.NameUnitOfQty = _repoUnit.GetById(productDto.IdUnitOfQty).Name;
