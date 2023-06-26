@@ -91,12 +91,10 @@ namespace ERP_System.BLL.Guide
 
                 var tbl = _mapper.Map<Stock>(stockDto);
                 tbl.AddedBy = data.AddedBy;
-
                 tbl.ModifiedDate = AppDateTime.Now;
-                if (_repoStock.UserId != Guid.Empty)
-                {
-                    tbl.ModifiedBy = _repoStock.UserId;
-                }
+                tbl.ModifiedBy = _repoStock.UserId;
+                tbl.CreatedDate = data.CreatedDate;
+
                 if (_repoStock.Update(tbl))
                 {
                     resultViewModel.Status = true;

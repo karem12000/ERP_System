@@ -133,6 +133,7 @@
         $('#Name').val('');
         $('#BarCodeText').val('');
         $('#QtyInStock').val('');
+        $('#ExpireDate').val('');
         $('#IsActive').val('true');
         $('#IsActive').attr('checked');
         $('#ddlStockId').val(stockId).trigger('change');
@@ -158,7 +159,7 @@
             frm.append("ID", document.getElementById('id').value);
             frm.append("StockId", document.querySelector("#ddlStockId").value);
             frm.append("GroupId", document.querySelector("#ddlGroupId").value);
-            frm.append("UnitId", document.querySelector("#ddlUnitId").value);
+            //frm.append("UnitId", document.querySelector("#ddlIdUnitOfQty").value);
             frm.append("BarCodeText", document.getElementById('BarCodeText').value);
             frm.append("Name", document.getElementById('Name').value);
             frm.append("QtyInStock", document.getElementById('QtyInStock').value);

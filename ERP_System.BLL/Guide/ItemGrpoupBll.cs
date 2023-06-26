@@ -71,13 +71,10 @@ namespace ERP_System.BLL.Guide
                 }
 
                 var tbl = _mapper.Map<ItemGrpoup>(GroupItemDTO);
+                tbl.CreatedDate = data.CreatedDate;
                 tbl.AddedBy = data.AddedBy;
-
                 tbl.ModifiedDate = AppDateTime.Now;
-                if (_repoGroup.UserId != Guid.Empty)
-                {
-                    tbl.ModifiedBy = _repoGroup.UserId;
-                }
+                tbl.ModifiedBy = _repoGroup.UserId;
                 if (_repoGroup.Update(tbl))
                 {
                     resultViewModel.Status = true;

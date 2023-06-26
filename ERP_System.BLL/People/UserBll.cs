@@ -378,9 +378,10 @@ namespace ERP_System.BLL
                 tbl.ScreenId = user.ScreenId;
                 tbl.Phone = user.Phone.Trim();
                 tbl.Address = user.Address.Trim();
-                tbl.ModifiedDate = DateTime.Now;
+                tbl.CreatedDate = tbl.CreatedDate;
+                tbl.AddedBy = tbl.AddedBy;
+                tbl.ModifiedDate = AppDateTime.Now;
                 tbl.ModifiedBy = _repoUser.UserId;
-               
 
                 if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
                     tbl.UserClassification = UserClassification.Admin;

@@ -383,6 +383,8 @@ namespace ERP_System.BLL.Guide
             if (data != null)
             {
                 var supplier = _repoSupplier.GetById(InvoiceDTO.SupplierId.Value);
+                var oldPriceDiff = data.TotalPaid ?? 0;
+                oldPriceDiff = data.InvoiceTotalPrice.Value - oldPriceDiff;
                 var newInvoice = data;
                 newInvoice.StockId = InvoiceDTO.StockId;
                 newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
@@ -393,6 +395,10 @@ namespace ERP_System.BLL.Guide
                 newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
                 newInvoice.TransactionType = (TransactionType?)InvoiceDTO.TransactionType;
                 newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
+                newInvoice.AddedBy = data.AddedBy;
+                newInvoice.ModifiedDate = AppDateTime.Now;
+                newInvoice.ModifiedBy = _repoInvoice.UserId;
+                newInvoice.CreatedDate = data.CreatedDate;
 
                 if (newInvoice.InvoiceTotalPrice < 0)
                 {
@@ -499,69 +505,51 @@ namespace ERP_System.BLL.Guide
                         }
                         var deleteInvoiceDetaails = _repoInvoiceDetail.DeleteRange(oldInvoiceDetails);
                         var saveInvoiceDetaails = _repoInvoiceDetail.InsertRange(AllDetails);
-                        //var PriceDiff = newInvoice.TotalPaid ?? 0;
-                        //PriceDiff = newInvoice.InvoiceTotalPrice.Value - PriceDiff;
-                        //var supplierAmount = PriceDiff;
-                        //if (InvoiceDTO.TransactionType == 1)
-                        //{
-                        //	if (supplier.ProcessType != null)
-                        //	{
-                        //		if (supplier.ProcessType == ProcessType.Debtor)
-                        //		{
-                        //			supplier.ProcessAmount = supplier.ProcessAmount + supplierAmount;
-                        //			if (supplier.ProcessAmount < 0)
-                        //			{
-                        //				supplier.ProcessType = ProcessType.Creditor;
-                        //				supplier.ProcessAmount = Math.Abs(supplier.ProcessAmount.Value);
-                        //			}
 
-                        //		}
-                        //		else
-                        //		{
-                        //			supplier.ProcessAmount = supplier.ProcessAmount - supplierAmount;
-                        //			if (supplier.ProcessAmount < 0)
-                        //			{
-                        //				supplier.ProcessType = ProcessType.Debtor;
-                        //				supplier.ProcessAmount = Math.Abs(supplier.ProcessAmount.Value);
-                        //			}
-                        //		}
-                        //	}
-                        //	else
-                        //	{
-                        //		supplier.ProcessType = ProcessType.Debtor;
-                        //		supplier.ProcessAmount = Math.Abs(supplierAmount);
-                        //	}
-                        //}
-                        //else if (InvoiceDTO.TransactionType == 0)
-                        //{
-                        //	if (supplier.ProcessType != null)
-                        //	{
-                        //		if (supplier.ProcessType == ProcessType.Debtor)
-                        //		{
-                        //			supplier.ProcessAmount = supplier.ProcessAmount + supplierAmount;
-                        //			if (supplier.ProcessAmount < 0)
-                        //			{
-                        //				supplier.ProcessType = ProcessType.Creditor;
-                        //				supplier.ProcessAmount = Math.Abs(supplier.ProcessAmount.Value);
-                        //			}
+                        var NewPriceDiff = newInvoice.TotalPaid ?? 0;
+                        NewPriceDiff = newInvoice.InvoiceTotalPrice.Value - NewPriceDiff;
+                        //var supplierAmount = NewPriceDiff;
 
-                        //		}
-                        //		else
-                        //		{
-                        //			supplier.ProcessAmount = supplier.ProcessAmount - supplierAmount;
-                        //			if (supplier.ProcessAmount < 0)
-                        //			{
-                        //				supplier.ProcessType = ProcessType.Debtor;
-                        //				supplier.ProcessAmount = Math.Abs(supplier.ProcessAmount.Value);
-                        //			}
-                        //		}
-                        //	}
-                        //	else
-                        //	{
-                        //		supplier.ProcessType = ProcessType.Debtor;
-                        //		supplier.ProcessAmount = Math.Abs(supplierAmount);
-                        //	}
-                        //}
+                        if (InvoiceDTO.TransactionType == 1 || InvoiceDTO.TransactionType == 0)
+                        {
+                            if (supplier.ProcessType != null)
+                            {
+                                if (supplier.ProcessType == ProcessType.Debtor)
+                                {
+                                    supplier.ProcessAmount = supplier.ProcessAmount + (NewPriceDiff - oldPriceDiff);
+                                    if (supplier.ProcessAmount < 0)
+                                    {
+                                        supplier.ProcessType = ProcessType.Creditor;
+                                        supplier.ProcessAmount = Math.Abs(supplier.ProcessAmount.Value);
+                                    }
+
+                                }
+                                else
+                                {
+                                    supplier.ProcessAmount = supplier.ProcessAmount - (NewPriceDiff - oldPriceDiff);
+                                    if (supplier.ProcessAmount < 0)
+                                    {
+                                        supplier.ProcessType = ProcessType.Debtor;
+                                        supplier.ProcessAmount = Math.Abs(supplier.ProcessAmount.Value);
+                                    }
+                                }
+                            }
+                            else
+                            {
+
+                                if (NewPriceDiff >= oldPriceDiff)
+                                {
+                                    supplier.ProcessType = ProcessType.Debtor;
+                                    supplier.ProcessAmount = Math.Abs(NewPriceDiff - oldPriceDiff);
+
+                                }
+                                else
+                                {
+                                    supplier.ProcessType = ProcessType.Creditor;
+                                    supplier.ProcessAmount = Math.Abs(NewPriceDiff - oldPriceDiff);
+                                }
+                            }
+                        }
                         _repoSupplier.Update(supplier);
                         _repoProduct.SaveChange();
 

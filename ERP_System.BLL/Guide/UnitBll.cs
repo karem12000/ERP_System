@@ -111,12 +111,10 @@ namespace ERP_System.BLL.Guide
 
                 var tbl = _mapper.Map<Unit>(unitDTO);
                 tbl.AddedBy = data.AddedBy;
-
                 tbl.ModifiedDate = AppDateTime.Now;
-                if (_repoUnit.UserId != Guid.Empty)
-                {
-                    tbl.ModifiedBy = _repoUnit.UserId;
-                }
+                tbl.ModifiedBy = _repoUnit.UserId;
+                tbl.CreatedDate = data.CreatedDate;
+
                 if (_repoUnit.Update(tbl))
                 {
                     resultViewModel.Status = true;

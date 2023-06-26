@@ -171,7 +171,7 @@ namespace ERP_System.BLL.Guide
 				}
 				else
 				{
-					resultView.Message = AppConstants.Messages.ProductByNameNotFound;
+					resultView.Message = AppConstants.Messages.ProductByBarCodeNotFound;
 				}
 			}
 			else
@@ -393,24 +393,48 @@ namespace ERP_System.BLL.Guide
 			var data = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == productDto.ID).FirstOrDefault();
 			if (data != null)
 			{
-				var existMdl = _repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted && p.IsActive)
+				var existMdl = _repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted)
 					.Where(p => p.ID != data.ID && p.Name.Trim().ToLower() == productDto.Name.Trim().ToLower()).FirstOrDefault();
 				if (existMdl != null)
 				{
-					resultViewModel.Message = AppConstants.Messages.NameAlreadyExists;
-					return resultViewModel;
+                    resultViewModel.Message = "اسم الصنف مستخدم من قبل صنف اخر";
+                    return resultViewModel;
 
 				}
 
-				var existBarCode = _repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted && p.IsActive)
+				var existBarCode = _repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted)
 					.Where(p => p.ID != data.ID && p.BarCodeText.Trim().ToLower() == productDto.BarCodeText.Trim().ToLower()).FirstOrDefault();
 				if (existBarCode != null)
 				{
-					resultViewModel.Message = AppConstants.Messages.BarCodeAlreadyExists;
+					resultViewModel.Message = "باركود الصنف مستخدم من قبل صنف اخر";
 					return resultViewModel;
 				}
 
-				var tbl = _mapper.Map<Product>(productDto);
+				if (_productUnit.GetAllAsNoTracking().Any(x => x.ProductId != productDto.ID && x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim()))
+				{
+                    resultViewModel.Message = "باركود الصنف مستخدم من قبل وحدة منتج أخر";
+                    return resultViewModel;
+                }
+                if (productDto.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim() && x.UnitId != productDto.IdUnitOfQty))
+                {
+                    resultViewModel.Status = false;
+                    resultViewModel.Message = "باركود المنتج متعارض  مع أحد باركودات وحدات المنتج";
+                    return resultViewModel;
+                }
+                var allAnotherUnitBarcode = _productUnit.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.ProductId != productDto.ID);
+				foreach (var unit in productDto.ProductUnits)
+				{
+					var existBarcode = allAnotherUnitBarcode.Where(x=>x.UnitBarcodeText.Trim()==unit.UnitBarcodeText.Trim()).FirstOrDefault();
+                    if (existBarcode != null)
+                    {
+                        resultViewModel.Status = false;
+                        resultViewModel.Message = "الباركود " + existBarcode.UnitBarcodeText + " مستخدم لوحدة منتج اخر";
+                        return resultViewModel;
+                    }
+                }
+                
+
+                var tbl = _mapper.Map<Product>(productDto);
 				if (data.IdUnitOfQty != productDto.IdUnitOfQty)
 				{
 					if (productDto.IdUnitOfQty != null && productDto.IdUnitOfQty != Guid.Empty)
@@ -425,35 +449,32 @@ namespace ERP_System.BLL.Guide
 
 				if (string.IsNullOrEmpty(productDto.BarCodeText))
 				{
-					tbl.BarCodePath = data.BarCodePath;
-					tbl.BarCodeText = data.BarCodeText;
+                    resultViewModel.Status = false;
+                    resultViewModel.Message ="باركود المنتج مطلوب";
+					return resultViewModel;
 				}
 				else
 				{
-					tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
-					tbl.BarCodeText = productDto.BarCodeText;
-					if (!string.IsNullOrEmpty(data.BarCodePath))
+					if(tbl.BarCodeText.Trim() != data.BarCodeText.Trim())
 					{
-						File.Delete(_webHostEnvironment + data.BarCodePath);
-					}
+                        tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
+                        tbl.BarCodeText = productDto.BarCodeText;
+                        if (!string.IsNullOrEmpty(data.BarCodePath))
+                        {
+                            File.Delete(_webHostEnvironment + data.BarCodePath);
+                        }
+                    }
 				}
 				tbl.AddedBy = data.AddedBy;
-
-				tbl.ModifiedDate = AppDateTime.Now;
-				if (_repoProduct.UserId != Guid.Empty)
-				{
-					tbl.ModifiedBy = _repoProduct.UserId;
-				}
+                tbl.CreatedDate = data.CreatedDate;
+                tbl.ModifiedDate = AppDateTime.Now;
+				tbl.ModifiedBy = _repoProduct.UserId;
+				
 				if (productDto.Image != null && productDto.Image.Length > 0)
 				{
 					tbl.Image = _helperBll.UploadFile(productDto.Image, ImagesFoldeName);
 				}
-				if (productDto.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim() && x.UnitId != productDto.IdUnitOfQty))
-				{
-					resultViewModel.Status = false;
-					resultViewModel.Message = "لا يجوز أن يتكرر الباركود للمنتج مع الباركود الخاص بوحدات المنتج";
-					return resultViewModel;
-				}
+  
 				if (_repoProduct.Update(tbl))
 				{
 					if (productDto.ProductUnits != null && productDto.ProductUnits.Length > 0)
@@ -499,13 +520,37 @@ namespace ERP_System.BLL.Guide
 			{
 				if (_repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.Name.Trim().ToLower() == productDto.Name.Trim().ToLower()).FirstOrDefault() != null)
 				{
-					resultViewModel.Message = AppConstants.Messages.NameAlreadyExists;
-					return resultViewModel;
+                    resultViewModel.Message = "اسم الصنف مستخدم من قبل صنف اخر";
+                    return resultViewModel;
                 }
                 if (_repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.BarCodeText.Trim() == productDto.BarCodeText.Trim()).FirstOrDefault() != null)
                 {
-                    resultViewModel.Message = AppConstants.Messages.BarCodeAlreadyExists;
+                    resultViewModel.Message = "باركود الصنف مستخدم من قبل صنف اخر";
                     return resultViewModel;
+                }
+
+                if (_productUnit.GetAllAsNoTracking().Any(x => x.ProductId != productDto.ID && x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim()))
+                {
+                    resultViewModel.Message = "باركود الصنف مستخدم من قبل وحدة منتج أخر";
+                    return resultViewModel;
+                }
+
+                if (productDto.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim() && x.UnitId != productDto.IdUnitOfQty))
+                {
+                    resultViewModel.Status = false;
+                    resultViewModel.Message = "باركود المنتج متعارض  مع أحد باركودات وحدات المنتج";
+                    return resultViewModel;
+                }
+                var allAnotherUnitBarcode = _productUnit.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.ProductId != productDto.ID);
+                foreach (var unit in productDto.ProductUnits)
+                {
+                    var existBarcode = allAnotherUnitBarcode.Where(x => x.UnitBarcodeText.Trim() == unit.UnitBarcodeText.Trim()).FirstOrDefault();
+                    if (existBarcode != null)
+                    {
+                        resultViewModel.Status = false;
+                        resultViewModel.Message = "الباركود " + existBarcode.UnitBarcodeText + " مستخدم لوحدة منتج اخر";
+                        return resultViewModel;
+                    }
                 }
 
                 var tbl = _mapper.Map<Product>(productDto);
@@ -518,21 +563,13 @@ namespace ERP_System.BLL.Guide
 					tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
 					tbl.BarCodeText = productDto.BarCodeText;
 				}
-				if (_repoProduct.UserId != Guid.Empty)
-				{
-					tbl.AddedBy = _repoProduct.UserId;
-				}
+				tbl.AddedBy = _repoProduct.UserId;
 				if (productDto.Image != null && productDto.Image.Length > 0)
 				{
 					tbl.Image = _helperBll.UploadFile(productDto.Image, ImagesFoldeName);
 				}
 
-				if (productDto.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim() && x.UnitId != productDto.IdUnitOfQty))
-				{
-					resultViewModel.Status = false;
-					resultViewModel.Message = "لا يجوز أن يتكرر الباركود للمنتج مع الباركود الخاص بوحدات المنتج";
-					return resultViewModel;
-				}
+               
 				if (_repoProduct.Insert(tbl))
 				{
 					if (productDto.ProductUnits != null && productDto.ProductUnits.Length > 0)

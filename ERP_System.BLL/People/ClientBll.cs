@@ -64,13 +64,10 @@ namespace ERP_System.BLL.Guide
                 {
                     tbl.ProcessAmount = 0;
                 }
-                tbl.AddedBy = data.AddedBy;
                 tbl.CreatedDate = data.CreatedDate;
+                tbl.AddedBy = data.AddedBy;
                 tbl.ModifiedDate = AppDateTime.Now;
-                if (_repoClient.UserId != Guid.Empty)
-                {
-                    tbl.ModifiedBy = _repoClient.UserId;
-                }
+                tbl.ModifiedBy = _repoClient.UserId;
                 if (_repoClient.Update(tbl))
                 {
                     resultViewModel.Status = true;

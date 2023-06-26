@@ -253,6 +253,11 @@ namespace ERP_System.BLL.Guide
                 newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;
                 newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? (InvoiceDTO.InvoiceDetails.Sum(x=>x.TotalQtyPrice)- InvoiceDTO.InvoiceDetails.Sum(x => x.DiscountPProduct)) : 0;
                 decimal ? TotalPrice = 0;
+                newInvoice.AddedBy = data.AddedBy;
+                newInvoice.ModifiedDate = AppDateTime.Now;
+                newInvoice.ModifiedBy = _repoInvoice.UserId;
+                newInvoice.CreatedDate = data.CreatedDate;
+
                 var oldInvoiceDetails = data.SaleInvoiceDetail;
                 if (newInvoice.InvoiceTotalPrice < 0)
                 {

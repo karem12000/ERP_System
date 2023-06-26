@@ -284,7 +284,6 @@
 
 			$.get('@Url.GetAction("GetProductByBarCode")', { text: barcode }, function (res) {
 				if (res.Status) {
-					console.log(ProductId.val());
 					if (ProductId.val() !== 0) {
 						InvoiceProductsAddNew({
 							"id": "0", "ProductId": "0",
@@ -352,7 +351,6 @@
 				ProductName.val(data.Name);
 				UnitId.empty();
 				ConversionFactor.val(data.ConversionFactor);
-				console.log(ConversionFactor.val());
 				data.GetProductUnits.forEach(function (item) {
 					if (item.UnitId === data.IdUnitOfQty) {
 						UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
@@ -696,7 +694,8 @@
             if (res) {
                 let SType = res.ProcessTypeInt;
                 var SAmount = res.ProcessAmount;
-                if (SType !== null) {
+
+                if (SType !== null && SType != 0) {
                     if (SType == 1) {
                         $('.SupplierData').empty();
                         $('.SupplierData').append(`
@@ -705,8 +704,8 @@
                         `);
 
                     } else {
-                        $('#SupplierData').empty();
-                        $('#SupplierData').append(`
+                        $('.SupplierData').empty();
+                        $('.SupplierData').append(`
                             <input type="text" readonly class="form-control" placeholder="دائن (عليه فلوس)">
                             <input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
                         `);

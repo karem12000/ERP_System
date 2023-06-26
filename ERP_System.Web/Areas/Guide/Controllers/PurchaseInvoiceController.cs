@@ -27,7 +27,9 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         }
         public IActionResult Index(bool previous=false)
         {
-            if(previous)
+            previous = true;
+
+            if (previous)
                 return View();
             else
             return Redirect("/Guide/PurchaseInvoice/Add");

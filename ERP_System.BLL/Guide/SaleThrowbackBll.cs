@@ -240,6 +240,11 @@ namespace ERP_System.BLL.Guide
                 newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
                 newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null? InvoiceDTO.InvoiceDetails.Sum(x=>x.TotalQtyPrice) : 0;
                 decimal? TotalPrice = 0;
+                newInvoice.AddedBy = data.AddedBy;
+                newInvoice.ModifiedDate = AppDateTime.Now;
+                newInvoice.ModifiedBy = _repoSaleThrowback.UserId;
+                newInvoice.CreatedDate = data.CreatedDate;
+
                 var oldInvoiceDetails = data.SaleInvoiceDetails;
                 if (newInvoice.InvoiceTotalPrice < 0)
                 {

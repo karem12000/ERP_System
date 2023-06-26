@@ -50,7 +50,8 @@
 									</div>
 									<div class="col-1">
 										<label for="Supplier">المورد<span style="color:red;"> * </span></label>
-										<select class="Select sAddress form-select" disabled onchange="handleChangeSupplier()" aria-label="اختر المورد" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Suppliers"] , "Value", "Text",Model.SupplierId)' name="SupplierId" id="ddlSupplierId">
+										<input hidden  id="txtSupplierId" value="@Model.SupplierId" class="d-none" />
+										<select class="Select sAddress form-select" disabled onchange="handleChangeSupplier()" aria-label="اختر المورد" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Suppliers"] , "Value", "Text")' name="SupplierId" id="ddlSupplierId">
 											<option selected value="0">اختر المورد</option>
 										</select>
 									</div>
@@ -227,8 +228,10 @@
 		$(document).ready(function () {
 			$("#sidebar").removeClass("active");
 
+			var supplierId = $('#txtSupplierId').val();
+			$('#ddlSupplierId').val(supplierId).trigger('change');
+
 			var transActionType = $('#txtTransactionType').val();
-			console.log(transActionType);
 			$('#ddlTransactionType').val(transActionType).trigger('change');
 		});
 	</script>

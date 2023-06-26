@@ -72,8 +72,10 @@ namespace ERP_System.BLL
 
                 var tbl = _mapper.Map<UserType>(UserTypeDTO);
                 tbl.AddedBy = data.AddedBy;
-
                 tbl.ModifiedDate = AppDateTime.Now;
+                tbl.ModifiedBy = _repoUserType.UserId;
+                tbl.CreatedDate = data.CreatedDate;
+
                 if (_repoUserType.Update(tbl))
                 {
                     resultViewModel.Status = true;

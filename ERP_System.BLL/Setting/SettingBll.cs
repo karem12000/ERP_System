@@ -55,8 +55,12 @@ namespace ERP_System.BLL.Guide
                 tbl.Description = settingDto.Description.Trim();
                 var oldLogo = _webHostEnvironment.WebRootPath +data.Logo;
                 var oldCompanyImage = _webHostEnvironment.WebRootPath +data.CompanyImage;
-                tbl.AddedBy = data.AddedBy;
+
+
                 tbl.ModifiedDate = AppDateTime.Now;
+                tbl.ModifiedBy = _repoSetting.UserId;
+
+
                 if (_repoSetting.UserId != Guid.Empty)
                 {
                     tbl.ModifiedBy = _repoSetting.UserId;
