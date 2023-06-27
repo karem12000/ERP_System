@@ -29,6 +29,24 @@
 
         });
     }
+    function FinishShift() {
+        Swal.fire({
+            title: 'إلغاء الخدمة؟',
+            text: "هل انت متاكد من إلغاء الخدمة",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'لا',
+            confirmButtonText: 'نعم!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                window.location.href = "/Account/LogOff";
+            }
+        })
+
+    }
     function CancelProcess() {
         Swal.fire({
             title: 'إلغاء العملية؟',
@@ -308,7 +326,7 @@
             }
             getRowsNumber();
         });
-        if ($('#ddlStockId').val() == '0' || $('#InvoiceNumber').val() == '' || $('#InvoiceDate').val() == '' || $('#Buyer').val() == '') {
+        if ($('#ddlStockId').val() == '0' || $('#InvoiceNumber').val() == '' || $('#InvoiceDate').val() == '') {
             Swal.fire({
                 title: `من فضلك أدخل بيانات الفاتورة`,
                 timer: 2000,
