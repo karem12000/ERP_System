@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "_Layout";
 }
 @model ERP_System.DTO.Guide.PurchaseThrowbackDTO;
@@ -126,7 +126,7 @@
 																	</td>
 																	<td><input type="text" disabled class="form-control QtyInStockStr" value="@detail.QtyInStockStr" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
 																	<td><input type="number" step="0.01" onkeyup="getInvoiceTotalPrice(this)" value="@detail.Qty" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-																	<td><input type="number" step="0.01" onkeyup="getInvoiceTotalPrice(this)" value="@detail.PurchasingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" /></td>
+                                                                    <td><input type="number" step="0.01" onkeyup="getInvoiceTotalPrice(this)" value="@detail.PurchasingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" readonly /></td>
 																	<td><input type="number" disabled class="form-control TotalQtyPrice" value="@detail.TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
 																	<td>
 																		<div class="d-flex">
