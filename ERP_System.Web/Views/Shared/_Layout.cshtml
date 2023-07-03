@@ -148,12 +148,11 @@
         $(window).on('load', function () {
             var $preloader = $('#loader');
             var ERP_System_UserId = getCookie('App.ERP_System.UserId');
-            $('#txtUserId').val(ERP_System_UserId);
+            //$('#txtUserId').val(ERP_System_UserId);
             $preloader.delay(350).fadeOut('slow');
-            if ($('#txtUserId').val() == '' || $('#txtUserId').val()==undefined)
+           
+            if (ERP_System_UserId === undefined || ERP_System_UserId==='')
             document.location = "/Account/Login";
-            //if (ERP_System_UserId === undefined || ERP_System_UserId==='')
-            //document.location = "/Account/Login";
         });
 
 
