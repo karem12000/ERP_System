@@ -103,7 +103,7 @@ namespace ERP_System
         {
             var cOption = new CookieOptions()
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Path = "/",
                 //TODO please un comment the next line if y will use HTTPS
                 // Secure = true
@@ -111,7 +111,7 @@ namespace ERP_System
 
             if (!IsExpire)
             {
-                cOption.Expires = AppDateTime.Now.AddYears(5);
+                cOption.Expires = AppDateTime.Now.AddDays(1);
             }
 
 

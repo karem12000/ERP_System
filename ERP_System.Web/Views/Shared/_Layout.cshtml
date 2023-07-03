@@ -57,7 +57,7 @@
             <partial name="_Header" />
             <div class="main-content">
                 <div class="page-heading">
-
+                <input hidden id="txtUserId" value="0" />
                     @RenderBody()
                 </div>
             </div>
@@ -147,16 +147,23 @@
     <script>
         $(window).on('load', function () {
             var $preloader = $('#loader');
-            
-            console.log(getCookie('App.ERP_System.UserId'));
+            var ERP_System_UserId = getCookie('App.ERP_System.UserId');
+            $('#txtUserId').val(ERP_System_UserId);
             $preloader.delay(350).fadeOut('slow');
+            if ($('#txtUserId').val() == '' || $('#txtUserId').val()==undefined)
+            document.location = "/Account/Login";
+            //if (ERP_System_UserId === undefined || ERP_System_UserId==='')
+            //document.location = "/Account/Login";
         });
 
+
         function getCookie(name) {
-            var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-            if (match) return true;
-            else return false;
+            let matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+            ));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
         }
+        
     </script>
 </body>
 </html>
