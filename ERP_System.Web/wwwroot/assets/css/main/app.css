@@ -21806,3 +21806,7 @@ a {
 .z-1 {
     z-index: 1
 }
+.navbar {
+    height: 50px;
+    padding: 1.5rem;
+}
