@@ -26,13 +26,17 @@ namespace ERP_System.BLL.Guide
 		private readonly IRepository<Product> _repoProduct;
 		private readonly IRepository<Unit> _repoUnit;
 		private readonly IRepository<Attachment> _repoAttatchment;
+		private readonly IRepository<PurchaseInvoice> _repoPurchaseInvoice;
+		private readonly IRepository<PurchaseThrowback> _repoPurchaseThrowback;
 		private readonly IRepository<StockProduct> _stockProduct;
 		private readonly IRepository<ProductUnit> _productUnit;
 		private readonly IMapper _mapper;
 		private readonly HelperBll _helperBll;
 		private readonly IWebHostEnvironment _webHostEnvironment;
 
-		public ProductBll(IRepository<Attachment> repoAttatchment, IRepository<Unit> repoUnit, IRepository<ProductUnit> productUnit, IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll, IRepository<StockProduct> stockProduct)
+		public ProductBll(IRepository<Attachment> repoAttatchment, IRepository<Unit> repoUnit, IRepository<ProductUnit> productUnit,
+			IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll,
+			IRepository<StockProduct> stockProduct , IRepository<PurchaseInvoice> repoPurchaseInvoice , IRepository<PurchaseThrowback> repoPurchaseThrowback)
 		{
 			_repoProduct = repoProduct;
 			_mapper = mapper;
@@ -42,6 +46,8 @@ namespace ERP_System.BLL.Guide
 			_stockProduct = stockProduct;
 			_productUnit = productUnit;
 			_repoUnit = repoUnit;
+			_repoPurchaseInvoice = repoPurchaseInvoice;
+			_repoPurchaseThrowback = repoPurchaseThrowback;
 		}
 
 		#region Get
@@ -623,14 +629,21 @@ namespace ERP_System.BLL.Guide
 				resultViewModel.Message = AppConstants.Messages.DeletedFailed;
 				return resultViewModel;
 			}
-
-			tbl.IsDeleted = true;
-			if (_repoProduct.UserId != Guid.Empty)
+			var haveInvoicesP = _repoPurchaseInvoice.GetAllAsNoTracking().Any(p=>p.PurchaseInvoiceDetail.Any(p=>p.ProductId == id && !p.IsDeleted));
+			var haveInvoicesThrowback = _repoPurchaseThrowback.GetAllAsNoTracking().Any(p=>p.PurchaseThrowbackDetails.Any(p=>p.ProductId == id && !p.IsDeleted));
+			//tbl.IsDeleted = true;
+			//if (_repoProduct.UserId != Guid.Empty)
+			//{
+			//	tbl.DeletedBy = _repoProduct.UserId;
+			//}
+			//tbl.DeletedDate = AppDateTime.Now;
+			if(haveInvoicesP || haveInvoicesThrowback)
 			{
-				tbl.DeletedBy = _repoProduct.UserId;
-			}
-			tbl.DeletedDate = AppDateTime.Now;
-			var IsSuceess = _repoProduct.Update(tbl);
+                resultViewModel.Status = false;
+                resultViewModel.Message = "لا يمكن حذف المنتج لانه يوجد له فواتير";
+                return resultViewModel;
+            }
+			var IsSuceess = _repoProduct.Delete(tbl);
 
 			resultViewModel.Status = IsSuceess;
 			resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;

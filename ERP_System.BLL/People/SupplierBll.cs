@@ -18,12 +18,16 @@ namespace ERP_System.BLL.Guide
     {
         private const string _spSupplier = "[People].[spSupplier]";
         private readonly IRepository<Supplier> _repoSupplier;
+        private readonly IRepository<PurchaseInvoice> _repoPurchaseInvoices;
+        private readonly IRepository<PurchaseThrowback> _repoPurchaseThrowback;
         private readonly IMapper _mapper;
 
-        public SupplierBll(IRepository<Supplier> repoSupplier,  IMapper mapper)
+        public SupplierBll(IRepository<Supplier> repoSupplier,  IMapper mapper, IRepository<PurchaseInvoice> repoPurchaseInvoices, IRepository<PurchaseThrowback> repoPurchaseThrowback)
         {
             _repoSupplier = repoSupplier;
             _mapper = mapper;
+            _repoPurchaseInvoices = repoPurchaseInvoices;
+            _repoPurchaseThrowback = repoPurchaseThrowback;
         }
 
         #region Get
@@ -119,17 +123,26 @@ namespace ERP_System.BLL.Guide
                 return resultViewModel;
             }
 
-            tbl.IsDeleted = true;
-            if (_repoSupplier.UserId != Guid.Empty)
+            var havePurchaseInvoices = _repoPurchaseInvoices.GetAllAsNoTracking().Any(p => p.SupplierId == id);
+            var haveThrowbackPurchaseInvoices = _repoPurchaseThrowback.GetAllAsNoTracking().Any(p => p.SupplierId == id);
+            if (havePurchaseInvoices || haveThrowbackPurchaseInvoices)
             {
-                tbl.DeletedBy = _repoSupplier.UserId;
+                resultViewModel.Status = false;
+                resultViewModel.Message = "لايمكن حذف المورد لوجود معاملات خاصه به";
+                return resultViewModel;
             }
-            tbl.DeletedDate = AppDateTime.Now;
-            var IsSuceess = _repoSupplier.Update(tbl);
+            var IsSuceess = _repoSupplier.Delete(tbl);
+
+            //tbl.IsDeleted = true;
+            //if (_repoSupplier.UserId != Guid.Empty)
+            //{
+            //    tbl.DeletedBy = _repoSupplier.UserId;
+            //}
+            //tbl.DeletedDate = AppDateTime.Now;
+            //var IsSuceess = _repoSupplier.Update(tbl);
 
             resultViewModel.Status = IsSuceess;
             resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;
-
 
             return resultViewModel;
         }

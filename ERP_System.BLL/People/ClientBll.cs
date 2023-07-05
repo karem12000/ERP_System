@@ -111,13 +111,13 @@ namespace ERP_System.BLL.Guide
                 return resultViewModel;
             }
 
-            tbl.IsDeleted = true;
-            if (_repoClient.UserId != Guid.Empty)
-            {
-                tbl.DeletedBy = _repoClient.UserId;
-            }
-            tbl.DeletedDate = AppDateTime.Now;
-            var IsSuceess = _repoClient.Update(tbl);
+            //tbl.IsDeleted = true;
+            //if (_repoClient.UserId != Guid.Empty)
+            //{
+            //    tbl.DeletedBy = _repoClient.UserId;
+            //}
+            //tbl.DeletedDate = AppDateTime.Now;
+            var IsSuceess = _repoClient.Delete(tbl);
 
             resultViewModel.Status = IsSuceess;
             resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;

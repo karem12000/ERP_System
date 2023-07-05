@@ -18,13 +18,15 @@ namespace ERP_System.BLL.Guide
 
         private readonly IRepository<Stock> _repoStock;
         private readonly IRepository<UserStock> _repoUserStock;
+        private readonly IRepository<StockProduct> _repoStockProduct;
         private readonly IMapper _mapper;
 
-        public StockBll(IRepository<Stock> repoStock, IRepository<UserStock> repoUserStock, IMapper mapper)
+        public StockBll(IRepository<Stock> repoStock, IRepository<UserStock> repoUserStock, IMapper mapper, IRepository<StockProduct> repoStockProduct)
         {
             _repoStock = repoStock;
             _mapper = mapper;
             _repoUserStock = repoUserStock;
+            _repoStockProduct = repoStockProduct;
         }
 
         #region Get
@@ -146,27 +148,38 @@ namespace ERP_System.BLL.Guide
         public ResultViewModel Delete(Guid id)
         {
             ResultViewModel resultViewModel = new ResultViewModel();
-            var tbl = _repoStock.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
 
-            if (tbl == null)
+            var haveProducts = _repoStockProduct.GetAllAsNoTracking().Any(x=>x.StockId== id);
+            if(haveProducts)
             {
                 resultViewModel.Status = false;
-                resultViewModel.Message = AppConstants.Messages.DeletedFailed;
+                resultViewModel.Message = "لا يمكن حذف المخزن لانه يحتوي علي منتجات";
                 return resultViewModel;
+                
             }
-
-            tbl.IsDeleted = true;
-            if (_repoStock.UserId != Guid.Empty)
+            else
             {
-                tbl.DeletedBy = _repoStock.UserId;
+                var tbl = _repoStock.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
+
+                if (tbl == null)
+                {
+                    resultViewModel.Status = false;
+                    resultViewModel.Message = AppConstants.Messages.DeletedFailed;
+                    return resultViewModel;
+                }
+                var IsSuceess = _repoStock.Delete(tbl);
+
+                resultViewModel.Status = IsSuceess;
+                resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;
             }
-            tbl.DeletedDate = AppDateTime.Now;
-            var IsSuceess = _repoStock.Update(tbl);
-
-            resultViewModel.Status = IsSuceess;
-            resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;
-
-
+            //tbl.IsDeleted = true;
+            //if (_repoStock.UserId != Guid.Empty)
+            //{
+            //    tbl.DeletedBy = _repoStock.UserId;
+            //}
+            //tbl.DeletedDate = AppDateTime.Now;
+            //var IsSuceess = _repoStock.Update(tbl);
+            
             return resultViewModel;
         }
         #endregion

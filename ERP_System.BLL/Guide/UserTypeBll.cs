@@ -20,10 +20,12 @@ namespace ERP_System.BLL
         private const string _spUserTypes = "Guide.[spUserTypes]";
 
         private readonly IRepository<UserType> _repoUserType;
+        private readonly IRepository<User> _repoUser;
         private readonly IMapper _mapper;
-        public UserTypeBll(IRepository<UserType> repoUserType, IMapper mapper)
+        public UserTypeBll(IRepository<UserType> repoUserType, IMapper mapper, IRepository<User> repoUser)
         {
             _repoUserType = repoUserType;
+            _repoUser = repoUser;
             _mapper = mapper;
         }
 
@@ -118,10 +120,17 @@ namespace ERP_System.BLL
                 resultViewModel.Message = AppConstants.Messages.DeletedFailed;
                 return resultViewModel;
             }
-            tbl.IsDeleted = true;
-            tbl.DeletedBy = null;
-            tbl.DeletedDate = AppDateTime.Now;
-            var IsSuceess = _repoUserType.Update(tbl);
+            var used = _repoUser.GetAllAsNoTracking().Any(p => p.UserTypeId == id && !p.IsDeleted);
+            if(used)
+            {
+                resultViewModel.Status = false;
+                resultViewModel.Message = "لا يمكن حذف النوع لانه مستخدم من قبل مستخدم";
+                return resultViewModel;
+            }
+            //tbl.IsDeleted = true;
+            //tbl.DeletedBy = null;
+            //tbl.DeletedDate = AppDateTime.Now;
+            var IsSuceess = _repoUserType.Delete(tbl);
 
             resultViewModel.Status = IsSuceess;
             resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;

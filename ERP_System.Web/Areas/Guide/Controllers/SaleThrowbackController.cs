@@ -1,4 +1,5 @@
-﻿using ERP_System.BLL.Guide;
+﻿using ERP_System.BLL;
+using ERP_System.BLL.Guide;
 using ERP_System.DTO.Guide;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +12,17 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly SaleThrowbackBll _invoiceBll;
         private readonly StockBll _stockBll;
+        private readonly UserBll _userBll;
         private readonly UnitBll _unitBll;
         private readonly ProductBll _productBll;
-        public SaleThrowbackController(IHttpContextAccessor httpContextAccessor, ProductBll productBll, StockBll stockBll , UnitBll unitBll , SaleThrowbackBll invoiceBll)
+        public SaleThrowbackController(IHttpContextAccessor httpContextAccessor, UserBll userBll, ProductBll productBll, StockBll stockBll , UnitBll unitBll , SaleThrowbackBll invoiceBll)
         {
             _httpContextAccessor= httpContextAccessor;
             _stockBll= stockBll;
             _unitBll = unitBll;
             _invoiceBll= invoiceBll;
             _productBll = productBll;
+            _userBll= userBll;
         }
         public IActionResult Index(bool previous=false)
         {
@@ -34,6 +37,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         public IActionResult Add()
         {
             var userId = _httpContextAccessor.UserId();
+            ViewData["DisscountPermission"] = _userBll.GetById(userId).DiscountPermission;
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
             return View();
         }
@@ -42,6 +46,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         {
             var userId = _httpContextAccessor.UserId();
             var invoice = _invoiceBll.GetById(id);
+            ViewData["DisscountPermission"] = _userBll.GetById(userId).DiscountPermission;
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
 
             if (invoice != null)

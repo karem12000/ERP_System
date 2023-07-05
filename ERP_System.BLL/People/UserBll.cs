@@ -24,16 +24,25 @@ namespace ERP_System.BLL
         private readonly IRepository<UserPermission> _repoUserPermission;
         private readonly IRepository<Page> _repoPage;
         private readonly IRepository<ActionsPage> _repoActionsPage;
+        private readonly IRepository<PurchaseInvoice> _repoPurchaseInvoices;
+        private readonly IRepository<PurchaseThrowback> _repoPurchaseThrowback;
+        private readonly IRepository<SaleInvoice> _repoSaleInvoices;
+        private readonly IRepository<SaleThrowback> _repoSaleThrowback;
 
         public UserBll(IRepository<User> repoUser, IRepository<UserStock> repoUserStock,
             IRepository<UserPermission> repoUserPermission, IRepository<Page> repoPage,
-            IRepository<ActionsPage> repoActionsPage)
+            IRepository<ActionsPage> repoActionsPage, IRepository<PurchaseInvoice> repoPurchaseInvoices , IRepository<PurchaseThrowback> repoPurchaseThrowback
+            , IRepository<SaleInvoice> repoSaleInvoices , IRepository<SaleThrowback> repoSaleThrowback)
         {
             _repoUser = repoUser;
             _repoUserPermission = repoUserPermission;
             _repoPage = repoPage;
             _repoActionsPage = repoActionsPage;
             _repoUserStock = repoUserStock;
+            _repoPurchaseInvoices = repoPurchaseInvoices;
+            _repoPurchaseThrowback = repoPurchaseThrowback;
+            _repoSaleInvoices = repoSaleInvoices;
+            _repoSaleThrowback = repoSaleThrowback;
         }
 
         #endregion
@@ -90,7 +99,8 @@ namespace ERP_System.BLL
                 UserName= x.UserName,
                 UserTypeId= x.UserTypeId,
                 StockIdsStr = string.Join(',',x.UserStocks.Select(c=>c.StockId).ToArray()),
-                ScreenId = x.ScreenId
+                ScreenId = x.ScreenId,
+                DiscountPermission = x.DiscountPermission
             }).FirstOrDefault();
         }
         #endregion
@@ -376,12 +386,13 @@ namespace ERP_System.BLL
                 tbl.Email = user.Email.Trim();
                 tbl.UserTypeId = user.UserTypeId;
                 tbl.ScreenId = user.ScreenId;
-                tbl.Phone = user.Phone.Trim();
-                tbl.Address = user.Address.Trim();
+                tbl.Phone = user.Phone;
+                tbl.Address = user.Address;
                 tbl.CreatedDate = tbl.CreatedDate;
                 tbl.AddedBy = tbl.AddedBy;
                 tbl.ModifiedDate = AppDateTime.Now;
                 tbl.ModifiedBy = _repoUser.UserId;
+                tbl.DiscountPermission = user.DiscountPermission;
 
                 if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
                     tbl.UserClassification = UserClassification.Admin;
@@ -431,11 +442,25 @@ namespace ERP_System.BLL
         public ResultViewModel Delete(Guid id)
         {
             ResultViewModel resultViewModel = new ResultViewModel();
-            var tbl = _repoUser.GetById(id);
-            tbl.IsDeleted = true;
-            tbl.DeletedBy = null;
-            tbl.DeletedDate = AppDateTime.Now;
-            var IsSuceess = _repoUser.Update(tbl);
+            var tbl = _repoUser.GetAllAsNoTracking().Where(p=>p.ID==id&&!p.IsDeleted).FirstOrDefault();
+            if (tbl == null)
+            {
+                resultViewModel.Status = false;
+                resultViewModel.Message = AppConstants.Messages.DeletedFailed;
+                return resultViewModel;
+            }
+            var havePurchaseInvoices = _repoPurchaseInvoices.GetAllAsNoTracking().Any(p => p.SupplierId == id);
+            var haveThrowbackPurchaseInvoices = _repoPurchaseThrowback.GetAllAsNoTracking().Any(p => p.SupplierId == id);
+            if (havePurchaseInvoices || haveThrowbackPurchaseInvoices)
+            {
+                resultViewModel.Status = false;
+                resultViewModel.Message = "لايمكن حذف المورد لوجود معاملات خاصه به";
+                return resultViewModel;
+            }
+            //tbl.IsDeleted = true;
+            //tbl.DeletedBy = null;
+            //tbl.DeletedDate = AppDateTime.Now;
+            var IsSuceess = _repoUser.Delete(tbl);
 
             resultViewModel.Status = IsSuceess;
             resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;

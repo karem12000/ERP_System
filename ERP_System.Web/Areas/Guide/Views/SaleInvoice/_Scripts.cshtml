@@ -67,15 +67,15 @@
 		if (invoiceType === '0') {
 			$('#ddlInvoiceType').empty();
 			$('#ddlInvoiceType').append(`
-						  <option selected value="0">فاتورة مبيعات</option>
-					`);
+							  <option selected value="0">فاتورة مبيعات</option>
+						`);
 			GetLastInvoiceNumberByDate(invoiceDate);
 		} else if (invoiceType === '1') {
 			$('#ddlInvoiceType').empty();
 			$('#ddlInvoiceType').append(`
-				<option  value="0">فاتورة مبيعات</option>
-				<option selected value="1">فاتورة مرتجع مبيعات</option>
-			`);
+					<option  value="0">فاتورة مبيعات</option>
+					<option selected value="1">فاتورة مرتجع مبيعات</option>
+				`);
 			GetLastThrowbackInvoiceNumberByDate(invoiceDate);
 
 		} else { }
@@ -130,9 +130,9 @@
 					}
 				});
 				var oldQty = Qty.val();
-				if(oldQty=='0' || oldQty==''){
-				Qty.val('1');
-				}else{
+				if (oldQty == '0' || oldQty == '') {
+					Qty.val('1');
+				} else {
 					Qty.val(oldQty);
 				}
 				let TQP = 1 * SellingPrice.val();
@@ -212,15 +212,15 @@
 		}
 		getRowsNumber()
 	}
-	function GetLastInvoiceNumberByDate(date){
+	function GetLastInvoiceNumberByDate(date) {
 		$.get('@Url.GetAction("GetLastInvoiceNumberByDate")', { date: date }, function (res) {
-			if(res){
-				var invoiceNumber = res+1;
+			if (res) {
+				var invoiceNumber = res + 1;
 				$('#InvoiceNumber').val(invoiceNumber);
-			}else{
+			} else {
 				$('#InvoiceNumber').val('1');
 			}
-				
+
 		});
 	}
 	function GetLastThrowbackInvoiceNumberByDate(date) {
@@ -434,8 +434,8 @@
 					//	}
 					//}
 					success: function (res) {
-					    $preloader.delay(200).fadeOut('slow');
-						if(res.Status){
+						$preloader.delay(200).fadeOut('slow');
+						if (res.Status) {
 							Swal.fire({
 								title: `${res.Message}`,
 								timer: 2000,
@@ -449,7 +449,7 @@
 									window.location.href = "/Guide/SaleInvoice/Index?previous=true";
 								}
 							})
-						}else{
+						} else {
 							Swal.fire({
 								title: `${res.Message}`,
 								timer: 4000,
@@ -458,17 +458,17 @@
 								showConfirmButton: false
 							})
 						}
-					   
+
 					},
 					error: function (res) {
-					    $preloader.delay(100).fadeOut('slow');
-					    Swal.fire({
-					        title: `${res.Message}`,
-					        timer: 4000,
-					        timerProgressBar: true,
-					        icon: 'error',
-					        showConfirmButton: false
-					    })
+						$preloader.delay(100).fadeOut('slow');
+						Swal.fire({
+							title: `${res.Message}`,
+							timer: 4000,
+							timerProgressBar: true,
+							icon: 'error',
+							showConfirmButton: false
+						})
 					}
 				});
 			} else if (invoiceType === "1") {
@@ -644,21 +644,21 @@
 
 	@if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
 	{
-																																												<a class="btn-icon btn btn-warning btn-sm"  href="/Guide/SaleInvoice/Edit/${data.ID}" >
-																																						 <i class="fas fa-pen"></i>
+																																														<a class="btn-icon btn btn-warning btn-sm"  href="/Guide/SaleInvoice/Edit/${data.ID}" >
+																																								 <i class="fas fa-pen"></i>
 
-																																						</a>
+																																								</a>
 
 	}
 
 	@if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
 	{
-																																								   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
-																																					   <i class="fas fa-trash-alt"></i>
+																																										   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+																																							   <i class="fas fa-trash-alt"></i>
 
-																																					   </a>
+																																							   </a>
 	}
-																					   `;
+																						   `;
 						return btn + '</div>';
 					}
 				}
@@ -721,35 +721,68 @@
 		getRowsNumber()
 	})
 	function InvoiceProductsAddNew(obj) {
-
+		
+		var haveDisscountPermission = @((ViewData.ContainsKey("DisscountPermission") && (bool)ViewData["DisscountPermission"] == true) ? "true" : "false");
 		let rowId = Math.floor(Math.random() * 500) + 1;
-		$("#InvoiceProductsBody").append(` <tr>
-						<td>
-							<input class="form-control ID" type="hidden" value="${obj.id}" />
-							<input class="form-control ProductId" type="hidden" value="0" />
-								<input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
-						</td>
-									<td><input type="text" required onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
-						<td>
-								<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
-								<option selected value="0">اختر الوحدة</option>
-							</select>
-									<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
-						</td>
-									<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-										<td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-										<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
-								<td><input type="number" step="0.01" value="${obj.TotalQtyPrice}" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" /></td>
+		if (haveDisscountPermission == true || haveDisscountPermission === "true") {
+			$("#InvoiceProductsBody").append(` <tr>
+								<td>
+									<input class="form-control ID" type="hidden" value="${obj.id}" />
+									<input class="form-control ProductId" type="hidden" value="0" />
+										<input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+								</td>
+											<td><input type="text" required onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+								<td>
+										<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+										<option selected value="0">اختر الوحدة</option>
+									</select>
+											<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+								</td>
+											<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+												<td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+												<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+										<td><input type="number" value="${obj.DiscountPProduct}" onchange="getInvoiceTotalPrice()" onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+										<td><input type="number" step="0.01" value="${obj.TotalQtyPrice}" disabled onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" /></td>
 
-							<td><input type="number" disabled value="${obj.DiscountPProduct}" onchange="getInvoiceTotalPrice()" onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-						<td>
-							<div class="d-flex">
-								<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-							</div>
-						</td>
 
-					</tr>
-					`);
+								<td>
+									<div class="d-flex">
+										<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+									</div>
+								</td>
+
+							</tr>
+							`);
+		}else{
+			$("#InvoiceProductsBody").append(` <tr>
+								<td>
+									<input class="form-control ID" type="hidden" value="${obj.id}" />
+									<input class="form-control ProductId" type="hidden" value="0" />
+										<input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+								</td>
+											<td><input type="text" required onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+								<td>
+										<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+										<option selected value="0">اختر الوحدة</option>
+									</select>
+											<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+								</td>
+											<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+												<td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+												<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+											<td><input type="number" disabled value="${obj.DiscountPProduct}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+										<td><input type="number" disabled step="0.01" value="${obj.TotalQtyPrice}" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" /></td>
+
+								<td>
+									<div class="d-flex">
+										<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+									</div>
+								</td>
+
+							</tr>
+							`);
+		}
+		
 		getRowsNumber()
 
 

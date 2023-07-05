@@ -445,5 +445,17 @@
         $(`input[name=${name}]`).prop('checked', checked);
 
     }
+    function DiscountPermissionChanged() {
+        var selected = $('#ddlUserTypeId').val();
+        if (selected == '7b95531a-edcb-4c1f-b7d8-3abeb1aac16d') {
+            $('#DiscountPermissionDev').show();
+        } else {
+            $('#DiscountPermissionDev').hide();
+        }
+    }
 
+    $("#DiscountPermission").change(function (e) {
+        var isChecked = $(this).prop("checked");
+        $("#DiscountPermission").val(isChecked);
+    });
 </script>

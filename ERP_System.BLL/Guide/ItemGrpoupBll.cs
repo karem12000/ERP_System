@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using ERP_System.Tables;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace ERP_System.BLL.Guide
 {
@@ -111,7 +112,7 @@ namespace ERP_System.BLL.Guide
         public ResultViewModel Delete(Guid id)
         {
             ResultViewModel resultViewModel = new ResultViewModel();
-            var tbl = _repoGroup.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
+            var tbl = _repoGroup.GetAllAsNoTracking().Where(p => p.ID == id).Include(x=>x.Products).FirstOrDefault();
 
             if (tbl == null)
             {
@@ -119,15 +120,20 @@ namespace ERP_System.BLL.Guide
                 resultViewModel.Message = AppConstants.Messages.DeletedFailed;
                 return resultViewModel;
             }
-
-            tbl.IsDeleted = true;
-            if (_repoGroup.UserId != Guid.Empty)
+            var haveProducts = tbl.Products.Any(x => x.GroupId == id && !x.IsDeleted);
+            if (haveProducts)
             {
-                tbl.DeletedBy = _repoGroup.UserId;
+                resultViewModel.Status = false;
+                resultViewModel.Message = "لا يمكن حذف المجموعة لانها تحتوي علي منتجات";
+                return resultViewModel;
             }
-            tbl.DeletedDate = AppDateTime.Now;
-            var IsSuceess = _repoGroup.Update(tbl);
-
+            //tbl.IsDeleted = true;
+            //if (_repoGroup.UserId != Guid.Empty)
+            //{
+            //    tbl.DeletedBy = _repoGroup.UserId;
+            //}
+            //tbl.DeletedDate = AppDateTime.Now;
+            var IsSuceess = _repoGroup.Delete(tbl);
             resultViewModel.Status = IsSuceess;
             resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;
 

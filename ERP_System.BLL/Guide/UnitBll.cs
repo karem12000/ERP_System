@@ -18,13 +18,15 @@ namespace ERP_System.BLL.Guide
         private const string _spUnits = "Guide.[spUnits]";
         private readonly IRepository<Unit> _repoUnit;
         private readonly IRepository<ProductUnit> _repoProductUnit;
+        private readonly IRepository<Product> _repoProduct;
         private readonly IMapper _mapper;
 
-        public UnitBll(IRepository<Unit> repoUnit, IMapper mapper , IRepository<ProductUnit> repoProductUnit)
+        public UnitBll(IRepository<Unit> repoUnit, IMapper mapper , IRepository<ProductUnit> repoProductUnit, IRepository<Product> repoProduct)
         {
             _repoUnit = repoUnit;
             _mapper = mapper;
             _repoProductUnit = repoProductUnit;
+            _repoProduct = repoProduct;
         }
 
         #region Get
@@ -158,7 +160,14 @@ namespace ERP_System.BLL.Guide
                 resultViewModel.Message = AppConstants.Messages.DeletedFailed;
                 return resultViewModel;
             }
-
+            var haveProduct = _repoProduct.GetAllAsNoTracking().Any(x => x.IdUnitOfQty == id && !x.IsDeleted);
+            var haveProductUnit = _repoProductUnit.GetAllAsNoTracking().Any(x => x.UnitId == id && !x.IsDeleted);
+            if (haveProduct || haveProductUnit)
+            {
+                resultViewModel.Status = false;
+                resultViewModel.Message = "لا يمكن حذف الوحده لانها مستخدمة في منتج";
+                return resultViewModel;
+            }
             tbl.IsDeleted = true;
             if (_repoUnit.UserId != Guid.Empty)
             {

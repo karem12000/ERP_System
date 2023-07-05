@@ -72,7 +72,7 @@ namespace ERP_System.DTO
         public string Phone { get; set; }
         public string Address { get; set; }
         public string PasswordHash { get; set; }
-        
+        public bool DiscountPermission { get; set; }
         public bool IsAdmin { get; set; } = false;
 
         public bool IsActive { get; set; }

@@ -1,4 +1,5 @@
-﻿using ERP_System.BLL.Guide;
+﻿using ERP_System.BLL;
+using ERP_System.BLL.Guide;
 using ERP_System.Common.General;
 using ERP_System.DTO.Guide;
 using Microsoft.AspNetCore.Http;
@@ -14,8 +15,9 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         private readonly SaleThrowbackBll _ThrowbackinvoiceBll;
         private readonly StockBll _stockBll;
         private readonly UnitBll _unitBll;
+        private readonly UserBll _userBll;
         private readonly ProductBll _productBll;
-        public SaleInvoiceController(IHttpContextAccessor httpContextAccessor, SaleThrowbackBll ThrowbackinvoiceBll, ProductBll productBll, StockBll stockBll, UnitBll unitBll, SaleInvoiceBll invoiceBll)
+        public SaleInvoiceController(IHttpContextAccessor httpContextAccessor, UserBll userBll, SaleThrowbackBll ThrowbackinvoiceBll, ProductBll productBll, StockBll stockBll, UnitBll unitBll, SaleInvoiceBll invoiceBll)
         {
             _httpContextAccessor = httpContextAccessor;
             _stockBll = stockBll;
@@ -23,6 +25,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             _invoiceBll = invoiceBll;
             _productBll = productBll;
             _ThrowbackinvoiceBll = ThrowbackinvoiceBll;
+            _userBll = userBll;
         }
         public IActionResult Index(bool previous = false)
         {
@@ -35,6 +38,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         public IActionResult Add()
         {
             var userId = _httpContextAccessor.UserId();
+            ViewData["DisscountPermission"] = _userBll.GetById(userId).DiscountPermission;
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
             return View();
         }
@@ -42,6 +46,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         public IActionResult Edit(Guid id)
         {
             var userId = _httpContextAccessor.UserId();
+            ViewData["DisscountPermission"] = _userBll.GetById(userId).DiscountPermission;
             var invoice = _invoiceBll.GetById(id);
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
 
