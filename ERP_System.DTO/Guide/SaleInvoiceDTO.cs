@@ -7,23 +7,30 @@ using System.Text;
 
 namespace ERP_System.DTO.Guide
 {
-    public class SaleInvoiceDTO
+    public class GetSaleInvoiceDTO
     {
         public Guid? ID { get; set; }
         public InvoiceType? InvoiceType { get; set; }
         public Guid? StockId { get; set; }
         public string? StockName { get; set; }
         public int InvoiceNumber { get; set; }
-        public DateTime InvoiceDate { get; set; }
+		public decimal? AddedTax { get; set; }
+		public DateTime InvoiceDate { get; set; }
         public string InvoiceDateStr { get; set; }
         public decimal? InvoiceTotalDiscount { get; set; }
+        public DisscountType? InvoiceTotalDiscountType { get; set; }
+        public int? InvoiceTotalDiscountTypeInt { get; set; }
         public decimal? TotalPaid { get; set; }
         public string? Buyer { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
         public bool IsActive { get; set; }
         public string? InvoiceProductsStr { get; set; }
-        public SaleInvoiceProductsDTO[] InvoiceDetails => JsonConvert.DeserializeObject<SaleInvoiceProductsDTO[]>(InvoiceProductsStr);
         public List<SaleInvoiceProductsDTO> GetInvoiceDetails { get; set; }
+    }
+    public class SaleInvoiceDTO : GetSaleInvoiceDTO
+    {
+      
+        public SaleInvoiceProductsDTO[] InvoiceDetails => JsonConvert.DeserializeObject<SaleInvoiceProductsDTO[]>(InvoiceProductsStr);
     }
 
     public class SaleInvoiceProductsDTO
@@ -33,7 +40,9 @@ namespace ERP_System.DTO.Guide
         public string? ProductBarCode { get; set; }
         public string? ProductName { get; set; }
         public decimal? DiscountPProduct { get; set; }
-        public string? Buyer { get; set; }
+		public DisscountType? DiscountTypePProduct { get; set; }
+		public int? DiscountTypePProductInt { get; set; }
+		public string? Buyer { get; set; }
         public Guid? UnitId { get; set; }
         public decimal? ConversionFactor { get; set; }
         public decimal? ItemUnitPrice { get; set; }

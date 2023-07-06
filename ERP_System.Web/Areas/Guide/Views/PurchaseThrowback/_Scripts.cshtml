@@ -572,14 +572,14 @@
                     if (SType == 1) {
                         $('.SupplierData').empty();
                         $('.SupplierData').append(`
-                                <input type="text" readonly class="form-control" placeholder="مدين (له فلوس)">
+                                <input type="text" readonly class="form-control" placeholder="مدين (له )">
                                 <input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
                             `);
 
                     } else {
                         $('.SupplierData').empty();
                         $('.SupplierData').append(`
-                                <input type="text" readonly class="form-control" placeholder="دائن (عليه فلوس)">
+                                <input type="text" readonly class="form-control" placeholder="دائن (عليه )">
                                 <input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
                             `);
                     }

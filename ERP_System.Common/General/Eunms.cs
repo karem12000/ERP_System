@@ -49,5 +49,8 @@ namespace ERP_System.Common.General
         , Delay = 1
     }
 
-
+    public enum DisscountType
+    {
+       Percent=0 , Value=1
+    }
 }

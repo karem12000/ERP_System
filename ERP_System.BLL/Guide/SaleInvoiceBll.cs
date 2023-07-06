@@ -50,20 +50,26 @@ namespace ERP_System.BLL.Guide
                 StockId = x.StockId,
                 StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
                 InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+                InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
                 Buyer = x.Buyer,
                 TotalPaid = x.TotalPaid,
                 IsActive = x.IsActive,
-                InvoiceTotalPrice = x.InvoiceTotalPrice,
+				InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
+
+				InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.SaleInvoiceDetail.Select(c => new SaleInvoiceProductsDTO
                 {
                     ID = c.ID,
                     ProductId = c.ProductId,
                     ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
                     Qty = c.Qty,
+                    DiscountTypePProduct = c.DiscountTypePProduct,
                     UnitId = c.UnitId,
                     ConversionFactor = c.ConversionFactor,
                     ItemUnitPrice = c.ItemUnitPrice,
-                    ProductBarCode = c.ProductBarCode,
+					DiscountTypePProductInt = (int)c.DiscountTypePProduct,
+
+					ProductBarCode = c.ProductBarCode,
                     DiscountPProduct = c.DiscountPProduct,
                     SellingPrice = c.SellingPrice,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
@@ -79,17 +85,23 @@ namespace ERP_System.BLL.Guide
 
             return invoiceNumber;
         }
-        public SaleInvoiceDTO GetByInvoiceNumber(int? number)
+        public ResultViewModel  GetByInvoiceNumber(int? number)
         {
-            return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new SaleInvoiceDTO
+            var result = new ResultViewModel();
+            result.Status = false;
+
+            var invoice = _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new GetSaleInvoiceDTO
             {
                 ID = x.ID,
                 InvoiceDateStr = x.InvoiceDate.Date.ToString(),
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
-                StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
-                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
-                Buyer = x.Buyer,
+				InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
+
+				StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
+				InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+				InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
+				Buyer = x.Buyer,
                 TotalPaid = x.TotalPaid,
 
                 IsActive = x.IsActive,
@@ -102,16 +114,30 @@ namespace ERP_System.BLL.Guide
                     ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
                     Qty = c.Qty,
                     UnitId = c.UnitId,
-                    ConversionFactor = c.ConversionFactor,
+					DiscountTypePProduct = c.DiscountTypePProduct,
+					ConversionFactor = c.ConversionFactor,
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
                     DiscountPProduct = c.DiscountPProduct,
-                    SellingPrice = c.SellingPrice,
+					DiscountTypePProductInt = (int)c.DiscountTypePProduct,
+
+					SellingPrice = c.SellingPrice,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
                 }).ToList(),
 
             }).FirstOrDefault();
+            if(invoice != null)
+            {
+                result.Status = true;
+                result.Data = invoice;
+            }
+            else
+            {
+                result.Message = "لاتوجد فاتورة مبيعات بهذا الرقم";
+            }
+
+            return result;
         }
 
 
@@ -126,9 +152,12 @@ namespace ERP_System.BLL.Guide
                     InvoiceNumber = x.InvoiceNumber,
                     StockId = x.StockId,
                     StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
-                    InvoiceTotalDiscount = x.InvoiceTotalDiscount,
-                    Buyer = x.Buyer,
-                    TotalPaid = x.TotalPaid,
+					InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+					InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
+					Buyer = x.Buyer,
+					InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
+
+					TotalPaid = x.TotalPaid,
 
                     IsActive = x.IsActive,
 
@@ -140,11 +169,14 @@ namespace ERP_System.BLL.Guide
                         ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
                         Qty = c.Qty,
                         UnitId = c.UnitId,
-                        ConversionFactor = c.ConversionFactor,
+						DiscountTypePProduct = c.DiscountTypePProduct,
+						ConversionFactor = c.ConversionFactor,
                         ItemUnitPrice = c.ItemUnitPrice,
                         ProductBarCode = c.ProductBarCode,
                         DiscountPProduct = c.DiscountPProduct,
-                        SellingPrice = c.SellingPrice,
+						DiscountTypePProductInt = (int)c.DiscountTypePProduct,
+
+						SellingPrice = c.SellingPrice,
                         GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
                     }).ToList(),
@@ -164,9 +196,12 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
-                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
-                Buyer = x.Buyer,
-                TotalPaid = x.TotalPaid,
+				InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+				InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
+				Buyer = x.Buyer,
+				InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
+
+				TotalPaid = x.TotalPaid,
 
                 IsActive = x.IsActive,
 
@@ -178,10 +213,13 @@ namespace ERP_System.BLL.Guide
                     ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
                     Qty = c.Qty,
                     UnitId = c.UnitId,
-                    ConversionFactor = c.ConversionFactor,
+					DiscountTypePProduct = c.DiscountTypePProduct,
+					ConversionFactor = c.ConversionFactor,
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
-                    DiscountPProduct = c.DiscountPProduct,
+					DiscountTypePProductInt = (int)c.DiscountTypePProduct,
+
+					DiscountPProduct = c.DiscountPProduct,
                     SellingPrice = c.SellingPrice,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
@@ -200,8 +238,10 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
-                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
-                Buyer = x.Buyer,
+				InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+				InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
+                InvoiceTotalDiscountTypeInt =(int)x.InvoiceTotalDiscountType,
+				Buyer = x.Buyer,
                 IsActive = x.IsActive,
                 TotalPaid = x.TotalPaid,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
@@ -212,8 +252,10 @@ namespace ERP_System.BLL.Guide
                     ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
                     Qty = c.Qty,
                     UnitId = c.UnitId,
-                    ConversionFactor = c.ConversionFactor,
+					DiscountTypePProduct = c.DiscountTypePProduct,
+					ConversionFactor = c.ConversionFactor,
                     DiscountPProduct = c.DiscountPProduct,
+                    DiscountTypePProductInt = (int) c.DiscountTypePProduct,
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
                     SellingPrice = c.SellingPrice,
@@ -250,13 +292,40 @@ namespace ERP_System.BLL.Guide
                 newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                 newInvoice.Buyer = InvoiceDTO.Buyer;
                 newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
+                newInvoice.InvoiceTotalDiscountType = InvoiceDTO.InvoiceTotalDiscountType;
                 newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;
-                newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? (InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) - InvoiceDTO.InvoiceDetails.Sum(x => x.DiscountPProduct)) : 0;
+                newInvoice.AddedTax = data.AddedTax;
+                
                 decimal? TotalPrice = 0;
                 newInvoice.AddedBy = data.AddedBy;
                 newInvoice.ModifiedDate = AppDateTime.Now;
                 newInvoice.ModifiedBy = _repoInvoice.UserId;
                 newInvoice.CreatedDate = data.CreatedDate;
+                decimal? SumInvoiceTotalQtyPrice = 0;
+                if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
+                {
+                    foreach (var item in InvoiceDTO.InvoiceDetails)
+                    {
+                        if (item.DiscountTypePProduct == DisscountType.Percent)
+                        {
+                            SumInvoiceTotalQtyPrice += item.TotalQtyPrice - (item.TotalQtyPrice * item.DiscountPProduct / 100) ?? 0;
+                        }
+                        else
+                        {
+                            SumInvoiceTotalQtyPrice += item.TotalQtyPrice - item.DiscountPProduct;
+                        }
+                    }
+
+                }
+                if (newInvoice.InvoiceTotalDiscountType == DisscountType.Value)
+                {
+                    SumInvoiceTotalQtyPrice = SumInvoiceTotalQtyPrice - newInvoice.InvoiceTotalDiscount ?? 0;
+                }
+                else
+                {
+                    SumInvoiceTotalQtyPrice = SumInvoiceTotalQtyPrice - (SumInvoiceTotalQtyPrice * newInvoice.InvoiceTotalDiscount / 100) ?? 0;
+                }
+                newInvoice.InvoiceTotalPrice = SumInvoiceTotalQtyPrice + newInvoice.AddedTax;
 
                 var oldInvoiceDetails = data.SaleInvoiceDetail;
                 if (newInvoice.InvoiceTotalPrice < 0)
@@ -329,6 +398,8 @@ namespace ERP_System.BLL.Guide
                                     oldDetail.DiscountPProduct = invoiceDetail.DiscountPProduct;
                                     oldDetail.TotalQtyPrice = invoiceDetail.TotalQtyPrice;
                                     oldDetail.SaleInvoiceId = newInvoice.ID;
+                                    oldDetail.DiscountTypePProduct = invoiceDetail.DiscountTypePProduct;
+
 
                                     AllDetails.Add(oldDetail);
 
@@ -368,7 +439,8 @@ namespace ERP_System.BLL.Guide
                                         ID = Guid.NewGuid(),
                                         TotalQtyPrice = invoiceDetail.TotalQtyPrice,
                                         SaleInvoiceId = newInvoice.ID,
-                                        ProductName = product.Name
+                                        ProductName = product.Name,
+                                        DiscountTypePProduct = invoiceDetail.DiscountTypePProduct
                                     };
                                     AllDetails.Add(newInvoiceDetail);
                                 }
@@ -421,9 +493,36 @@ namespace ERP_System.BLL.Guide
                 newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                 newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
                 newInvoice.Buyer = InvoiceDTO.Buyer;
-                newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
-                newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? (InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) - InvoiceDTO.InvoiceDetails.Sum(x => x.DiscountPProduct)) : 0;
+                newInvoice.InvoiceTotalDiscountType = InvoiceDTO.InvoiceTotalDiscountType;
                 newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;
+                newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
+                newInvoice.AddedTax = InvoiceDTO.AddedTax??0;
+
+                decimal? SumInvoiceTotalQtyPrice = 0;
+                if(InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
+                {
+                    foreach (var item in InvoiceDTO.InvoiceDetails)
+                    {
+                        if (item.DiscountTypePProduct == DisscountType.Percent)
+                        {
+                            SumInvoiceTotalQtyPrice += item.TotalQtyPrice - (item.TotalQtyPrice * item.DiscountPProduct / 100) ?? 0;
+                        }
+                        else
+                        {
+                            SumInvoiceTotalQtyPrice += item.TotalQtyPrice - item.DiscountPProduct;
+                        }
+                    }
+
+                }
+                if (newInvoice.InvoiceTotalDiscountType == DisscountType.Value) {
+                    SumInvoiceTotalQtyPrice = SumInvoiceTotalQtyPrice - newInvoice.InvoiceTotalDiscount ?? 0;
+                } else
+                {
+                    SumInvoiceTotalQtyPrice = SumInvoiceTotalQtyPrice - (SumInvoiceTotalQtyPrice * newInvoice.InvoiceTotalDiscount/100 )?? 0;
+                }
+                newInvoice.InvoiceTotalPrice = SumInvoiceTotalQtyPrice+newInvoice.AddedTax;
+                   
+                
                 newInvoice.AddedBy = _repoInvoice.UserId;
                 decimal? TotalPrice = 0;
                 if (newInvoice.InvoiceTotalPrice < 0)
@@ -497,7 +596,8 @@ namespace ERP_System.BLL.Guide
                                         ID = Guid.NewGuid(),
                                         TotalQtyPrice = invoiceDetail.TotalQtyPrice,
                                         SaleInvoiceId = newInvoice.ID,
-                                        ProductName = product.Name
+                                        ProductName = product.Name,
+                                        DiscountTypePProduct = invoiceDetail.DiscountTypePProduct,
                                     };
                                     //_repoInvoiceDetail.Insert(newInvoiceDetail);
                                     AllDetails.Add(newInvoiceDetail);

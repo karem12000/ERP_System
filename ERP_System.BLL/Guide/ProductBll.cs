@@ -459,18 +459,18 @@ namespace ERP_System.BLL.Guide
                     resultViewModel.Message ="باركود المنتج مطلوب";
 					return resultViewModel;
 				}
-				else
-				{
-					if(tbl.BarCodeText.Trim() != data.BarCodeText.Trim())
-					{
-                        tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
-                        tbl.BarCodeText = productDto.BarCodeText;
-                        if (!string.IsNullOrEmpty(data.BarCodePath))
-                        {
-                            File.Delete(_webHostEnvironment + data.BarCodePath);
-                        }
-                    }
-				}
+				//else
+				//{
+				//	if(tbl.BarCodeText.Trim() != data.BarCodeText.Trim())
+				//	{
+    //                    tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
+    //                    tbl.BarCodeText = productDto.BarCodeText;
+    //                    if (!string.IsNullOrEmpty(data.BarCodePath))
+    //                    {
+    //                        File.Delete(_webHostEnvironment + data.BarCodePath);
+    //                    }
+    //                }
+				//}
 				tbl.AddedBy = data.AddedBy;
                 tbl.CreatedDate = data.CreatedDate;
                 tbl.ModifiedDate = AppDateTime.Now;
@@ -499,7 +499,11 @@ namespace ERP_System.BLL.Guide
 								UnitBarcodeText = unit.UnitBarcodeText,
 								UnitId = unit.UnitId
 							};
-							newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
+                            if (newR.UnitId == tbl.IdUnitOfQty)
+                            {
+                                newR.UnitBarcodeText = tbl.BarCodeText;
+                            }
+                            //newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
 							NewRecords.Add(newR);
 						}
 						_productUnit.InsertRange(NewRecords);
@@ -529,6 +533,7 @@ namespace ERP_System.BLL.Guide
                     resultViewModel.Message = "اسم الصنف مستخدم من قبل صنف اخر";
                     return resultViewModel;
                 }
+              
                 if (_repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.BarCodeText.Trim() == productDto.BarCodeText.Trim()).FirstOrDefault() != null)
                 {
                     resultViewModel.Message = "باركود الصنف مستخدم من قبل صنف اخر";
@@ -566,8 +571,14 @@ namespace ERP_System.BLL.Guide
 				}
 				if (!string.IsNullOrEmpty(productDto.BarCodeText))
 				{
-					tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
+					//tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
 					tbl.BarCodeText = productDto.BarCodeText;
+				}
+				else
+				{
+					resultViewModel.Status = false;
+					resultViewModel.Message = "باركود الصنف مطلوب";
+					return resultViewModel;
 				}
 				tbl.AddedBy = _repoProduct.UserId;
 				if (productDto.Image != null && productDto.Image.Length > 0)
@@ -583,16 +594,21 @@ namespace ERP_System.BLL.Guide
 						var NewRecords = new List<ProductUnit>();
 						foreach (var unit in productDto.ProductUnits)
 						{
-							var newR = new ProductUnit
+                            var newR = new ProductUnit
+                            {
+                                ProductId = tbl.ID,
+                                ConversionFactor = unit.ConversionFactor,
+                                PurchasingPrice = unit.PurchasingPrice,
+                                SellingPrice = unit.SellingPrice,
+                                UnitBarcodeText = unit.UnitBarcodeText,
+                                UnitId = unit.UnitId
+                            };
+                            if (newR.UnitId==tbl.IdUnitOfQty)
 							{
-								ProductId = tbl.ID,
-								ConversionFactor = unit.ConversionFactor,
-								PurchasingPrice = unit.PurchasingPrice,
-								SellingPrice = unit.SellingPrice,
-								UnitBarcodeText = unit.UnitBarcodeText,
-								UnitId = unit.UnitId
-							};
-							newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
+								newR.UnitBarcodeText = tbl.BarCodeText;
+							}
+							
+							//newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
 							NewRecords.Add(newR);
 						}
 						_productUnit.InsertRange(NewRecords);

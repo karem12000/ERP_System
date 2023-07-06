@@ -238,15 +238,53 @@ namespace ERP_System.BLL.Guide
                 newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
                 newInvoice.Buyer = InvoiceDTO.Buyer;
                 newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
-                newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
-                decimal? TotalPrice = 0;
+                newInvoice.AddedTax = data.AddedTax;
+                newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;
+                newInvoice.InvoiceTotalDiscountType = InvoiceDTO.InvoiceTotalDiscountType;
+                
+                //newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
                 newInvoice.AddedBy = data.AddedBy;
                 newInvoice.ModifiedDate = AppDateTime.Now;
                 newInvoice.ModifiedBy = _repoSaleThrowback.UserId;
                 newInvoice.CreatedDate = data.CreatedDate;
+				newInvoice.SaleInvoiceId = InvoiceDTO.SaleInvoiceId;
 
                 var oldInvoiceDetails = data.SaleInvoiceDetails;
-                if (newInvoice.InvoiceTotalPrice < 0)
+
+                if (newInvoice.SaleInvoiceId == null || newInvoice.SaleInvoiceId == Guid.Empty)
+                {
+                    resultViewModel.Status = false;
+                    resultViewModel.Message = "يجب تحديد الفاتورة المراد عمل ارجاع لمنتجاتها";
+                    return resultViewModel;
+                }
+                decimal? SumInvoiceTotalQtyPrice = 0;
+                if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
+                {
+                    foreach (var item in InvoiceDTO.InvoiceDetails)
+                    {
+                        if (item.DiscountTypePProduct == DisscountType.Percent)
+                        {
+                            SumInvoiceTotalQtyPrice += item.TotalQtyPrice - (item.TotalQtyPrice * item.DiscountPProduct / 100) ?? 0;
+                        }
+                        else
+                        {
+                            SumInvoiceTotalQtyPrice += item.TotalQtyPrice - item.DiscountPProduct;
+                        }
+                    }
+
+                }
+                if (newInvoice.InvoiceTotalDiscountType == DisscountType.Value)
+                {
+                    SumInvoiceTotalQtyPrice = SumInvoiceTotalQtyPrice - newInvoice.InvoiceTotalDiscount ?? 0;
+                }
+                else
+                {
+                    SumInvoiceTotalQtyPrice = SumInvoiceTotalQtyPrice - (SumInvoiceTotalQtyPrice * newInvoice.InvoiceTotalDiscount / 100) ?? 0;
+                }
+                newInvoice.InvoiceTotalPrice = SumInvoiceTotalQtyPrice + newInvoice.AddedTax;
+
+           
+				if (newInvoice.InvoiceTotalPrice < 0)
                 {
                     resultViewModel.Status = false;
                     resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
@@ -302,6 +340,8 @@ namespace ERP_System.BLL.Guide
                                 oldDetail.SellingPrice = invoiceDetail.SellingPrice;
                                 oldDetail.TotalQtyPrice = invoiceDetail.TotalQtyPrice;
                                 oldDetail.SaleThrowbackId = newInvoice.ID;
+                                oldDetail.DiscountTypePProduct = invoiceDetail.DiscountTypePProduct;
+                                oldDetail.DiscountPProduct = invoiceDetail.DiscountPProduct;
 
                                 AllDetails.Add(oldDetail);
                                 //TotalPrice += oldDetail.TotalQtyPrice;
@@ -333,7 +373,9 @@ namespace ERP_System.BLL.Guide
                                     ID = Guid.NewGuid(),
                                     TotalQtyPrice = invoiceDetail.TotalQtyPrice,
                                     SaleThrowbackId = newInvoice.ID,
-                                    ProductName = product.Name
+                                    ProductName = product.Name,
+                                    DiscountPProduct = invoiceDetail.DiscountPProduct,
+                                    DiscountTypePProduct = invoiceDetail.DiscountTypePProduct
                                 };
                                 AllDetails.Add(newInvoiceDetail);
 
@@ -378,6 +420,7 @@ namespace ERP_System.BLL.Guide
             else
             {
                 var newInvoice = new SaleThrowback();
+                newInvoice.SaleInvoiceId = InvoiceDTO.SaleInvoiceId;
                 newInvoice.StockId = InvoiceDTO.StockId;
                 newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
                 newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
@@ -386,6 +429,35 @@ namespace ERP_System.BLL.Guide
                 newInvoice.Buyer = InvoiceDTO.Buyer;
                 newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
                 newInvoice.AddedBy = _repoSaleThrowback.UserId;
+                newInvoice.AddedTax = InvoiceDTO.AddedTax;
+                newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;
+                newInvoice.InvoiceTotalDiscountType = InvoiceDTO.InvoiceTotalDiscountType;
+                decimal? SumInvoiceTotalQtyPrice = 0;
+                if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
+                {
+                    foreach (var item in InvoiceDTO.InvoiceDetails)
+                    {
+                        if (item.DiscountTypePProduct == DisscountType.Percent)
+                        {
+                            SumInvoiceTotalQtyPrice += item.TotalQtyPrice - (item.TotalQtyPrice * item.DiscountPProduct / 100) ?? 0;
+                        }
+                        else
+                        {
+                            SumInvoiceTotalQtyPrice += item.TotalQtyPrice - item.DiscountPProduct;
+                        }
+                    }
+
+                }
+                if (newInvoice.InvoiceTotalDiscountType == DisscountType.Value)
+                {
+                    SumInvoiceTotalQtyPrice = SumInvoiceTotalQtyPrice - newInvoice.InvoiceTotalDiscount ?? 0;
+                }
+                else
+                {
+                    SumInvoiceTotalQtyPrice = SumInvoiceTotalQtyPrice - (SumInvoiceTotalQtyPrice * newInvoice.InvoiceTotalDiscount / 100) ?? 0;
+                }
+                newInvoice.InvoiceTotalPrice = SumInvoiceTotalQtyPrice + newInvoice.AddedTax;
+
 
                 if (newInvoice.InvoiceTotalPrice < 0)
                 {
@@ -393,7 +465,13 @@ namespace ERP_System.BLL.Guide
                     resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
                     return resultViewModel;
                 }
-                decimal? TotalPrice = 0;
+				if (newInvoice.SaleInvoiceId == null || newInvoice.SaleInvoiceId ==Guid.Empty)
+				{
+					resultViewModel.Status = false;
+					resultViewModel.Message = "يجب تحديد الفاتورة المراد عمل ارجاع لمنتجاتها";
+					return resultViewModel;
+				}
+				decimal? TotalPrice = 0;
                 newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
                 {
@@ -441,6 +519,8 @@ namespace ERP_System.BLL.Guide
                                     IsActive = true,
                                     UnitId = invoiceDetail.UnitId,
                                     ConversionFactor = invoiceDetail.ConversionFactor,
+                                    DiscountPProduct = invoiceDetail.DiscountPProduct,
+                                    DiscountTypePProduct = invoiceDetail.DiscountTypePProduct,
                                     ProductBarCode = invoiceDetail.ProductBarCode,
                                     ProductId = invoiceDetail.ProductId,
                                     ItemUnitPrice = invoiceDetail.ItemUnitPrice,

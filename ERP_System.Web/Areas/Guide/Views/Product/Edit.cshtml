@@ -62,7 +62,8 @@
 
                                     <div class="form-group col-6">
                                         <label class="lable" for="IdUnitOfQty">وحدة الكمية</label>
-                                        <select class="Select sAddress form-select" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text",Model.IdUnitOfQty)' name="IdUnitOfQty" id="ddlIdUnitOfQty">
+                                        <input hidden id="txtIdUnitOfQty" value="@Model.IdUnitOfQty">
+                                        <select class="Select sAddress form-select" onchange="handleSelectIdUnitOfQty()" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text",Model.IdUnitOfQty)' name="IdUnitOfQty" id="ddlIdUnitOfQty">
                                             <option selected value="0">اختر الوحدة</option>
                                         </select>
                                     </div>
@@ -109,7 +110,7 @@
                                                                     <td>
 
                                                                         <input class="form-control ID" type="hidden" value="@unit.ID" />
-                                                                        <select class="Select sAddress form-select UnitId" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text",unit.UnitId)' name="UnitId" id="ddlUnitId">
+                                                                        <select class="Select sAddress form-select UnitId" onchange="handleSelectProductUnit(this)" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text",unit.UnitId)' name="UnitId" id="ddlUnitId">
                                                                             <option selected value="0">اختر الوحدة</option>
                                                                         </select>
                                                                     </td>
@@ -134,7 +135,7 @@
                                                                 <td>
 
                                                                     <input class="form-control ID" type="hidden" value="0" />
-                                                                    <select class="Select sAddress form-select UnitId" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text")' name="UnitId" id="ddlUnitId">
+                                                                    <select class="Select sAddress form-select UnitId" onchange="handleSelectProductUnit(this)" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text")' name="UnitId" id="ddlUnitId">
                                                                         <option selected value="0">اختر الوحدة</option>
                                                                     </select>
                                                                 </td>
@@ -146,6 +147,7 @@
                                                                     <div class="d-flex">
                                                                         <button type="button" class="btn btn-primary btn-icon addRow mx-2"><i class="fas fa-plus"></i></button>
                                                                         <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                                        <a target="_blank" class="btn btn-outline-secondary mx-1" href="#"><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
                                                                     </div>
                                                                 </td>
 
@@ -202,7 +204,12 @@
     <partial name="_Scripts" />
     <script>
         $(document).ready(function () {
+            reservedUnits = [];
+            $.each($("#UnitsTbl .UnitId"), function () {
+                reservedUnits.push($(this).val())
+            })
 
+            $('#ddlUnitId').trigger('change');
             var expireDate = $('#ExpireDateStr').val();
             if(expireDate){
                 $('#ExpireDate').val(expireDate).trigger('change');

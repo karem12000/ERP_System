@@ -11,11 +11,12 @@ namespace ERP_System.Web.Areas.Guide.Controllers
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly SaleThrowbackBll _invoiceBll;
+        private readonly SaleInvoiceBll _saleInvoiceBll;
         private readonly StockBll _stockBll;
         private readonly UserBll _userBll;
         private readonly UnitBll _unitBll;
         private readonly ProductBll _productBll;
-        public SaleThrowbackController(IHttpContextAccessor httpContextAccessor, UserBll userBll, ProductBll productBll, StockBll stockBll , UnitBll unitBll , SaleThrowbackBll invoiceBll)
+        public SaleThrowbackController(IHttpContextAccessor httpContextAccessor, SaleInvoiceBll saleInvoiceBll, UserBll userBll, ProductBll productBll, StockBll stockBll , UnitBll unitBll , SaleThrowbackBll invoiceBll)
         {
             _httpContextAccessor= httpContextAccessor;
             _stockBll= stockBll;
@@ -23,6 +24,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             _invoiceBll= invoiceBll;
             _productBll = productBll;
             _userBll= userBll;
+            _saleInvoiceBll= saleInvoiceBll;
         }
         public IActionResult Index(bool previous=false)
         {
@@ -61,6 +63,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
         public IActionResult Save(SaleThrowbackDTO mdl) => Ok(_invoiceBll.Save(mdl));
         public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
+        public IActionResult GetSaleInvoiceDetail(int? invoiceNumber) => Ok(_saleInvoiceBll.GetByInvoiceNumber(invoiceNumber));
         public IActionResult GetLastInvoiceNumberByDate(DateTime? date) => Ok(_invoiceBll.GetLastInvoiceNumberByDate(date));
         public IActionResult GetProductByName(string text) => Ok(_productBll.GetByProductName(text));
         public IActionResult GetProductDataByUnitId(Guid? productId, Guid? unitId) => Ok(_productBll.GetProductDataByUnitId(productId, unitId));

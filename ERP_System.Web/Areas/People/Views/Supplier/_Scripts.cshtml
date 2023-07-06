@@ -170,10 +170,10 @@
                     bSortable: true,
                     render: function (data, type, row) {
                         if(data.ProcessType == 1){
-                            return '<label class="ProcessType">مدين (له فلوس)</label>  <input hidden name="ProcessType" class="ProcessType" value="' + data.ProcessType + '" />'
+                            return '<label class="ProcessType">مدين (له )</label>  <input hidden name="ProcessType" class="ProcessType" value="' + data.ProcessType + '" />'
                         }
                         else if(data.ProcessType == 2){
-                        return '<label class="ProcessType">دائن (عليه فلوس)</label>  <input hidden name="ProcessType" class="ProcessType" value="' + data.ProcessType + '" />'
+                        return '<label class="ProcessType">دائن (عليه )</label>  <input hidden name="ProcessType" class="ProcessType" value="' + data.ProcessType + '" />'
 
                         }else{
                         return '<label class="ProcessType">غير معرف</label>  <input hidden name="ProcessType" class="ProcessType" value="' + null + '" />'

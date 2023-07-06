@@ -4,14 +4,16 @@ using ERP_System.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERP_System.DAL.Migrations
 {
     [DbContext(typeof(ERP_SystemDbContext))]
-    partial class ERP_SystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230706101718_updateSaleInvoice")]
+    partial class updateSaleInvoice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -843,9 +845,6 @@ namespace ERP_System.DAL.Migrations
                     b.Property<Guid?>("AddedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("AddedTax")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Buyer")
                         .HasColumnType("nvarchar(max)");
 
@@ -993,9 +992,6 @@ namespace ERP_System.DAL.Migrations
                     b.Property<Guid?>("AddedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("AddedTax")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Buyer")
                         .HasColumnType("nvarchar(max)");
 
@@ -1034,9 +1030,6 @@ namespace ERP_System.DAL.Migrations
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("SaleInvoiceId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("StockId")
                         .HasColumnType("uniqueidentifier");

@@ -46,6 +46,12 @@
                                             <input type="text" class="form-control" value="@Model.Buyer" name="Buyer" id="Buyer">
                                         </div>
                                     </div>
+                                    <div class="col-2">
+                                        <div class="form-group">
+                                            <label for="SaleInvoiceId">رقم فاتورة المبيعات<span style="color:red;"> * </span></label>
+                                            <input type="text" value="@Model.SaleInvoiceId" onkeypress="handleGetSaleInvoice(event)" id="SaleInvoiceId" name="SaleInvoiceId" class="form-control" placeholder="رقم فاتورة المبيعات">
+                                        </div>
+                                    </div>
                                    @* <div class="col-1">
                                         <div class="form-group">
                                             <a type="button" href="/Guide/SaleThrowback/Index?previous=true" class="btn btn-primary">إلغاء العملية</a>
@@ -174,6 +180,12 @@
                                                         <td colspan="3"><input type="number" value="@Model.TotalPaid" class="form-control TotalPaid" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                     </tr>
                                                     <tr>
+                                                        <td class="col-4 d-flex gap-2 align-items-center">
+                                                            <h5 class="mb-0"> ضريبة القيمة المضافة</h5>
+                                                            <input type="number" step="0.01" class="form-control AddedTax w-75" value="@Model.AddedTax" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
                                                         <td colspan="5"><h5>الإجمالي</h5></td>
                                                         <td colspan="3"><input disabled type="number" value="@Model.InvoiceTotalPrice" class="form-control InvoiceTotalPrice" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                     </tr>
@@ -194,11 +206,11 @@
                                         <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('edit')">
                                             حفظ
                                         </button>
-                                        <div class="col-1">
+                                       @* <div class="col-1">
                                             <div class="form-group">
                                                 <button type="button" onclick="FinishShift();" class="btn btn-danger" name="btnFinishShift" id="btnFinishShift">إنهاء الخدمة</button>
                                             </div>
-                                        </div>
+                                        </div>*@
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
                                             <div class="d-flex align-items-center justify-content-end ps-2">

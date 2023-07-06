@@ -12,14 +12,17 @@ namespace ERP_System.Tables
     public class SaleThrowback : BaseEntity
     {
         public Guid? StockId { get; set; }
-        public string? StockName { get; set; }
+        public Guid? SaleInvoiceId { get; set; }
+		public decimal? AddedTax { get; set; }
+		public string? StockName { get; set; }
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
         public string? Buyer { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
         public decimal? TotalPaid { get; set; }
-
-        public ICollection<SaleThrowbackDetail> SaleInvoiceDetails { get; set; }
+		public decimal? InvoiceTotalDiscount { get; set; }
+		public DisscountType? InvoiceTotalDiscountType { get; set; }
+		public ICollection<SaleThrowbackDetail> SaleInvoiceDetails { get; set; }
 
 
     }
@@ -35,9 +38,10 @@ namespace ERP_System.Tables
         public decimal? Qty { get; set; }
         public decimal? SellingPrice { get; set; }
         public decimal? TotalQtyPrice { get; set; }
+		public decimal? DiscountPProduct { get; set; }
+		public DisscountType? DiscountTypePProduct { get; set; }
 
-
-        [ForeignKey(nameof(SaleThrowback))]
+		[ForeignKey(nameof(SaleThrowback))]
         public Guid? SaleThrowbackId { get; set; }
         public virtual SaleThrowback SaleThrowback { get; set; }
 

@@ -383,7 +383,7 @@ namespace ERP_System.BLL
                 }
                 tbl.Name = user.Name.Trim();
                 tbl.UserName = user.UserName.Trim();
-                tbl.Email = user.Email.Trim();
+                tbl.Email = user.Email;
                 tbl.UserTypeId = user.UserTypeId;
                 tbl.ScreenId = user.ScreenId;
                 tbl.Phone = user.Phone;
