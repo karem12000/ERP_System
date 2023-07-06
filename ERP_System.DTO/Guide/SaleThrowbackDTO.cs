@@ -22,6 +22,7 @@ namespace ERP_System.DTO.Guide
         public decimal? TotalPaid { get; set; }
 		public decimal? InvoiceTotalDiscount { get; set; }
 		public DisscountType? InvoiceTotalDiscountType { get; set; }
+		public int? InvoiceTotalDiscountTypeInt { get; set; }
 		public bool IsActive { get; set; }
         public string? InvoiceProductsStr { get; set; }
         public SaleThrowbackProductsDTO[] InvoiceDetails => JsonConvert.DeserializeObject<SaleThrowbackProductsDTO[]>(InvoiceProductsStr);
@@ -42,6 +43,7 @@ namespace ERP_System.DTO.Guide
         public decimal? SellingPrice { get; set; }
 		public decimal? DiscountPProduct { get; set; }
 		public DisscountType? DiscountTypePProduct { get; set; }
+		public int? DiscountTypePProductInt { get; set; }
 		public decimal? TotalQtyPrice =>Math.Round( Qty.Value  * ItemUnitPrice.Value ,2);
         public List<ProductUnitsDTO> GetProductUnits { get; set; }
 

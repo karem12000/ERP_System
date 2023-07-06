@@ -60,6 +60,11 @@ namespace ERP_System.BLL.Guide
                 IsActive = x.IsActive,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 TotalPaid = x.TotalPaid,
+                InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
+                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+                AddedTax = x.AddedTax,
+                SaleInvoiceId = x.SaleInvoiceId,
+                InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
                 GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                 {
                     ID = c.ID,
@@ -71,6 +76,9 @@ namespace ERP_System.BLL.Guide
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
                     SellingPrice = c.SellingPrice,
+                    DiscountPProduct = c.DiscountPProduct,
+                    DiscountTypePProduct = c.DiscountTypePProduct,
+                    DiscountTypePProductInt = (int)c.DiscountTypePProduct,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
                 }).ToList(),
 
@@ -89,7 +97,11 @@ namespace ERP_System.BLL.Guide
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
                 TotalPaid = x.TotalPaid,
-
+                InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
+                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+                AddedTax = x.AddedTax,
+                SaleInvoiceId = x.SaleInvoiceId,
+                InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                 {
@@ -102,6 +114,9 @@ namespace ERP_System.BLL.Guide
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
                     SellingPrice = c.SellingPrice,
+                    DiscountPProduct = c.DiscountPProduct,
+                    DiscountTypePProduct = c.DiscountTypePProduct,
+                    DiscountTypePProductInt = (int)c.DiscountTypePProduct,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
                 }).ToList(),
@@ -124,7 +139,11 @@ namespace ERP_System.BLL.Guide
                     Buyer = x.Buyer,
                     IsActive = x.IsActive,
                     TotalPaid = x.TotalPaid,
-
+                    InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
+                    InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+                    AddedTax = x.AddedTax,
+                    SaleInvoiceId = x.SaleInvoiceId,
+                    InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
                     InvoiceTotalPrice = x.InvoiceTotalPrice,
                     GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                     {
@@ -137,6 +156,9 @@ namespace ERP_System.BLL.Guide
                         ItemUnitPrice = c.ItemUnitPrice,
                         ProductBarCode = c.ProductBarCode,
                         SellingPrice = c.SellingPrice,
+                        DiscountPProduct = c.DiscountPProduct,
+                        DiscountTypePProduct = c.DiscountTypePProduct,
+                        DiscountTypePProductInt = (int)c.DiscountTypePProduct,
                         GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
                     }).ToList(),
@@ -159,8 +181,13 @@ namespace ERP_System.BLL.Guide
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
                 TotalPaid = x.TotalPaid,
-
+                InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
+                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+                AddedTax = x.AddedTax,
+                SaleInvoiceId = x.SaleInvoiceId,
+                InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
+
                 GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                 {
                     ID = c.ID,
@@ -172,6 +199,9 @@ namespace ERP_System.BLL.Guide
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
                     SellingPrice = c.SellingPrice,
+                    DiscountPProduct = c.DiscountPProduct,
+                    DiscountTypePProduct = c.DiscountTypePProduct,
+                    DiscountTypePProductInt = (int)c.DiscountTypePProduct,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
                 }).ToList(),
@@ -192,7 +222,11 @@ namespace ERP_System.BLL.Guide
                 Buyer = x.Buyer,
                 IsActive = x.IsActive,
                 TotalPaid = x.TotalPaid,
-
+                InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
+                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+                AddedTax = x.AddedTax,
+                SaleInvoiceId = x.SaleInvoiceId,
+                InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.SaleInvoiceDetails.Select(c => new SaleThrowbackProductsDTO
                 {
@@ -205,6 +239,9 @@ namespace ERP_System.BLL.Guide
                     ItemUnitPrice = c.ItemUnitPrice,
                     ProductBarCode = c.ProductBarCode,
                     SellingPrice = c.SellingPrice,
+                    DiscountPProduct = c.DiscountPProduct,
+                    DiscountTypePProduct = c.DiscountTypePProduct,
+                    DiscountTypePProductInt = (int)c.DiscountTypePProduct,
                     GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
 
                 }).ToList(),
@@ -241,13 +278,13 @@ namespace ERP_System.BLL.Guide
                 newInvoice.AddedTax = data.AddedTax;
                 newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;
                 newInvoice.InvoiceTotalDiscountType = InvoiceDTO.InvoiceTotalDiscountType;
-                
+
                 //newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
                 newInvoice.AddedBy = data.AddedBy;
                 newInvoice.ModifiedDate = AppDateTime.Now;
                 newInvoice.ModifiedBy = _repoSaleThrowback.UserId;
                 newInvoice.CreatedDate = data.CreatedDate;
-				newInvoice.SaleInvoiceId = InvoiceDTO.SaleInvoiceId;
+                newInvoice.SaleInvoiceId = InvoiceDTO.SaleInvoiceId;
 
                 var oldInvoiceDetails = data.SaleInvoiceDetails;
 
@@ -283,8 +320,8 @@ namespace ERP_System.BLL.Guide
                 }
                 newInvoice.InvoiceTotalPrice = SumInvoiceTotalQtyPrice + newInvoice.AddedTax;
 
-           
-				if (newInvoice.InvoiceTotalPrice < 0)
+
+                if (newInvoice.InvoiceTotalPrice < 0)
                 {
                     resultViewModel.Status = false;
                     resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
@@ -394,7 +431,7 @@ namespace ERP_System.BLL.Guide
                     }
                     var deleteInvoiceDetaails = _repoSaleThrowbackDetail.DeleteRange(oldInvoiceDetails);
                     var saveInvoiceDetaails = _repoSaleThrowbackDetail.InsertRange(AllDetails);
-                   
+
                     if (deleteInvoiceDetaails && saveInvoiceDetaails)
                     {
                         foreach (var item in AllInvoiceProducts)
@@ -465,13 +502,13 @@ namespace ERP_System.BLL.Guide
                     resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
                     return resultViewModel;
                 }
-				if (newInvoice.SaleInvoiceId == null || newInvoice.SaleInvoiceId ==Guid.Empty)
-				{
-					resultViewModel.Status = false;
-					resultViewModel.Message = "يجب تحديد الفاتورة المراد عمل ارجاع لمنتجاتها";
-					return resultViewModel;
-				}
-				decimal? TotalPrice = 0;
+                if (newInvoice.SaleInvoiceId == null || newInvoice.SaleInvoiceId == Guid.Empty)
+                {
+                    resultViewModel.Status = false;
+                    resultViewModel.Message = "يجب تحديد الفاتورة المراد عمل ارجاع لمنتجاتها";
+                    return resultViewModel;
+                }
+                decimal? TotalPrice = 0;
                 newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
                 if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
                 {
@@ -482,7 +519,7 @@ namespace ERP_System.BLL.Guide
                         foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
                         {
                             var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-                            var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId && x.StockId==InvoiceDTO.StockId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
+                            var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId && x.StockId == InvoiceDTO.StockId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
                             if (product != null)
                             {
                                 var existProduct = AllInvoiceProducts.Where(x => x.BarCodeText == product.BarCodeText).FirstOrDefault();
