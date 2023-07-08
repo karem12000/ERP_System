@@ -41,10 +41,12 @@ namespace ERP_System.DTO.Guide
         public string? ProductName { get; set; }
         public decimal? DiscountPProduct { get; set; }
 		public DisscountType? DiscountTypePProduct { get; set; }
-		public int? DiscountTypePProductInt { get; set; }
+        public decimal? TotalQtyPriceAfterDisscount { get; set; }
+        public int? DiscountTypePProductInt { get; set; }
 		public string? Buyer { get; set; }
         public Guid? UnitId { get; set; }
-        public decimal? ConversionFactor { get; set; }
+		public string? UnitName { get; set; }
+		public decimal? ConversionFactor { get; set; }
         public decimal? ItemUnitPrice { get; set; }
         public decimal? Qty { get; set; }
         public decimal? SellingPrice { get; set; }

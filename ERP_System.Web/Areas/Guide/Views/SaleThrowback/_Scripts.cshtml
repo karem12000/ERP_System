@@ -18,20 +18,44 @@
 		Save(type);
 
 	}
-	function handleGetSaleInvoice(event) {
-		var invoiceNumber = $('#SaleInvoiceNo').val();
-		if (invoiceNumber==''){
+	function handleGetSaleInvoice() {
+		var invoiceNumber = $('#SaleInvoiceNo');
+		var invoiceDate = $('#SInvoiceDate');
+		var saleInvoiceId = $('#SaleInvoiceId');
+		var $preloader = $('#loader');
+		if (invoiceNumber.val()==''){
 			$('#SaleInvoiceId').val('0');
-		}
-		if (event.keyCode === 13) {
-			$.get('@Url.GetAction("GetSaleInvoiceDetail")', { invoiceNumber: invoiceNumber }, function (res) {
+			$('#SaleInvoiceNo').focus();
+			Swal.fire({
+				title: 'من فضلك أدخل رقم فاتورة المبيعات',
+				timer: 2000,
+				timerProgressBar: true,
+				icon: 'warning',
+				showConfirmButton: false
+			});
+		}else{
+		$preloader.fadeIn('slow');
+			$.get('@Url.GetAction("GetSaleInvoiceDetail")', { invoiceNumber: invoiceNumber.val(),invoiceDate : invoiceDate.val() }, function (res) {
+				$preloader.fadeOut('slow');
 				if (res.Status) {
-					$('#SaleInvoiceId').val(res.Data.ID);
-					FillInvoice(res.Data);
+					if(res.Data){
+						saleInvoiceId.val(res.Data.ID);
+						invoiceNumber.val(res.Data.InvoiceNumber);
+						invoiceDate.val(res.Data.InvoiceDateStr);
+						FillInvoice(res.Data);
+					}else{
+						Swal.fire({
+							title: 'لا توجد فاتورة بهذا الرقم والتاريخ',
+							timer: 2000,
+							timerProgressBar: true,
+							icon: 'warning',
+							showConfirmButton: false
+						});
+					}
 				} else {
 					Swal.fire({
 						title: `${res.Message}`,
-						timer: 1500,
+						timer: 2000,
 						timerProgressBar: true,
 						icon: 'warning',
 						showConfirmButton: false
@@ -44,35 +68,48 @@
 		var invoiceProducts = obj.GetInvoiceDetails;
 		var stockId = $('#ddlStockId');
 		var Buyer = $('#Buyer');
-		var SaleInvoiceId = $('#SaleInvoiceId');
+		//var SaleInvoiceId = $('#SaleInvoiceId');
 		var InvoiceTotalPrice = $('.InvoiceTotalPrice');
 		var InvoiceTotalDiscount = $('.InvoiceTotalDiscount');
+		var ddlInvoiceTotalDiscountType = $('.sInvoiceDescount');
 		var TotalPaid = $('.TotalPaid');
 		var productsTable = $('#InvoiceProductsBody');
+
 		stockId.val(obj.StockId);
-		stockId.attr("disabled" , "disabled");
-		Buyer.attr("disabled", "disabled");
 		Buyer.val(obj.Buyer);
-		SaleInvoiceId.val(obj.ID);
 		InvoiceTotalPrice.val(obj.InvoiceTotalPrice);
 		InvoiceTotalDiscount.val(obj.InvoiceTotalDiscount);
 		TotalPaid.val(obj.TotalPaid);
+		ddlInvoiceTotalDiscountType.empty();
+		if(obj.InvoiceTotalDiscountTypeInt===0){
+		ddlInvoiceTotalDiscountType.append('<option selected="" value="0"> % </option>');
+		}else{
+		ddlInvoiceTotalDiscountType.append('<option selected="" value="1"> قيمة </option>');
+		}
+
+
+		stockId.attr("disabled" , "disabled");
+		$('#InvoiceDate').attr("disabled" , "disabled");
+		$('#ddlInvoiceTotalDiscountType').attr("disabled" , "disabled");
+		InvoiceTotalPrice.attr("disabled" , "disabled");
+		InvoiceTotalDiscount.attr("disabled" , "disabled");
+		Buyer.attr("disabled", "disabled");
+		//SaleInvoiceId.val(obj.ID);
 		if (invoiceProducts != null && invoiceProducts.length > 0) {
 			productsTable.empty();
 			invoiceProducts.forEach(function (item) {
-				console.log(item);
 				InvoiceProductsAddNew({
-					"id": item.ID, "ProductId": item.ProductId,
+					"id": "0", "ProductId": item.ProductId,
 					"ProductBarCode": item.ProductBarCode, "ProductName": item.ProductName
-					, "UnitId": item.UnitId, "ConversionFactor": item.ConversionFactor, "ItemUnitPrice": item.ItemUnitPrice, "Units": item.GetProductUnits, "Qty": item.Qty, "SellingPrice": item.SellingPrice, "TotalQtyPrice": item.TotalQtyPrice
-				});
+					, "UnitId": item.UnitId, "ConversionFactor": item.ConversionFactor, "SaleDetailId": item.ID, "DiscountPProduct": item.DiscountPProduct, "DiscountTypePProduct": item.DiscountTypePProductInt, "ItemUnitPrice": item.ItemUnitPrice, "UnitName": item.UnitName, "Qty": item.Qty, "SellingPrice": item.SellingPrice, "TotalQtyPrice": item.TotalQtyPriceAfterDisscount
+				},false);
 			})
 		} else {
 			InvoiceProductsAddNew({
 				"id": "0", "ProductId": "0",
 				"ProductBarCode": "", "ProductName": ""
-				, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
-			});
+				, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "SaleDetailId": "0", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+			},true);
 		}
 	}
 	function GetLastInvoiceNumberByDate(date) {
@@ -131,16 +168,25 @@
 		$('#Name').val('');
 		$('#id').val('');
 		$('#ddlInvoiceType').val('0');
+		$('.InvoiceTotalDiscount').val('0');
 		$('#ddlStockId').val(stockId).trigger('change');
 		$('#ddlStockId').removeAttr("disabled");
+		$('#InvoiceDate').removeAttr("disabled");
+		$('.InvoiceTotalDiscount').removeAttr("disabled");
+		$('#ddlInvoiceTotalDiscountType').removeAttr("disabled");
+		$('#ddlInvoiceTotalDiscountType').empty();
+		$('#ddlInvoiceTotalDiscountType').append(`
+		<option selected="" value="0"> % </option>
+		<option value="1">قيمة</option>
+		`);
 		$('#Buyer').removeAttr("disabled");
 		$('#Buyer').val('');
 		$('#InvoiceProductsBody').empty();
 		InvoiceProductsAddNew({
 			"id": "0", "ProductId": "0",
 			"ProductBarCode": "", "ProductName": ""
-			, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
-		});
+			, "UnitId": "0", "ConversionFactor": "", "SaleDetailId": "0", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+		},true);
 		var invoiceDate = $('#InvoiceDate').val();
 		GetLastInvoiceNumberByDate(invoiceDate);
 		$("#ProductsCount").text('0');
@@ -213,62 +259,107 @@
 
 		if (event.keyCode === 13) {
 			var name = value.value;
-			let tBody = $(value).parent().parent();
-			let ID = tBody.find(".ID");
-			let ProductId = tBody.find(".ProductId");
-			let ProductBarCode = tBody.find(".ProductBarCode");
-			let ProductName = tBody.find(".ProductName");
-			let UnitId = tBody.find(".UnitId");
-			let ConversionFactor = tBody.find(".ConversionFactor");
-			let ItemUnitPrice = tBody.find(".ItemUnitPrice");
-			let Qty = tBody.find(".Qty");
-			let SellingPrice = tBody.find(".SellingPrice");
-			let TotalQtyPrice = tBody.find(".TotalQtyPrice");
-			//let barCodeBtn = tBody.find(".barCodeBtn");
-			let InvoiceTotalPrice = tBody.find(".InvoiceTotalPrice");
-
-			$.get('@Url.GetAction("GetProductByName")', { text: name }, function (res) {
-				if (res.Status) {
-					let data = res.Data;
-					if (ProductId.val() !== 0) {
-						InvoiceProductsAddNew({
-							"id": "0", "ProductId": "0",
-							"ProductBarCode": "", "ProductName": ""
-							, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+			if(name !=='' && name !==null){
+				let tBody = $(value).parent().parent();
+				let ID = tBody.find(".ID");
+				let ProductId = tBody.find(".ProductId");
+				let ProductBarCode = tBody.find(".ProductBarCode");
+				let ProductName = tBody.find(".ProductName");
+				let UnitId = tBody.find(".UnitId");
+				let ConversionFactor = tBody.find(".ConversionFactor");
+				let ItemUnitPrice = tBody.find(".ItemUnitPrice");
+				let Qty = tBody.find(".Qty");
+				let SellingPrice = tBody.find(".SellingPrice");
+				let TotalQtyPrice = tBody.find(".TotalQtyPrice");
+				//let barCodeBtn = tBody.find(".barCodeBtn");
+				let InvoiceTotalPrice = tBody.find(".InvoiceTotalPrice");
+				$.get('@Url.GetAction("GetProductByBarCodeAndInvoiceId")', { text: name, saleInvoiceId: saleInvoiceId }, function (res) {
+					if (res.Status) {
+						let data = res.Data;
+						if (ProductId.val() !== 0) {
+							InvoiceProductsAddNew({
+								"id": "0", "ProductId": "0",
+								"ProductBarCode": "", "ProductName": ""
+								, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SaleDetailId": "0", "SellingPrice": "", "TotalQtyPrice": ""
+							}, true);
+						}
+						ProductId.val(data.ID);
+						ProductBarCode.val(data.BarCodeText);
+						ProductName.val(data.Name);
+						UnitId.empty();
+						ID.val('@Guid.NewGuid()');
+						data.GetProductUnits.forEach(function (item) {
+							if (item.UnitId === data.IdUnitOfQty) {
+								UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
+								ConversionFactor.val(item.ConversionFactor);
+								ItemUnitPrice.val(item.SellingPrice);
+								SellingPrice.val(item.SellingPrice);
+							}
+							else {
+								UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+							}
+						});
+						Qty.val('1');
+						let TQP = 1 * SellingPrice.val();
+						TotalQtyPrice.val(TQP);
+						getInvoiceTotalPrice(ProductBarCode)
+						$(".ProductBarCode").get(-1).focus();
+						//barCodeBtn.attr("href", data.BarCodePath);
+					} else {
+						Swal.fire({
+							title: `${res.Message}`,
+							timer: 1500,
+							timerProgressBar: true,
+							icon: 'warning',
+							showConfirmButton: false
 						});
 					}
-					ProductId.val(data.ID);
-					ProductBarCode.val(data.BarCodeText);
-					ProductName.val(data.Name);
-					UnitId.empty();
-					ID.val('@Guid.NewGuid()');
-					data.GetProductUnits.forEach(function (item) {
-						if (item.UnitId === data.IdUnitOfQty) {
-							UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
-							ConversionFactor.val(item.ConversionFactor);
-							ItemUnitPrice.val(item.SellingPrice);
-							SellingPrice.val(item.SellingPrice);
-						}
-						else {
-							UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
-						}
-					});
-					Qty.val('1');
-					let TQP = 1 * SellingPrice.val();
-					TotalQtyPrice.val(TQP);
-					getInvoiceTotalPrice(ProductBarCode)
-					$(".ProductBarCode").get(-1).focus();
-					//barCodeBtn.attr("href", data.BarCodePath);
-				} else {
-					Swal.fire({
-						title: `${res.Message}`,
-						timer: 1500,
-						timerProgressBar: true,
-						icon: 'warning',
-						showConfirmButton: false
-					});
-				}
-			});
+				});
+
+				//$.get('@Url.GetAction("GetProductByName")', { text: name }, function (res) {
+				//	if (res.Status) {
+				//		let data = res.Data;
+				//		if (ProductId.val() !== 0) {
+				//			InvoiceProductsAddNew({
+				//				"id": "0", "ProductId": "0",
+				//				"ProductBarCode": "", "ProductName": ""
+				//				, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+				//			},true);
+				//		}
+				//		ProductId.val(data.ID);
+				//		ProductBarCode.val(data.BarCodeText);
+				//		ProductName.val(data.Name);
+				//		UnitId.empty();
+				//		ID.val('@Guid.NewGuid()');
+				//		data.GetProductUnits.forEach(function (item) {
+				//			if (item.UnitId === data.IdUnitOfQty) {
+				//				UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
+				//				ConversionFactor.val(item.ConversionFactor);
+				//				ItemUnitPrice.val(item.SellingPrice);
+				//				SellingPrice.val(item.SellingPrice);
+				//			}
+				//			else {
+				//				UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+				//			}
+				//		});
+				//		Qty.val('1');
+				//		let TQP = 1 * SellingPrice.val();
+				//		TotalQtyPrice.val(TQP);
+				//		getInvoiceTotalPrice(ProductBarCode)
+				//		$(".ProductBarCode").get(-1).focus();
+				//		//barCodeBtn.attr("href", data.BarCodePath);
+				//	} else {
+				//		Swal.fire({
+				//			title: `${res.Message}`,
+				//			timer: 1500,
+				//			timerProgressBar: true,
+				//			icon: 'warning',
+				//			showConfirmButton: false
+				//		});
+				//	}
+				//});
+			}
+			
 		}
 		getRowsNumber()
 	}
@@ -277,134 +368,274 @@
 
 		if (event.keyCode === 13) {
 			var barcode = value.value;
-			let tBody = $(value).parent().parent();
-			let ID = tBody.find(".ID");
-			let ProductId = tBody.find(".ProductId");
-			let ProductBarCode = tBody.find(".ProductBarCode");
-			let ProductName = tBody.find(".ProductName");
-			let UnitId = tBody.find(".UnitId");
-			let ConversionFactor = tBody.find(".ConversionFactor");
-			let ItemUnitPrice = tBody.find(".ItemUnitPrice");
-			let Qty = tBody.find(".Qty");
-			let SellingPrice = tBody.find(".SellingPrice");
-			let TotalQtyPrice = tBody.find(".TotalQtyPrice");
-			//let barCodeBtn = tBody.find(".barCodeBtn");
-			let InvoiceTotalPrice = tBody.find(".InvoiceTotalPrice");
+			var saleInvoiceId = $('#SaleInvoiceId').val();
+			
+				var saleInvoiceId = $('#SaleInvoiceId').val();
+				if(saleInvoiceId ==='' || saleInvoiceId=='0'|| saleInvoiceId==null){
+				Swal.fire({
+					title: 'من فضلك حدد الفاتورة المراد البحث في منتجاتها',
+					timer: 1500,
+					timerProgressBar: true,
+					icon: 'warning',
+					showConfirmButton: false
+				});
+				}else if(barcode !==''&& barcode!==null){
+				let tBody = $(value).parent().parent();
+				let ID = tBody.find(".ID");
+				let ProductId = tBody.find(".ProductId");
+				let ProductBarCode = tBody.find(".ProductBarCode");
+				let ProductName = tBody.find(".ProductName");
+				let UnitId = tBody.find(".UnitId");
+				let ConversionFactor = tBody.find(".ConversionFactor");
+				let ItemUnitPrice = tBody.find(".ItemUnitPrice");
+				let Qty = tBody.find(".Qty");
+				let SellingPrice = tBody.find(".SellingPrice");
+				let TotalQtyPrice = tBody.find(".TotalQtyPrice");
+				let DiscountPProduct = tBody.find(".DiscountPProduct");
+				let DiscountTypePProduct = tBody.find("#ddlDiscountTypePProduct");
+				let InvoiceTotalPrice = tBody.find(".InvoiceTotalPrice");
+				$.get('@Url.GetAction("GetProductByBarCodeAndInvoiceId")', { text: barcode, saleInvoiceId: saleInvoiceId }, function (res) {
+					if (res.Status) {
+						let data = res.Data;
+						console.log(data);
+						let productExist = false;
+						$.each($("#InvoiceProductsBody >tr"), function (key, value) {
+							let IdF = $(value).children("td").children(".ID").val().trim();
+							let ID = IdF == '0' ? null : IdF,
+								ProductId = $(value).children("td").children(".ProductId").val().trim(),
+								UnitId = $(value).children("td").children(".UnitId").val(),
+								Qty = $(value).children("td").children(".Qty").val().trim(),
+								ProductBarCode = $(value).children("td").children(".ProductBarCode").val().trim(),
+								ProductName = $(value).children("td").children(".ProductName").val().trim(),
+								DiscountPProduct = $(value).children("td").children(".DiscountPProduct").val().trim(),
+								DiscountTypePProduct = $(value).children("td").children(".sDescount").val(),
+								ItemUnitPrice = $(value).children("td").children(".ItemUnitPrice").val().trim(),
+								SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
+								TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
 
-			$.get('@Url.GetAction("GetProductByBarCode")', { text: barcode }, function (res) {
-				if (res.Status) {
-					console.log(ProductId.val());
-					if (ProductId.val() !== 0) {
-						InvoiceProductsAddNew({
-							"id": "0", "ProductId": "0",
-							"ProductBarCode": "", "ProductName": ""
-							, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+							if (ID == data.ID) {
+								productExist = true;
+							}
 						});
+						if(!productExist){
+							ProductId.val(data.ProductId);
+							ProductBarCode.val(data.ProductBarCode);
+							ProductBarCode.attr('disabled','disabled');
 
+							ProductName.val(data.ProductName);
+							ProductName.attr('disabled', 'disabled');
+							UnitId.empty();
+							UnitId.attr('disabled', 'disabled');
+							UnitId.append(`
+									<option selected value="${data.UnitId}">${data.UnitName}</option>
+							`)
+							ID.val(data.ID);
+							ConversionFactor.val(data.ConversionFactor);
+							ItemUnitPrice.val(data.ItemUnitPrice);
+							ItemUnitPrice.attr('disabled', 'disabled');
+							Qty.val(data.Qty);
+							SellingPrice.val(data.SellingPrice);
+							SellingPrice.attr('disabled', 'disabled');
+							DiscountPProduct.val(data.DiscountPProduct);
+							DiscountPProduct.attr('disabled', 'disabled');
+							DiscountTypePProduct.empty();
+							DiscountTypePProduct.attr('disabled', 'disabled');
+							if (data.DiscountTypePProduct == '0') {
+								DiscountTypePProduct.append(`<option selected value="${data.DiscountTypePProduct}">%</option>`)
+							} else {
+								DiscountTypePProduct.append(`<option selected value="${data.DiscountTypePProduct}">قيمة</option>`)
+							}
+							TotalQtyPrice.val(data.TotalQtyPrice);
+							TotalQtyPrice.attr('disabled', 'disabled');
+							getInvoiceTotalPrice(ProductBarCode)
+							$(".ProductBarCode").get(-1).focus();
+						}else{
+							Swal.fire({
+								title: 'هذا المنتج موجود بالفعل',
+								timer: 1500,
+								timerProgressBar: true,
+								icon: 'warning',
+								showConfirmButton: false
+							});
+						}
+						
+						//barCodeBtn.attr("href", data.BarCodePath);
+					} else {
+						Swal.fire({
+							title: `${res.Message}`,
+							timer: 1500,
+							timerProgressBar: true,
+							icon: 'warning',
+							showConfirmButton: false
+						});
 					}
-					let data = res.Data;
-					ProductId.val(data.ID);
-					ProductBarCode.val(data.BarCodeText);
-					ProductName.val(data.Name);
-					UnitId.empty();
-					ID.val('@Guid.NewGuid()');
-					data.GetProductUnits.forEach(function (item) {
-						if (item.UnitId === data.IdUnitOfQty) {
-							UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
-							ConversionFactor.val(item.ConversionFactor);
-							ItemUnitPrice.val(item.SellingPrice);
-							SellingPrice.val(item.SellingPrice);
-						}
-						else {
-							UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
-						}
-					});
-					Qty.val('1');
-					let TQP = 1 * SellingPrice.val();
-					TotalQtyPrice.val(TQP);
-					getInvoiceTotalPrice(ProductBarCode)
-					$(".ProductBarCode").get(-1).focus();
-					//barCodeBtn.attr("href", data.BarCodePath);
-				} else {
-					Swal.fire({
-						title: `${res.Message}`,
-						timer: 1500,
-						timerProgressBar: true,
-						icon: 'warning',
-						showConfirmButton: false
-					});
-				}
-			});
+				});
+
+				//$.get('@Url.GetAction("GetProductByBarCode")', { text: barcode, saleInvoiceId: saleInvoiceId }, function (res) {
+				//	if (res.Status) {
+				//		console.log(ProductId.val());
+				//		if (ProductId.val() !== 0) {
+				//			InvoiceProductsAddNew({
+				//				"id": "0", "ProductId": "0",
+				//				"ProductBarCode": "", "ProductName": ""
+				//				, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+				//			},true);
+
+				//		}
+				//		let data = res.Data;
+				//		ProductId.val(data.ID);
+				//		ProductBarCode.val(data.BarCodeText);
+				//		ProductName.val(data.Name);
+				//		UnitId.empty();
+				//		ID.val('@Guid.NewGuid()');
+				//		data.GetProductUnits.forEach(function (item) {
+				//			if (item.UnitId === data.IdUnitOfQty) {
+				//				UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
+				//				ConversionFactor.val(item.ConversionFactor);
+				//				ItemUnitPrice.val(item.SellingPrice);
+				//				SellingPrice.val(item.SellingPrice);
+				//			}
+				//			else {
+				//				UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+				//			}
+				//		});
+				//		Qty.val('1');
+				//		let TQP = 1 * SellingPrice.val();
+				//		TotalQtyPrice.val(TQP);
+				//		getInvoiceTotalPrice(ProductBarCode)
+				//		$(".ProductBarCode").get(-1).focus();
+				//		//barCodeBtn.attr("href", data.BarCodePath);
+				//	} else {
+				//		Swal.fire({
+				//			title: `${res.Message}`,
+				//			timer: 1500,
+				//			timerProgressBar: true,
+				//			icon: 'warning',
+				//			showConfirmButton: false
+				//		});
+				//	}
+				//});
+			}
+			
 		}
 		getRowsNumber()
 	}
 
 	function getInvoiceTotalPrice(value) {
 		var TPrice = 0;
-		let tRow = $(value).parent().parent();
-		let SellingPrice = tRow.find(".SellingPrice").val().trim();
-		let ConversionFactor = tRow.find(".ConversionFactor").val().trim();
-		let Qty = tRow.find(".Qty").val().trim();
-		let TotalQtyPrice = tRow.find(".TotalQtyPrice");
+		var TDiscount = 0;
+		if ($(value).parent().hasClass("w-75")) {
+			let mainDev = $(value).parent();
+			let SelectedDiscount = mainDev.find(".Select.sDescount").find(":selected").val();
+			let DescountPrice = + mainDev.find(".InvoiceTotalDiscount").val().trim();
+			let InvoiceTotalPrice = mainDev.parent().parent().find(".InvoiceTotalPrice");
+			$.each($("#InvoiceProductsBody >tr"), function (key, value) {
+				let IdF = + $(value).children("td").children(".ID").val().trim();
+				ConversionFactor = + $(value).children("td").children(".ConversionFactor").val().trim(),
+					Qty = + $(value).children("td").children(".Qty").val().trim(),
+					SellingPrice = + $(value).children("td").children(".SellingPrice").val().trim(),
+					priceAfterDescount = + $(value).children('td').children(".TotalQtyPrice").val(),
+					//TPrice += Qty * SellingPrice;
+					TPrice += priceAfterDescount;
+				InvoiceTotalPrice.val(TPrice);
 
-		let CurrentRowPrice = Qty * SellingPrice;
+			});
 
-		let InvoiceTotalPrice = tRow.parent().parent().find(".InvoiceTotalPrice");
+			let InvoiceTotalPriceValue = mainDev.parent().parent().find(".InvoiceTotalPrice").val();
+			if (SelectedDiscount == 0 && DescountPrice != 0) {
+				InvoiceTotalPriceValue = InvoiceTotalPriceValue - ((DescountPrice / 100) * InvoiceTotalPriceValue);
+			}
+			if (SelectedDiscount == 1) {
+				InvoiceTotalPriceValue = InvoiceTotalPriceValue - DescountPrice;
+			}
+			InvoiceTotalPrice.val(InvoiceTotalPriceValue);
+		}
 
-		TotalQtyPrice.val(CurrentRowPrice);
+		else {
+			let tRow = $(value).parents("tr");
+			let SellingPrice = + tRow.find(".SellingPrice").val().trim();
+			let SelectedDiscount = tRow.find(".Select.sDescount").find(":selected").val();
+			let DescountPrice = + tRow.find(".DiscountPProduct").val().trim();
+			let ConversionFactor = + tRow.find(".ConversionFactor").val().trim();
+			let Qty = + tRow.find(".Qty").val().trim();
+			let TotalQtyPrice = tRow.find(".TotalQtyPrice");
 
-		$.each($("#InvoiceProductsBody >tr"), function (key, value) {
-			let IdF = $(value).children("td").children(".ID").val().trim();
-			ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
-				Qty = $(value).children("td").children(".Qty").val().trim(),
-				SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
-				TPrice += Qty * SellingPrice;
+			let CurrentRowPrice = Qty * SellingPrice;
+			if (SelectedDiscount == 0 && DescountPrice != 0) {
+				CurrentRowPrice = CurrentRowPrice - ((DescountPrice / 100) * CurrentRowPrice);
+			}
+			if (SelectedDiscount == 1) {
+				CurrentRowPrice = CurrentRowPrice - DescountPrice;
+			}
 
-		});
-		InvoiceTotalPrice.val(TPrice);
+			let InvoiceTotalPrice = tRow.parent().parent().parent().parent().find(".InvoiceTotalPrice");
+			//let InvoiceTotalDiscountPrice = tRow.parent().parent().parent().parent().find(".InvoiceTotalDiscount");
+
+			TotalQtyPrice.val(CurrentRowPrice);
+
+			$.each($("#InvoiceProductsBody >tr"), function (key, value) {
+				let IdF = + $(value).children("td").children(".ID").val().trim();
+				ConversionFactor = + $(value).children("td").children(".ConversionFactor").val().trim(),
+					Qty = + $(value).children("td").children(".Qty").val().trim(),
+					SellingPrice = + $(value).children("td").children(".SellingPrice").val().trim(),
+					priceAfterDescount = + $(value).children('td').children(".TotalQtyPrice").val(),
+					//TPrice += Qty * SellingPrice;
+					TPrice += priceAfterDescount;
+
+
+			});
+			//TPrice = TPrice - InvoiceTotalDiscountPrice.val();
+			InvoiceTotalPrice.val(TPrice);
+		}
 
 	}
 	function Save(type) {
 		let stockId = document.querySelector("#ddlStockId").value;
 		let Products = [];
+		
 		$.each($("#InvoiceProductsBody >tr"), function (key, value) {
 			let IdF = $(value).children("td").children(".ID").val().trim();
 			let ID = IdF == '0' ? null : IdF,
 				ProductId = $(value).children("td").children(".ProductId").val().trim(),
 				ProductBarCode = $(value).children("td").children(".ProductBarCode").val().trim(),
 				ProductName = $(value).children("td").children(".ProductName").val().trim(),
-				UnitId = $(value).children("td").children(".UnitId").val().trim(),
+				SaleDetailId = $(value).children("td").children(".SaleDetailId").val().trim(),
+				UnitId = $(value).children("td").children(".UnitId").val(),
 				ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
 				ItemUnitPrice = $(value).children("td").children(".ItemUnitPrice").val().trim(),
+				DiscountPProduct = $(value).children("td").children(".DiscountPProduct").val().trim(),
+				DiscountTypePProduct = $(value).children("td").children(".sDescount").val(),
 				Qty = $(value).children("td").children(".Qty").val().trim(),
 				SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
 				TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
+
 			if (UnitId !== '0') {
 				Products.push({
 					ID: ID, ProductId: ProductId, ProductBarCode: ProductBarCode, ProductName: ProductName,
-					UnitId: UnitId, ConversionFactor: ConversionFactor, ItemUnitPrice: ItemUnitPrice, Qty: Qty, SellingPrice: SellingPrice
+					UnitId: UnitId, ConversionFactor: ConversionFactor, SaleDetailId: SaleDetailId, DiscountTypePProduct: DiscountTypePProduct, DiscountPProduct: DiscountPProduct, ItemUnitPrice: ItemUnitPrice, Qty: Qty, SellingPrice: SellingPrice
 					, TotalQtyPrice: TotalQtyPrice
 				});
 			}
+			console.log(Products);
 			getRowsNumber();
 		});
-		if ($('#ddlStockId').val() == '0' || $('#InvoiceNumber').val() == '' || $('#InvoiceDate').val() == '') {
+		if ($('#SaleInvoiceNo').val() == '' || $('#SaleInvoiceId').val() == '') {
 			Swal.fire({
-				title: `من فضلك أدخل بيانات الفاتورة`,
+				title: `من فضلك قم بالبحث عن الفاتورة المراد عمل مرتجع لها`,
 				timer: 3000,
 				timerProgressBar: true,
 				icon: 'warning',
 				showConfirmButton: false
 			});
-		} else if ($('#ddlStockId').val() == '0') {
+		}else if ($('#ddlStockId').val() == '0' || $('#InvoiceNumber').val() == '' || $('#InvoiceDate').val() == '') {
 			Swal.fire({
-				title: `من فضلك قم بتحديد الفاتورة المراد عمل مرتجع لها`,
+				title: `من فضلك اختر المخزن`,
 				timer: 3000,
 				timerProgressBar: true,
 				icon: 'warning',
 				showConfirmButton: false
 			});
-		}
+		} 
 		else if (Products.length <= 0) {
 			Swal.fire({
 				title: `من فضلك أدخل بيانات المنتجات`,
@@ -421,12 +652,15 @@
 			frm.append("ID", document.getElementById('id').value);
 			frm.append("InvoiceType", document.querySelector("#ddlInvoiceType").value);
 			frm.append("SaleInvoiceId", document.querySelector("#SaleInvoiceId").value);
+			frm.append("SaleInvoiceDate", document.querySelector("#SInvoiceDate").value);
 			frm.append("StockId", document.querySelector("#ddlStockId").value);
 			frm.append("InvoiceNumber", document.querySelector("#InvoiceNumber").value);
 			frm.append("InvoiceDate", document.querySelector("#InvoiceDate").value);
 			frm.append("Buyer", document.querySelector("#Buyer").value);
 			frm.append("TotalPaid", document.querySelector(".TotalPaid").value);
 			frm.append("InvoiceTotalPrice", document.querySelector(".InvoiceTotalPrice").value);
+			frm.append("InvoiceTotalDiscount", document.querySelector(".InvoiceTotalDiscount").value);
+			frm.append("InvoiceTotalDiscountType", document.querySelector(".sInvoiceDescount").value);
 			frm.append("InvoiceProductsStr", JSON.stringify(Products));
 			var $preloader = $('#loader');
 			$preloader.fadeIn('slow');
@@ -437,7 +671,7 @@
 				processData: false,
 				data: frm,
 				success: function (res) {
-					$preloader.delay(200).fadeOut('slow');
+					$preloader.delay(50).fadeOut('slow');
 					if (res.Status) {
 						Swal.fire({
 							title: `${res.Message}`,
@@ -674,36 +908,120 @@
 		InvoiceProductsAddNew({
 			"id": "0", "ProductId": "0",
 			"ProductBarCode": "", "ProductName": ""
-			, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
-		});
+			, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "SaleDetailId": "0", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+		},true);
 	})
-	function InvoiceProductsAddNew(obj) {
+	//function InvoiceProductsAddNew(obj) {
+	//	var haveDisscountPermission = @((ViewData.ContainsKey("DisscountPermission") && (bool)ViewData["DisscountPermission"] == true) ? "true" : "false");
+	//	let rowId = Math.floor(Math.random() * 100000000) + 1;
+	//	var Units = [];
+	//	if(obj.Units != null){
+	//		Units = obj.Units;
+	//	}
+	//	if (haveDisscountPermission == true || haveDisscountPermission === "true") {
+	//		$("#InvoiceProductsBody").append(` <tr>
+	//								<td>
+	//									<input class="form-control ID" type="hidden" value="${obj.id}" />
+	//										<input class="form-control ProductId" type="hidden" value="${obj.ProductId}" />
+	//										<input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+	//								</td>
+	//											<td><input type="text" required  onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+	//								<td>
+	
+	//										<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" value="${obj.UnitId}" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+	//										<option selected value="0">اختر الوحدة</option>
+	//									</select>
+	//											<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+	//								</td>
+	//											<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+	//											<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" class="form-control Qty" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+	//												<td><input type="number" onchange="getInvoiceTotalPrice(this)" step="0.01"  onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+	//											<td><input type="number" value="${obj.DiscountPProduct}" onchange="getInvoiceTotalPrice()" onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+	//													<td><input type="number" disabled value="${obj.TotalQtyPrice}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+	//								<td>
+	//									<div class="d-flex">
+	//										<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+	//									</div>
+	//								</td>
+
+	//							</tr>
+	//							`);
+	//	} else {
+	//		$("#InvoiceProductsBody").append(` <tr>
+	//								<td>
+	//									<input class="form-control ID" type="hidden" value="${obj.id}" />
+	//									<input class="form-control ProductId" type="hidden" value="0" />
+	//										<input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+	//								</td>
+	//											<td><input type="text" required onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+	//								<td>
+	//										<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة"onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+	//										<option selected value="0">اختر الوحدة</option>
+	//									</select>
+	//											<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+	//								</td>
+	//											<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+	//											<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" class="form-control Qty" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+	//												<td><input type="number" onchange="getInvoiceTotalPrice(this)" step="0.01"  onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+	//												<td><input type="number" disabled value="0"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+	//													<td><input type="number" disabled value="${obj.TotalQtyPrice}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+	//								<td>
+	//									<div class="d-flex">
+	//										<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+	//									</div>
+	//								</td>
+
+	//							</tr>
+	//							`);
+	//	}
+	//	if (Units.length>0) {
+	//		var tbRow = $(`#rowId-${rowId}`).parent().parent();
+	//		var UnitId = tbRow.find(`#ddlUnitId`);
+	//			UnitId.empty();
+	//		Units.forEach(function(unit){
+	//			if (unit.UnitId === obj.UnitId){
+	//				UnitId.append(`<option selected value="${unit.UnitId}">${unit.UnitName}</option>`);
+	//			}else{
+	//			UnitId.append(`<option  value="${unit.UnitId}">${unit.UnitName}</option>`);
+	//			}
+	//		});
+	//	}
+		
+	//	getRowsNumber()
+	//}
+	function InvoiceProductsAddNew(obj,isReseted) {
+
 		var haveDisscountPermission = @((ViewData.ContainsKey("DisscountPermission") && (bool)ViewData["DisscountPermission"] == true) ? "true" : "false");
-		let rowId = Math.floor(Math.random() * 100000000) + 1;
-		var Units = [];
-		if(obj.Units != null){
-			Units = obj.Units;
-		}
-		if (haveDisscountPermission == true || haveDisscountPermission === "true") {
+		let rowId = Math.floor(Math.random() * 500) + 1;
+		if(isReseted){
+			if (haveDisscountPermission == true || haveDisscountPermission === "true") {
 			$("#InvoiceProductsBody").append(` <tr>
 									<td>
 										<input class="form-control ID" type="hidden" value="${obj.id}" />
+												<input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
 											<input class="form-control ProductId" type="hidden" value="${obj.ProductId}" />
-											<input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+											<input type="text"  onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
 									</td>
-												<td><input type="text" required  onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+													<td><input type="text" required  onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
 									<td>
-	
-											<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" value="${obj.UnitId}" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+											<select class="Select sAddress form-select UnitId"  required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
 											<option selected value="0">اختر الوحدة</option>
 										</select>
 												<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
 									</td>
 												<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-												<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" class="form-control Qty" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-													<td><input type="number" onchange="getInvoiceTotalPrice(this)" step="0.01"  onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
-												<td><input type="number" value="${obj.DiscountPProduct}" onchange="getInvoiceTotalPrice()" onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-														<td><input type="number" disabled value="${obj.TotalQtyPrice}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+													<td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+													<td><input type="number" step="0.01"  onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" readonly/></td>
+														<td class="d-flex gap-2">
+																			<input type="number" onkeyup="getInvoiceTotalPrice(this)"   value="${obj.DiscountPProduct}" onchange="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" />
+																					<select class="Select sDescount form-select" aria-label="اختر نوع الخصم"  value="${obj.DiscountTypePProduct}" required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct"  onchange="getInvoiceTotalPrice(this)">
+																			<option selected="" value="0"> % </option>
+																			<option value="1">قيمة</option>
+																		</select>
+														</td>
+													<td><input type="number" step="0.01" value="${obj.TotalQtyPrice}" disabled onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control TotalQtyPrice" /></td>
+
+
 									<td>
 										<div class="d-flex">
 											<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
@@ -716,21 +1034,24 @@
 			$("#InvoiceProductsBody").append(` <tr>
 									<td>
 										<input class="form-control ID" type="hidden" value="${obj.id}" />
+													<input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
+
 										<input class="form-control ProductId" type="hidden" value="0" />
 											<input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
 									</td>
-												<td><input type="text" required onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+													<td><input type="text" required onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
 									<td>
-											<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة"onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+											<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
 											<option selected value="0">اختر الوحدة</option>
 										</select>
 												<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
 									</td>
 												<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-												<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" class="form-control Qty" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-													<td><input type="number" onchange="getInvoiceTotalPrice(this)" step="0.01"  onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
-													<td><input type="number" disabled value="0"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-														<td><input type="number" disabled value="${obj.TotalQtyPrice}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+													<td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+													<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+												<td><input type="number" disabled value="${obj.DiscountPProduct}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+											<td><input type="number" disabled step="0.01" value="${obj.TotalQtyPrice}" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" /></td>
+
 									<td>
 										<div class="d-flex">
 											<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
@@ -740,27 +1061,98 @@
 								</tr>
 								`);
 		}
-		if (Units.length>0) {
-			var tbRow = $(`#rowId-${rowId}`).parent().parent();
-			var UnitId = tbRow.find(`#ddlUnitId`);
-				UnitId.empty();
-			Units.forEach(function(unit){
-				if (unit.UnitId === obj.UnitId){
-					UnitId.append(`<option selected value="${unit.UnitId}">${unit.UnitName}</option>`);
-				}else{
-				UnitId.append(`<option  value="${unit.UnitId}">${unit.UnitName}</option>`);
-				}
-			});
+		}else{
+			var discountType = "";
+			if(obj.DiscountTypePProduct==0)
+			discountType = "%";
+			else
+			discountType="قيمة"
+			if (haveDisscountPermission == true || haveDisscountPermission === "true") {
+			$("#InvoiceProductsBody").append(` <tr>
+									<td>
+										<input class="form-control ID" type="hidden" value="${obj.id}" />
+													<input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
+
+											<input class="form-control ProductId" type="hidden" value="${obj.ProductId}" />
+											<input type="text" disabled onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+									</td>
+													<td><input type="text" required disabled onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+									<td>
+											<select class="Select sAddress form-select UnitId" disabled required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+											<option selected value="${obj.UnitId}">${obj.UnitName}</option>
+										</select>
+												<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+									</td>
+												<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+													<td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+													<td><input type="number" step="0.01" disabled onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" readonly/></td>
+														<td class="d-flex gap-2">
+																			<input type="number" onkeyup="getInvoiceTotalPrice(this)" disabled  value="${obj.DiscountPProduct}" onchange="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" />
+																					<select class="Select sDescount form-select" aria-label="اختر المخزن" disabled value="${obj.DiscountTypePProduct}" required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct"  onchange="getInvoiceTotalPrice(this)">
+																			<option selected value="${obj.DiscountTypePProduct}">${discountType}</option>
+																		</select>
+														</td>
+													<td><input type="number" step="0.01" value="${obj.TotalQtyPrice}" disabled onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control TotalQtyPrice" /></td>
+
+
+									<td>
+										<div class="d-flex">
+											<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+										</div>
+									</td>
+
+								</tr>
+								`);
+		} else {
+			$("#InvoiceProductsBody").append(` <tr>
+									<td>
+										<input class="form-control ID" type="hidden" value="${obj.id}" />
+													<input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
+
+										<input class="form-control ProductId" type="hidden" value="0" />
+											<input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+									</td>
+													<td><input type="text" required onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+									<td>
+											<select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+											<option selected value="0">اختر الوحدة</option>
+										</select>
+												<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+									</td>
+												<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+													<td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+													<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+												<td><input type="number" disabled value="${obj.DiscountPProduct}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+											<td><input type="number" disabled step="0.01" value="${obj.TotalQtyPrice}" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" /></td>
+
+									<td>
+										<div class="d-flex">
+											<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+										</div>
+									</td>
+
+								</tr>
+								`);
+		}
 		}
 		
 		getRowsNumber()
+
+		$("#InvoiceProducts").animate({
+			scrollTop: $(
+				'#InvoiceProducts').get(0).scrollHeight
+		}, 300);
+
+
+
 	}
 
 	$("#InvoiceProductsBody").on("click", ".removeRow", function () {
 		let id = $(this).parent().parent().siblings("td").children(".ProductId").val().trim();
+		let rowId = $(this).parent().parent().siblings("td").children(".ID").val().trim();
 		let btn = $(this);
 
-		if (id != "0" || id != 0) {
+		if (id != "0" && rowId!="0" && id != 0 && rowId !=0) {
 			Swal.fire({
 				title: 'هل أنت متأكد؟',
 				text: "هل انت متاكد من اجراء العملية",
@@ -772,28 +1164,43 @@
 				confirmButtonText: 'نعم ، احذفها!'
 			}).then((result) => {
 				if (result.isConfirmed) {
-
-					if ($("#InvoiceProductsBody > tr").length > 1) { $(btn).parent().parent().parent().remove(); }
+					if ($("#InvoiceProductsBody > tr").length > 1) { 
+						$(btn).parent().parent().parent().remove(); 
+						var lastTr = $('table tr:last');
+						var productId = lastTr.find(".ProductId");
+						getInvoiceTotalPrice(productId);
+					}
 					else {
 						$("#InvoiceProductsBody").empty();
 						InvoiceProductsAddNew({
 							"id": "0", "ProductId": "0",
 							"ProductBarCode": "", "ProductName": ""
-							, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
-						});
+							, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "SaleDetailId": "0", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+						},true);
+						var lastTr = $('table tr:last');
+						var productId = lastTr.find(".ProductId");
+						getInvoiceTotalPrice(productId);
 					}
 				}
 			});
 		}
 		else {
-			if ($("#InvoiceProductsBody > tr").length > 1) { $(btn).parent().parent().parent().remove(); }
+			if ($("#InvoiceProductsBody > tr").length > 1) { 
+				$(btn).parent().parent().parent().remove(); 
+				var lastTr = $('table tr:last');
+				var productId = lastTr.find(".ProductId");
+				getInvoiceTotalPrice(productId);
+			}
 			else {
 				$("#InvoiceProductsBody").empty();
 				InvoiceProductsAddNew({
 					"id": "0", "ProductId": "0",
 					"ProductBarCode": "", "ProductName": ""
-					, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
-				});
+					, "UnitId": "0", "ConversionFactor": "", "ItemUnitPrice": "", "SaleDetailId": "0", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+				},true);
+				var lastTr = $('table tr:last');
+				var productId = lastTr.find(".ProductId");
+				getInvoiceTotalPrice(productId);
 			}
 		}
 		getRowsNumber();

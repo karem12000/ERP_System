@@ -187,7 +187,7 @@ namespace ERP_System.BLL.Guide
 			}
 			return resultView;
 		}
-
+		
 		public ResultViewModel GetByProductName(string barcode)
 		{
 			var resultView = new ResultViewModel();

@@ -68,7 +68,7 @@ namespace ERP_System.BLL.Guide
                     ConversionFactor = c.ConversionFactor,
                     ItemUnitPrice = c.ItemUnitPrice,
 					DiscountTypePProductInt = (int)c.DiscountTypePProduct,
-
+					TotalQtyPriceAfterDisscount = (int)c.DiscountTypePProduct==0? (c.Qty*c.SellingPrice)-((c.Qty*c.SellingPrice)*(c.DiscountPProduct/100)) : (c.Qty * c.SellingPrice)-c.DiscountPProduct,
 					ProductBarCode = c.ProductBarCode,
                     DiscountPProduct = c.DiscountPProduct,
                     SellingPrice = c.SellingPrice,
@@ -128,6 +128,105 @@ namespace ERP_System.BLL.Guide
 
             }).FirstOrDefault();
             if(invoice != null)
+            {
+                result.Status = true;
+                result.Data = invoice;
+            }
+            else
+            {
+                result.Message = "لاتوجد فاتورة مبيعات بهذا الرقم";
+            }
+
+            return result;
+        }
+		public ResultViewModel GetProductByBarCodeAndInvoiceId(string barcode, Guid? invoiceId)
+		{
+			var resultView = new ResultViewModel();
+			resultView.Status = false;
+			if (barcode != null)
+			{
+				var data = _repoInvoiceDetail.GetAllAsNoTracking()
+			   .Where(p => (p.ProductBarCode.Trim()==barcode.Trim() || p.ProductName.Contains(barcode)) && p.SaleInvoiceId==invoiceId && p.IsActive && !p.IsDeleted && !p.SaleInvoice.IsDeleted)
+			   .Select(p => new SaleInvoiceDetailDto
+			   {
+                   ID = p.ID,
+				  ConversionFactor = p.ConversionFactor,
+                  DiscountPProduct= p.DiscountPProduct,
+                  DiscountTypePProduct = p.DiscountTypePProduct,
+                  ItemUnitPrice = p.ItemUnitPrice,
+                  ProductBarCode = p.ProductBarCode,
+                  ProductName   = p.ProductName,
+                  ProductId = p.ProductId,
+                  Qty = p.Qty,
+                  UnitId = p.UnitId,
+                  UnitName = _UnitBll.GetById(p.UnitId.Value).Name,
+                  TotalQtyPrice = p.TotalQtyPrice,
+                  SellingPrice = p.SellingPrice
+                  
+			   }).FirstOrDefault();
+
+				if (data != null)
+				{
+					
+					resultView.Status = true;
+					resultView.Data = data;
+				}
+				else
+				{
+					resultView.Message = " هذه الفاتورة لا تحتوي علي منتج بهذا الباركود "+barcode;
+				}
+			}
+			else
+			{
+				resultView.Status = true;
+				resultView.Data = null;
+			}
+			return resultView;
+		}
+		public ResultViewModel GetByInvoiceNumberAndDate(int? number , DateTime? date)
+        {
+            var result = new ResultViewModel();
+            result.Status = false;
+
+            var invoice = _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.InvoiceDate.Date==date.Value.Date && p.IsActive && !p.IsDeleted).Select(x => new GetSaleInvoiceDTO
+            {
+                ID = x.ID,
+                InvoiceDateStr = x.InvoiceDate.Date.ToString(),
+                InvoiceNumber = x.InvoiceNumber,
+                StockId = x.StockId,
+                InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
+
+                StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
+                InvoiceTotalDiscount = x.InvoiceTotalDiscount,
+                InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
+                Buyer = x.Buyer,
+                TotalPaid = x.TotalPaid,
+
+                IsActive = x.IsActive,
+
+                InvoiceTotalPrice = x.InvoiceTotalPrice,
+                GetInvoiceDetails = x.SaleInvoiceDetail.Select(c => new SaleInvoiceProductsDTO
+                {
+                    ID = c.ID,
+                    ProductId = c.ProductId,
+                    ProductName = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == c.ProductId).Select(p => p.Name).FirstOrDefault(),
+                    Qty = c.Qty,
+                    UnitId = c.UnitId,
+                    DiscountTypePProduct = c.DiscountTypePProduct,
+                    ConversionFactor = c.ConversionFactor,
+                    ItemUnitPrice = c.ItemUnitPrice,
+                    ProductBarCode = c.ProductBarCode,
+                    DiscountPProduct = c.DiscountPProduct,
+                    DiscountTypePProductInt = (int)c.DiscountTypePProduct,
+					UnitName = _UnitBll.GetById(c.UnitId.Value).Name,
+					TotalQtyPriceAfterDisscount = (int)c.DiscountTypePProduct == 0 ? (c.Qty * c.SellingPrice) - ((c.Qty * c.SellingPrice) * (c.DiscountPProduct / 100)) : (c.Qty * c.SellingPrice) - c.DiscountPProduct,
+					SellingPrice = c.SellingPrice,
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+
+                }).ToList(),
+
+            }).FirstOrDefault();
+            if (invoice != null)
             {
                 result.Status = true;
                 result.Data = invoice;
