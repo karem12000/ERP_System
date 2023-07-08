@@ -9,9 +9,11 @@ using System.Xml.Linq;
 
 namespace ERP_System.DTO.Guide
 {
-    public class PurchaseInvoiceDTO
+
+    public class GetPurchaseInvoiceDTO
     {
         public Guid? ID { get; set; }
+        public Guid? PurchaseInvoiceId { get; set; }
         public int? TransactionType { get; set; }
         public Guid? StockId { get; set; }
         public string? StockName { get; set; }
@@ -24,8 +26,12 @@ namespace ERP_System.DTO.Guide
         public decimal? TotalPaid { get; set; }
         public bool IsActive { get; set; }
         public string? InvoiceProductsStr { get; set; }
-        public PurchaseInvoiceProductsDTO[] InvoiceDetails => JsonConvert.DeserializeObject<PurchaseInvoiceProductsDTO[]>(InvoiceProductsStr);
         public List<PurchaseInvoiceProductsDTO> GetInvoiceDetails { get; set; }
+    }
+
+    public class PurchaseInvoiceDTO : GetPurchaseInvoiceDTO
+    {
+        public PurchaseInvoiceProductsDTO[] InvoiceDetails => JsonConvert.DeserializeObject<PurchaseInvoiceProductsDTO[]>(InvoiceProductsStr);
     }
 
     public class PurchaseInvoiceProductsDTO
@@ -34,7 +40,10 @@ namespace ERP_System.DTO.Guide
         public Guid? ProductId { get; set; }
         public string? ProductBarCode { get; set; }
         public string? ProductName { get; set; }
-        public Guid? UnitId { get; set; }
+		public Guid? PurchaseDetailId { get; set; }
+
+		public Guid? UnitId { get; set; }
+        public string? UnitName { get; set; }
         public decimal? ConversionFactor { get; set; }
         public decimal? Qty { get; set; }
         public decimal? QtyInStock { get; set; }

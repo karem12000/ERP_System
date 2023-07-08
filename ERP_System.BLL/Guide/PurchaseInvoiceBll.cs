@@ -23,13 +23,14 @@ namespace ERP_System.BLL.Guide
 		private readonly UnitBll _UnitBll;
 		private readonly SupplierBll _supplierBll;
 		private readonly IRepository<Supplier> _repoSupplier;
+		private readonly IRepository<Unit> _repoUnit;
 		private readonly IRepository<Stock> _repoStock;
 		private readonly IRepository<Product> _repoProduct;
 		private readonly IRepository<ProductUnit> _repoProductUnit;
 		private readonly IRepository<PurchaseInvoiceDetail> _repoInvoiceDetail;
 		private readonly IMapper _mapper;
 
-		public PurchaseInvoiceBll(IRepository<Product> repoProduct, IRepository<Supplier> repoSupplier, SupplierBll supplierBll, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
+		public PurchaseInvoiceBll(IRepository<Product> repoProduct, IRepository<Unit> repoUnit, IRepository<Supplier> repoSupplier, SupplierBll supplierBll, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
 		{
 			_repoInvoice = repoInvoice;
 			_mapper = mapper;
@@ -40,6 +41,7 @@ namespace ERP_System.BLL.Guide
 			_repoProductUnit = repoProductUnit;
 			_supplierBll = supplierBll;
 			_repoSupplier = repoSupplier;
+			_repoUnit = repoUnit;
 		}
 
 		#region Get
@@ -61,7 +63,7 @@ namespace ERP_System.BLL.Guide
 				StockId = x.StockId,
 				StockName = x.StockName,
 				SupplierId = x.SupplierId,
-				SupplierName = x.SupplierName,
+				SupplierName = _repoSupplier.GetById(x.SupplierId).Name,
 				IsActive = x.IsActive,
 				TotalPaid = x.TotalPaid,
 				InvoiceTotalPrice = x.InvoiceTotalPrice,
@@ -73,6 +75,7 @@ namespace ERP_System.BLL.Guide
 					ProductName = c.ProductName,
 					Qty = c.Qty,
 					UnitId = c.UnitId,
+					UnitName = _repoUnit.GetById(c.UnitId).Name,
 					ConversionFactor = c.ConversionFactor,
 					ProductBarCode = c.ProductBarCode,
 					PurchasingPrice = c.PurchasingPrice,
@@ -81,6 +84,46 @@ namespace ERP_System.BLL.Guide
 					QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
 				}).ToList()
 			}).FirstOrDefault();
+		}
+		public ResultViewModel GetProductByBarCodeAndInvoiceId(string barcode, Guid? invoiceId)
+		{
+			var resultView = new ResultViewModel();
+			resultView.Status = false;
+			if (barcode != null)
+			{
+				var data = _repoInvoiceDetail.GetAllAsNoTracking()
+			   .Where(p => (p.ProductBarCode.Trim() == barcode.Trim() || p.ProductName.Contains(barcode)) && p.PurchaseInvoiceId == invoiceId && p.IsActive && !p.IsDeleted && !p.PurchaseInvoice.IsDeleted)
+			   .Select(p => new PurchaseInvoiceProductsDTO
+			   {
+				   ConversionFactor = p.ConversionFactor,
+				   ID = p.ID,
+				   ProductBarCode = barcode,
+				   ProductId = p.ProductId,
+				   ProductName = _repoProduct.GetById(p.ProductId).Name,
+				   PurchaseDetailId = p.PurchaseInvoiceId,
+				   Qty = p.Qty,
+				   PurchasingPrice = p.PurchasingPrice,
+				   UnitId = p.UnitId,
+				   UnitName = _repoUnit.GetById(p.UnitId).Name
+			   }).FirstOrDefault();
+
+				if (data != null)
+				{
+
+					resultView.Status = true;
+					resultView.Data = data;
+				}
+				else
+				{
+					resultView.Message = " هذه الفاتورة لا تحتوي علي منتج بهذا الباركود " + barcode;
+				}
+			}
+			else
+			{
+				resultView.Status = true;
+				resultView.Data = null;
+			}
+			return resultView;
 		}
 		public PurchaseInvoiceDTO GetByInvoiceNumber(int? number)
 		{
@@ -198,6 +241,53 @@ namespace ERP_System.BLL.Guide
 			});
 
 		}
+		public ResultViewModel GetByInvoiceNumberAndDate(int? number, DateTime? date)
+		{
+			var result = new ResultViewModel();
+			result.Status = false;
+
+			var invoice = _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.InvoiceDate.Date == date.Value.Date && p.IsActive && !p.IsDeleted).Select(x => new GetPurchaseInvoiceDTO
+			{
+				ID = x.ID,
+				InvoiceDateStr = x.InvoiceDate.Date.ToString(),
+				InvoiceNumber = x.InvoiceNumber,
+				StockId = x.StockId,
+				StockName = _repoStock.GetById(x.StockId).Name,
+				SupplierId = x.SupplierId,
+				TotalPaid = x.TotalPaid ?? 0,
+				TransactionType = (int)x.TransactionType,
+				SupplierName = _repoSupplier.GetById(x.SupplierId).Name,
+				IsActive = x.IsActive,
+				InvoiceTotalPrice = x.InvoiceTotalPrice,
+				GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
+				{
+					ID = c.ID,
+					ProductId = c.ProductId,
+					ProductName = c.ProductName,
+					Qty = c.Qty,
+					UnitId = c.UnitId,
+					UnitName = _repoUnit.GetById(c.UnitId).Name,
+					ConversionFactor = c.ConversionFactor,
+					ProductBarCode = c.ProductBarCode,
+					PurchasingPrice = c.PurchasingPrice,
+					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+					//QtyInStock = Math.Round(_repoProduct.GetById(c.ProductId).QtyInStock.Value * c.ConversionFactor.Value, 2),
+					QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+
+				}).ToList(),
+			}).FirstOrDefault();
+			if (invoice != null)
+			{
+				result.Status = true;
+				result.Data = invoice;
+			}
+			else
+			{
+				result.Message = "لاتوجد فاتورة مبيعات بهذا الرقم";
+			}
+
+			return result;
+		}
 		public IQueryable<PurchaseInvoiceDTO> GetAllByDate(DateTime? fromDate, DateTime? toDate)
 		{
 
@@ -309,7 +399,7 @@ namespace ERP_System.BLL.Guide
 							else
 							{
 								productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-								QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock??0;
+								QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock ?? 0;
 								ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
 								TotalQtyInStock = QtyInStock * ConversionFactor;
 							}
@@ -346,7 +436,7 @@ namespace ERP_System.BLL.Guide
 									oldDetail.Qty = invoiceDetail.Qty;
 									oldDetail.TotalQtyPrice = invoiceDetail.TotalQtyPrice;
 									oldDetail.PurchaseInvoiceId = newInvoice.ID;
-									
+
 									AllDetails.Add(oldDetail);
 
 								}
@@ -355,7 +445,7 @@ namespace ERP_System.BLL.Guide
 							}
 							else
 							{
-								
+
 								var EntireQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
 
 								product.QtyInStock = TotalQtyInStock + EntireQty;
@@ -490,6 +580,7 @@ namespace ERP_System.BLL.Guide
 					if (_repoInvoice.Insert(newInvoice))
 					{
 						var AllDetails = new List<PurchaseInvoiceDetail>();
+						var productUnitList = new List<ProductUnit>();
 						foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
 						{
 							var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
@@ -520,6 +611,13 @@ namespace ERP_System.BLL.Guide
 								{
 
 									product.QtyInStock = TotalQtyInStock + EntrieQty;
+									var NewproductUnit = productUnit.Where(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()).FirstOrDefault();
+									if (invoiceDetail.PurchasingPrice > 0)
+									{
+										NewproductUnit.PurchasingPrice = invoiceDetail.PurchasingPrice;
+									}
+									productUnitList.Remove(NewproductUnit);
+									productUnitList.Add(NewproductUnit);
 									product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
 									//_repoProduct.Update(product);
 									AllInvoiceProducts.Remove(existProduct);
@@ -604,6 +702,10 @@ namespace ERP_System.BLL.Guide
 
 						if (saveDetails && _repoSupplier.Update(Supplier))
 						{
+							foreach (var item in productUnitList)
+							{
+								_repoProductUnit.Update(item);
+							}
 							resultViewModel.Status = true;
 							resultViewModel.Message = AppConstants.Messages.SavedSuccess;
 						}

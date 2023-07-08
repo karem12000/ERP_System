@@ -299,35 +299,66 @@
 				$.get('@Url.GetAction("GetProductByName")', { text: name }, function (res) {
 					if (res.Status) {
 						let data = res.Data;
-						if (ProductId.val() !== 0) {
-							InvoiceProductsAddNew({
-								"id": "0", "ProductId": "0",
-								"ProductBarCode": "", "ProductName": ""
-								, "UnitId": "0", "ConversionFactor": "", "DiscountPProduct": "0", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
-							});
-						}
-						ProductId.val(data.ID);
-						ProductBarCode.val(data.BarCodeText);
-						ProductName.val(data.Name);
-						UnitId.empty();
-						ID.val('@Guid.NewGuid()');
-						data.GetProductUnits.forEach(function (item) {
-							if (item.UnitId === data.IdUnitOfQty) {
-								UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
-								ConversionFactor.val(item.ConversionFactor);
-								ItemUnitPrice.val(item.SellingPrice);
-								SellingPrice.val(item.SellingPrice);
-							}
-							else {
-								UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+
+						let existProduct = false;
+						$.each($("#InvoiceProductsBody >tr"), function (key, value) {
+							let IdF = $(value).children("td").children(".ID").val().trim();
+							let ID = IdF == '0' ? null : IdF,
+								ProductId = $(value).children("td").children(".ProductId").val().trim(),
+								ProductBarCode = $(value).children("td").children(".ProductBarCode").val().trim(),
+								ProductName = $(value).children("td").children(".ProductName").val().trim(),
+								UnitId = $(value).children("td").children(".UnitId").val(),
+								ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
+								ItemUnitPrice = $(value).children("td").children(".ItemUnitPrice").val().trim(),
+								DiscountPProduct = $(value).children("td").children(".DiscountPProduct").val().trim(),
+								DiscountTypePProduct = $(value).children("td").children(".sDescount").val(),
+								Qty = $(value).children("td").children(".Qty").val().trim(),
+								SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
+								TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
+
+							if ((UnitId === data.IdUnitOfQty && ProductId == data.ID) || (ProductBarCode === data.BarCodeText && ProductId == data.ID)) {
+								existProduct = true;
 							}
 						});
-						Qty.val('1');
-						let TQP = 1 * SellingPrice.val();
-						TotalQtyPrice.val(TQP);
-						getInvoiceTotalPrice(ProductBarCode)
-						$(".ProductBarCode").get(-1).focus();
-						//barCodeBtn.attr("href", data.BarCodePath);
+
+						if(!existProduct){
+							if (ProductId.val() !== 0) {
+								InvoiceProductsAddNew({
+									"id": "0", "ProductId": "0",
+									"ProductBarCode": "", "ProductName": ""
+									, "UnitId": "0", "ConversionFactor": "", "DiscountPProduct": "0", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+								});
+							}
+							ProductId.val(data.ID);
+							ProductBarCode.val(data.BarCodeText);
+							ProductName.val(data.Name);
+							UnitId.empty();
+							ID.val('@Guid.NewGuid()');
+							data.GetProductUnits.forEach(function (item) {
+								if (item.UnitId === data.IdUnitOfQty) {
+									UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
+									ConversionFactor.val(item.ConversionFactor);
+									ItemUnitPrice.val(item.SellingPrice);
+									SellingPrice.val(item.SellingPrice);
+								}
+								else {
+									UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+								}
+							});
+							Qty.val('1');
+							let TQP = 1 * SellingPrice.val();
+							TotalQtyPrice.val(TQP);
+							getInvoiceTotalPrice(ProductBarCode)
+							$(".ProductBarCode").get(-1).focus();
+						}else{
+							Swal.fire({
+								title: 'هذا المنتج موجود بالفعل',
+								timer: 1500,
+								timerProgressBar: true,
+								icon: 'warning',
+								showConfirmButton: false
+							});
+						}
 					} else {
 						Swal.fire({
 							title: `${res.Message}`,
@@ -386,37 +417,69 @@
 
 				$.get('@Url.GetAction("GetProductByBarCode")', { text: barcode }, function (res) {
 					if (res.Status) {
-						console.log(ProductId.val());
-						if (ProductId.val() !== 0) {
-							InvoiceProductsAddNew({
-								"id": "0", "ProductId": "0",
-								"ProductBarCode": "", "ProductName": ""
-								, "UnitId": "0", "ConversionFactor": "", "DiscountPProduct": "0", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
-							});
-
-						}
+						
 						let data = res.Data;
-						ProductId.val(data.ID);
-						ProductBarCode.val(data.BarCodeText);
-						ProductName.val(data.Name);
-						UnitId.empty();
-						ID.val('@Guid.NewGuid()');
-						data.GetProductUnits.forEach(function (item) {
-							if (item.UnitId === data.IdUnitOfQty) {
-								UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
-								ConversionFactor.val(item.ConversionFactor);
-								ItemUnitPrice.val(item.SellingPrice);
-								SellingPrice.val(item.SellingPrice);
-							}
-							else {
-								UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+						console.log(data)
+						let existProduct = false;
+						$.each($("#InvoiceProductsBody >tr"), function (key, value) {
+							let IdF = $(value).children("td").children(".ID").val().trim();
+							let ID = IdF == '0' ? null : IdF,
+								ProductId = $(value).children("td").children(".ProductId").val().trim(),
+								ProductBarCode = $(value).children("td").children(".ProductBarCode").val().trim(),
+								ProductName = $(value).children("td").children(".ProductName").val().trim(),
+								UnitId = $(value).children("td").children(".UnitId").val(),
+								ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
+								ItemUnitPrice = $(value).children("td").children(".ItemUnitPrice").val().trim(),
+								DiscountPProduct = $(value).children("td").children(".DiscountPProduct").val().trim(),
+								DiscountTypePProduct = $(value).children("td").children(".sDescount").val(),
+								Qty = $(value).children("td").children(".Qty").val().trim(),
+								SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
+								TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
+
+							if ((UnitId === data.IdUnitOfQty && ProductId == data.ID) || (ProductBarCode === data.BarCodeText && ProductId == data.ID)) {
+								existProduct = true;
 							}
 						});
-						Qty.val('1');
-						let TQP = 1 * SellingPrice.val();
-						TotalQtyPrice.val(TQP);
-						getInvoiceTotalPrice(ProductBarCode)
-						$(".ProductBarCode").get(-1).focus();
+
+						if (!existProduct) {
+							if (ProductId.val() !== 0) {
+								InvoiceProductsAddNew({
+									"id": "0", "ProductId": "0",
+									"ProductBarCode": "", "ProductName": ""
+									, "UnitId": "0", "ConversionFactor": "", "DiscountPProduct": "0", "ItemUnitPrice": "", "Qty": "", "SellingPrice": "", "TotalQtyPrice": ""
+								});
+							}
+							ProductId.val(data.ID);
+							ProductBarCode.val(data.BarCodeText);
+							ProductName.val(data.Name);
+							UnitId.empty();
+							ID.val('@Guid.NewGuid()');
+							data.GetProductUnits.forEach(function (item) {
+								if (item.UnitId === data.IdUnitOfQty) {
+									UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
+									ConversionFactor.val(item.ConversionFactor);
+									ItemUnitPrice.val(item.SellingPrice);
+									SellingPrice.val(item.SellingPrice);
+								}
+								else {
+									UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
+								}
+							});
+							Qty.val('1');
+							let TQP = 1 * SellingPrice.val();
+							TotalQtyPrice.val(TQP);
+							getInvoiceTotalPrice(ProductBarCode)
+							$(".ProductBarCode").get(-1).focus();
+						}else{
+							Swal.fire({
+								title: 'هذا المنتج موجود بالفعل',
+								timer: 1500,
+								timerProgressBar: true,
+								icon: 'warning',
+								showConfirmButton: false
+							});
+						}
+					
 						//barCodeBtn.attr("href", data.BarCodePath);
 					} else {
 						ProductBarCode.val('');

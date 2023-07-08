@@ -155,14 +155,13 @@ namespace ERP_System.BLL.Guide
                   DiscountTypePProduct = p.DiscountTypePProduct,
                   ItemUnitPrice = p.ItemUnitPrice,
                   ProductBarCode = p.ProductBarCode,
-                  ProductName   = p.ProductName,
+                  ProductName   = _repoProduct.GetById(p.ProductId).Name,
                   ProductId = p.ProductId,
                   Qty = p.Qty,
                   UnitId = p.UnitId,
                   UnitName = _UnitBll.GetById(p.UnitId.Value).Name,
                   TotalQtyPrice = p.TotalQtyPrice,
                   SellingPrice = p.SellingPrice
-                  
 			   }).FirstOrDefault();
 
 				if (data != null)

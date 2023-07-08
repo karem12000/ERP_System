@@ -12,6 +12,8 @@ namespace ERP_System.Tables
     public class PurchaseThrowback : BaseEntity
     {
         public Guid? StockId { get; set; }
+        public Guid? PurchaseInvoiceId { get; set; }
+        public DateTime? PurchaseInvoiceDate { get; set; }
         public string? StockName { get; set; }
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
@@ -19,6 +21,7 @@ namespace ERP_System.Tables
 		public string? SupplierName { get; set; }
         public TransactionType? TransactionType { get; set; }
         public decimal? TotalPaid { get; set; }
+        public decimal? AddedTax { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
 
         public ICollection<PurchaseThrowbackDetail> PurchaseThrowbackDetails { get; set; }
@@ -29,6 +32,7 @@ namespace ERP_System.Tables
     public class PurchaseThrowbackDetail : BaseEntity
     {
         public Guid? ProductId { get; set; }
+        public Guid? PurchaseDetailId { get; set; }
         public string? ProductBarCode { get; set; }
         public string? ProductName { get; set; }
         public Guid? UnitId { get; set; }

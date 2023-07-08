@@ -403,6 +403,7 @@
 							let IdF = $(value).children("td").children(".ID").val().trim();
 							let ID = IdF == '0' ? null : IdF,
 								ProductId = $(value).children("td").children(".ProductId").val().trim(),
+								SaleDetailId = $(value).children("td").children(".SaleDetailId").val().trim(),
 								UnitId = $(value).children("td").children(".UnitId").val(),
 								Qty = $(value).children("td").children(".Qty").val().trim(),
 								ProductBarCode = $(value).children("td").children(".ProductBarCode").val().trim(),
@@ -412,8 +413,7 @@
 								ItemUnitPrice = $(value).children("td").children(".ItemUnitPrice").val().trim(),
 								SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
 								TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
-
-							if (ID == data.ID) {
+							if ((ProductBarCode === data.ProductBarCode && ProductId == data.ProductId) || (UnitId === data.UnitId && ProductId == data.ProductId)) {
 								productExist = true;
 							}
 						});
@@ -429,7 +429,7 @@
 							UnitId.append(`
 									<option selected value="${data.UnitId}">${data.UnitName}</option>
 							`)
-							ID.val(data.ID);
+							//ID.val(data.ID);
 							ConversionFactor.val(data.ConversionFactor);
 							ItemUnitPrice.val(data.ItemUnitPrice);
 							ItemUnitPrice.attr('disabled', 'disabled');

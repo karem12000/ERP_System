@@ -13,6 +13,10 @@ namespace ERP_System.DTO.Guide
         public int? TransactionType { get; set; }
         public Guid? ID { get; set; }
         public Guid? StockId { get; set; }
+        public Guid? PurchaseInvoiceId { get; set; }
+        public DateTime? PurchaseInvoiceDate { get; set; }
+        public string? PurchaseInvoiceDateStr { get; set; }
+        public int? PurchaseInvoiceNo { get; set; }
         public string? StockName { get; set; }
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
@@ -20,6 +24,7 @@ namespace ERP_System.DTO.Guide
         public Guid? SupplierId { get; set; }
         public string? SupplierName { get; set; }
         public decimal? InvoiceTotalPrice { get; set; }
+        public decimal? AddedTax { get; set; }
         public decimal? TotalPaid { get; set; }
         public bool IsActive { get; set; }
         public string? InvoiceProductsStr { get; set; }
@@ -31,6 +36,7 @@ namespace ERP_System.DTO.Guide
     {
         public Guid? ID { get; set; }
         public Guid? ProductId { get; set; }
+        public Guid? PurchaseDetailId { get; set; }
         public string? ProductBarCode { get; set; }
         public string? ProductName { get; set; }
         public string? QtyInStockStr { get; set; }
