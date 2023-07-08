@@ -1002,7 +1002,7 @@
 											<input class="form-control ProductId" type="hidden" value="${obj.ProductId}" />
 											<input type="text"  onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
 									</td>
-													<td><input type="text" required  onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+														<td><input type="text" required  onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
 									<td>
 											<select class="Select sAddress form-select UnitId"  required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
 											<option selected value="0">اختر الوحدة</option>
