@@ -100,11 +100,13 @@ namespace ERP_System.BLL.Guide
 				   ProductBarCode = barcode,
 				   ProductId = p.ProductId,
 				   ProductName = _repoProduct.GetById(p.ProductId).Name,
-				   PurchaseDetailId = p.PurchaseInvoiceId,
+				   PurchaseDetailId = p.ID,
 				   Qty = p.Qty,
 				   PurchasingPrice = p.PurchasingPrice,
 				   UnitId = p.UnitId,
-				   UnitName = _repoUnit.GetById(p.UnitId).Name
+				   UnitName = _repoUnit.GetById(p.UnitId).Name,
+					QtyInStockStr = string.Join(" - ", _repoProduct.GetById(p.ProductId).QtyInStock.Value, _repoProduct.GetById(p.ProductId).NameUnitOfQty)
+
 			   }).FirstOrDefault();
 
 				if (data != null)
@@ -115,7 +117,7 @@ namespace ERP_System.BLL.Guide
 				}
 				else
 				{
-					resultView.Message = " هذه الفاتورة لا تحتوي علي منتج بهذا الباركود " + barcode;
+					resultView.Message = " هذه الفاتورة لا تحتوي علي منتج بهذا الاسم أو الباركود " + barcode;
 				}
 			}
 			else
@@ -249,6 +251,7 @@ namespace ERP_System.BLL.Guide
 			var invoice = _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.InvoiceDate.Date == date.Value.Date && p.IsActive && !p.IsDeleted).Select(x => new GetPurchaseInvoiceDTO
 			{
 				ID = x.ID,
+				PurchaseInvoiceId = x.ID,
 				InvoiceDateStr = x.InvoiceDate.Date.ToString(),
 				InvoiceNumber = x.InvoiceNumber,
 				StockId = x.StockId,
@@ -258,6 +261,7 @@ namespace ERP_System.BLL.Guide
 				TransactionType = (int)x.TransactionType,
 				SupplierName = _repoSupplier.GetById(x.SupplierId).Name,
 				IsActive = x.IsActive,
+				InvoiceDate = x.InvoiceDate,
 				InvoiceTotalPrice = x.InvoiceTotalPrice,
 				GetInvoiceDetails = x.PurchaseInvoiceDetail.Select(c => new PurchaseInvoiceProductsDTO
 				{
@@ -270,8 +274,7 @@ namespace ERP_System.BLL.Guide
 					ConversionFactor = c.ConversionFactor,
 					ProductBarCode = c.ProductBarCode,
 					PurchasingPrice = c.PurchasingPrice,
-					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
-					//QtyInStock = Math.Round(_repoProduct.GetById(c.ProductId).QtyInStock.Value * c.ConversionFactor.Value, 2),
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
 					QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
 
 				}).ToList(),
@@ -283,7 +286,7 @@ namespace ERP_System.BLL.Guide
 			}
 			else
 			{
-				result.Message = "لاتوجد فاتورة مبيعات بهذا الرقم";
+				result.Message = "لاتوجد فاتورة مشتريات بهذا الرقم";
 			}
 
 			return result;

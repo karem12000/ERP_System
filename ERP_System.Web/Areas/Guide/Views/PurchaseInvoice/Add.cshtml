@@ -44,7 +44,7 @@
                                     <div class="col-2">
                                         <div class="form-group">
                                             <label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
-                                            <input type="date" class="form-control" name="InvoiceDate" id="InvoiceDate">
+                                            <input type="date" class="form-control" readonly name="InvoiceDate" id="InvoiceDate">
                                         </div>
                                     </div>
                                     <div class="col-2">
@@ -56,7 +56,7 @@
                                         @if (CurrentFormByControllerName("PurchaseThrowback").CurrentFormPermissionActions.AddHasPermission)
                                         {
                                             <div class="form-group mb-0">
-                                                <button type="button" onclick="SetInvoiceThroback()" class="btn btn-primary" name="btnThrowback" id="btnThrowback">إضافة مرتجع مشتريات</button>
+                                                <a type="button" target="_blank" href="/Guide/PurchaseThrowback/Add" class="btn btn-primary" name="btnThrowback" id="btnThrowback">إضافة مرتجع مشتريات</a>
                                             </div>
                                         }
                                     </div>

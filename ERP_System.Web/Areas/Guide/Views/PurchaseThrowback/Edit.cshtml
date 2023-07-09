@@ -100,7 +100,7 @@
 																		<input class="form-control ProductId" type="hidden" value="@detail.ProductId" />
 																		<input type="text" onkeyup="getProduct(this,event)" value="@detail.ProductBarCode" required class="form-control ProductBarCode" />
 																	</td>
-																	<td><input type="text" onkeyup="getProductByName(this,event)" value="@detail.ProductName" required class="form-control ProductName" /></td>
+																	<td><input type="text" onkeyup="getProduct(this,event)" value="@detail.ProductName" required class="form-control ProductName" /></td>
 																	<td>
 																		<select class="Select sAddress form-select UnitId" onchange="handleUnitChange(this,event)" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
 																			@if (detail.GetProductUnits != null && detail.GetProductUnits.Count() > 0)
@@ -146,7 +146,7 @@
 																	<input class="form-control ProductId" type="hidden" value="0" />
 																	<input type="text" onkeyup="getProduct(this,event)" required class="form-control ProductBarCode" />
 																</td>
-																<td><input type="text" required onkeyup="getProductByName(this,event)" class="form-control ProductName" /></td>
+																<td><input type="text" required onkeyup="getProduct(this,event)" class="form-control ProductName" /></td>
 																<td>
 																	<select class="Select sAddress form-select UnitId" onchange="handleUnitChange(this,event)" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
 																		<option selected value="0">اختر الوحدة</option>

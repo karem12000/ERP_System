@@ -194,15 +194,12 @@ namespace ERP_System.BLL.Guide
                 InvoiceNumber = x.InvoiceNumber,
                 StockId = x.StockId,
                 InvoiceTotalDiscountTypeInt = (int)x.InvoiceTotalDiscountType,
-
                 StockName = _repoStock.GetAllAsNoTracking().Where(p => p.ID == x.StockId).Select(p => p.Name).FirstOrDefault(),
                 InvoiceTotalDiscount = x.InvoiceTotalDiscount,
                 InvoiceTotalDiscountType = x.InvoiceTotalDiscountType,
                 Buyer = x.Buyer,
                 TotalPaid = x.TotalPaid,
-
                 IsActive = x.IsActive,
-
                 InvoiceTotalPrice = x.InvoiceTotalPrice,
                 GetInvoiceDetails = x.SaleInvoiceDetail.Select(c => new SaleInvoiceProductsDTO
                 {

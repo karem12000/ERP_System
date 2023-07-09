@@ -221,6 +221,9 @@
 	<partial name="_Scripts" />
 	<script>
 		$(document).ready(function () {
+
+
+
 			const date = new Date();
 			let day = date.getDate();
 			let month = date.getMonth() + 1;
@@ -230,6 +233,7 @@
 			} if (day < 10) {
 				day = `0${day}`
 			}
+
 			let currentDate = `${year}-${month}-${day}`;
 			$("#InvoiceDate").val(currentDate);
 			GetLastInvoiceNumberByDate(currentDate);
