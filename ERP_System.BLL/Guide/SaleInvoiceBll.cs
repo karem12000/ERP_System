@@ -20,6 +20,7 @@ namespace ERP_System.BLL.Guide
     {
         private const string _spInvoices = "[Guide].[spSaleInvoice]";
         private readonly IRepository<SaleInvoice> _repoInvoice;
+        private readonly IRepository<SaleThrowback> _repoThrowbackInvoice;
         private readonly UnitBll _UnitBll;
         private readonly IRepository<Stock> _repoStock;
         private readonly IRepository<Product> _repoProduct;
@@ -27,7 +28,7 @@ namespace ERP_System.BLL.Guide
         private readonly IRepository<SaleInvoiceDetail> _repoInvoiceDetail;
         private readonly IMapper _mapper;
 
-        public SaleInvoiceBll(IRepository<Product> repoProduct, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<SaleInvoice> repoInvoice, IRepository<SaleInvoiceDetail> repoInvoiceDetail, IMapper mapper)
+        public SaleInvoiceBll(IRepository<Product> repoProduct, IRepository<SaleThrowback> repoThrowbackInvoice, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<SaleInvoice> repoInvoice, IRepository<SaleInvoiceDetail> repoInvoiceDetail, IMapper mapper)
         {
             _repoInvoice = repoInvoice;
             _mapper = mapper;
@@ -36,6 +37,7 @@ namespace ERP_System.BLL.Guide
             _UnitBll = UnitBll;
             _repoStock = repoStock;
             _repoProductUnit = repoProductUnit;
+            _repoThrowbackInvoice = repoThrowbackInvoice;
         }
 
         #region Get
@@ -746,15 +748,21 @@ namespace ERP_System.BLL.Guide
         {
             ResultViewModel resultViewModel = new ResultViewModel();
             var tbl = _repoInvoice.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
+			var RelatedInvoices = _repoThrowbackInvoice.GetAllAsNoTracking().Any(x => x.SaleInvoiceId == id && !x.IsDeleted);
 
-            if (tbl == null)
+			if (tbl == null)
             {
                 resultViewModel.Status = false;
                 resultViewModel.Message = AppConstants.Messages.DeletedFailed;
                 return resultViewModel;
             }
-
-            tbl.IsDeleted = true;
+			if (RelatedInvoices)
+			{
+				resultViewModel.Status = false;
+				resultViewModel.Message = "لا يمكن حذف الفاتورة لوجود مرتجعات مرتبطة بها";
+				return resultViewModel;
+			}
+			tbl.IsDeleted = true;
             if (_repoInvoice.UserId != Guid.Empty)
             {
                 tbl.DeletedBy = _repoInvoice.UserId;

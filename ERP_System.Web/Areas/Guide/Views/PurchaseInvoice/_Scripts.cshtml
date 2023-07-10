@@ -567,9 +567,20 @@
 			}
 			getRowsNumber();
 		});
+
+
 		if ($('#ddlStockId').val() == '0') {
 			Swal.fire({
 				title: `من فضلك أختر المخزن`,
+				timer: 2000,
+				timerProgressBar: true,
+				icon: 'warning',
+				showConfirmButton: false
+			});
+		}
+		else if ($('#ddlSupplierId').val()=='0'){
+			Swal.fire({
+				title: `من فضلك أختر المورد`,
 				timer: 2000,
 				timerProgressBar: true,
 				icon: 'warning',
@@ -815,7 +826,7 @@
 					else {
 
 						Swal.fire({
-							title: `خطأ في الحذف`,
+							title: `${res.Message}`,
 							timer: 2000,
 							timerProgressBar: true,
 							icon: 'warning',

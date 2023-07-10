@@ -101,6 +101,7 @@
 		if (invoiceProducts != null && invoiceProducts.length > 0) {
 			productsTable.empty();
 			invoiceProducts.forEach(function (item) {
+			console.log(item)
 				InvoiceProductsAddNew({
 					"id": "0", "ProductId": item.ProductId,
 					"ProductBarCode": item.ProductBarCode, "ProductName": item.ProductName
@@ -523,7 +524,7 @@
 				Products.push({
 					ID: ID, ProductId: ProductId, ProductBarCode: ProductBarCode, ProductName: ProductName,
 					UnitId: UnitId, ConversionFactor: ConversionFactor, Qty: Qty, PurchasingPrice: PurchasingPrice
-					, TotalQtyPrice: TotalQtyPrice
+					, TotalQtyPrice: TotalQtyPrice, PurchaseDetailId: PurchaseDetailId
 				});
 			}
 			getRowsNumber();
@@ -591,6 +592,8 @@
 						}).then((result) => {
 							if (type === 'add') {
 								resetForm(stockId, '0');
+								var invoiceDate = $('#InvoiceDate').val();
+								GetLastInvoiceNumberByDate(invoiceDate);
 							} else {
 								window.location.href = "/Guide/PurchaseThrowback/Index?previous=true";
 							}
@@ -728,7 +731,6 @@
 
 	})
 	function InvoiceProductsAddNew(obj, isReseted) {
-
 		let rowId = Math.floor(Math.random() * 100000) + 1;
 		if (isReseted) {
 			$("#InvoiceProductsBody").append(` <tr>
@@ -753,7 +755,6 @@
 								<td>
 									<div class="d-flex">
 										<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-										<a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
 									</div>
 								</td>
 
@@ -782,7 +783,6 @@
 									<td>
 										<div class="d-flex">
 											<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-											<a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
 										</div>
 									</td>
 
