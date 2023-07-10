@@ -231,7 +231,7 @@
                                                 {
                                                     <div class="d-flex gap-2 w-75">
                                                         <input type="number" class="form-control InvoiceTotalDiscount" disabled onkeyup="getInvoiceTotalPrice(this)" value="@Model.InvoiceTotalDiscount" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
-                                                        <select class="Select sDescount form-select sInvoiceDescount" disabled value="@Model.InvoiceTotalDiscountTypeInt" name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
+                                                        <select class="Select sDescount form-select sInvoiceDescount"  value="@Model.InvoiceTotalDiscountTypeInt" name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
                                                             @if (Model.InvoiceTotalDiscountTypeInt == 1)
                                                             {
                                                                 <option value="0"> % </option>

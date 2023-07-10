@@ -387,17 +387,18 @@ namespace ERP_System.BLL.Guide
 						resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
 						return resultViewModel;
 					}
-					var NewPriceDiff = newInvoice.TotalPaid ?? 0;
+					var NewInvoiceTotalPaid = newInvoice.TotalPaid ?? 0;
 					var NewInvoiceTotalPrice = newInvoice.InvoiceTotalPrice.Value;
+					var diffPrice = NewInvoiceTotalPrice - NewInvoiceTotalPaid;
 					if (InvoiceDTO.TransactionType == 1 || InvoiceDTO.TransactionType == 0)
 					{
 						Supplier.ProcessAmount = Supplier.ProcessAmount + oldTotalPaid - oldTotalInvoicePrice ;
+						Supplier.ProcessType = Supplier.ProcessAmount == 0 ? null : Supplier.ProcessType;
 						if (Supplier.ProcessType != null)
 						{
 							if (Supplier.ProcessType == ProcessType.Debtor)
 							{
-
-								Supplier.ProcessAmount = Supplier.ProcessAmount + newInvoice.InvoiceTotalPrice - newInvoice.TotalPaid;
+								Supplier.ProcessAmount = diffPrice > 0 ? Supplier.ProcessAmount + diffPrice : Supplier.ProcessAmount - diffPrice;
 								if (Supplier.ProcessAmount < 0)
 								{
 									Supplier.ProcessType = ProcessType.Creditor;
@@ -407,7 +408,7 @@ namespace ERP_System.BLL.Guide
 							}
 							else
 							{
-								Supplier.ProcessAmount = Supplier.ProcessAmount - newInvoice.InvoiceTotalPrice + newInvoice.TotalPaid;
+								Supplier.ProcessAmount = diffPrice > 0 ? Supplier.ProcessAmount - diffPrice : Supplier.ProcessAmount + diffPrice;
 								if (Supplier.ProcessAmount < 0)
 								{
 									Supplier.ProcessType = ProcessType.Debtor;
@@ -434,13 +435,9 @@ namespace ERP_System.BLL.Guide
 							}
 
 						}
+
+						Supplier.ProcessAmount = Math.Abs(Supplier.ProcessAmount.Value);
 					}
-
-
-
-
-
-
 
 					decimal? TotalPrice = 0;
 					var oldInvoiceDetails = data.PurchaseInvoiceDetail;
