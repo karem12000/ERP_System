@@ -569,7 +569,8 @@
 			}
 
 			let InvoiceTotalPrice = tRow.parent().parent().parent().parent().find(".InvoiceTotalPrice");
-			//let InvoiceTotalDiscountPrice = tRow.parent().parent().parent().parent().find(".InvoiceTotalDiscount");
+			let InvoiceTotalDiscountPrice = + tRow.parent().parent().parent().parent().find(".InvoiceTotalDiscount").val();
+			let InvoiceTotalDiscountSelected = tRow.parent().parent().parent().parent().find("#ddlInvoiceTotalDiscountType").find(":selected").val();
 
 			TotalQtyPrice.val(CurrentRowPrice);
 
@@ -586,6 +587,14 @@
 			});
 			//TPrice = TPrice - InvoiceTotalDiscountPrice.val();
 			InvoiceTotalPrice.val(TPrice);
+			if (InvoiceTotalDiscountPrice) {
+				if (InvoiceTotalDiscountSelected == 0) {
+					InvoiceTotalPrice.val(TPrice - ((InvoiceTotalDiscountPrice / 100) * TPrice));
+				}
+				if (InvoiceTotalDiscountSelected == 1) {
+					InvoiceTotalPrice.val(TPrice - InvoiceTotalDiscountPrice);
+				}
+			}
 		}
 
 	}
