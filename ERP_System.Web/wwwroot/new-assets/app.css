@@ -137,3 +137,11 @@
         padding: 1rem 2rem;
     }
 }
+.sidebar-wrapper .menu .submenu .submenu-item a {
+    padding: 0.7rem 1rem;
+}
+
+[dir="rtl"] .sidebar-wrapper .menu .sidebar-item.has-sub .sidebar-link:after {
+    right: unset;
+    left: 15px;
+}
