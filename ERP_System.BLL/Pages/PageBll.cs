@@ -79,6 +79,40 @@ namespace ERP_System.BLL
             var newData = data.Where(p =>p.HasPermission).ToList();
             return newData;
         }
+
+
+
+        public IEnumerable<NewSidebarDto> GetAsideBarPages2()
+        {
+
+            var data = _repoPage.GetAll().Where(x => x.IsActive && !x.IsDeleted && x.haveArea==false).Include(p => p.ActionsPages).OrderBy(p => p.OrderNo).Select(p => new NewSidebarDto()
+            {
+
+                PageRoute = p.ControllerName == "Xero" ? $"{p.AreaName}/{p.ControllerName}/Preparation" : (string.IsNullOrEmpty(p.AreaName) ? $"{p.ControllerName}/Index" : $"{p.AreaName}/{p.ControllerName}/Index"),
+                PageTitle = p.Text,
+                IconName = p.IconName,
+                AreaName = p.AreaName,
+                CollapsedArea = p.CollapsedArea,
+                IsArea = p.IsArea,
+                HaveArea = p.haveArea,
+                OrderNo = p.OrderNo,
+                Pages = _repoPage.GetAll().Where(x => x.IsActive && !x.IsDeleted && x.haveArea == true && x.CollapsedArea == p.AreaName).OrderBy(p => p.OrderNo).Select(x => new AsideBarPagesDTO
+                {
+                    PageTitle = x.Text,
+                    IconName = x.IconName,
+                    OrderNo = x.OrderNo,
+                    AreaTitle = x.AreaName,
+                    PageRoute = x.ControllerName == "Xero" ? $"{x.AreaName}/{x.ControllerName}/Preparation" : (string.IsNullOrEmpty(x.AreaName) ? $"{x.ControllerName}/Index" : $"{x.AreaName}/{x.ControllerName}/Index"),
+                    HasPermission = _repoUserPermissions.GetAll().Where(u => u.UserTypeId == _userBll.GetById(_repoPage.UserId).UserTypeId && p.ActionsPages.Contains(u.ActionsPage)).Any()
+                }).ToList(),
+                HasPermission = _repoUserPermissions.GetAll().Where(u => u.UserTypeId == _userBll.GetById(_repoPage.UserId).UserTypeId && p.ActionsPages.Contains(u.ActionsPage) && !p.IsArea).Any()
+            });
+
+            var newData = data.Where(p => p.HasPermission || p.Pages.Any(x => x.HasPermission) || p.IsArea).ToList();
+            return newData;
+        }
         #endregion
     }
+
+   
 }

@@ -53,7 +53,7 @@ namespace ERP_System.BLL.Guide
 		}
 		public PurchaseThrowbackDTO GetById(Guid id)
 		{
-			return _repoInvoice.GetAllAsNoTracking().Include(c => c.PurchaseThrowbackDetails).Where(p => p.ID == id).Select(x => new PurchaseThrowbackDTO
+			var invoice = _repoInvoice.GetAllAsNoTracking().Include(c => c.PurchaseThrowbackDetails).Where(p => p.ID == id).Select(x => new PurchaseThrowbackDTO
 			{
 				ID = x.ID,
 				InvoiceDateStr = x.InvoiceDate.Date.ToString(),
@@ -82,11 +82,22 @@ namespace ERP_System.BLL.Guide
 					ProductBarCode = c.ProductBarCode,
 					PurchasingPrice = c.PurchasingPrice,
 					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
-					QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+					QtyInStockStr = string.Join(" - ", Math.Round((_repoProduct.GetById(c.ProductId.Value).QtyInStock/c.ConversionFactor) ?? 0, 2), _UnitBll.GetById(c.UnitId.Value).Name) 
 				}).ToList(),
 
 
 			}).FirstOrDefault();
+
+			//foreach (var item in invoice.GetInvoiceDetails)
+			//{
+			//	var stockQty = item.QtyInStock;
+			//	var conversionFactor = item.ConversionFactor;
+			//	var fQty = stockQty / conversionFactor;
+			//	fQty = Math.Round(fQty ?? 0, 2);
+			//	item.QtyInStockStr = string.Join(" - ", fQty, item.QtyInStockStr);
+			//}
+
+			return invoice;
 		}
 
 		public PurchaseThrowbackDTO GetByInvoiceNumber(int? number)
@@ -257,6 +268,12 @@ namespace ERP_System.BLL.Guide
 			}
 			var AllPurchaseThrowbackInvoices = _repoInvoice.GetAllAsNoTracking().Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted).ToList();
 			var data = _repoInvoice.GetAllAsNoTracking().Include(x => x.PurchaseThrowbackDetails).Where(p => p.ID == InvoiceDTO.ID && p.IsActive && !p.IsDeleted).FirstOrDefault();
+			if(InvoiceDTO.SupplierId == null || InvoiceDTO.SupplierId==Guid.Empty)
+			{
+				resultViewModel.Status = false;
+				resultViewModel.Message = "من فضلك تأكد من اختيار المورد";
+				return resultViewModel;
+			}
 			var Supplier = _repoSupplier.GetById(InvoiceDTO.SupplierId.Value);
 			if (Supplier != null)
 			{
@@ -282,12 +299,7 @@ namespace ERP_System.BLL.Guide
 					newInvoice.ModifiedBy = _repoInvoice.UserId;
 					newInvoice.CreatedDate = data.CreatedDate;
 
-					if (newInvoice.InvoiceTotalPrice < 0)
-					{
-						resultViewModel.Status = false;
-						resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
-						return resultViewModel;
-					}
+					
 					#region Supplier ProcessType and Amount
 					
 					var InvoiceTotalPaid = newInvoice.TotalPaid ?? 0;
@@ -338,13 +350,13 @@ namespace ERP_System.BLL.Guide
 						foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
 						{
 							var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
-							var purchaseProduct = purchaseInvoice.GetInvoiceDetails.Where(x => x.ID == invoiceDetail.PurchaseDetailId).FirstOrDefault();
+							var purchaseProduct = purchaseInvoice.GetInvoiceDetails.Where(x => x.ID == invoiceDetail.PurchaseDetailId ).FirstOrDefault();
 							var existPurchaseThrowbackProduct = _repoInvoice.GetAllAsNoTracking()
-									.Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted && x.PurchaseInvoiceDate == InvoiceDTO.PurchaseInvoiceDate && x.PurchaseThrowbackDetails.Any(x => x.ProductId == invoiceDetail.ProductId && !x.IsDeleted))
+									.Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted && x.PurchaseInvoiceDate == InvoiceDTO.PurchaseInvoiceDate && x.PurchaseThrowbackDetails.Any(x => x.ProductId == invoiceDetail.ProductId && x.UnitId==invoiceDetail.UnitId && !x.IsDeleted))
 									.Select(x => new SaleThrowbackproductDto
 									{
-										ConversionFactor = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId && !x.IsDeleted).FirstOrDefault().ConversionFactor,
-										Qty = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId && !x.IsDeleted).FirstOrDefault().Qty
+										ConversionFactor = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId  && !x.IsDeleted).FirstOrDefault().ConversionFactor,
+										Qty = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId  && !x.IsDeleted).FirstOrDefault().Qty
 									});
 							decimal? alreadyThrowbacks = 0;
 							if(purchaseProduct != null)
@@ -399,11 +411,13 @@ namespace ERP_System.BLL.Guide
 									{
 										var oldEntireQty = oldDetail.Qty * oldDetail.ConversionFactor;
 										TotalQtyInStock = TotalQtyInStock + oldEntireQty;
-										var requiredQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
+										var requiredQty = invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value;
 
 
 										product.QtyInStock = TotalQtyInStock;
-										product.QtyInStock = Math.Round((TotalQtyInStock.Value - requiredQty.Value) / ConversionFactor.Value, 2);
+										product.QtyInStock = TotalQtyInStock - requiredQty;
+										product.QtyInStock = product.QtyInStock / ConversionFactor;
+										product.QtyInStock = Math.Abs(product.QtyInStock.Value);
 
 										if (product.QtyInStock < 0)
 										{
@@ -527,27 +541,28 @@ namespace ERP_System.BLL.Guide
 					newInvoice.SupplierId = Supplier.ID;
 					newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
 					newInvoice.TransactionType = (TransactionType?)InvoiceDTO.TransactionType;
-					newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
+					newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0 ;
 					newInvoice.AddedBy = _repoInvoice.UserId;
-					if (newInvoice.InvoiceTotalPrice < 0)
-					{
-						resultViewModel.Status = false;
-						resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
-						return resultViewModel;
-					}
+					
 
 					#region Supplier Process Type And Amount
 					var InvoiceTotalPaid = newInvoice.TotalPaid ?? 0;
 					var invoiceTotPrice = newInvoice.InvoiceTotalPrice.Value;
-
 					var diffPrice = invoiceTotPrice- InvoiceTotalPaid;
+
+
 					if (InvoiceDTO.TransactionType == 1 || InvoiceDTO.TransactionType == 0)
 					{
 						if (Supplier.ProcessType != null)
 						{
 							if (Supplier.ProcessType == ProcessType.Creditor)
 							{
-								Supplier.ProcessAmount =diffPrice>0? Supplier.ProcessAmount+diffPrice : Supplier.ProcessAmount-diffPrice ;
+
+								if (diffPrice > 0)
+									Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice;
+								else if(diffPrice<0)
+
+
 								if (Supplier.ProcessAmount < 0)
 								{
 									Supplier.ProcessType = ProcessType.Debtor;
@@ -567,9 +582,22 @@ namespace ERP_System.BLL.Guide
 						}
 						else
 						{
-							Supplier.ProcessType =diffPrice>0? ProcessType.Creditor : ProcessType.Debtor;
-							Supplier.ProcessAmount = Supplier.ProcessAmount +diffPrice ;
-							
+							if(diffPrice > 0)
+							{
+								Supplier.ProcessType =  ProcessType.Creditor ;
+								Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice ;
+
+							}
+							else if(diffPrice < 0)
+							{
+								Supplier.ProcessType = ProcessType.Debtor;
+								Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice;
+							}
+							else
+							{
+								Supplier.ProcessType = null;
+								Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice;
+							}							
 						}
 						Supplier.ProcessAmount = Math.Abs (Supplier.ProcessAmount.Value);
 					}
@@ -586,10 +614,10 @@ namespace ERP_System.BLL.Guide
 
 								var purchaseProduct = purchaseInvoice.GetInvoiceDetails.Where(x => x.ID == invoiceDetail.PurchaseDetailId).FirstOrDefault();
 								var existPurchaseThrowbackProduct = _repoInvoice.GetAllAsNoTracking()
-									.Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted && x.PurchaseInvoiceDate == InvoiceDTO.PurchaseInvoiceDate && x.PurchaseThrowbackDetails.Any(x => x.ProductId == invoiceDetail.ProductId && !x.IsDeleted))
+									.Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted && x.PurchaseInvoiceDate == InvoiceDTO.PurchaseInvoiceDate && x.PurchaseThrowbackDetails.Any(x => x.ProductId == invoiceDetail.ProductId && x.UnitId == invoiceDetail.UnitId && !x.IsDeleted))
 									.Select(x => new SaleThrowbackproductDto
 									{
-										ConversionFactor = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId && !x.IsDeleted).FirstOrDefault().ConversionFactor,
+										ConversionFactor = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId  && !x.IsDeleted).FirstOrDefault().ConversionFactor,
 										Qty = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId && !x.IsDeleted).FirstOrDefault().Qty
 									});
 								decimal? alreadyThrowbacks = 0;
@@ -611,7 +639,7 @@ namespace ERP_System.BLL.Guide
 									{
 										foreach (var item in existPurchaseThrowbackProduct)
 										{
-											alreadyThrowbacks += item.Qty * item.ConversionFactor;
+											alreadyThrowbacks += item.Qty* item.ConversionFactor;
 										}
 										canThrowback = (invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value) > ((purchaseProduct.Qty.Value * purchaseProduct.ConversionFactor.Value) - (alreadyThrowbacks));
 										if (canThrowback)
@@ -664,7 +692,8 @@ namespace ERP_System.BLL.Guide
 										else
 										{
 											product.QtyInStock = TotalQtyInStock - TotalRequiredQty;
-											product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
+											product.QtyInStock = product.QtyInStock / ConversionFactor;
+											product.QtyInStock = Math.Round(product.QtyInStock.Value, 2);
 											AllInvoiceProducts.Remove(existProduct);
 											AllInvoiceProducts.Add(product);
 											var newInvoiceDetail = new PurchaseThrowbackDetail()

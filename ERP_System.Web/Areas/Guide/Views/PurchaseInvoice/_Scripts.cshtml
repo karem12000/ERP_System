@@ -324,7 +324,7 @@
 									UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
 									ConversionFactor.val(item.ConversionFactor);
 									//ItemUnitPrice.val(item.PurchasingPrice);
-									PurchasingPrice.val(0);
+									PurchasingPrice.val(item.PurchasingPrice);
 									//PurchasingPrice.val(item.PurchasingPrice);
 								}
 								else {
@@ -372,6 +372,7 @@
 		let ProductName = tBody.find(".ProductName");
 		var unitId = value.value;
 		let UnitId = tBody.find(".UnitId");
+		let QtyInStock = tBody.find(".QtyInStock");
 		let Qty = tBody.find(".Qty");
 		let ConversionFactor = tBody.find(".ConversionFactor");
 		let PurchasingPrice = tBody.find(".PurchasingPrice");
@@ -380,11 +381,13 @@
 		$.get('@Url.GetAction("GetProductDataByUnitId")', { unitId: unitId, productId: ProductId.val() }, function (res) {
 			if (res.Status) {
 				let data = res.Data;
+				console.log(data)
 				ProductId.val(data.ID);
 				ProductBarCode.val(data.BarCodeText);
 				ProductName.val(data.Name);
 				UnitId.empty();
 				ConversionFactor.val(data.ConversionFactor);
+				QtyInStock.val(data.QtyInStockStr)
 				data.GetProductUnits.forEach(function (item) {
 					if (item.UnitId === data.IdUnitOfQty) {
 						UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
@@ -769,31 +772,36 @@
 
 	function handleChangeSupplier() {
 		var supplierId = $('#ddlSupplierId').val();
-		$.get('@Url.GetAction("GetSupplierById")', { supplierId: supplierId }, function (res) {
-			if (res) {
-				let SType = res.ProcessTypeInt;
-				var SAmount = res.ProcessAmount;
+		if(supplierId =='0'){
+			$('.SupplierData').empty();
+		}else{
+			$.get('@Url.GetAction("GetSupplierById")', { supplierId: supplierId }, function (res) {
+				if (res) {
+					let SType = res.ProcessTypeInt;
+					var SAmount = res.ProcessAmount;
 
-				if (SType !== null && SType != 0) {
-					if (SType == 1) {
-						$('.SupplierData').empty();
-						$('.SupplierData').append(`
-								<input type="text" readonly class="form-control" placeholder="مدين (له )">
-								<input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
-							`);
+					if (SType !== null && SType != 0) {
+						if (SType == 1) {
+							$('.SupplierData').empty();
+							$('.SupplierData').append(`
+									<input type="text" readonly class="form-control" placeholder="مدين (له )">
+									<input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
+								`);
 
-					} else {
-						$('.SupplierData').empty();
-						$('.SupplierData').append(`
-								<input type="text" readonly class="form-control" placeholder="دائن (عليه )">
-								<input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
-							`);
+						} else {
+							$('.SupplierData').empty();
+							$('.SupplierData').append(`
+									<input type="text" readonly class="form-control" placeholder="دائن (عليه )">
+									<input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
+								`);
+						}
 					}
-				}
-			} else {
+				} else {
 
-			}
-		});
+				}
+			});
+		}
+		
 	}
 
 	function Delete(e, id) {

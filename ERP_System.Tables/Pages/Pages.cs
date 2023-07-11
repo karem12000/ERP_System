@@ -31,6 +31,9 @@ namespace ERP_System.Tables
         public int? OrderNo { get; set; }
         public string IconName { get; set; }
         public string ControllerName { get; set; }
+        public string CollapsedArea { get; set; }
+        public bool haveArea { get; set; }
+        public bool IsArea { get; set; }
         //[ForeignKey(nameof(Area))]
         //public Guid? AreaId { get; set; }
         //public virtual Area Area { get; set; }

@@ -207,6 +207,16 @@
             })
             frm.append("ProductUnitsStr", JSON.stringify(Units));
             var $preloader = $('#loader');
+
+            if(Units.length==0){
+                Swal.fire({
+                    title: `من فضلك أدخل وحدات المنتج`,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    icon: 'error',
+                    showConfirmButton: false
+                })
+            }else{
             $preloader.fadeIn('slow');
             $.ajax({
                 url: '@Url.GetAction("Save")',
@@ -270,6 +280,8 @@
 
                 },
                 error: function (res) {
+                        $preloader.delay(200).fadeOut('slow');
+
                     Swal.fire({
                         title: `${res.Message}`,
                         timer: 4000,
@@ -279,6 +291,9 @@
                     })
                 }
             });
+
+            }
+
         }
     }
     function Delete(e, id) {

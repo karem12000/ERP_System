@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using ZXing.QrCode.Internal;
 
 namespace ERP_System.BLL.Guide
 {
@@ -144,8 +145,7 @@ namespace ERP_System.BLL.Guide
 				   QtyInStock = p.QtyInStock,
 				   IdUnitOfQty = p.IdUnitOfQty,
 				   NameUnitOfQty = p.NameUnitOfQty,
-				   GetQtyInStock = p.BarCodeText.Trim()==barcode.Trim()? p.QtyInStock 
-				   : p.QtyInStock * p.ProductUnits.Where(x=>x.UnitBarcodeText.Trim()==barcode.Trim()).Select(x=>x.ConversionFactor).FirstOrDefault(),
+				   GetQtyInStock = p.QtyInStock / p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.ConversionFactor).FirstOrDefault(),
 				   GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
 				   {
 					   ID = c.ID,
@@ -157,7 +157,7 @@ namespace ERP_System.BLL.Guide
 					   UnitId = c.UnitId,
 					   UnitName = c.Unit.Name
 				   }).ToArray(),
-				   QtyInStockStr = string.Join(" - ", p.QtyInStock??0, p.NameUnitOfQty??"")
+				   QtyInStockStr =p.ProductUnits.Where(x=>x.UnitBarcodeText.Trim()==barcode.Trim()).Select(x=>x.Unit.Name).FirstOrDefault()??""
 
 			   }).FirstOrDefault();
 
@@ -171,7 +171,10 @@ namespace ERP_System.BLL.Guide
 						data.IdUnitOfQty = currentProduct.UnitId;
 						data.NameUnitOfQty = currentProduct.UnitName;
 						data.SalePrice = currentProduct.SellingPrice;
+						data.ConversionFactor = currentProduct.ConversionFactor;
+
 					}
+					data.QtyInStockStr = string.Join(" - ",Math.Round(data.GetQtyInStock.Value,2) ,data.QtyInStockStr );
 					resultView.Status = true;
 					resultView.Data = data;
 				}
@@ -206,7 +209,8 @@ namespace ERP_System.BLL.Guide
 				   QtyInStock = p.QtyInStock,
 				   IdUnitOfQty = p.IdUnitOfQty,
 				   NameUnitOfQty = p.NameUnitOfQty,
-				   
+				   ConversionFactor = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted && c.UnitId==p.IdUnitOfQty).Select(x=>x.ConversionFactor).FirstOrDefault(),
+				   GetQtyInStock = p.QtyInStock / p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.ConversionFactor).FirstOrDefault(),
 				   GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
 				   {
 					   ID = c.ID,
@@ -218,11 +222,13 @@ namespace ERP_System.BLL.Guide
 					   UnitId = c.UnitId,
 					   UnitName = c.Unit.Name
 				   }).ToArray(),
-				   QtyInStockStr = string.Join(" - ", p.QtyInStock ?? 0, p.NameUnitOfQty ?? "")
+				   QtyInStockStr = p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.Unit.Name).FirstOrDefault() ?? ""
 			   }).FirstOrDefault();
 
 				if (data != null)
 				{
+					data.QtyInStockStr = string.Join(" - ", Math.Round(data.GetQtyInStock.Value, 2), data.QtyInStockStr);
+
 					//if (barcode.Trim().ToLower() != data.BarCodeText.Trim().ToLower())
 					//{
 					//    var currentProduct = data.GetProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).FirstOrDefault();
@@ -266,7 +272,7 @@ namespace ERP_System.BLL.Guide
 				   IdUnitOfQty = p.IdUnitOfQty,
 				   NameUnitOfQty = p.NameUnitOfQty,
 				   ConversionFactor = p.ProductUnits.Where(x=>x.UnitId==unitId).Select(x=>x.ConversionFactor).FirstOrDefault(),
-				   GetQtyInStock = p.IdUnitOfQty ==unitId ? p.QtyInStock : 0,
+				   GetQtyInStock = p.QtyInStock,
 				   GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
 				   {
 					   ID = c.ID,
@@ -278,7 +284,7 @@ namespace ERP_System.BLL.Guide
 					   UnitId = c.UnitId,
 					   UnitName = c.Unit.Name
 				   }).ToArray(),
-				   QtyInStockStr = string.Join(" - ", p.QtyInStock ?? 0, p.NameUnitOfQty ?? "")
+				   QtyInStockStr = p.ProductUnits.Where(x => x.UnitId == unitId).Select(x => x.Unit.Name).FirstOrDefault() ?? ""
 
 			   }).FirstOrDefault();
 
@@ -292,7 +298,10 @@ namespace ERP_System.BLL.Guide
 						data.IdUnitOfQty = currentProduct.UnitId;
 						data.NameUnitOfQty = currentProduct.UnitName;
 						data.SalePrice = currentProduct.SellingPrice;
+						
+						data.ConversionFactor = currentProduct.ConversionFactor;
 					}
+					data.QtyInStockStr = string.Join(" - ", Math.Round((data.GetQtyInStock.Value / data.ConversionFactor.Value), 2), data.QtyInStockStr);
 					resultView.Status = true;
 					resultView.Data = data;
 				}
@@ -399,6 +408,9 @@ namespace ERP_System.BLL.Guide
 			var data = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == productDto.ID).FirstOrDefault();
 			if (data != null)
 			{
+
+				var oldProductUnits = data.ProductUnits;
+
 				var existMdl = _repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted)
 					.Where(p => p.ID != data.ID && p.Name.Trim().ToLower() == productDto.Name.Trim().ToLower()).FirstOrDefault();
 				if (existMdl != null)
@@ -490,21 +502,43 @@ namespace ERP_System.BLL.Guide
 						var NewRecords = new List<ProductUnit>();
 						foreach (var unit in productDto.ProductUnits)
 						{
-							var newR = new ProductUnit
+							ProductUnit currentUnit = null;
+							if (oldProductUnits != null)
 							{
-								ProductId = tbl.ID,
-								ConversionFactor = unit.ConversionFactor,
-								PurchasingPrice = unit.PurchasingPrice,
-								SellingPrice = unit.SellingPrice,
-								UnitBarcodeText = unit.UnitBarcodeText,
-								UnitId = unit.UnitId
-							};
-                            if (newR.UnitId == tbl.IdUnitOfQty)
-                            {
-                                newR.UnitBarcodeText = tbl.BarCodeText;
-                            }
-                            //newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
-							NewRecords.Add(newR);
+							 currentUnit = oldProductUnits.Where(x => x.ID == unit.ID).FirstOrDefault();
+
+							}
+							if(currentUnit != null)
+							{
+							
+								currentUnit.ProductId = tbl.ID;
+								currentUnit.ConversionFactor = unit.ConversionFactor;
+								currentUnit.SellingPrice = unit.SellingPrice;
+								currentUnit.PurchasingPrice = unit.PurchasingPrice;
+								currentUnit.UnitBarcodeText = unit.UnitBarcodeText;
+								currentUnit.UnitId = unit.UnitId;
+
+								NewRecords.Add(currentUnit);
+							}
+							else
+							{
+								var newR = new ProductUnit
+								{
+									ProductId = tbl.ID,
+									ConversionFactor = unit.ConversionFactor,
+									PurchasingPrice = unit.PurchasingPrice,
+									SellingPrice = unit.SellingPrice,
+									UnitBarcodeText = unit.UnitBarcodeText,
+									UnitId = unit.UnitId
+								};
+								if (newR.UnitId == tbl.IdUnitOfQty)
+								{
+									newR.UnitBarcodeText = tbl.BarCodeText;
+								}
+								//newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
+								NewRecords.Add(newR);
+							}
+							
 						}
 						_productUnit.InsertRange(NewRecords);
 					}

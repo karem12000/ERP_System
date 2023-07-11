@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using AutoMapper;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ERP_System.BLL.Guide
 {
@@ -56,7 +57,7 @@ namespace ERP_System.BLL.Guide
 		}
 		public PurchaseInvoiceDTO GetById(Guid id)
 		{
-			return _repoInvoice.GetAllAsNoTracking().Include(c => c.PurchaseInvoiceDetail).Where(p => p.ID == id).Select(x => new PurchaseInvoiceDTO
+			var invoice = _repoInvoice.GetAllAsNoTracking().Include(c => c.PurchaseInvoiceDetail).Where(p => p.ID == id).Select(x => new PurchaseInvoiceDTO
 			{
 				ID = x.ID,
 				InvoiceDateStr = x.InvoiceDate.Date.ToString(),
@@ -82,10 +83,21 @@ namespace ERP_System.BLL.Guide
 					ProductBarCode = c.ProductBarCode,
 					PurchasingPrice = c.PurchasingPrice,
 					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
-					//QtyInStock = Math.Round(_repoProduct.GetById(c.ProductId).QtyInStock.Value * c.ConversionFactor.Value, 2),
-					QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+					QtyInStockStr = string.Join(" - ", Math.Round((_repoProduct.GetById(c.ProductId.Value).QtyInStock / c.ConversionFactor) ?? 0, 2), _UnitBll.GetById(c.UnitId.Value).Name)
 				}).ToList()
 			}).FirstOrDefault();
+
+			//foreach (var item in invoice.GetInvoiceDetails)
+			//{
+			//	var stockQty = _repoProduct.Find(x => x.ID == invoice.GetInvoiceDetails.Where(x=>x.ID==item.ID).FirstOrDefault().ProductId).FirstOrDefault().QtyInStock;
+			//	var conversionFactor = item.ConversionFactor;
+			//	var fQty = stockQty / conversionFactor;
+			//	fQty = Math.Round(fQty??0, 2);
+			//	item.QtyInStockStr = string.Join(" - ", fQty, item.QtyInStockStr);
+			//}
+
+			return invoice;
+
 		}
 		public ResultViewModel GetProductByBarCodeAndInvoiceId(string barcode, Guid? invoiceId)
 		{
@@ -277,12 +289,46 @@ namespace ERP_System.BLL.Guide
 					ProductBarCode = c.ProductBarCode,
 					PurchasingPrice = c.PurchasingPrice,
 					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
-					QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty),
+					QtyInStockStr = string.Join(" - ", Math.Round((_repoProduct.GetById(c.ProductId).QtyInStock.Value / c.ConversionFactor.Value), 2), _repoUnit.GetById(c.UnitId).Name),
 
 				}).ToList(),
 			}).FirstOrDefault();
 			if (invoice != null)
 			{
+				var alreadThrowback = _repoThrowbackInvoice.GetAllAsNoTracking().Include(x => x.PurchaseThrowbackDetails).Where(x => x.PurchaseInvoiceId == invoice.ID && !x.IsDeleted).Select(x => x.PurchaseThrowbackDetails).ToList();
+				var finalInvoice = invoice.GetInvoiceDetails.ToList();
+				foreach (var item in invoice.GetInvoiceDetails)
+				{
+					var qty = alreadThrowback.Where(x => x.Any(xx => xx.UnitId == item.UnitId && xx.ProductId == item.ProductId)).ToList();
+					if (qty != null && qty.Count() > 0)
+					{
+						decimal? allQty = 0;
+						foreach (var iq in qty)
+						{
+							allQty = iq.Sum(x => x.Qty);
+						}
+
+						var currenRow = finalInvoice.Where(x => x.UnitId == item.UnitId && x.ProductId == item.ProductId).FirstOrDefault();
+						var currenQty = currenRow.Qty;
+						currenQty -= allQty;
+						currenRow.Qty = currenQty;
+						finalInvoice.Remove(invoice.GetInvoiceDetails.Where(x => x.UnitId == item.UnitId && x.ProductId == item.ProductId).FirstOrDefault());
+						if(currenQty != 0)
+						finalInvoice.Add(currenRow);
+
+
+					}
+				}
+				invoice.GetInvoiceDetails = finalInvoice;
+
+
+				if (finalInvoice.Count == 0)
+				{
+					result.Status = false;
+					result.Message = "تم إرجاع جميع منتجات هذه الفاتورة";
+					return result;
+				}
+
 				result.Status = true;
 				result.Data = invoice;
 			}
@@ -381,24 +427,54 @@ namespace ERP_System.BLL.Guide
 					newInvoice.ModifiedBy = _repoInvoice.UserId;
 					newInvoice.CreatedDate = data.CreatedDate;
 
-					if (newInvoice.InvoiceTotalPrice < 0)
-					{
-						resultViewModel.Status = false;
-						resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
-						return resultViewModel;
-					}
+					
 					var NewInvoiceTotalPaid = newInvoice.TotalPaid ?? 0;
 					var NewInvoiceTotalPrice = newInvoice.InvoiceTotalPrice.Value;
 					var diffPrice = NewInvoiceTotalPrice - NewInvoiceTotalPaid;
 					if (InvoiceDTO.TransactionType == 1 || InvoiceDTO.TransactionType == 0)
 					{
-						Supplier.ProcessAmount = Supplier.ProcessAmount + oldTotalPaid - oldTotalInvoicePrice ;
+						if (Supplier.ProcessType == ProcessType.Debtor)
+						{
+							Supplier.ProcessAmount = Supplier.ProcessAmount - oldTotalInvoicePrice + oldTotalPaid;
+
+							if (Supplier.ProcessAmount < 0)
+								Supplier.ProcessType = ProcessType.Creditor;
+						}
+						else if (Supplier.ProcessType == ProcessType.Creditor)
+						{
+							Supplier.ProcessAmount = Supplier.ProcessAmount + oldTotalInvoicePrice - oldTotalPaid;
+
+							if (Supplier.ProcessAmount < 0)
+								Supplier.ProcessType = ProcessType.Debtor;
+						}
+						else
+						{
+							Supplier.ProcessAmount = Supplier.ProcessAmount - oldTotalInvoicePrice + oldTotalPaid;
+							if (Supplier.ProcessAmount > 0)
+							{
+								Supplier.ProcessType = ProcessType.Debtor;
+							}
+							else if (Supplier.ProcessAmount < 0) { 
+								Supplier.ProcessType = ProcessType.Creditor;
+							}
+
+						}
+
+
 						Supplier.ProcessType = Supplier.ProcessAmount == 0 ? null : Supplier.ProcessType;
+
+
+
 						if (Supplier.ProcessType != null)
 						{
 							if (Supplier.ProcessType == ProcessType.Debtor)
 							{
-								Supplier.ProcessAmount = diffPrice > 0 ? Supplier.ProcessAmount + diffPrice : Supplier.ProcessAmount - diffPrice;
+
+								if (diffPrice > 0)
+									Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice;
+								else if (diffPrice < 0)
+									Supplier.ProcessAmount = Supplier.ProcessAmount - diffPrice;
+
 								if (Supplier.ProcessAmount < 0)
 								{
 									Supplier.ProcessType = ProcessType.Creditor;
@@ -408,7 +484,12 @@ namespace ERP_System.BLL.Guide
 							}
 							else
 							{
-								Supplier.ProcessAmount = diffPrice > 0 ? Supplier.ProcessAmount - diffPrice : Supplier.ProcessAmount + diffPrice;
+								if (diffPrice > 0)
+									Supplier.ProcessAmount = Supplier.ProcessAmount - diffPrice;
+								else if (diffPrice < 0)
+									Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice;
+
+
 								if (Supplier.ProcessAmount < 0)
 								{
 									Supplier.ProcessType = ProcessType.Debtor;
@@ -591,12 +672,7 @@ namespace ERP_System.BLL.Guide
 
 
 					decimal? TotalPrice = 0;
-					if (newInvoice.InvoiceTotalPrice < 0)
-					{
-						resultViewModel.Status = false;
-						resultViewModel.Message = "لا يمكن حفظ الاجمالي للفاتورة بالقيمة السالبة";
-						return resultViewModel;
-					}
+					
 
 					if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
 					{
@@ -690,14 +766,18 @@ namespace ERP_System.BLL.Guide
 							//newInvoice.InvoiceTotalPrice = TotalPrice;
 							var PriceDiff = newInvoice.TotalPaid ?? 0;
 							PriceDiff = newInvoice.InvoiceTotalPrice.Value - PriceDiff;
-							var supplierAmount = PriceDiff;
+
 							if (InvoiceDTO.TransactionType == 1 || InvoiceDTO.TransactionType == 0)
 							{
 								if (Supplier.ProcessType != null)
 								{
 									if (Supplier.ProcessType == ProcessType.Debtor)
 									{
-										Supplier.ProcessAmount = Supplier.ProcessAmount + supplierAmount;
+										if (PriceDiff > 0)
+											Supplier.ProcessAmount = Supplier.ProcessAmount + PriceDiff;
+										else if (PriceDiff < 0)
+											Supplier.ProcessAmount = Supplier.ProcessAmount + PriceDiff;
+
 										if (Supplier.ProcessAmount < 0)
 										{
 											Supplier.ProcessType = ProcessType.Creditor;
@@ -707,7 +787,11 @@ namespace ERP_System.BLL.Guide
 									}
 									else
 									{
-										Supplier.ProcessAmount = Supplier.ProcessAmount - supplierAmount;
+										if (PriceDiff > 0)
+											Supplier.ProcessAmount = Supplier.ProcessAmount - PriceDiff;
+										else if (PriceDiff < 0)
+											Supplier.ProcessAmount = Supplier.ProcessAmount + PriceDiff;
+
 										if (Supplier.ProcessAmount < 0)
 										{
 											Supplier.ProcessType = ProcessType.Debtor;
@@ -717,8 +801,13 @@ namespace ERP_System.BLL.Guide
 								}
 								else
 								{
-									Supplier.ProcessType = ProcessType.Debtor;
-									Supplier.ProcessAmount = Math.Abs(supplierAmount);
+									if (PriceDiff > 0)
+										Supplier.ProcessType = ProcessType.Debtor;
+									else if (PriceDiff < 0)
+										Supplier.ProcessType = ProcessType.Creditor;
+
+									Supplier.ProcessAmount = Math.Abs(PriceDiff);
+
 								}
 							}
 
