@@ -492,7 +492,7 @@
 
 		let CurrentRowPrice = Qty * PurchasingPrice;
 
-		let InvoiceTotalPrice = tRow.parent().parent().find(".InvoiceTotalPrice");
+		let InvoiceTotalPrice = tRow.parent().parent().parent().parent().parent().parent().find(".InvoiceTotalPrice");
 
 		TotalQtyPrice.val(CurrentRowPrice);
 
@@ -661,14 +661,14 @@
 						$('.SupplierData').empty();
 						$('.SupplierData').append(`
 										<input type="text" readonly class="form-control" placeholder="مدين (له )">
-										<input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
+											<input type="text" readonly class="form-control" placeholder="${res.ActualAmount}">
 									`);
 
 					} else {
 						$('.SupplierData').empty();
 						$('.SupplierData').append(`
 										<input type="text" readonly class="form-control" placeholder="دائن (عليه )">
-										<input type="text" readonly class="form-control" placeholder="${res.ProcessAmount}">
+											<input type="text" readonly class="form-control" placeholder="${res.ActualAmount}">
 									`);
 					}
 				}
@@ -755,6 +755,7 @@
 								<td>
 									<div class="d-flex">
 										<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+										<a onclick="doAll(this)" class="btn btn-outline-secondary mx-1" href="#"><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
 									</div>
 								</td>
 
@@ -783,6 +784,7 @@
 									<td>
 										<div class="d-flex">
 											<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+											<a onclick="doAll(this)" class="btn btn-outline-secondary mx-1" href="#"><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
 										</div>
 									</td>
 
@@ -820,6 +822,7 @@
 							, "UnitId": "0", "ConversionFactor": "", "QtyInStock": "", "Qty": "", "PurchasingPrice": "", "TotalQtyPrice": ""
 						}, true);
 					}
+					getInvoiceTotalPriceAfterRemoveRow();
 				}
 			});
 		}
@@ -838,9 +841,52 @@
 
 	});
 
+	function getInvoiceTotalPriceAfterRemoveRow() {
+		var TPrice = 0;
+
+		$.each($("#InvoiceProductsBody >tr"), function (key, value) {
+			let IdF = $(value).children("td").children(".ID").val().trim();
+			ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
+				Qty = $(value).children("td").children(".Qty").val().trim(),
+				PurchasingPrice = $(value).children("td").children(".PurchasingPrice").val().trim(),
+				TPrice += Qty * PurchasingPrice;
+		});
+
+		let InvoiceTotalPrice = $('.InvoiceTotalPrice');
+		InvoiceTotalPrice.val(TPrice);
+	}
+
 	$("#IsActive").change(function (e) {
 		var isChecked = $(this).prop("checked");
 		$("#IsActive").val(isChecked);
 	});
 
+
+	function doAll(value) {
+		if ($(value).parents("tr").find(".ProductBarCode").val() === "" || $(value).parents("tr").find(".UnitId").val() == "0") {
+			swal.fire({
+				title: `من فضلك أدخل الباركود`,
+				timer: 2000,
+				timerProgressBar: true,
+				icon: 'error',
+				showConfirmButton: false
+			})
+		}
+		else {
+			var newWin = window.open('', '_blank');
+			newWin.document.write('<svg id="barcode"></svg>');
+			newWin.focus();
+			var element = newWin.document.querySelector('#barcode');
+			generateBar(element, $(value).parents("tr").find(".ProductBarCode").val());
+		}
+	}
+
+	function generateBar(element, value) {
+		JsBarcode(element, value, {
+			format: 'code128',
+			displayValue: true,
+			width: 2.8,
+			height: 100
+		});
+	}
 </script>

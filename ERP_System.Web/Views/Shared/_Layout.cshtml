@@ -122,15 +122,19 @@
     <script src="~/assets/extensions/sweetalert2/sweetalert2.min.js"></script>
     <script>
         $(document).ready(function () {
-            $(".sidebar-item").removeClass("active");
+           var sidbar = $(".sidebar-item");
+            sidbar.removeClass("active");
             let pathName = location.pathname.split("/");
+            let collapsedArea = location.pathname;
+            sidbar.find()
+            console.log(collapsedArea);
             pathName.pop();
             pathName = pathName.join("/");
             if (pathName === '') {
                 pathName = '/Home/Index';
             }
             let linkT;
-
+            
             $.each($(".sidebar-link"), function () {
                 linkT = $(this).attr("href").split("/");
                 linkT.pop();

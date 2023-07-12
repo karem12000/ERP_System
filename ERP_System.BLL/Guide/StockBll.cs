@@ -167,7 +167,12 @@ namespace ERP_System.BLL.Guide
                     resultViewModel.Message = AppConstants.Messages.DeletedFailed;
                     return resultViewModel;
                 }
-                var IsSuceess = _repoStock.Delete(tbl);
+
+				tbl.IsDeleted = true;
+				tbl.DeletedDate = DateTime.Now;
+				tbl.DeletedBy = _repoStock.UserId;
+
+				var IsSuceess = _repoStock.Update(tbl);
 
                 resultViewModel.Status = IsSuceess;
                 resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;

@@ -13,9 +13,8 @@ namespace ERP_System.Web.Components
 
         public AsideBar(PageBll pageBll) => _pageBll = pageBll;
 
-        //public IViewComponentResult Invoke() => View("Index", _pageBll.GetAsideBarPages2());
-
-        // _UserBll.GetAllowedUserAppForms()
-        public IViewComponentResult Invoke() => View("Index", _pageBll.GetAsideBarPages());
+     
+        public IViewComponentResult Invoke() => View("Index", _pageBll.GetAsideBarPages2());
+        //public IViewComponentResult Invoke() => View("Index", _pageBll.GetAsideBarPages());
     }
 }

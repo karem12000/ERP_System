@@ -19,7 +19,9 @@ namespace ERP_System.DTO
         public ProcessType? ProcessType { get; set; }
         public int? ProcessTypeInt { get; set; }
         public decimal? ProcessAmount { get; set; }
+        public decimal? ActualAmount { get; set; }
         public bool IsActive { get; set; }
+
     }
 
     public class SupplierTableDTO
@@ -32,6 +34,7 @@ namespace ERP_System.DTO
         public string AddedDate { get; set; }
         public int? ProcessType { get; set; }
         public decimal? ProcessAmount { get; set; }
+        public decimal? ActualAmount => Math.Abs(ProcessAmount.Value);
         public bool IsActive { get; set; }
         public int TotalCount { get; set; }
 

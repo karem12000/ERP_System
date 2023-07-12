@@ -105,10 +105,21 @@ namespace ERP_System.BLL
                     PageRoute = x.ControllerName == "Xero" ? $"{x.AreaName}/{x.ControllerName}/Preparation" : (string.IsNullOrEmpty(x.AreaName) ? $"{x.ControllerName}/Index" : $"{x.AreaName}/{x.ControllerName}/Index"),
                     HasPermission = _repoUserPermissions.GetAll().Where(u => u.UserTypeId == _userBll.GetById(_repoPage.UserId).UserTypeId && p.ActionsPages.Contains(u.ActionsPage)).Any()
                 }).ToList(),
-                HasPermission = _repoUserPermissions.GetAll().Where(u => u.UserTypeId == _userBll.GetById(_repoPage.UserId).UserTypeId && p.ActionsPages.Contains(u.ActionsPage) && !p.IsArea).Any()
+                HasPermission =p.IsArea ? true : _repoUserPermissions.GetAll().Where(u => u.UserTypeId == _userBll.GetById(_repoPage.UserId).UserTypeId && p.ActionsPages.Contains(u.ActionsPage) && !p.IsArea).Any()
             });
 
-            var newData = data.Where(p => p.HasPermission || p.Pages.Any(x => x.HasPermission) || p.IsArea).ToList();
+            var data2 = new List<NewSidebarDto>();
+            foreach (var item in data)
+            {
+                if (item.IsArea && item.Pages.Count()==0)
+                {
+                    item.HasPermission = false;
+                }
+
+                data2.Add(item);
+            }
+
+            var newData = data2.Where(p => p.HasPermission || p.Pages.Any(x => x.HasPermission)).ToList();
             return newData;
         }
         #endregion

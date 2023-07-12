@@ -42,7 +42,8 @@ namespace ERP_System.BLL.Guide
                 Name = p.Name,
                 Phone = p.Phone,
                 ProcessAmount = p.ProcessAmount,
-                ProcessTypeInt = p.ProcessType == null ? 0 : (int)p.ProcessType
+                ProcessTypeInt = p.ProcessType == null ? 0 : (int)p.ProcessType ,
+                ActualAmount = Math.Abs(p.ProcessAmount.Value)
             }).FirstOrDefault();
         }
         public IQueryable<SelectListDTO> GetSelect()
@@ -80,6 +81,11 @@ namespace ERP_System.BLL.Guide
                 tbl.AddedBy = data.AddedBy;
                 tbl.ModifiedDate = AppDateTime.Now;
                 tbl.ModifiedBy = _repoSupplier.UserId;
+                if (SupplierDTO.ProcessType == ProcessType.Creditor)
+                {
+                    tbl.ProcessAmount = -1 * tbl.ProcessAmount;
+                }
+
                 if (_repoSupplier.Update(tbl))
                 {
                     resultViewModel.Status = true;
@@ -98,6 +104,13 @@ namespace ERP_System.BLL.Guide
                 {
                     tbl.AddedBy = _repoSupplier.UserId;
                 }
+
+
+                if(SupplierDTO.ProcessType == ProcessType.Creditor)
+                {
+                    tbl.ProcessAmount = -1 * tbl.ProcessAmount;
+                }
+
                 if (_repoSupplier.Insert(tbl))
                 {
                     resultViewModel.Status = true;
@@ -131,7 +144,11 @@ namespace ERP_System.BLL.Guide
                 resultViewModel.Message = "لايمكن حذف المورد لوجود معاملات خاصه به";
                 return resultViewModel;
             }
-            var IsSuceess = _repoSupplier.Delete(tbl);
+
+			tbl.IsDeleted = true;
+			tbl.DeletedDate = DateTime.Now;
+			tbl.DeletedBy = _repoSupplier.UserId;
+			var IsSuceess = _repoSupplier.Update(tbl);
 
             //tbl.IsDeleted = true;
             //if (_repoSupplier.UserId != Guid.Empty)

@@ -693,7 +693,10 @@ namespace ERP_System.BLL.Guide
                 resultViewModel.Message = "لا يمكن حذف المنتج لانه يوجد له فواتير";
                 return resultViewModel;
             }
-			var IsSuceess = _repoProduct.Delete(tbl);
+			tbl.IsDeleted = true;
+			tbl.DeletedDate = DateTime.Now;
+			tbl.DeletedBy = _repoProduct.UserId;
+			var IsSuceess = _repoProduct.Update(tbl);
 
 			resultViewModel.Status = IsSuceess;
 			resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;

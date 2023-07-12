@@ -457,10 +457,10 @@ namespace ERP_System.BLL
                 resultViewModel.Message = "لايمكن حذف المورد لوجود معاملات خاصه به";
                 return resultViewModel;
             }
-            //tbl.IsDeleted = true;
-            //tbl.DeletedBy = null;
-            //tbl.DeletedDate = AppDateTime.Now;
-            var IsSuceess = _repoUser.Delete(tbl);
+            tbl.IsDeleted = true;
+            tbl.DeletedBy = _repoUser.UserId;
+            tbl.DeletedDate = AppDateTime.Now;
+            var IsSuceess = _repoUser.Update(tbl);
 
             resultViewModel.Status = IsSuceess;
             resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;

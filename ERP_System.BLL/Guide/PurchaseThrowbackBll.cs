@@ -305,42 +305,20 @@ namespace ERP_System.BLL.Guide
 					var InvoiceTotalPaid = newInvoice.TotalPaid ?? 0;
 					var invoiceTotPrice = newInvoice.InvoiceTotalPrice??0;
 					var diffPrice = invoiceTotPrice- InvoiceTotalPaid;
-					if (InvoiceDTO.TransactionType == 1 || InvoiceDTO.TransactionType == 0)
-					{
-						if (Supplier.ProcessType != null)
-						{
-							Supplier.ProcessAmount = Supplier.ProcessAmount + oldInvoiceTotalPrice - oldInvoiceTotalPaid;
-							if (Supplier.ProcessType == ProcessType.Creditor)
-							{
-								Supplier.ProcessAmount = diffPrice > 0 ? Supplier.ProcessAmount + diffPrice : Supplier.ProcessAmount - diffPrice;
-								if (Supplier.ProcessAmount < 0)
-								{
-									Supplier.ProcessType = ProcessType.Debtor;
-									Supplier.ProcessAmount = Math.Abs(Supplier.ProcessAmount.Value);
-								}
+					var oldDiff = oldInvoiceTotalPrice - oldInvoiceTotalPaid;
 
-							}
-							else
-							{
-								Supplier.ProcessAmount = diffPrice > 0 ? Supplier.ProcessAmount - diffPrice : Supplier.ProcessAmount + diffPrice;
-								if (Supplier.ProcessAmount < 0)
-								{
-									Supplier.ProcessType = ProcessType.Creditor;
-									Supplier.ProcessAmount = Math.Abs(Supplier.ProcessAmount.Value);
-								}
-							}
-						}
-						else
-						{
-							Supplier.ProcessType = diffPrice > 0 ? ProcessType.Creditor : ProcessType.Debtor;
-							Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice;
-						}
-						Supplier.ProcessAmount = Math.Abs(Supplier.ProcessAmount.Value);
-					}
-					#endregion
+                    Supplier.ProcessAmount = Supplier.ProcessAmount + oldDiff;
+                    Supplier.ProcessAmount = Supplier.ProcessAmount - diffPrice;
+
+                    if (Supplier.ProcessAmount > 0)
+                        Supplier.ProcessType = ProcessType.Debtor;
+                    else if (Supplier.ProcessAmount < 0)
+                        Supplier.ProcessType = ProcessType.Creditor;
+                    else Supplier.ProcessType = null;
+                    #endregion
 
 
-					decimal? TotalPrice = 0;
+                    decimal? TotalPrice = 0;
 					var oldInvoiceDetails = data.PurchaseThrowbackDetails;
 					if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
 					{
@@ -550,60 +528,17 @@ namespace ERP_System.BLL.Guide
 					var invoiceTotPrice = newInvoice.InvoiceTotalPrice.Value;
 					var diffPrice = invoiceTotPrice- InvoiceTotalPaid;
 
+                    Supplier.ProcessAmount = Supplier.ProcessAmount - diffPrice;
 
-					if (InvoiceDTO.TransactionType == 1 || InvoiceDTO.TransactionType == 0)
-					{
-						if (Supplier.ProcessType != null)
-						{
-							if (Supplier.ProcessType == ProcessType.Creditor)
-							{
+                    if (Supplier.ProcessAmount > 0)
+                        Supplier.ProcessType = ProcessType.Debtor;
+                    else if (Supplier.ProcessAmount < 0)
+                        Supplier.ProcessType = ProcessType.Creditor;
+                    else Supplier.ProcessType = null;
 
-								if (diffPrice > 0)
-									Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice;
-								else if(diffPrice<0)
+                    #endregion
 
-
-								if (Supplier.ProcessAmount < 0)
-								{
-									Supplier.ProcessType = ProcessType.Debtor;
-									Supplier.ProcessAmount = Math.Abs(Supplier.ProcessAmount.Value);
-								}
-
-							}
-							else
-							{
-								Supplier.ProcessAmount =diffPrice>0? Supplier.ProcessAmount - diffPrice : Supplier.ProcessAmount+diffPrice;
-								if (Supplier.ProcessAmount < 0)
-								{
-									Supplier.ProcessType = ProcessType.Creditor;
-									Supplier.ProcessAmount = Math.Abs(Supplier.ProcessAmount.Value);
-								}
-							}
-						}
-						else
-						{
-							if(diffPrice > 0)
-							{
-								Supplier.ProcessType =  ProcessType.Creditor ;
-								Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice ;
-
-							}
-							else if(diffPrice < 0)
-							{
-								Supplier.ProcessType = ProcessType.Debtor;
-								Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice;
-							}
-							else
-							{
-								Supplier.ProcessType = null;
-								Supplier.ProcessAmount = Supplier.ProcessAmount + diffPrice;
-							}							
-						}
-						Supplier.ProcessAmount = Math.Abs (Supplier.ProcessAmount.Value);
-					}
-					#endregion
-
-					if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
+                    if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
 					{
 						if (_repoInvoice.Insert(newInvoice))
 						{
