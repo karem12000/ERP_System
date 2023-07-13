@@ -96,7 +96,7 @@
 		stockId.attr('disabled', 'disabled');
 		supplier.attr('disabled', 'disabled');
 		InvoiceTotalPrice.val(obj.InvoiceTotalPrice);
-		TotalPaid.val(obj.TotalPaid)
+		//TotalPaid.val(obj.TotalPaid)
 
 		if (invoiceProducts != null && invoiceProducts.length > 0) {
 			productsTable.empty();
@@ -216,10 +216,10 @@
 
 
 
-	@if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+	@if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
 	{
 																																												<a class="btn-icon btn btn-warning btn-sm"  href="/Guide/PurchaseThrowback/Edit/${data.ID}" >
-																																								 <i class="fas fa-pen"></i>
+																																										 <i class="fas fa-eye"></i>
 
 																																								</a>
 

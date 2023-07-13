@@ -305,7 +305,7 @@ namespace ERP_System.BLL.Guide
 						decimal? allQty = 0;
 						foreach (var iq in qty)
 						{
-							allQty = iq.Sum(x => x.Qty);
+							allQty += iq.Sum(x => x.Qty);
 						}
 
 						var currenRow = finalInvoice.Where(x => x.UnitId == item.UnitId && x.ProductId == item.ProductId).FirstOrDefault();
@@ -320,8 +320,6 @@ namespace ERP_System.BLL.Guide
 					}
 				}
 				invoice.GetInvoiceDetails = finalInvoice;
-
-
 				if (finalInvoice.Count == 0)
 				{
 					result.Status = false;
@@ -329,6 +327,7 @@ namespace ERP_System.BLL.Guide
 					return result;
 				}
 
+				invoice.InvoiceTotalPrice = invoice.GetInvoiceDetails.Sum(x => x.TotalQtyPrice);
 				result.Status = true;
 				result.Data = invoice;
 			}
@@ -410,7 +409,12 @@ namespace ERP_System.BLL.Guide
 				{
 					var oldTotalPaid = data.TotalPaid ?? 0;
 					var oldTotalInvoicePrice = data.InvoiceTotalPrice.Value;
-
+					if (InvoiceDTO.InvoiceDetails.Where(x => x.PurchasingPrice == null || x.TotalQtyPrice == null).FirstOrDefault() != null)
+					{
+						resultViewModel.Status = false;
+						resultViewModel.Message = "تأكد من إدخال سعر الشراء لكل منتج";
+						return resultViewModel;
+					}
 					var newInvoice = data;
 
 					newInvoice.StockId = InvoiceDTO.StockId;
@@ -630,6 +634,12 @@ namespace ERP_System.BLL.Guide
 				else
 				{
 
+					if(InvoiceDTO.InvoiceDetails.Where(x=>x.PurchasingPrice ==null || x.TotalQtyPrice == null).FirstOrDefault() != null)
+					{
+						resultViewModel.Status = false;
+						resultViewModel.Message = "تأكد من إدخال سعر الشراء لكل منتج";
+						return resultViewModel;
+					}
 					var newInvoice = new PurchaseInvoice();
 					newInvoice.StockId = InvoiceDTO.StockId;
 					newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;

@@ -37,7 +37,7 @@ namespace ERP_System.BLL.Guide
 
 		public ProductBll(IRepository<Attachment> repoAttatchment, IRepository<Unit> repoUnit, IRepository<ProductUnit> productUnit,
 			IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll,
-			IRepository<StockProduct> stockProduct , IRepository<PurchaseInvoice> repoPurchaseInvoice , IRepository<PurchaseThrowback> repoPurchaseThrowback)
+			IRepository<StockProduct> stockProduct, IRepository<PurchaseInvoice> repoPurchaseInvoice, IRepository<PurchaseThrowback> repoPurchaseThrowback)
 		{
 			_repoProduct = repoProduct;
 			_mapper = mapper;
@@ -145,6 +145,7 @@ namespace ERP_System.BLL.Guide
 				   QtyInStock = p.QtyInStock,
 				   IdUnitOfQty = p.IdUnitOfQty,
 				   NameUnitOfQty = p.NameUnitOfQty,
+				   SalePrice = p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.SellingPrice).FirstOrDefault(),
 				   GetQtyInStock = p.QtyInStock / p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.ConversionFactor).FirstOrDefault(),
 				   GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
 				   {
@@ -157,7 +158,7 @@ namespace ERP_System.BLL.Guide
 					   UnitId = c.UnitId,
 					   UnitName = c.Unit.Name
 				   }).ToArray(),
-				   QtyInStockStr =p.ProductUnits.Where(x=>x.UnitBarcodeText.Trim()==barcode.Trim()).Select(x=>x.Unit.Name).FirstOrDefault()??""
+				   QtyInStockStr = p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.Unit.Name).FirstOrDefault() ?? ""
 
 			   }).FirstOrDefault();
 
@@ -174,7 +175,22 @@ namespace ERP_System.BLL.Guide
 						data.ConversionFactor = currentProduct.ConversionFactor;
 
 					}
-					data.QtyInStockStr = string.Join(" - ",Math.Round(data.GetQtyInStock.Value,2) ,data.QtyInStockStr );
+
+					var conversionFactor = data.GetProductUnits.Where(x => x.UnitId == data.IdUnitOfQty).FirstOrDefault().ConversionFactor;
+					conversionFactor = conversionFactor ?? 0;
+					var qtyStock = data.QtyInStock ?? 0;
+
+					if (conversionFactor == 0 || qtyStock == 0)
+					{
+
+						data.QtyInStockStr = string.Join(" - ", Math.Round(0.0, 2), data.QtyInStockStr);
+
+					}
+					else
+					{
+						var qtyStr = qtyStock / conversionFactor;
+						data.QtyInStockStr = string.Join(" - ", Math.Round(qtyStr.Value, 2), data.QtyInStockStr);
+					}
 					resultView.Status = true;
 					resultView.Data = data;
 				}
@@ -190,7 +206,7 @@ namespace ERP_System.BLL.Guide
 			}
 			return resultView;
 		}
-		
+
 		public ResultViewModel GetByProductName(string barcode)
 		{
 			var resultView = new ResultViewModel();
@@ -209,8 +225,9 @@ namespace ERP_System.BLL.Guide
 				   QtyInStock = p.QtyInStock,
 				   IdUnitOfQty = p.IdUnitOfQty,
 				   NameUnitOfQty = p.NameUnitOfQty,
-				   ConversionFactor = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted && c.UnitId==p.IdUnitOfQty).Select(x=>x.ConversionFactor).FirstOrDefault(),
-				   GetQtyInStock = p.QtyInStock / p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.ConversionFactor).FirstOrDefault(),
+				   SalePrice = p.ProductUnits.Where(x => x.UnitId == p.IdUnitOfQty).Select(x => x.SellingPrice).FirstOrDefault(),
+				   ConversionFactor = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted && c.UnitId == p.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault(),
+				   GetQtyInStock = p.QtyInStock,
 				   GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
 				   {
 					   ID = c.ID,
@@ -222,13 +239,24 @@ namespace ERP_System.BLL.Guide
 					   UnitId = c.UnitId,
 					   UnitName = c.Unit.Name
 				   }).ToArray(),
-				   QtyInStockStr = p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.Unit.Name).FirstOrDefault() ?? ""
+				   QtyInStockStr = p.ProductUnits.Where(x => x.UnitId == p.IdUnitOfQty).Select(x => x.Unit.Name).FirstOrDefault() ?? ""
 			   }).FirstOrDefault();
 
 				if (data != null)
 				{
-					data.QtyInStockStr = string.Join(" - ", Math.Round(data.GetQtyInStock.Value, 2), data.QtyInStockStr);
+					var conversionFactor = data.ConversionFactor ?? 0;
+					var qtyStock = data.QtyInStock ?? 0;
+					if (conversionFactor == 0 || qtyStock == 0)
+					{
 
+						data.QtyInStockStr = string.Join(" - ", Math.Round(0.0, 2), data.QtyInStockStr);
+
+					}
+					else
+					{
+						var qtyStr = qtyStock / conversionFactor;
+						data.QtyInStockStr = string.Join(" - ", Math.Round(qtyStr, 2), data.QtyInStockStr);
+					}
 					//if (barcode.Trim().ToLower() != data.BarCodeText.Trim().ToLower())
 					//{
 					//    var currentProduct = data.GetProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).FirstOrDefault();
@@ -271,7 +299,7 @@ namespace ERP_System.BLL.Guide
 				   GroupId = p.GroupId,
 				   IdUnitOfQty = p.IdUnitOfQty,
 				   NameUnitOfQty = p.NameUnitOfQty,
-				   ConversionFactor = p.ProductUnits.Where(x=>x.UnitId==unitId).Select(x=>x.ConversionFactor).FirstOrDefault(),
+				   ConversionFactor = p.ProductUnits.Where(x => x.UnitId == unitId).Select(x => x.ConversionFactor).FirstOrDefault(),
 				   GetQtyInStock = p.QtyInStock,
 				   GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
 				   {
@@ -298,10 +326,23 @@ namespace ERP_System.BLL.Guide
 						data.IdUnitOfQty = currentProduct.UnitId;
 						data.NameUnitOfQty = currentProduct.UnitName;
 						data.SalePrice = currentProduct.SellingPrice;
-						
+
 						data.ConversionFactor = currentProduct.ConversionFactor;
 					}
-					data.QtyInStockStr = string.Join(" - ", Math.Round((data.GetQtyInStock.Value / data.ConversionFactor.Value), 2), data.QtyInStockStr);
+					var conversionFactor = data.ConversionFactor ?? 0;
+					var qtyStock = data.QtyInStock ?? 0;
+					if (conversionFactor == 0 || qtyStock == 0)
+					{
+
+						data.QtyInStockStr = string.Join(" - ", Math.Round(0.0, 2), data.QtyInStockStr);
+
+					}
+					else
+					{
+						var qtyStr = qtyStock / conversionFactor;
+						data.QtyInStockStr = string.Join(" - ", Math.Round(qtyStr, 2), data.QtyInStockStr);
+					}
+					//data.QtyInStockStr = string.Join(" - ", Math.Round((data.GetQtyInStock.Value / data.ConversionFactor.Value), 2), data.QtyInStockStr);
 					resultView.Status = true;
 					resultView.Data = data;
 				}
@@ -401,10 +442,28 @@ namespace ERP_System.BLL.Guide
 		public ResultViewModel Save(ProductDTO productDto)
 		{
 			ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
-			var BarCodeFoldeName = "\\ProductsBarCode\\";
-			var UnitBarCodeFoldeName = "\\ProductsBarCode\\UnitsBarCode\\";
+			//var BarCodeFoldeName = "\\ProductsBarCode\\";
+			//var UnitBarCodeFoldeName = "\\ProductsBarCode\\UnitsBarCode\\";
 			var ImagesFoldeName = "\\Images\\Products\\";
-
+			if (productDto.ProductUnits != null && productDto.ProductUnits.Count() > 0)
+			{
+				var allUnits = productDto.ProductUnits.ToList();
+				foreach (var item in allUnits)
+				{
+					if (item.UnitId == null || string.IsNullOrEmpty(item.UnitBarcodeText) || item.ConversionFactor == 0)
+					{
+						resultViewModel.Status = false;
+						resultViewModel.Message = $"تاكد من ادخال معامل التحويل والباركود لكل وحدة من وحدات المنتج";
+						return resultViewModel;
+					}
+					if (allUnits.Where(x => x.UnitId == item.UnitId).Count() > 1)
+					{
+						resultViewModel.Status = false;
+						resultViewModel.Message = $"توجد وحدات مكررة في وحدات المنتج";
+						return resultViewModel;
+					}
+				}
+			}
 			var data = _repoProduct.GetAllAsNoTracking().Where(p => p.ID == productDto.ID).FirstOrDefault();
 			if (data != null)
 			{
@@ -415,8 +474,8 @@ namespace ERP_System.BLL.Guide
 					.Where(p => p.ID != data.ID && p.Name.Trim().ToLower() == productDto.Name.Trim().ToLower()).FirstOrDefault();
 				if (existMdl != null)
 				{
-                    resultViewModel.Message = "اسم الصنف مستخدم من قبل صنف اخر";
-                    return resultViewModel;
+					resultViewModel.Message = "اسم الصنف مستخدم من قبل صنف اخر";
+					return resultViewModel;
 
 				}
 
@@ -430,29 +489,29 @@ namespace ERP_System.BLL.Guide
 
 				if (_productUnit.GetAllAsNoTracking().Any(x => x.ProductId != productDto.ID && x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim()))
 				{
-                    resultViewModel.Message = "باركود الصنف مستخدم من قبل وحدة منتج أخر";
-                    return resultViewModel;
-                }
-                if (productDto.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim() && x.UnitId != productDto.IdUnitOfQty))
-                {
-                    resultViewModel.Status = false;
-                    resultViewModel.Message = "باركود المنتج متعارض  مع أحد باركودات وحدات المنتج";
-                    return resultViewModel;
-                }
-                var allAnotherUnitBarcode = _productUnit.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.ProductId != productDto.ID);
+					resultViewModel.Message = "باركود الصنف مستخدم من قبل وحدة منتج أخر";
+					return resultViewModel;
+				}
+				if (productDto.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim() && x.UnitId != productDto.IdUnitOfQty))
+				{
+					resultViewModel.Status = false;
+					resultViewModel.Message = "باركود المنتج متعارض  مع أحد باركودات وحدات المنتج";
+					return resultViewModel;
+				}
+				var allAnotherUnitBarcode = _productUnit.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.ProductId != productDto.ID);
 				foreach (var unit in productDto.ProductUnits)
 				{
-					var existBarcode = allAnotherUnitBarcode.Where(x=>x.UnitBarcodeText.Trim()==unit.UnitBarcodeText.Trim()).FirstOrDefault();
-                    if (existBarcode != null)
-                    {
-                        resultViewModel.Status = false;
-                        resultViewModel.Message = "الباركود " + existBarcode.UnitBarcodeText + " مستخدم لوحدة منتج اخر";
-                        return resultViewModel;
-                    }
-                }
-                
+					var existBarcode = allAnotherUnitBarcode.Where(x => x.UnitBarcodeText.Trim() == unit.UnitBarcodeText.Trim()).FirstOrDefault();
+					if (existBarcode != null)
+					{
+						resultViewModel.Status = false;
+						resultViewModel.Message = "الباركود " + existBarcode.UnitBarcodeText + " مستخدم لوحدة منتج اخر";
+						return resultViewModel;
+					}
+				}
 
-                var tbl = _mapper.Map<Product>(productDto);
+
+				var tbl = _mapper.Map<Product>(productDto);
 				if (data.IdUnitOfQty != productDto.IdUnitOfQty)
 				{
 					if (productDto.IdUnitOfQty != null && productDto.IdUnitOfQty != Guid.Empty)
@@ -467,78 +526,97 @@ namespace ERP_System.BLL.Guide
 
 				if (string.IsNullOrEmpty(productDto.BarCodeText))
 				{
-                    resultViewModel.Status = false;
-                    resultViewModel.Message ="باركود المنتج مطلوب";
+					resultViewModel.Status = false;
+					resultViewModel.Message = "باركود المنتج مطلوب";
 					return resultViewModel;
 				}
 				//else
 				//{
 				//	if(tbl.BarCodeText.Trim() != data.BarCodeText.Trim())
 				//	{
-    //                    tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
-    //                    tbl.BarCodeText = productDto.BarCodeText;
-    //                    if (!string.IsNullOrEmpty(data.BarCodePath))
-    //                    {
-    //                        File.Delete(_webHostEnvironment + data.BarCodePath);
-    //                    }
-    //                }
+				//                    tbl.BarCodePath = _helperBll.GenerateBarcode(productDto.BarCodeText, BarCodeFoldeName);
+				//                    tbl.BarCodeText = productDto.BarCodeText;
+				//                    if (!string.IsNullOrEmpty(data.BarCodePath))
+				//                    {
+				//                        File.Delete(_webHostEnvironment + data.BarCodePath);
+				//                    }
+				//                }
 				//}
 				tbl.AddedBy = data.AddedBy;
-                tbl.CreatedDate = data.CreatedDate;
-                tbl.ModifiedDate = AppDateTime.Now;
+				tbl.CreatedDate = data.CreatedDate;
+				tbl.ModifiedDate = AppDateTime.Now;
 				tbl.ModifiedBy = _repoProduct.UserId;
-				
+
 				if (productDto.Image != null && productDto.Image.Length > 0)
 				{
 					tbl.Image = _helperBll.UploadFile(productDto.Image, ImagesFoldeName);
 				}
-  
+				var baseUnitExist = productDto.ProductUnits.Where(x => x.UnitId == productDto.IdUnitOfQty).FirstOrDefault();
+				if (baseUnitExist == null)
+				{
+					resultViewModel.Status = false;
+					resultViewModel.Message = $"من فضلك تأكد من إدخال الوحده {tbl.NameUnitOfQty} في الوحدات الخاصه بالمنتج";
+					return resultViewModel;
+				}
+				else
+				{
+					if (baseUnitExist.UnitBarcodeText.Trim() != tbl.BarCodeText.Trim())
+					{
+						resultViewModel.Status = false;
+						resultViewModel.Message = $"باركود المنتج يجب أن يطابق باركود الوحده الأساسية";
+						return resultViewModel;
+					}
+				}
+
+
 				if (_repoProduct.Update(tbl))
 				{
 					if (productDto.ProductUnits != null && productDto.ProductUnits.Length > 0)
 					{
-						_productUnit.ExecuteSQLQuery<int>("UPDATE [Guide].[ProductUnits] SET [IsDeleted] = 1 WHERE [ProductId]='" + tbl.ID + "'", CommandType.Text);
+						_productUnit.ExecuteSQLQuery<int>("Delete from [Guide].[ProductUnits] WHERE [ProductId]='" + tbl.ID + "'", CommandType.Text);
+						//_productUnit.ExecuteSQLQuery<int>("UPDATE [Guide].[ProductUnits] SET [IsDeleted] = 1 WHERE [ProductId]='" + tbl.ID + "'", CommandType.Text);
 
 						var NewRecords = new List<ProductUnit>();
 						foreach (var unit in productDto.ProductUnits)
 						{
-							ProductUnit currentUnit = null;
-							if (oldProductUnits != null)
-							{
-							 currentUnit = oldProductUnits.Where(x => x.ID == unit.ID).FirstOrDefault();
+							//ProductUnit currentUnit = null;
+							//if (oldProductUnits != null)
+							//{
+							// currentUnit = oldProductUnits.Where(x => x.ID == unit.ID).FirstOrDefault();
 
-							}
-							if(currentUnit != null)
-							{
-							
-								currentUnit.ProductId = tbl.ID;
-								currentUnit.ConversionFactor = unit.ConversionFactor;
-								currentUnit.SellingPrice = unit.SellingPrice;
-								currentUnit.PurchasingPrice = unit.PurchasingPrice;
-								currentUnit.UnitBarcodeText = unit.UnitBarcodeText;
-								currentUnit.UnitId = unit.UnitId;
+							//}
+							//if(currentUnit != null)
+							//{
 
-								NewRecords.Add(currentUnit);
-							}
-							else
+							//	currentUnit.ProductId = tbl.ID;
+							//	currentUnit.ConversionFactor = unit.ConversionFactor;
+							//	currentUnit.SellingPrice = unit.SellingPrice;
+							//	currentUnit.PurchasingPrice = unit.PurchasingPrice;
+							//	currentUnit.UnitBarcodeText = unit.UnitBarcodeText;
+							//	currentUnit.UnitId = unit.UnitId;
+
+							//	NewRecords.Add(currentUnit);
+							//}
+							//else
+							//{
+							var newR = new ProductUnit
 							{
-								var newR = new ProductUnit
-								{
-									ProductId = tbl.ID,
-									ConversionFactor = unit.ConversionFactor,
-									PurchasingPrice = unit.PurchasingPrice,
-									SellingPrice = unit.SellingPrice,
-									UnitBarcodeText = unit.UnitBarcodeText,
-									UnitId = unit.UnitId
-								};
-								if (newR.UnitId == tbl.IdUnitOfQty)
-								{
-									newR.UnitBarcodeText = tbl.BarCodeText;
-								}
-								//newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
-								NewRecords.Add(newR);
+								ID = unit.ID == null ? Guid.NewGuid() : unit.ID.Value,
+								ProductId = tbl.ID,
+								ConversionFactor = unit.ConversionFactor,
+								PurchasingPrice = unit.PurchasingPrice,
+								SellingPrice = unit.SellingPrice,
+								UnitBarcodeText = unit.UnitBarcodeText,
+								UnitId = unit.UnitId
+							};
+							if (newR.UnitId == tbl.IdUnitOfQty)
+							{
+								newR.UnitBarcodeText = tbl.BarCodeText;
 							}
-							
+							//newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
+							NewRecords.Add(newR);
+							//}
+
 						}
 						_productUnit.InsertRange(NewRecords);
 					}
@@ -564,41 +642,41 @@ namespace ERP_System.BLL.Guide
 			{
 				if (_repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.Name.Trim().ToLower() == productDto.Name.Trim().ToLower()).FirstOrDefault() != null)
 				{
-                    resultViewModel.Message = "اسم الصنف مستخدم من قبل صنف اخر";
-                    return resultViewModel;
-                }
-              
-                if (_repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.BarCodeText.Trim() == productDto.BarCodeText.Trim()).FirstOrDefault() != null)
-                {
-                    resultViewModel.Message = "باركود الصنف مستخدم من قبل صنف اخر";
-                    return resultViewModel;
-                }
+					resultViewModel.Message = "اسم الصنف مستخدم من قبل صنف اخر";
+					return resultViewModel;
+				}
 
-                if (_productUnit.GetAllAsNoTracking().Any(x => x.ProductId != productDto.ID && x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim()))
-                {
-                    resultViewModel.Message = "باركود الصنف مستخدم من قبل وحدة منتج أخر";
-                    return resultViewModel;
-                }
+				if (_repoProduct.GetAllAsNoTracking().Where(p => !p.IsDeleted).Where(p => p.BarCodeText.Trim() == productDto.BarCodeText.Trim()).FirstOrDefault() != null)
+				{
+					resultViewModel.Message = "باركود الصنف مستخدم من قبل صنف اخر";
+					return resultViewModel;
+				}
 
-                if (productDto.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim() && x.UnitId != productDto.IdUnitOfQty))
-                {
-                    resultViewModel.Status = false;
-                    resultViewModel.Message = "باركود المنتج متعارض  مع أحد باركودات وحدات المنتج";
-                    return resultViewModel;
-                }
-                var allAnotherUnitBarcode = _productUnit.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.ProductId != productDto.ID);
-                foreach (var unit in productDto.ProductUnits)
-                {
-                    var existBarcode = allAnotherUnitBarcode.Where(x => x.UnitBarcodeText.Trim() == unit.UnitBarcodeText.Trim()).FirstOrDefault();
-                    if (existBarcode != null)
-                    {
-                        resultViewModel.Status = false;
-                        resultViewModel.Message = "الباركود " + existBarcode.UnitBarcodeText + " مستخدم لوحدة منتج اخر";
-                        return resultViewModel;
-                    }
-                }
+				if (_productUnit.GetAllAsNoTracking().Any(x => x.ProductId != productDto.ID && x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim()))
+				{
+					resultViewModel.Message = "باركود الصنف مستخدم من قبل وحدة منتج أخر";
+					return resultViewModel;
+				}
 
-                var tbl = _mapper.Map<Product>(productDto);
+				if (productDto.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == productDto.BarCodeText.Trim() && x.UnitId != productDto.IdUnitOfQty))
+				{
+					resultViewModel.Status = false;
+					resultViewModel.Message = "باركود المنتج متعارض  مع أحد باركودات وحدات المنتج";
+					return resultViewModel;
+				}
+				var allAnotherUnitBarcode = _productUnit.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.ProductId != productDto.ID);
+				foreach (var unit in productDto.ProductUnits)
+				{
+					var existBarcode = allAnotherUnitBarcode.Where(x => x.UnitBarcodeText.Trim() == unit.UnitBarcodeText.Trim()).FirstOrDefault();
+					if (existBarcode != null)
+					{
+						resultViewModel.Status = false;
+						resultViewModel.Message = "الباركود " + existBarcode.UnitBarcodeText + " مستخدم لوحدة منتج اخر";
+						return resultViewModel;
+					}
+				}
+
+				var tbl = _mapper.Map<Product>(productDto);
 				if (productDto.IdUnitOfQty != null && productDto.IdUnitOfQty != Guid.Empty)
 				{
 					tbl.NameUnitOfQty = _repoUnit.GetById(productDto.IdUnitOfQty).Name;
@@ -620,7 +698,23 @@ namespace ERP_System.BLL.Guide
 					tbl.Image = _helperBll.UploadFile(productDto.Image, ImagesFoldeName);
 				}
 
-               
+				var baseUnitExist = productDto.ProductUnits.Where(x => x.UnitId == productDto.IdUnitOfQty).FirstOrDefault();
+				if (baseUnitExist == null)
+				{
+					resultViewModel.Status = false;
+					resultViewModel.Message = $"من فضلك تأكد من إدخال الوحده {tbl.NameUnitOfQty} في الوحدات الخاصه بالمنتج";
+					return resultViewModel;
+				}
+				else
+				{
+					if (baseUnitExist.UnitBarcodeText.Trim() != tbl.BarCodeText.Trim())
+					{
+						resultViewModel.Status = false;
+						resultViewModel.Message = $"باركود المنتج يجب أن يطابق باركود الوحده الأساسية";
+						return resultViewModel;
+					}
+				}
+
 				if (_repoProduct.Insert(tbl))
 				{
 					if (productDto.ProductUnits != null && productDto.ProductUnits.Length > 0)
@@ -628,20 +722,20 @@ namespace ERP_System.BLL.Guide
 						var NewRecords = new List<ProductUnit>();
 						foreach (var unit in productDto.ProductUnits)
 						{
-                            var newR = new ProductUnit
-                            {
-                                ProductId = tbl.ID,
-                                ConversionFactor = unit.ConversionFactor,
-                                PurchasingPrice = unit.PurchasingPrice,
-                                SellingPrice = unit.SellingPrice,
-                                UnitBarcodeText = unit.UnitBarcodeText,
-                                UnitId = unit.UnitId
-                            };
-                            if (newR.UnitId==tbl.IdUnitOfQty)
+							var newR = new ProductUnit
+							{
+								ProductId = tbl.ID,
+								ConversionFactor = unit.ConversionFactor,
+								PurchasingPrice = unit.PurchasingPrice,
+								SellingPrice = unit.SellingPrice,
+								UnitBarcodeText = unit.UnitBarcodeText,
+								UnitId = unit.UnitId
+							};
+							if (newR.UnitId == tbl.IdUnitOfQty)
 							{
 								newR.UnitBarcodeText = tbl.BarCodeText;
 							}
-							
+
 							//newR.UnitBarcodePath = _helperBll.GenerateBarcode(unit.UnitBarcodeText, UnitBarCodeFoldeName);
 							NewRecords.Add(newR);
 						}
@@ -679,20 +773,20 @@ namespace ERP_System.BLL.Guide
 				resultViewModel.Message = AppConstants.Messages.DeletedFailed;
 				return resultViewModel;
 			}
-			var haveInvoicesP = _repoPurchaseInvoice.GetAllAsNoTracking().Any(p=>p.PurchaseInvoiceDetail.Any(p=>p.ProductId == id && !p.IsDeleted));
-			var haveInvoicesThrowback = _repoPurchaseThrowback.GetAllAsNoTracking().Any(p=>p.PurchaseThrowbackDetails.Any(p=>p.ProductId == id && !p.IsDeleted));
+			var haveInvoicesP = _repoPurchaseInvoice.GetAllAsNoTracking().Any(p => p.PurchaseInvoiceDetail.Any(p => p.ProductId == id && !p.IsDeleted));
+			var haveInvoicesThrowback = _repoPurchaseThrowback.GetAllAsNoTracking().Any(p => p.PurchaseThrowbackDetails.Any(p => p.ProductId == id && !p.IsDeleted));
 			//tbl.IsDeleted = true;
 			//if (_repoProduct.UserId != Guid.Empty)
 			//{
 			//	tbl.DeletedBy = _repoProduct.UserId;
 			//}
 			//tbl.DeletedDate = AppDateTime.Now;
-			if(haveInvoicesP || haveInvoicesThrowback)
+			if (haveInvoicesP || haveInvoicesThrowback)
 			{
-                resultViewModel.Status = false;
-                resultViewModel.Message = "لا يمكن حذف المنتج لانه يوجد له فواتير";
-                return resultViewModel;
-            }
+				resultViewModel.Status = false;
+				resultViewModel.Message = "لا يمكن حذف المنتج لانه يوجد له فواتير";
+				return resultViewModel;
+			}
 			tbl.IsDeleted = true;
 			tbl.DeletedDate = DateTime.Now;
 			tbl.DeletedBy = _repoProduct.UserId;

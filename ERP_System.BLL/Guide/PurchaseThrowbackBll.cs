@@ -24,13 +24,14 @@ namespace ERP_System.BLL.Guide
 		private readonly UnitBll _UnitBll;
 		//private readonly SupplierBll _supplierBll
 		private readonly IRepository<Supplier> _repoSupplier;
+		private readonly IRepository<Unit> _repoUnit;
 		private readonly IRepository<Stock> _repoStock;
 		private readonly IRepository<Product> _repoProduct;
 		private readonly IRepository<ProductUnit> _repoProductUnit;
 		private readonly IRepository<PurchaseThrowbackDetail> _repoInvoiceDetail;
 		private readonly IMapper _mapper;
 
-		public PurchaseThrowbackBll(IRepository<Product> repoProduct, PurchaseInvoiceBll repoPInvoice, IRepository<Supplier> repoSupplier, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseThrowback> repoInvoice, IRepository<PurchaseThrowbackDetail> repoInvoiceDetail, IMapper mapper)
+		public PurchaseThrowbackBll(IRepository<Product> repoProduct, IRepository<Unit> repoUnit, PurchaseInvoiceBll repoPInvoice, IRepository<Supplier> repoSupplier, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseThrowback> repoInvoice, IRepository<PurchaseThrowbackDetail> repoInvoiceDetail, IMapper mapper)
 		{
 			_repoInvoice = repoInvoice;
 			_mapper = mapper;
@@ -41,6 +42,7 @@ namespace ERP_System.BLL.Guide
 			_repoProductUnit = repoProductUnit;
 			_repoSupplier = repoSupplier;
 			_repoPInvoice = repoPInvoice;
+			_repoUnit = repoUnit;
 		}
 
 		#region Get
@@ -526,7 +528,7 @@ namespace ERP_System.BLL.Guide
 					#region Supplier Process Type And Amount
 					var InvoiceTotalPaid = newInvoice.TotalPaid ?? 0;
 					var invoiceTotPrice = newInvoice.InvoiceTotalPrice.Value;
-					var diffPrice = invoiceTotPrice- InvoiceTotalPaid;
+					var diffPrice = invoiceTotPrice+ InvoiceTotalPaid;
 
                     Supplier.ProcessAmount = Supplier.ProcessAmount - diffPrice;
 
@@ -588,9 +590,9 @@ namespace ERP_System.BLL.Guide
 										}
 									}
 
-									var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId && x.StockId == InvoiceDTO.StockId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
+									var product = _repoProduct.GetAll().Include(x => x.ProductUnits).Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId && x.StockId == InvoiceDTO.StockId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
 									var existProduct = AllInvoiceProducts.Where(x => x.BarCodeText == product.BarCodeText).FirstOrDefault();
-									var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+									//var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
 
 
 									decimal? QtyInStock = 0;
@@ -598,18 +600,41 @@ namespace ERP_System.BLL.Guide
 									dynamic? TotalQtyInStock = 0;
 									if (product != null)
 									{
+									var productUnit =product.ProductUnits.ToList();
+										var currentUnit = _repoUnit.GetById(invoiceDetail.UnitId.Value);
+										if (currentUnit == null)
+										{
+											resultViewModel.Status = false;
+											resultViewModel.Message = $"الوحده للمنتج بالباركود {invoiceDetail.ProductBarCode} غير موجوده بالنظام";
+											_repoInvoice.Detached(newInvoice);
+											newInvoice.IsDeleted = true;
+											_repoInvoice.Update(newInvoice);
+											return resultViewModel;
+										}
+										if (!productUnit.Any(x => x.UnitId == invoiceDetail.UnitId && !x.IsDeleted))
+										{
+											resultViewModel.Status = false;
+											resultViewModel.Message = $"الوحده {currentUnit.Name} غير موجوده بوحدات المنتج {product.Name}";
+											_repoInvoice.Detached(newInvoice);
+											newInvoice.IsDeleted = true;
+											_repoInvoice.Update(newInvoice);
+											return resultViewModel;
+
+										}
 										if (existProduct != null)
 										{
 											//productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
 											QtyInStock = existProduct.QtyInStock ?? 0;
-											ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+											//ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+											ConversionFactor = productUnit.Where(x => x.UnitId == product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
 											TotalQtyInStock = QtyInStock * ConversionFactor;
 										}
 										else
 										{
 											//productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
 											QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock ?? 0;
-											ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+											//ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+											ConversionFactor = productUnit.Where(x => x.UnitId == product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
 											TotalQtyInStock = QtyInStock * ConversionFactor;
 										}
 

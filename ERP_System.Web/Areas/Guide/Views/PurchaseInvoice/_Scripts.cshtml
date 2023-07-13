@@ -119,10 +119,10 @@
 
 
 
-	@if (CurrentForm.CurrentFormPermissionActions.EditHasPermission)
+	@if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
 	{
 																																												<a class="btn-icon btn btn-warning btn-sm"  href="/Guide/PurchaseInvoice/Edit/${data.ID}" >
-																																								 <i class="fas fa-pen"></i>
+																																										 <i class="fas fa-eye"></i>
 
 																																								</a>
 
@@ -392,7 +392,7 @@
 					if (item.UnitId === data.IdUnitOfQty) {
 						UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
 						//PurchasingPrice.val(item.PurchasingPrice);
-						PurchasingPrice.val(0);
+						PurchasingPrice.val(item.PurchasingPrice);
 					}
 					else {
 						UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
@@ -422,10 +422,13 @@
 
 
 	function getProductByName(value, event) {
-
 		var name = value.value;
+
 		if (event.keyCode === 13) {
+			console.log(name)
 			if (name !== '' && name !== null) {
+				debugger
+
 				let tBody = $(value).parent().parent();
 				let ID = tBody.find(".ID");
 				let ProductId = tBody.find(".ProductId");
@@ -483,7 +486,7 @@
 									UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
 									ConversionFactor.val(item.ConversionFactor);
 									//ItemUnitPrice.val(item.PurchasingPrice);
-									PurchasingPrice.val(0);
+									PurchasingPrice.val(item.PurchasingPrice);
 									//PurchasingPrice.val(item.PurchasingPrice);
 								}
 								else {

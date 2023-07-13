@@ -47,19 +47,19 @@
                                     <div class="col-2 d-none">
                                         <div class="form-group">
                                             <label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
-                                            <input type="text" required id="InvoiceNumber" disabled value="@Model.InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
+                                            <input type="text" required id="InvoiceNumber" readonly value="@Model.InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
                                         </div>
                                     </div>
                                     <div class="col-2">
                                         <div class="form-group">
                                             <label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
-                                            <input type="date" class="form-control" disabled value="@Model.InvoiceDateStr" name="InvoiceDate" id="InvoiceDate">
+                                            <input type="date" class="form-control" readonly value="@Model.InvoiceDateStr" name="InvoiceDate" id="InvoiceDate">
                                         </div>
                                     </div>
                                     <div class="col-2">
                                         <div class="form-group">
                                             <label for="Supplier">اسم العميل<span style="color:red;"> * </span></label>
-                                            <input type="text" class="form-control" disabled value="@Model.Buyer" name="Buyer" id="Buyer">
+                                            <input type="text" class="form-control" readonly value="@Model.Buyer" name="Buyer" id="Buyer">
                                         </div>
                                     </div>
                                  
@@ -67,7 +67,7 @@
                                     <div class="col-md-12">
                                         <div class="table-container" id="InvoiceProducts">
                                             <label for="Products">المنتجات</label>
-                                            <button type="button" class="btn btn-outline-primary addInvoiceProduct mx-2">إضافة</button>
+                                            @*<button type="button" class="btn btn-outline-primary addInvoiceProduct mx-2">إضافة</button>*@
                                             <label id="ProductsCount"> 0 </label>
 
                                             <table class="table">
@@ -81,7 +81,7 @@
                                                         <th>سعر البيع<span style="color:red;"> * </span></th>
                                                         <th>الخصم للمنتج</th>
                                                         <th>الإجمالي للمنتج</th>
-                                                        <th>التحكم</th>
+                                                        @*<th>التحكم</th>*@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="InvoiceProductsBody">
@@ -156,11 +156,7 @@
                                                                         </td>
                                                                     }
                                                                     <td><input type="number" disabled class="form-control TotalQtyPrice" value="@detail.TotalQtyPriceAfterDisscount" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                    <td>
-                                                                        <div class="d-flex">
-                                                                            <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                                        </div>
-                                                                    </td>
+                                                                   
 
                                                                 </tr>
                                                             }
@@ -206,12 +202,7 @@
                                                                     </td>
                                                                 }
                                                                 <td><input type="number" disabled class="form-control TotalQtyPrice" value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td>
-                                                                    <div class="d-flex">
-                                                                        <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                                    </div>
-                                                                </td>
-
+                                                               
                                                             </tr>
                                                         }
                                                     }
@@ -222,7 +213,7 @@
                                         <div class="row my-3">
                                             <div class="col-2 d-flex gap-2 align-items-center">
                                                 <h5 class="mb-0">المبلغ المدفوع</h5>
-                                                <input type="number" step="1" class="form-control TotalPaid w-75" value="@Model.TotalPaid" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+                                                <input type="number" step="1" readonly class="form-control TotalPaid w-75" value="@Model.TotalPaid" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
                                             </div>
                                             <div class="col-4 d-flex gap-2 align-items-center">
 
@@ -230,8 +221,8 @@
                                                 @if ((bool)ViewData["DisscountPermission"])
                                                 {
                                                     <div class="d-flex gap-2 w-75">
-                                                        <input type="number" class="form-control InvoiceTotalDiscount" disabled onkeyup="getInvoiceTotalPrice(this)" value="@Model.InvoiceTotalDiscount" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
-                                                        <select class="Select sDescount form-select sInvoiceDescount"  value="@Model.InvoiceTotalDiscountTypeInt" name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
+                                                        <input type="number" class="form-control InvoiceTotalDiscount" readonly onkeyup="getInvoiceTotalPrice(this)" value="@Model.InvoiceTotalDiscount" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+                                                        <select class="Select sDescount form-select sInvoiceDescount" disabled  value="@Model.InvoiceTotalDiscountTypeInt" name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
                                                             @if (Model.InvoiceTotalDiscountTypeInt == 1)
                                                             {
                                                                 <option value="0"> % </option>
@@ -248,7 +239,7 @@
                                                 else
                                                 {
                                                     <div class="d-flex gap-2 w-75">
-                                                        <input disabled type="number" class="form-control InvoiceTotalDiscount " disabled onkeyup="getInvoiceTotalPrice(this)" value="@Model.InvoiceTotalDiscount" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+                                                        <input readonly type="number" class="form-control InvoiceTotalDiscount " disabled onkeyup="getInvoiceTotalPrice(this)" value="@Model.InvoiceTotalDiscount" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
                                                         <select class="Select sDescount form-select sInvoiceDescount" disabled value="@Model.InvoiceTotalDiscountTypeInt" name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
                                                             <option selected value="0"> % </option>
                                                             <option value="1">قيمة</option>
@@ -264,18 +255,18 @@
                                         </div>
                                     </div>
                                     <hr>
-                                    <div class="col-12 d-flex">
+                                    @*<div class="col-12 d-flex">
                                         <div class="form-check">
                                             <div class="checkbox">
                                                 <input type="checkbox" name="IsActive" id="IsActive" value="@Model.IsActive" class="form-check-input" checked="@Model.IsActive">
                                                 <label for="IsActive">الحاله</label>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>*@
                                     <div class="col-sm-12 d-flex justify-content-between mt-5">
-                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('edit')">
+                                       @* <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('edit')">
                                             حفظ
-                                        </button>
+                                        </button>*@
                                        @* <div class="col-1">
                                             <div class="form-group">
                                                 <button type="button" onclick="FinishShift();" class="btn btn-danger" name="btnFinishShift" id="btnFinishShift">إنهاء الخدمة</button>

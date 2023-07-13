@@ -226,36 +226,68 @@ namespace ERP_System.BLL.Guide
 
 			if (invoice != null)
 			{
-				var alreadThrowback = _repoThrowbackInvoice.GetAllAsNoTracking().Include(x => x.SaleInvoiceDetails).Where(x => x.SaleInvoiceId == invoice.ID && !x.IsDeleted).Select(x => x.SaleInvoiceDetails).ToList();
+				//var alreadThrowback = _repoThrowbackInvoice.GetAllAsNoTracking().Include(x => x.SaleInvoiceDetails).Where(x => x.SaleInvoiceId == invoice.ID && !x.IsDeleted).Select(x => x.SaleInvoiceDetails).ToList();
+				var alreadThrowback = _repoThrowbackInvoice.GetAllAsNoTracking().Include(x => x.SaleInvoiceDetails).Where(x => x.SaleInvoiceId == invoice.ID && !x.IsDeleted).ToList();
 				var finalInvoice = invoice.GetInvoiceDetails.ToList();
 				foreach (var item in invoice.GetInvoiceDetails)
 				{
-					var qty = alreadThrowback.Where(x => x.Any(xx => xx.UnitId == item.UnitId && xx.ProductId == item.ProductId)).ToList();
-					if (qty != null && qty.Count() > 0)
+					//var qty = alreadThrowback.Where(x => x.SaleInvoiceDetails.Any(xx => xx.UnitId == item.UnitId && xx.ProductId == item.ProductId)).ToList();
+					decimal? allQty = 0;
+					var allThrowback = new List<SaleThrowbackDetail>();
+					foreach (var currentItem in alreadThrowback)
 					{
-						decimal? allQty = 0;
-						foreach (var iq in qty)
+						foreach (var subItem in currentItem.SaleInvoiceDetails)
 						{
-							allQty = iq.Sum(x => x.Qty);
+							if (subItem.UnitId == item.UnitId && subItem.ProductId == item.ProductId)
+							{
+								allThrowback.Add(subItem);
+							}
 						}
+					}
+
+					if (allThrowback.Count() > 0)
+					{
+						allQty = allThrowback.Sum(x => x.Qty);
 
 						var currenRow = finalInvoice.Where(x => x.UnitId == item.UnitId && x.ProductId == item.ProductId).FirstOrDefault();
 						var currenQty = currenRow.Qty;
 						currenQty -= allQty;
+						currenRow.Qty = currenQty;
+						if (currenRow.DiscountTypePProduct == DisscountType.Value)
+						{
+
+							currenRow.TotalQtyPriceAfterDisscount = (currenQty * currenRow.SellingPrice) - currenRow.DiscountPProduct;
+						}
+						else if (currenRow.DiscountTypePProduct == DisscountType.Percent)
+						{
+							currenRow.TotalQtyPriceAfterDisscount = (currenQty * currenRow.SellingPrice) - (currenRow.DiscountPProduct / 100);
+
+						}
 
 						finalInvoice.Remove(invoice.GetInvoiceDetails.Where(x => x.UnitId == item.UnitId && x.ProductId == item.ProductId).FirstOrDefault());
 						if (currenQty != 0)
 							finalInvoice.Add(currenRow);
-
-
 					}
 				}
 				invoice.GetInvoiceDetails = finalInvoice;
+				
 				if (finalInvoice.Count == 0)
 				{
 					result.Status = false;
 					result.Message = "تم إرجاع جميع منتجات هذه الفاتورة";
 					return result;
+				}
+
+				invoice.InvoiceTotalPrice = invoice.GetInvoiceDetails.Sum(x => x.TotalQtyPriceAfterDisscount);
+				if (invoice.InvoiceTotalDiscountType == DisscountType.Value)
+				{
+
+					invoice.InvoiceTotalPrice = invoice.InvoiceTotalPrice - invoice.InvoiceTotalDiscount;
+				}
+				else if (invoice.InvoiceTotalDiscountType == DisscountType.Percent)
+				{
+					invoice.InvoiceTotalPrice = invoice.InvoiceTotalPrice - (invoice.InvoiceTotalDiscount / 100);
+
 				}
 				result.Status = true;
 				result.Data = invoice;
@@ -697,7 +729,7 @@ namespace ERP_System.BLL.Guide
 								if (reuiredQty > TotalQtyInStock)
 								{
 									resultViewModel.Status = false;
-									resultViewModel.Message = " الكمية المطلوبة من المنتج " + product.Name + " تجاوزت الكمية الموجودة بالمخزن ";
+									resultViewModel.Message =$"الكمية الموجودة بالمخزن للمنتج {product.Name} غير كافية";
 									resultViewModel.Data = InvoiceDTO;
 									_repoInvoice.Detached(newInvoice);
 									newInvoice.IsDeleted = true;
@@ -738,7 +770,8 @@ namespace ERP_System.BLL.Guide
 							else
 							{
 								resultViewModel.Status = false;
-								resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد ";
+								resultViewModel.Message = $"لايوجد منتج بهذا الباركود {invoiceDetail.ProductBarCode} أو هذا المنتج غير موجود بالمخزن المحدد";
+								//resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد ";
 								_repoInvoice.Detached(newInvoice);
 								newInvoice.IsDeleted = true;
 								_repoInvoice.Update(newInvoice);

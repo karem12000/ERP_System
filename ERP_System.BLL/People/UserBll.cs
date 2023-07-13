@@ -318,14 +318,18 @@ namespace ERP_System.BLL
                     return resultViewModel;
 
                 }
+				if (string.IsNullOrEmpty(user.Email))
+				{
+					tbl.Email = "ERP_System";
+				}
 
-                if (_repoUser.GetAll().Where(p => p.Email.Trim().ToLower() == userDTO.Email.Trim().ToLower() && !p.IsDeleted ).FirstOrDefault() != null)
-                {
-                    resultViewModel.Message = AppConstants.UserMessages.EmailAlreadyExists;
-                    return resultViewModel;
-                }
+				//if (_repoUser.GetAll().Where(p => p.Email.Trim().ToLower() == userDTO.Email.Trim().ToLower() && !p.IsDeleted ).FirstOrDefault() != null)
+				//{
+				//    resultViewModel.Message = AppConstants.UserMessages.EmailAlreadyExists;
+				//    return resultViewModel;
+				//}
 
-                if (string.IsNullOrEmpty(userDTO.Password))
+				if (string.IsNullOrEmpty(userDTO.Password))
                 {
                     user.PasswordHash = AppConstants.DefaultPassword.EncryptString();
                 }
@@ -358,7 +362,7 @@ namespace ERP_System.BLL
                     };
 
                 }
-
+               
                 if (_repoUser.Insert(user))
                 {
                     _repoUserStock.InsertRange(AllStock);
@@ -376,14 +380,22 @@ namespace ERP_System.BLL
 
                 }
 
-                if (_repoUser.GetAll().Where(p => p.ID != tbl.ID && p.Email.Trim().ToLower() == userDTO.Email.Trim().ToLower() && !p.IsDeleted).FirstOrDefault() != null)
-                {
-                    resultViewModel.Message = AppConstants.UserMessages.EmailAlreadyExists;
-                    return resultViewModel;
+				//if (_repoUser.GetAll().Where(p => p.ID != tbl.ID && p.Email.Trim().ToLower() == userDTO.Email.Trim().ToLower() && !p.IsDeleted).FirstOrDefault() != null)
+				//{
+				//    resultViewModel.Message = AppConstants.UserMessages.EmailAlreadyExists;
+				//    return resultViewModel;
+				//}
+				if (string.IsNullOrEmpty(userDTO.Email))
+				{
+					userDTO.Email = "ERP_System";
                 }
-                tbl.Name = user.Name.Trim();
-                tbl.UserName = user.UserName.Trim();
+                else
+                {
                 tbl.Email = user.Email;
+
+                }
+				tbl.Name = user.Name.Trim();
+                tbl.UserName = user.UserName.Trim();
                 tbl.UserTypeId = user.UserTypeId;
                 tbl.ScreenId = user.ScreenId;
                 tbl.Phone = user.Phone;
@@ -393,8 +405,8 @@ namespace ERP_System.BLL
                 tbl.ModifiedDate = AppDateTime.Now;
                 tbl.ModifiedBy = _repoUser.UserId;
                 tbl.DiscountPermission = user.DiscountPermission;
-
-                if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
+				
+				if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
                     tbl.UserClassification = UserClassification.Admin;
                 else if (userDTO.UserTypeId.ToString() == AppConstants.CashierTypeId.ToLower())
                     tbl.UserClassification = UserClassification.Cashier;
