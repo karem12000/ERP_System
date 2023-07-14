@@ -96,7 +96,6 @@
 		}
 	}
 	function FillInvoice(obj) {
-		console.log(obj);
 		var invoiceProducts = obj.GetInvoiceDetails;
 		var stockId = $('#ddlStockId');
 		var Buyer = $('#Buyer');
@@ -247,9 +246,7 @@
 				data.GetProductUnits.forEach(function (item) {
 					if (item.UnitId === data.IdUnitOfQty) {
 						UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
-						console.log(ConversionFactor.val());
 						ConversionFactor.val(item.ConversionFactor);
-						console.log(ConversionFactor.val());
 						ItemUnitPrice.val(item.SellingPrice);
 						SellingPrice.val(item.SellingPrice);
 					}
@@ -419,7 +416,6 @@
 					if (res.Status) {
 						
 						let data = res.Data;
-						console.log(data)
 						let existProduct = false;
 						$.each($("#InvoiceProductsBody >tr"), function (key, value) {
 							let IdF = $(value).children("td").children(".ID").val().trim();

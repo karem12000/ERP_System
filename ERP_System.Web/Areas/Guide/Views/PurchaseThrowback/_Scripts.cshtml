@@ -53,7 +53,6 @@
 				if (res.Status) {
 					if (res.Data) {
 						let data = res.Data;
-						console.log(res.Data);
 						pInvoiceId.val(data.ID);
 						pInvoiceNumber.val(data.InvoiceNumber);
 						pInvoiceDate.val(data.InvoiceDateStr);
@@ -101,7 +100,6 @@
 		if (invoiceProducts != null && invoiceProducts.length > 0) {
 			productsTable.empty();
 			invoiceProducts.forEach(function (item) {
-			console.log(item)
 				InvoiceProductsAddNew({
 					"id": "0", "ProductId": item.ProductId,
 					"ProductBarCode": item.ProductBarCode, "ProductName": item.ProductName
@@ -381,7 +379,6 @@
 							}
 						});
 
-						console.log(data);
 						if (!productExist) {						
 							ID.val('0');
 							ProductId.val(data.ProductId);
@@ -450,7 +447,6 @@
 				ProductName.val(data.Name);
 				UnitId.empty();
 				ConversionFactor.val(data.ConversionFactor);
-				console.log(ConversionFactor.val());
 				data.GetProductUnits.forEach(function (item) {
 					if (item.UnitId === data.IdUnitOfQty) {
 						UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);

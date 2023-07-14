@@ -287,7 +287,6 @@
 					if (res.Status) {
 
 						let data = res.Data;
-						console.log(data)
 						let existProduct = false;
 						$.each($("#InvoiceProductsBody >tr"), function (key, value) {
 							let IdF = $(value).children("td").children(".ID").val().trim();
@@ -381,7 +380,6 @@
 		$.get('@Url.GetAction("GetProductDataByUnitId")', { unitId: unitId, productId: ProductId.val() }, function (res) {
 			if (res.Status) {
 				let data = res.Data;
-				console.log(data)
 				ProductId.val(data.ID);
 				ProductBarCode.val(data.BarCodeText);
 				ProductName.val(data.Name);
@@ -425,9 +423,7 @@
 		var name = value.value;
 
 		if (event.keyCode === 13) {
-			console.log(name)
 			if (name !== '' && name !== null) {
-				debugger
 
 				let tBody = $(value).parent().parent();
 				let ID = tBody.find(".ID");
