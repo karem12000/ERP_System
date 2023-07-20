@@ -74,7 +74,8 @@ namespace ERP_System.BLL.Guide
 					ProductBarCode = c.ProductBarCode,
 					DiscountPProduct = c.DiscountPProduct,
 					SellingPrice = c.SellingPrice,
-					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+					QtyInStockStr = string.Join(" - ", Math.Round((_repoProduct.GetById(c.ProductId.Value).QtyInStock / c.ConversionFactor) ?? 0, 2), _UnitBll.GetById(c.UnitId.Value).Name)
 				}).ToList(),
 
 
@@ -441,7 +442,15 @@ namespace ERP_System.BLL.Guide
 		{
 			ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
 
-
+			if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Length > 0)
+			{
+				if (InvoiceDTO.InvoiceDetails.Any(x => x.SellingPrice == 0))
+				{
+					resultViewModel.Status = false;
+					resultViewModel.Message = "لايمكن حفظ سعر البيع بالقيمة 0";
+					return resultViewModel;
+				}
+			}
 			var data = _repoInvoice.GetAllAsNoTracking().Include(x => x.SaleInvoiceDetail).Where(p => p.ID == InvoiceDTO.ID && p.IsActive && !p.IsDeleted).FirstOrDefault();
 			if (data != null)
 			{

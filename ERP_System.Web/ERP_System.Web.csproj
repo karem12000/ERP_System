@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Reports\ProductPriceReport.rdlc" />
+    <Content Remove="wwwroot\Reports\ProductQtyReport.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="wwwroot\Reports\SaleInvoiceReport.rdlc" />
   </ItemGroup>
 
@@ -38,6 +43,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Reports\ProductPriceReport.rdlc" />
+    <None Include="wwwroot\Reports\ProductQtyReport.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DataSets\dsProduct.Designer.cs">
+      <DependentUpon>dsProduct.xsd</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="DataSets\dsSales.Designer.cs">
       <DependentUpon>dsSales.xsd</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -52,6 +67,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DataSets\dsProduct.xsd">
+      <SubType>Designer</SubType>
+      <LastGenOutput>dsProduct.Designer.cs</LastGenOutput>
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
     <None Update="DataSets\dsSales.xsd">
       <SubType>Designer</SubType>
       <LastGenOutput>dsSales.Designer.cs</LastGenOutput>

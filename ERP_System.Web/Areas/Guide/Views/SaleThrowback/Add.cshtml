@@ -90,6 +90,7 @@
                                                         <th>الباركود<span style="color:red;"> * </span></th>
                                                         <th>اسم المنتج<span style="color:red;"> * </span></th>
                                                         <th>الوحدة<span style="color:red;"> * </span></th>
+                                                        <th>الكمية بالمخزن</th>
                                                         <th>سعر الوحدة</th>
                                                         <th>الكمية<span style="color:red;"> * </span></th>
                                                         <th>سعر البيع<span style="color:red;"> * </span></th>
@@ -107,12 +108,14 @@
                                                             <input type="text" onkeyup="getProduct(this,event)" required class="form-control ProductBarCode" />
                                                         </td>
                                                         <td><input type="text" onkeyup="getProductByName(this,event)" required class="form-control ProductName" /></td>
+                                                       
                                                         <td>
                                                             <select onchange="handleUnitChange(this,event)" class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
                                                                 <option selected value="0">اختر الوحدة</option>
                                                             </select>
                                                             <input class="form-control ConversionFactor" type="hidden" value="0" />
                                                         </td>
+                                                        <td><input type="text" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                         <td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                         <td><input type="number" onchange="getInvoiceTotalPrice(this)" step="0.01" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                         <td><input type="number" onchange="getInvoiceTotalPrice(this)" step="0.01" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" readonly /></td>
@@ -151,7 +154,7 @@
                                         <div class="row my-3">
                                             <div class="col-2 d-flex gap-2 align-items-center">
                                                 <h5 class="mb-0">المبلغ المدفوع</h5>
-                                                <input type="number" step="1" class="form-control TotalPaid w-75" value="" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+                                                <input type="number" step="1" class="form-control TotalPaid w-75" onkeyup="calcInvoiceRemaining(this)" value="" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
                                             </div>
                                             <div class="col-4 d-flex gap-2 align-items-center">
 
@@ -181,6 +184,10 @@
                                                 <h5 class="mb-0">الإجمالي</h5>
                                                 <input disabled type="number" class="form-control InvoiceTotalPrice w-75" value="" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
 
+                                            </div>
+                                            <div class="col-4 d-flex gap-2 align-items-center">
+                                                <h5 class="mb-0">الباقي</h5>
+                                                <input disabled type="number" class="form-control Remaining w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
                                             </div>
                                         </div>
                                     </div>
@@ -242,5 +249,6 @@
             //$('.ProductBarCode').focus();
             $("#sidebar").removeClass("active");
         })
+        
     </script>
 }

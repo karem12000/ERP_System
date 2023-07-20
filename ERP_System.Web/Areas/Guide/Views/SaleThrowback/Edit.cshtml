@@ -8,7 +8,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">تعديل مرتجع مبيعات</h4>
+                    <h4 class="card-title"> مرتجع مبيعات</h4>
                     <div class="col-8 d-flex">
                         <div class="col-4 p-1">
                             <div class="form-group">
@@ -76,6 +76,7 @@
                                                         <th>الباركود<span style="color:red;"> * </span></th>
                                                         <th>اسم المنتج<span style="color:red;"> * </span></th>
                                                         <th>الوحدة<span style="color:red;"> * </span></th>
+                                                        <th>الكمية بالمخزن</th
                                                         <th>سعر الوحدة</th>
                                                         <th>الكمية<span style="color:red;"> * </span></th>
                                                         <th>سعر البيع<span style="color:red;"> * </span></th>
@@ -123,6 +124,7 @@
                                                                         </select>
                                                                         <input class="form-control ConversionFactor" type="hidden" value="@detail.ConversionFactor" />
                                                                     </td>
+														            <td><input type="text" disabled class="form-control QtyInStock" min="0" value="@detail.QtyInStockStr" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                     <td><input type="number" disabled class="form-control ItemUnitPrice" value="@detail.ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                     <td><input type="number" onchange="getInvoiceTotalPrice(this)" step="0.01" onkeyup="getInvoiceTotalPrice(this)" value="@detail.Qty" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                     <td><input type="number" disabled onchange="getInvoiceTotalPrice(this)" step="0.01" onkeyup="getInvoiceTotalPrice(this)" min="0" value="@detail.SellingPrice" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
@@ -178,6 +180,7 @@
                                                                     </select>
                                                                     <input class="form-control ConversionFactor" type="hidden" value="1" />
                                                                 </td>
+														            <td><input type="text" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                 <td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                 <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                 <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
@@ -252,6 +255,10 @@
                                                 <input disabled type="number" class="form-control InvoiceTotalPrice w-75" value="@Model.InvoiceTotalPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
 
                                             </div>
+                                            <div class="col-4 d-flex gap-2 align-items-center">
+												<h5 class="mb-0">الباقي</h5>
+												<input disabled type="number" class="form-control Remaining w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+											</div>
                                         </div>
                                     </div>
                                     <hr>
@@ -299,6 +306,7 @@
     <script>
         $(document).ready(function () {
             $("#sidebar").removeClass("active");
+            calcInvoiceRemaining();
         })
     </script>
 }

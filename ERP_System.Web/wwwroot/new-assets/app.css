@@ -145,3 +145,6 @@
     right: unset;
     left: 15px;
 }
+thead td.sorting{
+    text-align:right !important;
+}

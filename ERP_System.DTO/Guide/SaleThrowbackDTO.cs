@@ -69,6 +69,7 @@ namespace ERP_System.DTO.Guide
         public decimal? ConversionFactor { get; set; }
         public decimal? ItemUnitPrice { get; set; }
         public decimal? Qty { get; set; }
+		public string QtyInStockStr { get; set; }
         public decimal? SellingPrice { get; set; }
         public decimal? TotalQtyPriceAfterDisscount { get; set; }
         public decimal? DiscountPProduct { get; set; }

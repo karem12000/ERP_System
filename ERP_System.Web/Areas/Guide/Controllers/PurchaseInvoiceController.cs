@@ -35,6 +35,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             return Redirect("/Guide/PurchaseInvoice/Add");
         }
         public IActionResult Add()
+
         {
             var userId = _httpContextAccessor.UserId();
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
@@ -59,6 +60,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
 
         public IActionResult Save(PurchaseInvoiceDTO mdl) => Ok(_invoiceBll.Save(mdl));
+        public IActionResult SearchByProductName(string term) => Ok(_productBll.SearchByName(term));
         public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
         public IActionResult GetProductByName(string text) => Ok(_productBll.GetByProductName(text));
         public IActionResult GetLastInvoiceNumberByDate(DateTime? date) => Ok(_invoiceBll.GetLastInvoiceNumberByDate(date));

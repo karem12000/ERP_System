@@ -1,67 +1,107 @@
-﻿@{
-    Layout = "_Layout";
+﻿@using ERP_System.DTO;
+@{
+	Layout = "_Layout";
 }
 @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
 {
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">التقارير</h4>
-                </div>
-                <div class="card-content">
-                    <div class="card-body">
-                        <div class="form-body">
-                            <div class="row">
-                                <div class="form-group col-6">
-                                    <label class="lable" for="ReportType">اختر التقرير<span style="color:red;"> * </span> </label>
-                                    <select class="Select sAddress form-select" aria-label="اختر التقرير" required name="ReportType" id="ddlReportType">
-                                        <option selected value="0">اختر التقرير</option>
-                                        <option  value="1">تقرير المبيعات</option>
-                                        <option  value="2">تقرير مرتجع المبيعات</option>
-                                        <option  value="3">تقرير المشتريات</option>
-                                        <option  value="4">تقرير مرتجع المشتريات</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-6">
-                                    <label class="lable" for="PeriodType">اختر المدة<span style="color:red;"> * </span> </label>
-                                    <select class="Select sAddress form-select" onchange="handlePeriodTypeChange();" aria-label="اختر المدة" required name="PeriodType" id="ddlPeriodType">
-                                        <option selected value="0">يومي</option>
-                                        <option  value="1">أسبوعي</option>
-                                        <option  value="2">شهري</option>
-                                        <option  value="3">سنوي</option>
-                                    </select>
-                                </div> 
-                                
-                                <div class="form-group col-6 PeriodDate">
-                                        <label for="FromDate">التاريخ</label>
-                                        <input type="date" class="form-control" name="FromDate" id="FromDate">
-                                </div>
-                                
-                                <div class="form-group col-12">
-                                        <rsweb:ReportViewer ID="rvReportDetail" Visible="true" runat="server" Width="100%" Height="600px"></rsweb:ReportViewer>
-                                </div>
-                                
-                                <div class="col-sm-12 d-flex justify-content-between mt-5">
-                                    <button type="button" class="btn btn-primary me-1 mb-1" onclick="GenerateReport();">
-                                        إنشاء
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-}
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">التقارير</h4>
+				</div>
+				<div class="card-content">
+					<div class="card-body">
+						<div class="form-body">
+							<div class="row">
+								<div class="form-group col-4">
+									<label class="lable" for="ReportType">اختر التقرير<span style="color:red;"> * </span> </label>
+									<select class="Select sAddress form-select" onchange="handleSelectReportType()" aria-label="اختر التقرير" required name="ReportType" id="ddlReportType">
+										<option selected value="0">اختر التقرير</option>
+										<option value="1">تقرير كميات الأصناف</option>
+										<option value="2">تقرير أسعار الأصناف</option>
+										<option value="3">تقرير الأصناف</option>
+										<option value="4">تقرير المبيعات</option>
+										<option value="5">تقرير مرتجع المبيعات</option>
+										<option value="6">تقرير المشتريات</option>
+										<option value="7">تقرير مرتجع المشتريات</option>
+										<option value="8">تقرير الموردين</option>
+									</select>
+								</div>
+								<div class="form-group col-4">
+									<label class="lable" for="StockId">المخزن</label>
+									<select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
+										<option selected value="0">اختر المخزن</option>
+									</select>
+								</div>
+								<div class="form-group  SubReportOptionDev">
+									<div class="form-group col-4">
+										<label class="lable" for="PeriodType">اختر النوع<span style="color:red;"> * </span> </label>
+										<select class="Select sAddress form-select subReportSelect" aria-label="اختر النوع" onchange="handleSelectSubType()" name="SubReportType" id="ddlSubReportType">
+											<option selected value="0">كل الأصناف</option>
+											<option value="1">الأكثر مبيعا</option>
+											<option value="2">الأقل مبيعا</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group  ReportPeriodOptionDev">
+									<div class="form-group col-4">
+										<label class="lable" for="PeriodType">اختر المدة<span style="color:red;"> * </span> </label>
+										<select class="Select sAddress form-select" onchange="handlePeriodTypeChange();" aria-label="اختر المدة" required name="PeriodType" id="ddlPeriodType">
+											<option selected value="0">يومي</option>
+											<option value="1">أسبوعي</option>
+											<option value="2">شهري</option>
+											<option value="3">سنوي</option>
+										</select>
+									</div>
 
+									<div class="form-group col-4 PeriodDate">
+										<label for="FromDate">التاريخ</label>
+										<input type="date" class="form-control" name="FromDate" id="FromDate">
+									</div>
+								</div>
+
+
+								<div class="col-sm-12 d-flex justify-content-between mt-5">
+									<button type="button" class="btn btn-primary me-1 mb-1" onclick="GenerateReport();">
+										إنشاء
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="dataTableData">
+	</div>
+}
+@{
+	<partial name="_DataTable" />
+}
 @section Scripts
-    {
-        <script>
-            $(document).ready(function () {
-                console.log('Hi');
-            })
-        </script>
-    <partial name="_Scripts" />
+	{
+	<script>
+		$(document).ready(function () {
+			const date = new Date();
+			let day = date.getDate();
+			let month = date.getMonth() + 1;
+			let year = date.getFullYear();
+			if (month < 10) {
+				month = `0${month}`
+			} if (day < 10) {
+				day = `0${day}`
+			}
+
+			let currentDate = `${year}-${month}-${day}`;
+
+
+			$('#FromDate').val(currentDate);
+			$('.SubReportOptionDev').hide();
+			$('.ReportPeriodOptionDev').hide();
+			$('.PeriodDate').hide();
+		})
+	</script>
+	<partial name="_Scripts" />
 }

@@ -35,17 +35,18 @@
 				icon: 'warning',
 				showConfirmButton: false
 			});
-		} else if (pInvoiceDate.val() == '') {
-			$('#PInvoiceDate').val('');
-			$('#PInvoiceDate').focus();
-			Swal.fire({
-				title: 'من فضلك أدخل تاريخ فاتورة المشتريات',
-				timer: 2000,
-				timerProgressBar: true,
-				icon: 'warning',
-				showConfirmButton: false
-			});
-		}
+		} 
+		// else if (pInvoiceDate.val() == '') {
+		//	$('#PInvoiceDate').val('');
+		//	$('#PInvoiceDate').focus();
+		//	Swal.fire({
+		//		title: 'من فضلك أدخل تاريخ فاتورة المشتريات',
+		//		timer: 2000,
+		//		timerProgressBar: true,
+		//		icon: 'warning',
+		//		showConfirmButton: false
+		//	});
+		//}
 		else {
 			$preloader.fadeIn('slow');
 			$.get('@Url.GetAction("GetPurchaseInvoiceDetail")', { invoiceNumber: pInvoiceNumber.val(), invoiceDate: pInvoiceDate.val() }, function (res) {
@@ -653,19 +654,23 @@
 				let SType = res.ProcessTypeInt;
 				var SAmount = res.ProcessAmount;
 				if (SType !== null) {
-					if (SType == 1) {
+					if (SType === 0) {
 						$('.SupplierData').empty();
-						$('.SupplierData').append(`
-										<input type="text" readonly class="form-control" placeholder="مدين (له )">
-											<input type="text" readonly class="form-control" placeholder="${res.ActualAmount}">
-									`);
-
 					} else {
-						$('.SupplierData').empty();
-						$('.SupplierData').append(`
-										<input type="text" readonly class="form-control" placeholder="دائن (عليه )">
-											<input type="text" readonly class="form-control" placeholder="${res.ActualAmount}">
+						if (SType == 1) {
+							$('.SupplierData').empty();
+							$('.SupplierData').append(`
+												<input type="text" readonly class="form-control" placeholder="مدين (له )">
+													<input type="text" readonly class="form-control" placeholder="${res.ActualAmount}">
+											`);
+
+						} else {
+							$('.SupplierData').empty();
+							$('.SupplierData').append(`
+												<input type="text" readonly class="form-control" placeholder="دائن (عليه )">
+													<input type="text" readonly class="form-control" placeholder="${res.ActualAmount}">
 									`);
+						}
 					}
 				}
 			} else {

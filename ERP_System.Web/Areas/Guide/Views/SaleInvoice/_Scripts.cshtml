@@ -233,6 +233,7 @@
 		let ConversionFactor = tBody.find(".ConversionFactor");
 		let ItemUnitPrice = tBody.find(".ItemUnitPrice");
 		let Qty = tBody.find(".Qty");
+		let QtyInStock = tBody.find(".QtyInStock");
 		let SellingPrice = tBody.find(".SellingPrice");
 		let TotalQtyPrice = tBody.find(".TotalQtyPrice");
 		//let barCodeBtn = tBody.find(".barCodeBtn");
@@ -254,6 +255,7 @@
 						UnitId.append(`<option value="${item.UnitId}">${item.UnitName}</option>`);
 					}
 				});
+				QtyInStock.val(data.QtyInStockStr);
 				var oldQty = Qty.val();
 				if (oldQty == '0' || oldQty == '') {
 					Qty.val('1');
@@ -290,6 +292,8 @@
 				let Qty = tBody.find(".Qty");
 				let SellingPrice = tBody.find(".SellingPrice");
 				let TotalQtyPrice = tBody.find(".TotalQtyPrice");
+				let QtyInStock = tBody.find(".QtyInStock");
+
 				//let barCodeBtn = tBody.find(".barCodeBtn");
 				let InvoiceTotalPrice = tBody.find(".InvoiceTotalPrice");
 
@@ -343,9 +347,10 @@
 								}
 							});
 							Qty.val('1');
+							QtyInStock.val(data.QtyInStockStr);
 							let TQP = 1 * SellingPrice.val();
 							TotalQtyPrice.val(TQP);
-							getInvoiceTotalPrice(ProductBarCode)
+							getInvoiceTotalPrice(ProductBarCode);
 							$(".ProductBarCode").get(-1).focus();
 						}else{
 							Swal.fire({
@@ -409,6 +414,8 @@
 				let Qty = tBody.find(".Qty");
 				let SellingPrice = tBody.find(".SellingPrice");
 				let TotalQtyPrice = tBody.find(".TotalQtyPrice");
+				let QtyInStock = tBody.find(".QtyInStock");
+
 				//let barCodeBtn = tBody.find(".barCodeBtn");
 				let InvoiceTotalPrice = tBody.find(".InvoiceTotalPrice");
 
@@ -450,6 +457,7 @@
 							ProductName.val(data.Name);
 							UnitId.empty();
 							ID.val('@Guid.NewGuid()');
+							QtyInStock.val(data.QtyInStockStr);
 							data.GetProductUnits.forEach(function (item) {
 								if (item.UnitId === data.IdUnitOfQty) {
 									UnitId.append(`<option selected value="${item.UnitId}">${item.UnitName}</option>`);
@@ -464,7 +472,7 @@
 							Qty.val('1');
 							let TQP = 1 * SellingPrice.val();
 							TotalQtyPrice.val(TQP);
-							getInvoiceTotalPrice(ProductBarCode)
+							getInvoiceTotalPrice(ProductBarCode);
 							$(".ProductBarCode").get(-1).focus();
 						}else{
 							Swal.fire({
@@ -501,6 +509,8 @@
 			let SelectedDiscount = mainDev.find(".Select.sDescount").find(":selected").val();
 			let DescountPrice = + mainDev.find(".InvoiceTotalDiscount").val().trim();
 			let InvoiceTotalPrice = mainDev.parent().parent().find(".InvoiceTotalPrice");
+			//let InvoiceRemaining = $(".Remaining");
+			let TotalPaid = $(".TotalPaid");
 			$.each($("#InvoiceProductsBody >tr"), function (key, value) {
 				let IdF = + $(value).children("td").children(".ID").val().trim();
 				ConversionFactor = + $(value).children("td").children(".ConversionFactor").val().trim(),
@@ -521,8 +531,10 @@
 				InvoiceTotalPriceValue = InvoiceTotalPriceValue - DescountPrice;
 			}
 			InvoiceTotalPrice.val(InvoiceTotalPriceValue);
+			//calcInvoiceRemaining();
+			//let invRemaining = InvoiceTotalPriceValue - TotalPaid.val();
+			//InvoiceRemaining.val(invRemaining);
 		}
-
 		else{
 		let tRow = $(value).parents("tr");
 		let SellingPrice = + tRow.find(".SellingPrice").val().trim();
@@ -568,7 +580,17 @@
 				}
 			}
 		}
+		$('.TotalPaid').val($(".InvoiceTotalPrice").val())
+		calcInvoiceRemaining();
+	}
 
+	function calcInvoiceRemaining() {
+		
+		let InvTotalPaid = $('.TotalPaid').val();
+		let InvoiceTotalPrice = $(".InvoiceTotalPrice").val();
+		let InvoiceRemaining = $(".Remaining");
+		let remainValue = InvTotalPaid - InvoiceTotalPrice;
+		InvoiceRemaining.val(remainValue);
 	}
 	function Save(type) {
 		let stockId = document.querySelector("#ddlStockId").value;
@@ -959,9 +981,11 @@
 		});
 		getRowsNumber()
 	})
+
 	function InvoiceProductsAddNew(obj) {
+
 		
-		var haveDisscountPermission = @((ViewData.ContainsKey("DisscountPermission") && (bool)ViewData["DisscountPermission"] == true) ? "true" : "false");
+			var haveDisscountPermission = @((ViewData.ContainsKey("DisscountPermission") && (bool)ViewData["DisscountPermission"] == true) ? "true" : "false");
 		let rowId = Math.floor(Math.random() * 500) + 1;
 		if (haveDisscountPermission == true || haveDisscountPermission === "true") {
 			$("#InvoiceProductsBody").append(` <tr>
@@ -977,6 +1001,8 @@
 									</select>
 											<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
 								</td>
+										<td><input type="text" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+
 											<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
 												<td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
 												<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" readonly/></td>
@@ -1014,6 +1040,8 @@
 									</select>
 											<input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
 								</td>
+										<td><input type="text" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+
 											<td><input type="number" disabled class="form-control ItemUnitPrice"  value="${obj.ItemUnitPrice}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
 												<td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
 												<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>

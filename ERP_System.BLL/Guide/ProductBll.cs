@@ -16,6 +16,9 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using ZXing.QrCode.Internal;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ERP_System.BLL.Guide
 {
@@ -56,6 +59,8 @@ namespace ERP_System.BLL.Guide
 		{
 			return _repoProduct.GetAllAsNoTracking().Include(p => p.Attachments).Include(x => x.StockProducts).ThenInclude(x => x.Stock).Where(p => p.ID == id).Select(x => new ProductDTO
 			{
+
+
 				ID = x.ID,
 				Name = x.Name,
 				BarCodeText = x.BarCodeText,
@@ -77,7 +82,6 @@ namespace ERP_System.BLL.Guide
 					ConversionFactor = c.ConversionFactor,
 					PurchasingPrice = c.PurchasingPrice,
 					SellingPrice = c.SellingPrice,
-					UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
 					UnitBarcodeText = c.UnitBarcodeText,
 					UnitId = c.UnitId
 				}).ToArray()
@@ -153,7 +157,6 @@ namespace ERP_System.BLL.Guide
 					   ConversionFactor = c.ConversionFactor,
 					   PurchasingPrice = c.PurchasingPrice,
 					   SellingPrice = c.SellingPrice,
-					   UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
 					   UnitBarcodeText = c.UnitBarcodeText,
 					   UnitId = c.UnitId,
 					   UnitName = c.Unit.Name
@@ -282,6 +285,14 @@ namespace ERP_System.BLL.Guide
 			return resultView;
 		}
 
+
+		public JsonResult SearchByName(string name)
+		{
+			var allData = _repoProduct.GetAllAsNoTracking()
+				.Where(x=>x.Name.StartsWith(name, StringComparison.InvariantCultureIgnoreCase)).Select(x=>x.Name);
+			return new JsonResult(allData);
+        }
+
 		public ResultViewModel GetProductDataByUnitId(Guid? productId, Guid? unitId)
 		{
 			var resultView = new ResultViewModel();
@@ -330,7 +341,7 @@ namespace ERP_System.BLL.Guide
 						data.ConversionFactor = currentProduct.ConversionFactor;
 					}
 					var conversionFactor = data.ConversionFactor ?? 0;
-					var qtyStock = data.QtyInStock ?? 0;
+					var qtyStock = data.GetQtyInStock ?? 0;
 					if (conversionFactor == 0 || qtyStock == 0)
 					{
 

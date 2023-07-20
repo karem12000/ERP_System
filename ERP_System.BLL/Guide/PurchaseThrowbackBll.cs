@@ -255,6 +255,16 @@ namespace ERP_System.BLL.Guide
 		{
 			ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
 
+			if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Length > 0)
+			{
+				if (InvoiceDTO.InvoiceDetails.Any(x => x.PurchasingPrice == 0))
+				{
+					resultViewModel.Status = false;
+					resultViewModel.Message = "لايمكن حفظ سعر الشراء للوحده بالقيمة 0";
+					return resultViewModel;
+				}
+			}
+
 			var purchaseInvoice = _repoPInvoice.GetById(InvoiceDTO.PurchaseInvoiceId.Value);
 			if (purchaseInvoice == null)
 			{

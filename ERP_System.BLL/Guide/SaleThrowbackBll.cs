@@ -90,7 +90,8 @@ namespace ERP_System.BLL.Guide
 					DiscountTypePProduct = c.DiscountTypePProduct,
 					TotalQtyPriceAfterDisscount = (int)c.DiscountTypePProduct == 0 ? (c.Qty * c.SellingPrice) - ((c.Qty * c.SellingPrice) * (c.DiscountPProduct / 100)) : (c.Qty * c.SellingPrice) - c.DiscountPProduct,
 					DiscountTypePProductInt = (int)c.DiscountTypePProduct,
-					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
+					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+					QtyInStockStr = string.Join(" - ", Math.Round((_repoProduct.GetById(c.ProductId.Value).QtyInStock / c.ConversionFactor) ?? 0, 2), _UnitBll.GetById(c.UnitId.Value).Name)
 				}).ToList(),
 
 
@@ -286,6 +287,16 @@ namespace ERP_System.BLL.Guide
 		public ResultViewModel Save(SaleThrowbackDTO InvoiceDTO)
 		{
 			ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
+
+			if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Length > 0)
+			{
+				if (InvoiceDTO.InvoiceDetails.Any(x => x.SellingPrice == 0))
+				{
+					resultViewModel.Status = false;
+					resultViewModel.Message = "لايمكن حفظ سعر البيع بالقيمة 0";
+					return resultViewModel;
+				}
+			}
 
 			var saleInvoice = _saleInvoiceBll.GetById(InvoiceDTO.SaleInvoiceId.Value);
 			if (saleInvoice == null)

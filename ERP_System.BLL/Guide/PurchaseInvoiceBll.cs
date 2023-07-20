@@ -402,6 +402,15 @@ namespace ERP_System.BLL.Guide
 			}
 			var Supplier = _repoSupplier.GetById(InvoiceDTO.SupplierId.Value);
 
+			if(InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Length>0) {
+				if(InvoiceDTO.InvoiceDetails.Any(x=>x.PurchasingPrice == 0))
+				{
+					resultViewModel.Status = false;
+					resultViewModel.Message = "لايمكن حفظ سعر الشراء للوحده بالقيمة 0";
+					return resultViewModel;
+				}
+			}
+
 			if (Supplier != null)
 			{
 

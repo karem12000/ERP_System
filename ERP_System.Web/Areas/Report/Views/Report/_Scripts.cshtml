@@ -1,67 +1,1435 @@
 ﻿<script>
-    $(document).ready(function () {
-    })
+	$(document).ready(function () {
+	})
+	function handleSelectReportType() {
+		var currentReportType = $('#ddlReportType').val();
+		var currentSubReportDev = $('.SubReportOptionDev');
+		var currentSubReportType = $('.subReportSelect').val();
+		var ReportPeriodOptionDev = $('.ReportPeriodOptionDev');
 
 
-    function handlePeriodTypeChange() {
-        var currentChoice = $('#ddlPeriodType').val();
-        var parentDev = $('.PeriodDate');
-        if (currentChoice == "0") {
-            parentDev.empty();
-            parentDev.append(`
-                                      <label for="FromDate">التاريخ</label>
-                                      <input type="date" class="form-control" name="FromDate" id="FromDate">
-                            `);
-        } else {
-            parentDev.empty();
-            parentDev.append(`
-                                      <div class="form-group">
-                                        <label for="FromDate">التاريخ من : </label>
-                                        <input type="date" class="form-control" name="FromDate" id="FromDate">
-                                      </div>
-                                     <div class="form-group">
-                                        <label for="ToDate">التاريخ إلي : </label>
-                                        <input type="date" class="form-control" name="ToDate" id="ToDate">
-                                      </div>
-                            `);
-        }
-    }
+		if (currentReportType == "0" || currentReportType == "1" || currentReportType == "2") {
+			$('.SubReportOptionDev').hide();
+			$('.ReportPeriodOptionDev').hide();
+			$('.PeriodDate').hide();
+		} else {
+			$('.SubReportOptionDev').show();
+			$('.ReportPeriodOptionDev').show();
+			$('.PeriodDate').show();
+		}
 
-    function GenerateReport() {
-        var currentChoice = $('#ddlPeriodType').val();
-        var currentReport = $('#ddlReportType').val();
-        console.log(currentChoice);
-        console.log(currentReport);
-        var fromDate = "";
-        var toDate = "";
-        if (currentChoice == "0") {
-            fromDate = $("#FromDate").val();
-            toDate = fromDate;
-        } else {
-            fromDate = $("#FromDate").val();
-            toDate = $("#ToDate").val();
-        }
-        if (currentReport=="1") {
+		if (currentReportType == "3") {
+			$('.SubReportOptionDev').show();
+			$('.subReportSelect').empty();
+			$('.subReportSelect').append(`
+														<option selected value="0">كل الأصناف</option>
+														<option value="1">الأكثر مبيعا</option>
+														<option value="2">الأقل مبيعا</option>
+												`);
+			$('.ReportPeriodOptionDev').hide();
+			$('.PeriodDate').hide();
+		}
 
-            window.location.href = "/Report/Report/GetSaleInvoiceReport?FromDate=" + fromDate + "/ToDate=" + toDate;
-            //$.post("/Report/Report/GetSaleInvoiceReport", { 'FromDate': fromDate, 'ToDate': toDate }, function (res) {
-            //        if (res.Status) {
-            //            if (res.Data) {
-                           
-            //            }
-            //        }
-            //        else {
+		if (currentReportType == "4" || currentReportType == "5" || currentReportType == "6" || currentReportType == "7") { //  تقرير المبيعات والمشتريات والمرتجعات
+			$('.SubReportOptionDev').hide();
+			$('.ReportPeriodOptionDev').show();
+			$('.PeriodDate').show();
+		}
+		console.log(currentReportType);
+		console.log(currentSubReportType);
 
-            //            Swal.fire({
-            //                title: `${res.Message}`,
-            //                timer: 2000,
-            //                timerProgressBar: true,
-            //                icon: 'warning',
-            //                showConfirmButton: false
-            //            });
-            //        }
-            //    });
-        }
+		if (currentReportType == "8") { // تقرير الموردين
+			$('.subReportSelect').empty();
+			$('.subReportSelect').append(`
+												<option selected value="0"> الموردين الأكثر معاملات </option>
+												<option value="1"> الموردين الأقل معاملات </option>
+												<option value="2"> الموردين المدينيين </option>
+												<option value="3"> الموردين الدائنيين  </option>
+											`);
+			$('.SubReportOptionDev').show();
+			$('.ReportPeriodOptionDev').show();
+			$('.PeriodDate').show();
+		}
+	}
 
-    }
+	function handleSelectSubType() {
+		var currentReportType = $('#ddlReportType').val();
+		var currentSubReportDev = $('.SubReportOptionDev');
+		var currentSubReportType = $('.subReportSelect').val();
+		var ReportPeriodOptionDev = $('.ReportPeriodOptionDev');
+
+
+		if ((currentReportType == "3" && currentSubReportType == "0")) {
+			$('.SubReportOptionDev').show();
+			$('.ReportPeriodOptionDev').hide();
+			$('.PeriodDate').hide();
+		}
+
+		if ((currentReportType == "3" && currentSubReportType == "1") || (currentReportType == "3" && currentSubReportType == "2")) {
+			$('.SubReportOptionDev').show();
+			$('.ReportPeriodOptionDev').show();
+			$('.PeriodDate').show();
+		}
+
+		if (currentReportType == "8") {
+
+			$('.subReportSelect').empty();
+			if (currentSubReportType == "0") {
+				$('.subReportSelect').append(`
+																		<option selected value="0"> الموردين الأكثر معاملات </option>
+																	<option value="1"> الموردين الأقل معاملات </option>
+																	<option value="2"> الموردين المدينيين </option>
+																	<option value="3"> الموردين الدائنيين  </option>
+																	`);
+			}
+			else if (currentSubReportType == "1") {
+				$('.subReportSelect').append(`
+																	<option value="0"> الموردين الأكثر معاملات </option>
+																		<option selected value="1"> الموردين الأقل معاملات </option>
+																	<option value="2"> الموردين المدينيين </option>
+																	<option value="3"> الموردين الدائنيين  </option>
+																`);
+			} else if (currentSubReportType == "2") {
+				$('.subReportSelect').append(`
+																			<option  value="0"> الموردين الأكثر معاملات </option>
+																		<option value="1"> الموردين الأقل معاملات </option>
+																			<option selected value="2"> الموردين المدينيين </option>
+																		<option value="3"> الموردين الدائنيين  </option>
+																		`);
+			}
+			else if (currentSubReportType == "3") {
+				$('.subReportSelect').append(`
+																				<option  value="0"> الموردين الأكثر معاملات </option>
+																			<option value="1"> الموردين الأقل معاملات </option>
+																				<option  value="2"> الموردين المدينيين </option>
+																			<option selected value="3"> الموردين الدائنيين  </option>
+																			`);
+			}
+
+
+			if ((currentReportType == "8" && currentSubReportType == "0")) { // تقرير الموردين
+				$('.SubReportOptionDev').show();
+				$('.ReportPeriodOptionDev').show();
+				$('.PeriodDate').show();
+			} else if ((currentReportType == "8" && currentSubReportType == "1")) {
+				$('.SubReportOptionDev').show();
+				$('.ReportPeriodOptionDev').show();
+				$('.PeriodDate').show();
+			}
+			if ((currentReportType == "8" && currentSubReportType == "2")) { // تقرير الموردين
+				$('.SubReportOptionDev').show();
+				$('.ReportPeriodOptionDev').hide();
+				$('.PeriodDate').hide();
+			} else if ((currentReportType == "8" && currentSubReportType == "3")) {
+				$('.SubReportOptionDev').show();
+				$('.ReportPeriodOptionDev').hide();
+				$('.PeriodDate').hide();
+			}
+		}
+
+
+	}
+
+	function handlePeriodTypeChange() {
+		var currentChoice = $('#ddlPeriodType').val();
+		var parentDev = $('.PeriodDate');
+		const date = new Date();
+		let day = date.getDate();
+		let month = date.getMonth() + 1;
+		let year = date.getFullYear();
+		if (month < 10) {
+			month = `0${month}`
+		} if (day < 10) {
+			day = `0${day}`
+		}
+
+		let currentDate = `${year}-${month}-${day}`;
+
+		if (currentChoice == "0" || currentChoice == "1") {
+			parentDev.empty();
+			parentDev.append(`
+																		  <label for="FromDate">التاريخ</label>
+																			  <input type="date" value="${currentDate}" class="form-control" name="FromDate" id="FromDate">
+																`);
+		}
+		else if (currentChoice == "2") {
+			parentDev.empty();
+			parentDev.append(`
+																		  <div class="form-group">
+																			<label for="FromDate">التاريخ من : </label>
+																				<input type="date" value="${currentDate}" class="form-control" name="FromDate" id="FromDate">
+																		  </div>
+																		 <div class="form-group">
+																			<label for="ToDate">التاريخ إلي : </label>
+																			<input type="date" value="${currentDate}" class="form-control" name="ToDate" id="ToDate">
+																		  </div>
+																`);
+		}
+		else {
+			parentDev.empty();
+			parentDev.append(`
+													<div class="form-group">
+													<label for="Year">السنه</label>
+															<input type="number" id="Year" step="1" name="Year" value="${year}" class="form-control" placeholder="السنه" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
+													</div>
+																	`);
+		}
+	}
+
+	function GenerateReport() {
+		var currentPeriodChoice = $('#ddlPeriodType').val();
+		var currentReportChoice = $('#ddlReportType').val();
+		var subReportChoice = $('#ddlSubReportType').val();
+		var stockId = $('#ddlStockId').val();
+		var productId = null;
+
+		var fromDate = "";
+		var toDate = "";
+
+
+
+		if (currentPeriodChoice == "0") {
+			fromDate = $("#FromDate").val();
+			toDate = fromDate;
+		}
+		else if (currentPeriodChoice == "1") {
+			fromDate = $("#FromDate").val();
+			var dt = new Date(fromDate);
+			currentDate = add_weeks(dt , 1);
+			
+		}
+		else if (currentPeriodChoice == "2") {
+			fromDate = $("#FromDate").val();
+			toDate = $("#ToDate").val();
+		}
+		else {
+			const date = new Date();
+			let day = 1;
+			let month = 01;
+			let fromyear = $('#Year').val();
+			let toyear = parseInt(fromyear) + 1;
+			fromDate = `${fromyear}-${month}-${day}`;
+			toDate = `${toyear}-${month}-${day}`;
+		}
+
+		
+
+		if (currentReportChoice == "1") {
+			//let a = document.createElement('a');
+			//a.target = '_blank';
+			//a.href = "/Report/Report/GetProductQtyReport?StockId=" + stockId + "/ProductId=" + productId;
+			//a.click();
+			LoadProductsQty(stockId);
+		}
+		else if (currentReportChoice == "2") {
+			LoadProductsPrice(stockId);
+			//let a = document.createElement('a');
+			//a.target = '_blank';
+			//a.href = "/Report/Report/GetProductPriceReport?StockId=" + stockId + "/ProductId=" + productId;
+			//a.click();
+		}
+		else if (currentReportChoice == "3" && subReportChoice == "0") {
+			LoadAllProductData(stockId);
+		}
+		else if (currentReportChoice == "3" && subReportChoice == "1") {
+			LoadMostProductsSale(stockId, fromDate, toDate);
+		}
+		else if (currentReportChoice == "3" && subReportChoice == "2") {
+			LoadLeastProductsSale(stockId, fromDate, toDate);
+		}
+		else if (currentReportChoice == "8" && subReportChoice == "0") {
+			LoadMostSupplierTransaction(stockId, fromDate, toDate);
+		} else if (currentReportChoice == "8" && subReportChoice == "1") {
+			LoadLeastSupplierTransaction(stockId, fromDate, toDate);
+		} else if (currentReportChoice == "8" && subReportChoice == "2") {
+			LoadDebtorSupplierTransaction();
+		} else if (currentReportChoice == "8" && subReportChoice == "3") {
+			LoadCreditorSupplierTransaction();
+		} else if (currentReportChoice == "4") {
+			LoadSaleInvoicesReport(stockId, fromDate, toDate);
+		}
+		else if (currentReportChoice == "5") {
+			LoadSaleThrowbackInvoicesReport(stockId, fromDate, toDate);
+		} else if (currentReportChoice == "6") {
+			LoadPurchaseInvoicesReport(stockId, fromDate, toDate);
+		} else if (currentReportChoice == "7") {
+			LoadPurchaseThrowbackInvoicesReport(stockId, fromDate, toDate);
+		}
+		
+	}
+
+	function LoadProductsQty(stockId) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+					<div class="card-body">
+						<table id="tbl" class="table " width="100%">
+							<thead>
+								<tr>
+									<td>المنتج</td>
+									<td>الباركود</td>
+									<td>الوحده</td>
+									<td>الكمية</td>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				`);
+
+
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: '/Report/Report/GetProductsQty?StockId=' + stockId,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="ProductName">' + (data.ProductName ?? "") + '</label><input hidden name="ProductName" class="ProductName" value="' + data.ProductName + '" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="BarCode">' + (data.BarCode ?? "") + '</label><input hidden name="BarCode" class="BarCode" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="QtyName">' + (data.QtyName ?? "") + '</label><input hidden name="QtyName" class="QtyName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="QtyInStock">' + (data.QtyInStock ?? "") + '</label><input hidden name="QtyInStock" class="QtyInStock" value="" /> ' }
+
+				}
+			]
+		});
+
+	} // نقرير كل الأصناف
+	function LoadProductsPrice(stockId) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+						<div class="card-body">
+							<table id="tbl" class="table " width="100%">
+								<thead>
+									<tr>
+										<td>المنتج</td>
+										<td>الباركود</td>
+										<td>الوحده</td>
+										<td>سعر الشراء</td>
+										<td>سعر البيع</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					`);
+
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: '/Report/Report/GetProductsPrice?StockId=' + stockId,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="ProductName">' + (data.ProductName ?? "") + '</label><input hidden name="ProductName" class="ProductName" value="' + data.ProductName + '" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="BarCode">' + (data.BarCode ?? "") + '</label><input hidden name="BarCode" class="BarCode" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="QtyName">' + (data.QtyName ?? "") + '</label><input hidden name="QtyName" class="QtyName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="PurchasingPrice">' + (data.PurchasingPrice ?? "") + '</label><input hidden name="PurchasingPrice" class="PurchasingPrice" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="SellingPrice">' + (data.SellingPrice ?? "") + '</label><input hidden name="SellingPrice" class="SellingPrice" value="" /> ' }
+
+				}
+			]
+		});
+
+	} // تقرير أسعار المنتجات
+	function LoadAllProductData(stockId) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+						<div class="card-body">
+							<table id="tbl" class="table " width="100%">
+								<thead>
+									<tr>
+										<td>المنتج</td>
+										<td>المخزن</td>
+										<td>المجموعة</td>
+										<td>الباركود</td>
+										<td>الكمية</td>
+										<td>الوحده</td>
+										<td>تاريخ الصلاحية</td>
+										<td>الوصف</td>
+										<td>الحاله</td>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					`);
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: '/Report/Report/GetProductData?StockId=' + stockId,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="ProductName">' + (data.Name ?? "") + '</label><input hidden name="ProductId" class="ProductId" value="' + data.ID + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="StockName">' + (data.StockName ?? "") + '</label><input hidden name="StockId" class="StockId" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="GroupName">' + (data.GroupName ?? "") + '</label><input hidden name="GroupId" class="GroupId" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="BarCodeText">' + (data.BarCodeText ?? "") + '</label><input hidden name="BarCodeText" class="BarCodeText" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="QtyInStock">' + (data.QtyInStock ?? "") + '</label><input hidden name="QtyInStock" class="QtyInStock" value="' + data.QtyInStock + '" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+						return '<label class="NameUnitOfQty">' + (data.NameUnitOfQty ?? "") + '</label><input hidden name="IdUnitOfQty" class="IdUnitOfQty" value="" /> '
+					}
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+						return '<label class="NameUnitOfQty">' + (data.ExpireDate ?? "") + '</label><input hidden name="ExpireDate" class="ExpireDate" value="" /> '
+					}
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+						return '<label class="NameUnitOfQty">' + (data.Description ?? "") + '</label><input hidden name="Description" class="Description" value="" /> '
+					}
+
+				},
+				{
+
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+
+						return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+					}
+
+				}
+				//			{
+
+				//				data: null,
+				//				bSortable: false,
+				//				render: function (data, type, row) {
+				//					let btn = `<div class="Event">
+
+
+
+				//{
+				//																																																																					<a class="btn-icon btn btn-warning btn-sm"  href="/Guide/Product/Edit/${data.ID}" >
+				//																																																															 <i class="fas fa-pen"></i>
+
+				//																																																															</a>
+
+				//}
+
+				//{
+				//																																																																	   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+				//																																																														   <i class="fas fa-trash-alt"></i>
+
+				//																																																														   </a>
+				//}
+				//																																	   `;
+				//					return btn + '</div>';
+				//				}
+				//			}
+			]
+		});
+
+	} // تقرير كميات المنتجات
+	function LoadMostProductsSale(stockId, fromDate, toDate) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+							<div class="card-body">
+								<table id="tbl" class="table " width="100%">
+									<thead>
+										<tr>
+											<td>المنتج</td>
+											<td>الوحده</td>
+											<td>عدد المبيعات</td>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						`);
+
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: `/Report/Report/GetMostProductsSale?StockId=${stockId}&&FromDate=${fromDate}&&ToDate=${toDate}`,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="ProductName">' + (data.ProductName ?? "") + '</label><input hidden name="ProductName" class="ProductName" value="' + data.ProductName + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="UnitName">' + (data.UnitName ?? "") + '</label><input hidden name="UnitName" class="UnitName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="NumOfPay">' + (data.NumOfPay ?? "") + '</label><input hidden name="NumOfPay" class="NumOfPay" value="" /> ' }
+
+				}
+			]
+		});
+
+	} // تقرير أكثر المنتجات مبيعا
+	function LoadLeastProductsSale(stockId, fromDate, toDate) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+								<div class="card-body">
+									<table id="tbl" class="table " width="100%">
+										<thead>
+											<tr>
+												<td>المنتج</td>
+												<td>الوحده</td>
+												<td>عدد المبيعات</td>
+											</tr>
+										</thead>
+									</table>
+								</div>
+							`);
+		$('#tbl').DataTable().destroy();
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: `/Report/Report/GetLeastProductsSale?StockId=${stockId}&&FromDate=${fromDate}&&ToDate=${toDate}`,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="ProductName">' + (data.ProductName ?? "") + '</label><input hidden name="ProductName" class="ProductName" value="' + data.ProductName + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="UnitName">' + (data.UnitName ?? "") + '</label><input hidden name="UnitName" class="UnitName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="NumOfPay">' + (data.NumOfPay ?? "") + '</label><input hidden name="NumOfPay" class="NumOfPay" value="" /> ' }
+
+				}
+			]
+		});
+
+	} // تقرير أقل المنتجات مبيعا
+	function LoadMostSupplierTransaction(stockId, fromDate, toDate) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+								<div class="card-body">
+									<table id="tbl" class="table " width="100%">
+										<thead>
+											<tr>
+												<td>المورد</td>
+												<td>الشركة</td>
+												<td>عدد المعاملات</td>
+												<td>حالة المورد</td>
+											</tr>
+										</thead>
+									</table>
+								</div>
+							`);
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: `/Report/Report/GetMostSupplierTransaction?StockId=${stockId}&&FromDate=${fromDate}&&ToDate=${toDate}`,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="SupplierName">' + (data.SupplierName ?? "") + '</label><input hidden name="SupplierName" class="SupplierName" value="' + data.SupplierName + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="CompanyName">' + (data.CompanyName ?? "") + '</label><input hidden name="CompanyName" class="CompanyName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="NumOfProcess">' + (data.NumOfProcess ?? "") + '</label><input hidden name="NumOfProcess" class="NumOfProcess" value="" /> ' }
+
+				},
+				{
+
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+
+						return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+					}
+
+				}
+			]
+		});
+
+	} // تقرير أكثر الموردين معاملة
+	function LoadLeastSupplierTransaction(stockId, fromDate, toDate) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+									<div class="card-body">
+										<table id="tbl" class="table " width="100%">
+											<thead>
+												<tr>
+													<td>المورد</td>
+													<td>الشركة</td>
+													<td>عدد المعاملات</td>
+													<td>حالة المورد</td>
+												</tr>
+											</thead>
+										</table>
+									</div>
+								`);
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: `/Report/Report/GetLeastSupplierTransaction?StockId=${stockId}&&FromDate=${fromDate}&&ToDate=${toDate}`,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="SupplierName">' + (data.SupplierName ?? "") + '</label><input hidden name="SupplierName" class="SupplierName" value="' + data.SupplierName + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="CompanyName">' + (data.CompanyName ?? "") + '</label><input hidden name="CompanyName" class="CompanyName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="NumOfProcess">' + (data.NumOfProcess ?? "") + '</label><input hidden name="NumOfProcess" class="NumOfProcess" value="" /> ' }
+
+				},
+				{
+
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+
+						return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+					}
+
+				}
+			]
+		});
+
+	} // تقرير أقل الموردين معاملة
+	function LoadDebtorSupplierTransaction() {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+										<div class="card-body">
+											<table id="tbl" class="table " width="100%">
+												<thead>
+													<tr>
+														<td>المورد</td>
+														<td>اسم الشركة</td>
+															<td>العنوان</td>
+															<td>رقم الهاتف</td>
+															<td>نوع المعاملة</td>
+															<td>القيمة</td>
+															<td>الحاله</td>
+													</tr>
+												</thead>
+											</table>
+										</div>
+									`);
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: '/Report/Report/GetDebtorSupplierTransaction',
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="Name">' + (data.Name ?? "") + '</label><input hidden name="Name" class="Name" value="' + data.Name + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="CompanyName">' + (data.CompanyName ?? "") + '</label><input hidden name="CompanyName" class="CompanyName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="Address">' + (data.Address ?? "") + '</label><input hidden name="Address" class="Address" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="Phone">' + (data.Phone ?? "") + '</label><input hidden name="Phone" class="Phone" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="ProcessType">مدين</label><input hidden name="ProcessType" class="ProcessType" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="Amount">' + (data.Amount ?? "") + '</label><input hidden name="Amount" class="Amount" value="" /> ' }
+
+				},
+				{
+
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+
+						return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+					}
+
+				}
+			]
+		});
+
+	} // تقرير الموردين المدينيين
+	function LoadCreditorSupplierTransaction() {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+											<div class="card-body">
+												<table id="tbl" class="table " width="100%">
+													<thead>
+														<tr>
+															<td>المورد</td>
+															<td>اسم الشركة</td>
+																<td>العنوان</td>
+																<td>رقم الهاتف</td>
+																<td>نوع المعاملة</td>
+																<td>القيمة</td>
+																<td>الحاله</td>
+														</tr>
+													</thead>
+												</table>
+											</div>
+										`);
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: '/Report/Report/GetCreditorSupplierTransaction',
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="Name">' + (data.Name ?? "") + '</label><input hidden name="Name" class="Name" value="' + data.Name + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="CompanyName">' + (data.CompanyName ?? "") + '</label><input hidden name="CompanyName" class="CompanyName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="Address">' + (data.Address ?? "") + '</label><input hidden name="Address" class="Address" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="Phone">' + (data.Phone ?? "") + '</label><input hidden name="Phone" class="Phone" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="ProcessType">دائن</label><input hidden name="ProcessType" class="ProcessType" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="Amount">' + (data.Amount ?? "") + '</label><input hidden name="Amount" class="Amount" value="" /> ' }
+
+				},
+				{
+
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+
+						return '<label class="align-center  statesact  ' + ((data.IsActive) ? "IsActive badge bg-success" : "IsDeactivate badge bg-danger") + ' "> <span>' + ((data.IsActive) ? "نشط" : "غير نشط") + '</span></label><input hidden class="isActive" value="' + data.IsActive + '" />'
+
+					}
+
+				}
+			]
+		});
+
+	} // تقرير الموردين الدائنيين
+	function LoadSaleInvoicesReport(stockId, fromDate, toDate) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+												<div class="card-body">
+													<table id="tbl" class="table " width="100%">
+														<thead>
+															<tr>
+																<td>رقم الفاتورة</td>
+																<td>تاريخ الفاتورة</td>
+																	<td>المخزن</td>
+																	<td>المشتري</td>
+																	<td>عدد منتجات الفاتورة</td>
+																	<td>إجمالي الفاتورة</td>
+																	<td>خصم الفاتورة</td>
+																	<td>نوع الخصم</td>
+																	<td>المدفوع</td>
+																	<td>التفاصيل</td>
+															</tr>
+														</thead>
+													</table>
+												</div>
+											`);
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: `/Report/Report/GetSaleInvoicesReport?StockId=${stockId}&&FromDate=${fromDate}&&ToDate=${toDate}`,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceNumber">' + (data.InvoiceNumber ?? "") + '</label><input hidden name="InvoiceId" class="InvoiceId" value="' + data.ID + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceDate">' + (data.InvoiceDateStr ?? "") + '</label><input hidden name="InvoiceDate" class="InvoiceDate" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="StockName">' + (data.StockName ?? "") + '</label><input hidden name="StockName" class="StockName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="Buyer">' + (data.Buyer ?? "") + '</label><input hidden name="Buyer" class="Buyer" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="NumOfProducts">' + (data.NumOfProducts) + '</label><input hidden name="NumOfProducts" class="NumOfProducts" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceTotalPrice">' + (data.InvoiceTotalPrice) + '</label><input hidden name="InvoiceTotalPrice" class="InvoiceTotalPrice" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceTotalDiscount">' + (data.InvoiceTotalDiscount) + '</label><input hidden name="InvoiceTotalDiscount" class="InvoiceTotalDiscount" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+						if (data.InvoiceTotalDiscountType == 0) {
+							return '<label class="InvoiceTotalDiscountType">%</label><input hidden name="InvoiceTotalDiscountType" class="InvoiceTotalDiscountType" value="" /> '
+						} else {
+							return '<label class="InvoiceTotalDiscountType">قيمة</label><input hidden name="InvoiceTotalDiscountType" class="InvoiceTotalDiscountType" value="" /> '
+						}
+					}
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="TotalPaid">' + (data.TotalPaid) + '</label><input hidden name="TotalPaid" class="TotalPaid" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+						return `<a class="btn-icon btn btn-warning btn-sm  Details"  href="/Guide/SaleInvoice/Edit/${data.ID}" target="_blank">
+								 <i class="fas fa-eye"></i>
+							</a>` }
+				}
+
+			]
+		});
+
+	} // تقرير المبيعات
+	function LoadSaleThrowbackInvoicesReport(stockId, fromDate, toDate) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+													<div class="card-body">
+														<table id="tbl" class="table " width="100%">
+															<thead>
+																<tr>
+																	<td>رقم فاتورة المبيعات</td>
+																	<td>تاريخ فاتورة المبيعات</td>
+																	<td>رقم الفاتورة</td>
+																	<td>تاريخ الفاتورة</td>
+																	<td>المخزن</td>
+																	<td>المشتري</td>
+																	<td>عدد منتجات الفاتورة</td>
+																	<td>إجمالي الفاتورة</td>
+																	<td>المدفوع</td>
+																	<td>التفاصيل</td>
+																</tr>
+															</thead>
+														</table>
+													</div>
+												`);
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: `/Report/Report/GetSaleThrowbackInvoicesReport?StockId=${stockId}&&FromDate=${fromDate}&&ToDate=${toDate}`,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="SaleInvoiceNumber">' + (data.SaleInvoiceNumber ?? "") + '</label><input hidden name="SaleInvoiceNumber" class="SaleInvoiceNumber" value="' + data.SaleInvoiceNumber + '" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="SaleInvoiceDate">' + (data.SaleInvoiceDateStr ?? "") + '</label><input hidden name="SaleInvoiceDate" class="SaleInvoiceDate" value="' + data.SaleInvoiceDate + '" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceNumber">' + (data.InvoiceNumber ?? "") + '</label><input hidden name="InvoiceId" class="InvoiceId" value="' + data.ID + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceDate">' + (data.InvoiceDateStr ?? "") + '</label><input hidden name="InvoiceDate" class="InvoiceDate" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="StockName">' + (data.StockName ?? "") + '</label><input hidden name="StockName" class="StockName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="Buyer">' + (data.Buyer ?? "") + '</label><input hidden name="Buyer" class="Buyer" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="NumOfProducts">' + (data.NumOfProducts) + '</label><input hidden name="NumOfProducts" class="NumOfProducts" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceTotalPrice">' + (data.InvoiceTotalPrice) + '</label><input hidden name="InvoiceTotalPrice" class="InvoiceTotalPrice" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="TotalPaid">' + (data.TotalPaid) + '</label><input hidden name="TotalPaid" class="TotalPaid" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+						return `<a class="btn-icon btn btn-warning btn-sm  Details"  href="/Guide/SaleThrowback/Edit/${data.ID}" target="_blank" >
+									 <i class="fas fa-eye"></i>
+								</a>` }
+				}
+
+			]
+		});
+
+	} // تقرير مرتجع المبيعات
+	function LoadPurchaseInvoicesReport(stockId, fromDate, toDate) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+													<div class="card-body">
+														<table id="tbl" class="table " width="100%">
+															<thead>
+																<tr>
+																	<td>رقم الفاتورة</td>
+																	<td>تاريخ الفاتورة</td>
+																	<td>نوع المعاملة</td>
+																	<td>المخزن</td>
+																	<td>المورد</td>
+																	<td>عدد منتجات الفاتورة</td>
+																	<td>إجمالي الفاتورة</td>
+																	<td>المدفوع</td>
+																	<td>التفاصيل</td>
+																</tr>
+															</thead>
+														</table>
+													</div>
+												`);
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: `/Report/Report/GetPurchaseInvoicesReport?StockId=${stockId}&&FromDate=${fromDate}&&ToDate=${toDate}`,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceNumber">' + (data.InvoiceNumber ?? "") + '</label><input hidden name="InvoiceId" class="InvoiceId" value="' + data.ID + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceDate">' + (data.InvoiceDateStr ?? "") + '</label><input hidden name="InvoiceDate" class="InvoiceDate" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+						if (data.TransactionType === 0) {
+							return '<label class="TransactionType">كاش</label><input hidden name="TransactionType" class="TransactionType" value="' + data.TransactionType + '" /> '
+						} else if (data.TransactionType === 1) {
+
+							return '<label class="TransactionType">أجل</label><input hidden name="TransactionType" class="TransactionType" value="' + data.TransactionType + '" /> '
+						}
+					}
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="StockName">' + (data.StockName ?? "") + '</label><input hidden name="StockName" class="StockName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="SupplierName">' + (data.SupplierName ?? "") + '</label><input hidden name="SupplierName" class="SupplierName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="NumOfProducts">' + (data.NumOfProducts) + '</label><input hidden name="NumOfProducts" class="NumOfProducts" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceTotalPrice">' + (data.InvoiceTotalPrice) + '</label><input hidden name="InvoiceTotalPrice" class="InvoiceTotalPrice" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="TotalPaid">' + (data.TotalPaid) + '</label><input hidden name="TotalPaid" class="TotalPaid" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+						return `<a class="btn-icon btn btn-warning btn-sm  Details"  href="/Guide/PurchaseInvoice/Edit/${data.ID}" target="_blank">
+									 <i class="fas fa-eye"></i>
+								</a>` }
+				}
+
+			]
+		});
+
+	} // تقرير المشتريات
+	function LoadPurchaseThrowbackInvoicesReport(stockId, fromDate, toDate) {
+		$('#tbl').DataTable().destroy();
+		$('.tableReport').empty();
+		$('.tableReport').append(`
+																<div class="card-body">
+																	<table id="tbl" class="table " width="100%">
+																		<thead>
+																			<tr>
+																				<td>رقم فاتورة المشتريات</td>
+																				<td>تاريخ فاتورة المشتريات</td>
+																				<td>رقم الفاتورة</td>
+																				<td>تاريخ الفاتورة</td>
+																				<td>نوع المعاملة</td>
+																				<td>المخزن</td>
+																				<td>المورد</td>
+																				<td>عدد منتجات الفاتورة</td>
+																				<td>إجمالي الفاتورة</td>
+																				<td>المدفوع</td>
+																				<td>التفاصيل</td>
+																			</tr>
+																		</thead>
+																	</table>
+																</div>
+															`);
+		dt = $('#tbl').DataTable({
+			"columnDefs": [{ "defaultContent": "-", "targets": "_all" }],
+			"language": _dataTableTranslate,
+			pageLength: 10,
+			pagijngType: "full_numbers",
+			direction: 'rtl',
+			serverSide: true,
+			scrollX: true,
+			processing: true,
+			lengthMenu: [10, 25, 50, 75, 100],
+			sAjaxSource: `/Report/Report/GetPurchaseThrowbackInvoicesReport?StockId=${stockId}&&FromDate=${fromDate}&&ToDate=${toDate}`,
+			sServerMethod: "POST",
+			bPaginate: true,
+			paging: true,
+			dom: 'Blfrtip',
+			buttons: [],
+			search: {},
+			columns: [
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="PurchaseInvoiceNumber">' + (data.PurchaseInvoiceNumber ?? "") + '</label><input hidden name="PurchaseInvoiceNumber" class="PurchaseInvoiceNumber" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="PurchaseInvoiceDateStr">' + (data.PurchaseInvoiceDateStr ?? "") + '</label><input hidden name="PurchaseInvoiceDateStr" class="PurchaseInvoiceDateStr" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceNumber">' + (data.InvoiceNumber ?? "") + '</label><input hidden name="InvoiceId" class="InvoiceId" value="' + data.ID + '" /> ' }
+
+				},
+
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceDate">' + (data.InvoiceDateStr ?? "") + '</label><input hidden name="InvoiceDate" class="InvoiceDate" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+						if (data.TransactionType === 0) {
+							return '<label class="TransactionType">كاش</label><input hidden name="TransactionType" class="TransactionType" value="' + data.TransactionType + '" /> '
+						} else if (data.TransactionType === 1) {
+
+							return '<label class="TransactionType">أجل</label><input hidden name="TransactionType" class="TransactionType" value="' + data.TransactionType + '" /> '
+						}
+					}
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="StockName">' + (data.StockName ?? "") + '</label><input hidden name="StockName" class="StockName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="SupplierName">' + (data.SupplierName ?? "") + '</label><input hidden name="SupplierName" class="SupplierName" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="NumOfProducts">' + (data.NumOfProducts) + '</label><input hidden name="NumOfProducts" class="NumOfProducts" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="InvoiceTotalPrice">' + (data.InvoiceTotalPrice) + '</label><input hidden name="InvoiceTotalPrice" class="InvoiceTotalPrice" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) { return '<label class="TotalPaid">' + (data.TotalPaid) + '</label><input hidden name="TotalPaid" class="TotalPaid" value="" /> ' }
+
+				},
+				{
+					data: null,
+					bSortable: true,
+					render: function (data, type, row) {
+						return `<a class="btn-icon btn btn-warning btn-sm  Details"  href="/Guide/PurchaseThrowback/Edit/${data.ID}" target="_blank">
+												 <i class="fas fa-eye"></i>
+											</a>` }
+				}
+
+			]
+		});
+
+	} // تقرير مرتجع المشتريات
+	function add_weeks(dt, n) {
+		return new Date(dt.setDate(dt.getDate() + (n * 7))).toLocaleDateString('en-US', {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+		});
+	}
+
+
+
 </script>
