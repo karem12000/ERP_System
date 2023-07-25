@@ -1,0 +1,125 @@
+﻿<script>
+
+	
+	let form = $('#frm');
+
+	function getProductByBarcode() {
+
+		if (event.keyCode === 13) {
+			var name = $('#BarCodeText').val();
+			if (name !== '' && name !== null) {
+
+				$.get('@Url.GetAction("GetByProductBarCode")', { text: name }, function (res) {
+					if (res.Status) {
+						let data = res.Data;
+						$('#ProductId').val(data.ProductId);
+						$('#BarCodeText').val(data.BarCode);
+						$('#ProductName').val(data.ProductName);
+						$('#UnitId').val(data.UnitId);
+						$('#UnitName').val(data.UnitName);
+						$('#SellingPrice').val(data.SalePrice);
+						$('#PurchasingPrice').val(data.PurchasePrice);
+						$('#SellingPrice').focus();
+
+					} else {
+						Swal.fire({
+							title: `${res.Message}`,
+							timer: 1500,
+							timerProgressBar: true,
+							icon: 'warning',
+							showConfirmButton: false
+						});
+					}
+				});
+			}
+
+		}
+	}
+	function getProductByName() {
+
+		if (event.keyCode === 13) {
+			var name = $('#ProductName').val();
+			if (name !== '' && name !== null) {
+				
+				$.get('@Url.GetAction("GetProductByName")', { text: name }, function (res) {
+					if (res.Status) {
+						let data = res.Data;
+						$('#ProductId').val(data.ProductId);
+						$('#BarCodeText').val(data.BarCode);
+						$('#ProductName').val(data.ProductName);
+						$('#UnitId').val(data.UnitId);
+						$('#UnitName').val(data.UnitName);
+						$('#SellingPrice').val(data.SalePrice);
+						$('#PurchasingPrice').val(data.PurchasePrice);
+						$('#SellingPrice').focus();
+
+						
+					} else {
+						Swal.fire({
+							title: `${res.Message}`,
+							timer: 1500,
+							timerProgressBar: true,
+							icon: 'warning',
+							showConfirmButton: false
+						});
+					}
+				});
+			}
+
+		}
+	}
+
+	function Submit() {
+
+		if ($('#BarCodeText').val() == '' || $('#ProductName').val()=='') {
+			Swal.fire({
+				title: `من فضلك حدد المنتج`,
+				timer: 2000,
+				timerProgressBar: true,
+				icon: 'error',
+				showConfirmButton: false
+			});
+		}
+		else {
+			var $preloader = $('#loader');
+			$preloader.fadeIn('slow');
+			$.post('@Url.GetAction("Save")', form.serialize(), function (res) {
+				$preloader.delay(200).fadeOut('slow');
+				if (res.Status) {
+					Swal.fire({
+						title: `${res.Message}`,
+						timer: 2000,
+						timerProgressBar: true,
+						icon: 'success',
+						showConfirmButton: false
+					}).then((result) => {
+						resetForm();
+					})
+
+				}
+				else {
+					Swal.fire({
+						title: `${res.Message}`,
+						timer: 4000,
+						timerProgressBar: true,
+						icon: 'error',
+						showConfirmButton: false
+					})
+				}
+			});
+		}
+
+	}
+
+	function resetForm(){
+		$('#ProductId').val("0");
+		$('#BarCodeText').val("");
+		$('#ProductName').val("");
+		$('#UnitId').val("0");
+		$('#UnitName').val("");
+		$('#SellingPrice').val("0");
+		$('#PurchasingPrice').val("0");
+		$('#BarCodeText').focus();
+	}
+
+</script>

@@ -14,7 +14,7 @@
 					<div class="card-body">
 						<div class="form-body">
 							<div class="row">
-								<div class="form-group col-4">
+								<div class="form-group col-3">
 									<label class="lable" for="ReportType">اختر التقرير<span style="color:red;"> * </span> </label>
 									<select class="Select sAddress form-select" onchange="handleSelectReportType()" aria-label="اختر التقرير" required name="ReportType" id="ddlReportType">
 										<option selected value="0">اختر التقرير</option>
@@ -22,16 +22,23 @@
 										<option value="2">تقرير أسعار الأصناف</option>
 										<option value="3">تقرير الأصناف</option>
 										<option value="4">تقرير المبيعات</option>
-										<option value="5">تقرير مرتجع المبيعات</option>
-										<option value="6">تقرير المشتريات</option>
-										<option value="7">تقرير مرتجع المشتريات</option>
-										<option value="8">تقرير الموردين</option>
+										<option value="5">تقرير مبيعات الأصناف</option>
+										<option value="6">تقرير مرتجع المبيعات</option>
+										<option value="7">تقرير المشتريات</option>
+										<option value="8">تقرير مرتجع المشتريات</option>
+										<option value="9">تقرير الموردين</option>
 									</select>
 								</div>
-								<div class="form-group col-4">
+								<div class="form-group col-3">
 									<label class="lable" for="StockId">المخزن</label>
 									<select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
 										<option selected value="0">اختر المخزن</option>
+									</select>
+								</div>
+								<div class="form-group col-3">
+									<label class="lable" for="StockId">الكاشير</label>
+									<select class="Select sAddress form-select" aria-label="اختر الكاشير" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Cashers"] , "Value", "Text")' name="cashierId" id="ddlCashierId">
+										<option selected value="0">اختر الكاشير</option>
 									</select>
 								</div>
 								<div class="form-group  SubReportOptionDev">

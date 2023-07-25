@@ -25,6 +25,7 @@ namespace ERP_System.Tables
         public string UserImage { get; set; }
        
         public bool DiscountPermission { get; set; } = false;
+        public bool SalePriceEdit { get; set; } = false;
         public bool IsAdmin { get; set; } = false;
         /// <summary>
         /// هل قام باستخدام الباسورد الافتراضي ام لا

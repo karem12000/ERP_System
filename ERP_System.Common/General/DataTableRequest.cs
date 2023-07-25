@@ -274,6 +274,7 @@ namespace ERP_System
         public DateTime? ToDate { get; set; }
         public Guid? StockId { get; set; }
         public Guid? ProductId { get; set; }
+        public Guid? CashierId { get; set; }
         public SqlParameter[] ToSqlParameter(params SqlParameter[] sqlParameters)
         {
             List<SqlParameter> _list = new List<SqlParameter>
@@ -287,11 +288,15 @@ namespace ERP_System
 
             if (FromDate != null)
             {
-                _list.Add(new SqlParameter { ParameterName = "@FromDate", Value = FromDate });
+                _list.Add(new SqlParameter { ParameterName = "@FromDate", Value = FromDate.Value.Date  });
             }
             if (StockId != null)
             {
                 _list.Add(new SqlParameter { ParameterName = "@StockId", Value = StockId });
+            }
+            if (CashierId != null)
+            {
+                _list.Add(new SqlParameter { ParameterName = "@CashierId", Value = CashierId });
             }
             if (ProductId != null)
             {
@@ -299,7 +304,7 @@ namespace ERP_System
             }
             if (ToDate != null)
             {
-                _list.Add(new SqlParameter { ParameterName = "@ToDate", Value = ToDate });
+                _list.Add(new SqlParameter { ParameterName = "@ToDate", Value = ToDate.Value.Date });
             }
 
             if (sqlParameters != null)

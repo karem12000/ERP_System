@@ -219,8 +219,8 @@ namespace ERP_System.BLL.Guide
 					UnitName = _UnitBll.GetById(c.UnitId.Value).Name,
 					TotalQtyPriceAfterDisscount = (int)c.DiscountTypePProduct == 0 ? (c.Qty * c.SellingPrice) - ((c.Qty * c.SellingPrice) * (c.DiscountPProduct / 100)) : (c.Qty * c.SellingPrice) - c.DiscountPProduct,
 					SellingPrice = c.SellingPrice,
-					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId)
-
+					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+					QtyInStockStr = string.Join(" - ", Math.Round((_repoProduct.GetById(c.ProductId.Value).QtyInStock * c.ConversionFactor) ?? 0, 2), _UnitBll.GetById(c.UnitId.Value).Name)
 				}).ToList(),
 
 			}).FirstOrDefault();
@@ -660,7 +660,7 @@ namespace ERP_System.BLL.Guide
 				//newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
 				newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
 				newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
-				newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
+				newInvoice.InvoiceDate = DateTime.Now;
 				newInvoice.Buyer = InvoiceDTO.Buyer;
 				newInvoice.InvoiceTotalDiscountType = InvoiceDTO.InvoiceTotalDiscountType;
 				newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;

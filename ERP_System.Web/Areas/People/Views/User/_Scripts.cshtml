@@ -29,7 +29,11 @@
         $('#Address').val('');
         $('#StockIds').val('').trigger('change');
         $('#IsActive').val('true');
+        $('#DiscountPermission').val('false');
+        $('#SalePriceEdit').val('false');
         $('#IsActive').prop('checked', true);
+        $('#DiscountPermission').prop('checked', false);
+        $('#SalePriceEdit').prop('checked', false);
 
     }
 
@@ -42,7 +46,17 @@
                 icon: 'error',
                 showConfirmButton: false
             });
-        } else {
+        }
+        else if ($('#Password').val()==''){
+            Swal.fire({
+                title: `من فضلك أدخل الباسوورد`,
+                timer: 2000,
+                timerProgressBar: true,
+                icon: 'error',
+                showConfirmButton: false
+            });
+        }
+        else {
             var $preloader = $('#loader');
             $preloader.fadeIn('slow');
             $.post('@Url.GetAction("Save")', form.serialize(), function (res) {
@@ -449,13 +463,20 @@
         var selected = $('#ddlUserTypeId').val();
         if (selected == '7b95531a-edcb-4c1f-b7d8-3abeb1aac16d') {
             $('#DiscountPermissionDev').show();
+            $('#SalePriceEditDev').show();
         } else {
             $('#DiscountPermissionDev').hide();
+            $('#SalePriceEditDev').hide();
         }
     }
 
     $("#DiscountPermission").change(function (e) {
         var isChecked = $(this).prop("checked");
         $("#DiscountPermission").val(isChecked);
+    });
+
+    $("#SalePriceEdit").change(function (e) {
+        var isChecked = $(this).prop("checked");
+        $("#SalePriceEdit").val(isChecked);
     });
 </script>

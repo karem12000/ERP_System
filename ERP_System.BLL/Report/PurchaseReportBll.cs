@@ -91,9 +91,9 @@ namespace ERP_System.BLL.Guide
 		public int PurchaseInvoiceNumber { get; set; }
 		public DateTime? InvoiceDate { get; set; }
 		public DateTime? PurchaseInvoiceDate { get; set; }
-		public string InvoiceDateStr => InvoiceDate.Value.Date.ToString();
-		public string PurchaseInvoiceDateStr => PurchaseInvoiceDate.Value.Date.ToString();
-		public string SupplierName { get; set; }
+		public string InvoiceDateStr { get; set; }
+        public string PurchaseInvoiceDateStr { get; set; }
+        public string SupplierName { get; set; }
 		public int NumOfProducts { get; set; }
 		public decimal? InvoiceTotalPrice { get; set; }
 		public decimal? TotalPaid { get; set; }
@@ -106,8 +106,8 @@ namespace ERP_System.BLL.Guide
 		public string StockName { get; set; }
 		public int InvoiceNumber { get; set; }
 		public DateTime? InvoiceDate { get; set; }
-		public string InvoiceDateStr => InvoiceDate.Value.Date.ToString();
-		public string SupplierName { get; set; }
+		public string InvoiceDateStr { get; set; }
+        public string SupplierName { get; set; }
 		public int NumOfProducts { get; set; }
 		public decimal? InvoiceTotalPrice { get; set; }
 		public decimal? TotalPaid { get; set; }

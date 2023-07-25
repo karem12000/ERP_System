@@ -39,6 +39,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         {
             var userId = _httpContextAccessor.UserId();
             ViewData["DisscountPermission"] = _userBll.GetById(userId).DiscountPermission;
+            ViewData["SalePriceEditPermission"] = _userBll.GetById(userId).SalePriceEdit;
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
             return View();
         }
@@ -47,6 +48,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         {
             var userId = _httpContextAccessor.UserId();
             ViewData["DisscountPermission"] = _userBll.GetById(userId).DiscountPermission;
+            ViewData["SalePriceEditPermission"] = _userBll.GetById(userId).SalePriceEdit;
             var invoice = _invoiceBll.GetById(id);
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
 

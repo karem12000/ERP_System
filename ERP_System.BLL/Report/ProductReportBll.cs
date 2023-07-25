@@ -38,6 +38,14 @@ namespace ERP_System.BLL.Report
 
 			return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
 		}
+		
+		public DataTableResponse GetSaleProductData(ProductReportDataTableRequest mdl)
+		{
+			var data = _repoProduct.ExecuteStoredProcedure<SaleProductData>
+				("[Report].[spSaleProductData]", mdl?.ToSqlParameter(), CommandType.StoredProcedure);
+
+			return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
+		}
 		public DataTableResponse GetMostProductsSale(ProductReportDataTableRequest mdl)
 		{
 			var data = _repoProduct.ExecuteStoredProcedure<GetMostProductSellingReportDto>
@@ -162,8 +170,9 @@ namespace ERP_System.BLL.Report
     public class GetSupplierNumPurchasingReportDto
 	{
 		public string SupplierName { get; set; }
-		public string CompanyName { get; set; }
-		//public string StockName { get; set; }
+		public string companyName { get; set; }
+		public string Address { get; set; }
+		public string Phone { get; set; }
 		public int NumOfProcess { get; set; }
         public bool IsActive { get; set; }
         public int? TotalCount { get; set; }
@@ -184,7 +193,21 @@ namespace ERP_System.BLL.Report
 		public int TotalCount { get; set; }
 
 	}
-	public class BaseProductReportDto
+
+    public class SaleProductData
+    {
+        public Guid ID { get; set; }
+        public string ProductName { get; set; }
+        public string UnitName { get; set; }
+        public decimal? TotalQuantity { get; set; }
+        public DateTime? FirstDate { get; set; }
+        public DateTime? MaxDate { get; set; }
+        public int TotalCount { get; set; }
+
+    }
+
+
+    public class BaseProductReportDto
     {
         public string StockName { get; set; }
         public string ProductName { get; set; }

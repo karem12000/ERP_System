@@ -47,6 +47,16 @@ namespace ERP_System.BLL
 
         #endregion
         #region Get
+        public IQueryable<SelectListDTO> GetAllCasher()
+        {
+            var data = _repoUser.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted && x.UserClassification==UserClassification.Cashier).Select(p => new SelectListDTO()
+            {
+                Value = p.ID,
+                Text = p.Name
+            });
+            return data.Distinct();
+
+        }
         public ResultDTO Get()
         {
             ResultDTO result = new ResultDTO();
@@ -101,6 +111,7 @@ namespace ERP_System.BLL
                 StockIdsStr = string.Join(',',x.UserStocks.Select(c=>c.StockId).ToArray()),
                 ScreenId = x.ScreenId,
                 DiscountPermission = x.DiscountPermission
+                ,SalePriceEdit = x.SalePriceEdit
             }).FirstOrDefault();
         }
         #endregion
@@ -405,6 +416,7 @@ namespace ERP_System.BLL
                 tbl.ModifiedDate = AppDateTime.Now;
                 tbl.ModifiedBy = _repoUser.UserId;
                 tbl.DiscountPermission = user.DiscountPermission;
+                tbl.SalePriceEdit = user.SalePriceEdit;
 				
 				if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
                     tbl.UserClassification = UserClassification.Admin;
@@ -611,7 +623,7 @@ namespace ERP_System.BLL
         #region UserPermissions
         public IEnumerable<UserPermissionsDTO> GetUserPermissions(Guid id)
         {
-            IEnumerable<UserPermissionsDTO> data = _repoPage.GetAll().Include(p => p.ActionsPages).Where(p => p.IsActive && !p.IsDeleted).OrderBy(p => p.OrderNo).Select(p => new UserPermissionsDTO()
+            IEnumerable<UserPermissionsDTO> data = _repoPage.GetAll().Include(p => p.ActionsPages).Where(p => p.IsActive && !p.IsDeleted && !p.IsArea).OrderBy(p => p.OrderNo).Select(p => new UserPermissionsDTO()
             {
                 PageId = p.ID,
                 PageName = p.Text,

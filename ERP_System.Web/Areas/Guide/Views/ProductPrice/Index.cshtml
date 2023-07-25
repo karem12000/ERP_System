@@ -1,0 +1,58 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@if (CurrentForm.CurrentFormPermissionActions.AddHasPermission)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">سعر الصنف</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit()">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="form-group col-3">
+                                        <label for="BarCode">باركود الصنف<span style="color:red;"> * </span></label>
+                                        <input hidden name="ProductId" id="ProductId" value="" class="d-none" />
+                                        <input type="text" onkeyup="getProductByBarcode()" required id="BarCodeText" name="BarCode" class="form-control" placeholder="باركود الصنف">
+                                    </div>
+                                    <div class="form-group col-3">
+                                        <label for="ProductName"><span style="color:red;"> * </span>اسم الصنف</label>
+                                        <input type="text" required onkeyup="getProductByName()" id="ProductName" name="ProductName" class="form-control" placeholder="اسم الصنف">
+                                    </div>
+                                    <div class="form-group col-3">
+                                        <label for="Name"><span style="color:red;"> * </span>الوحده</label>
+                                        <input hidden name="UnitId" id="UnitId" value="" class="d-none" />
+                                        <input type="text" required readonly id="UnitName" name="UnitName" class="form-control" placeholder="اسم الصنف">
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label for="SellingPrice"><span style="color:red;"> * </span>سعر البيع</label>
+                                        <input type="number" step="0.01" name="SalePrice" id="SellingPrice" class="form-control SellingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label for="PurchasePrice"><span style="color:red;"> * </span>سعر الشراء</label>
+                                        <input type="number" step="0.01" name="PurchasePrice" id="PurchasingPrice" class="form-control PurchasingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+                                    </div>
+
+                                    <div class="col-sm-12 d-flex justify-content-between mt-5">
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
+                                            حفظ
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+    <partial name="_Scripts" />
+}

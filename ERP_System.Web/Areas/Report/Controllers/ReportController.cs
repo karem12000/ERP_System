@@ -1,4 +1,5 @@
-﻿using ERP_System.BLL.Guide;
+﻿using ERP_System.BLL;
+using ERP_System.BLL.Guide;
 using ERP_System.BLL.Report;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -21,14 +22,16 @@ namespace ERP_System.Web.Areas.Report.Controllers
         private readonly ProductReportBll _productReport;
         private readonly SupplierReportBll _supplierReport;
         private readonly StockBll _stockBll;
+        private readonly UserBll _userBll;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public ReportController(SaleReportBll saleReportBll , PurchaseReportBll purchaseReportBll, SupplierReportBll supplierReport, StockBll stockBll, ProductReportBll productReport, SettingBll settingBll, IWebHostEnvironment webHostEnvironment)
+        public ReportController(SaleReportBll saleReportBll , UserBll userBll, PurchaseReportBll purchaseReportBll, SupplierReportBll supplierReport, StockBll stockBll, ProductReportBll productReport, SettingBll settingBll, IWebHostEnvironment webHostEnvironment)
         {
             _saleReportBll = saleReportBll;
 			_productReport = productReport;
             _webHostEnvironment = webHostEnvironment;
 			_supplierReport = supplierReport;
             _settingBll = settingBll;
+			_userBll = userBll;
 			_stockBll = stockBll;
 			_purchaseReportBll = purchaseReportBll;
 			//System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -37,6 +40,7 @@ namespace ERP_System.Web.Areas.Report.Controllers
         {
 			var userId = HttpContext.UserId();
 			ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
+			ViewData["Cashers"] = _userBll.GetAllCasher();
 			//return Redirect("/Report/Report/GetProductQtyReport");
 			//return Redirect("/Report/Report/GetProductPriceReport");
 			return View();
@@ -83,6 +87,7 @@ namespace ERP_System.Web.Areas.Report.Controllers
 		//	return Ok(data);
 		//}
 		public IActionResult GetProductData(ProductReportDataTableRequest mdl) => JsonDataTable(_productReport.GetProductReportData(mdl));
+		public IActionResult GetSaleProductData(ProductReportDataTableRequest mdl) => JsonDataTable(_productReport.GetSaleProductData(mdl));
 		public IActionResult GetMostProductsSale(ProductReportDataTableRequest mdl) => JsonDataTable(_productReport.GetMostProductsSale(mdl));
 		public IActionResult GetMostSupplierTransaction(ProductReportDataTableRequest mdl) => JsonDataTable(_productReport.GetMostSupplierNumPurchasingReportDto(mdl));
 		public IActionResult GetLeastSupplierTransaction(ProductReportDataTableRequest mdl) => JsonDataTable(_productReport.GetLeastSupplierNumPurchasingReportDto(mdl));

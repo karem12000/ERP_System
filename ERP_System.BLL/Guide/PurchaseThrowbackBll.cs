@@ -522,7 +522,7 @@ namespace ERP_System.BLL.Guide
 				{
 					var newInvoice = new PurchaseThrowback();
 					newInvoice.StockId = InvoiceDTO.StockId;
-					newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
+					newInvoice.InvoiceDate = DateTime.Now;
 					newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
 					newInvoice.AddedTax = InvoiceDTO.AddedTax ?? 0;
 					newInvoice.PurchaseInvoiceId = InvoiceDTO.PurchaseInvoiceId;

@@ -9,6 +9,16 @@ using System.Text;
 
 namespace ERP_System.DTO.Guide
 {
+    public class ProductPriceDTO
+    {
+        public Guid ProductId { get; set; }
+        public Guid UnitId { get; set; }
+        public string BarCode { get; set; }
+        public string ProductName { get; set; }
+        public string UnitName { get; set; }
+        public decimal? PurchasePrice { get; set; }
+        public decimal? SalePrice { get; set; }
+    }
     public class ProductDTO
     {
         public Guid ID { get; set; }

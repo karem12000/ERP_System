@@ -652,7 +652,7 @@ namespace ERP_System.BLL.Guide
 					var newInvoice = new PurchaseInvoice();
 					newInvoice.StockId = InvoiceDTO.StockId;
 					newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
-					newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
+					newInvoice.InvoiceDate = DateTime.Now;
 					newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
 					newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
 					newInvoice.SupplierId = Supplier.ID;

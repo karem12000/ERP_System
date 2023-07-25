@@ -206,40 +206,107 @@ namespace ERP_System.DAL
 
         public virtual Task<bool> SaveChangeAsnc() => _uow.SaveChangesAsync();
 
-        #endregion
+		#endregion
 
-        #region SQL Query
+		#region SQL Query
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="U">The Result Class It Will Be List< <see cref="U"/> ></typeparam>
-        /// <param name="query">Query string or Stored Procedure name</param>
-        /// <param name="parameters">Parameters </param>
-        /// <param name="commandType">Query or StoredProcedure default is StoredProcedure</param>
-        /// <returns></returns>
-        public List<U> ExecuteStoredProcedure<U>(string query, SqlParameter[] parameters = null, CommandType commandType = CommandType.StoredProcedure)
-        {
-            /// in _db.Database.GetDbConnection().ConnectionString if the password didn't get inside connection string
-            /// please make sure you add => "Persist Security Info=true;" inside your connection string in appsetting.json
-            SqlConnection sqlConnection = new SqlConnection(_db.Database.GetDbConnection().ConnectionString);
-            SqlCommand cmd = new SqlCommand(query, sqlConnection);
-            cmd.CommandTimeout = 500;
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="U">The Result Class It Will Be List< <see cref="U"/> ></typeparam>
+		/// <param name="query">Query string or Stored Procedure name</param>
+		/// <param name="parameters">Parameters </param>
+		/// <param name="commandType">Query or StoredProcedure default is StoredProcedure</param>
+		/// <returns></returns>
 
-            if (parameters != null)
-                cmd.Parameters.AddRange(parameters);
-            if (sqlConnection.State != ConnectionState.Open)
-                sqlConnection.Open();
-            cmd.CommandType = commandType;
-            var reader = cmd.ExecuteReader();
+		public List<U> ExecuteStoredProcedure<U>(string query, SqlParameter[] parameters = null,
+					CommandType commandType = CommandType.StoredProcedure)
+		{
+			/// in _db.Database.GetDbConnection().ConnectionString if the password didn't get inside connection string
+			/// please make sure you add => "Persist Security Info=true;" inside your connection string in appsetting.json
+			using SqlConnection sqlConnection = new SqlConnection(_db.Database.GetDbConnection().ConnectionString);
+			using SqlCommand cmd = new SqlCommand(query, sqlConnection);
+			if (parameters != null)
+				cmd.Parameters.AddRange(parameters);
 
-            DataTable tbl = new DataTable();
-            tbl.Load(reader, LoadOption.PreserveChanges);
-            sqlConnection.Close();
-            return ConvertDataTable<U>(tbl);
-        }
+			cmd.CommandTimeout = 60 * 5;
+			if (sqlConnection.State != ConnectionState.Open)
+				sqlConnection.Open();
 
-        public List<U> ExecuteSQLQuery<U>(string query, CommandType commandType = CommandType.Text)
+			cmd.CommandType = commandType;
+			var reader = cmd.ExecuteReader();
+
+			Type[] supportedType = { typeof(string), typeof(long), typeof(int), typeof(bool) };
+
+			if (supportedType.Contains(typeof(U)))
+			{
+				if (reader.Read()) return new[] { reader.GetFieldValue<U>(0) }.ToList();
+			}
+
+			return DataReaderMapToList<U>(reader);
+		}
+		//public List<U> ExecuteStoredProcedure<U>(string query, SqlParameter[] parameters = null, CommandType commandType = CommandType.StoredProcedure)
+		//{
+		//    /// in _db.Database.GetDbConnection().ConnectionString if the password didn't get inside connection string
+		//    /// please make sure you add => "Persist Security Info=true;" inside your connection string in appsetting.json
+		//    SqlConnection sqlConnection = new SqlConnection(_db.Database.GetDbConnection().ConnectionString);
+		//    SqlCommand cmd = new SqlCommand(query, sqlConnection);
+		//    cmd.CommandTimeout = 500;
+
+		//    if (parameters != null)
+		//        cmd.Parameters.AddRange(parameters);
+		//    if (sqlConnection.State != ConnectionState.Open)
+		//        sqlConnection.Open();
+		//    cmd.CommandType = commandType;
+		//    var reader = cmd.ExecuteReader();
+
+		//    DataTable tbl = new DataTable();
+		//    tbl.Load(reader, LoadOption.PreserveChanges);
+		//    sqlConnection.Close();
+		//    return ConvertDataTable<U>(tbl);
+		//}
+
+		public static List<U> DataReaderMapToList<U>(IDataReader dr)
+		{
+			var list = new List<U>();
+			U obj = default;
+
+			var allColumns = Enumerable.Range(0, dr.FieldCount).Select(x => dr.GetName(x) + "").ToList();
+			var props = typeof(U).GetProperties()
+				.Where(x => x.CanWrite && allColumns.Any(c => c == x.Name)).ToList();
+
+			while (dr.Read())
+			{
+				obj = Activator.CreateInstance<U>();
+				foreach (PropertyInfo prop in props)
+				{
+					try
+					{
+						var colum = dr[prop.Name];
+						if (!Equals(colum, DBNull.Value))
+							prop.SetValue(obj, GetConvertedValue(colum, prop), null);
+					}
+					catch (Exception ex) { _ = ex.Message; }
+				}
+				list.Add(obj);
+			}
+			return list;
+		}
+
+		private static object GetConvertedValue(object colum, PropertyInfo property)
+		{
+			var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+			if (type == colum.GetType())
+				return colum;
+
+			if (type.IsEnum)
+				return Enum.ToObject(type, colum);
+
+			return Convert.ChangeType(colum, type);
+		}
+
+		public List<U> ExecuteSQLQuery<U>(string query, CommandType commandType = CommandType.Text)
         {
             SqlConnection sqlConnection = new SqlConnection(_db.Database.GetDbConnection().ConnectionString);
             SqlCommand cmd = new SqlCommand(query, sqlConnection);
@@ -263,6 +330,8 @@ namespace ERP_System.DAL
             sqlConnection.Close();
             return ConvertDataTable<U>(tbl);
         }
+
+
 
         private List<U> ConvertDataTable<U>(DataTable dt)
         {
