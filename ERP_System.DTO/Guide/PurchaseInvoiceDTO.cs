@@ -47,6 +47,7 @@ namespace ERP_System.DTO.Guide
         public decimal? ConversionFactor { get; set; }
         public decimal? Qty { get; set; }
         public decimal? QtyInStock { get; set; }
+        public decimal? ThrowbackQty { get; set; }
         public string QtyInStockStr { get; set; }
         public decimal? PurchasingPrice { get; set; }
         public decimal? TotalQtyPrice =>Math.Round( Qty.Value  * PurchasingPrice.Value ,2);

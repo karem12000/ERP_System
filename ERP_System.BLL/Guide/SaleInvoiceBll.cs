@@ -26,14 +26,16 @@ namespace ERP_System.BLL.Guide
 		private readonly IRepository<Product> _repoProduct;
 		private readonly IRepository<ProductUnit> _repoProductUnit;
 		private readonly IRepository<SaleInvoiceDetail> _repoInvoiceDetail;
+		private readonly IRepository<SaleThrowbackDetail> _repoSaleThrowbackDetail;
 		private readonly IMapper _mapper;
 
-		public SaleInvoiceBll(IRepository<Product> repoProduct, IRepository<SaleThrowback> repoThrowbackInvoice, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<SaleInvoice> repoInvoice, IRepository<SaleInvoiceDetail> repoInvoiceDetail, IMapper mapper)
+		public SaleInvoiceBll(IRepository<Product> repoProduct, IRepository<SaleThrowbackDetail> repoSaleThrowbackDetail, IRepository<SaleThrowback> repoThrowbackInvoice, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<SaleInvoice> repoInvoice, IRepository<SaleInvoiceDetail> repoInvoiceDetail, IMapper mapper)
 		{
 			_repoInvoice = repoInvoice;
 			_mapper = mapper;
 			_repoInvoiceDetail = repoInvoiceDetail;
 			_repoProduct = repoProduct;
+			_repoSaleThrowbackDetail = repoSaleThrowbackDetail;
 			_UnitBll = UnitBll;
 			_repoStock = repoStock;
 			_repoProductUnit = repoProductUnit;
@@ -148,6 +150,13 @@ namespace ERP_System.BLL.Guide
 			resultView.Status = false;
 			if (barcode != null)
 			{
+				var throwback = _repoSaleThrowbackDetail.GetAllAsNoTracking().Include(x=>x.SaleThrowback)
+					.Where(x => (x.ProductBarCode.Trim() == barcode.Trim() || x.ProductName == barcode.Trim()) && x.SaleThrowback.SaleInvoiceId == invoiceId).ToList();
+				decimal ThrowbackQty = 0;
+				if(throwback != null)
+				{
+					ThrowbackQty = throwback.Sum(x => x.Qty.Value);
+				}
 				var data = _repoInvoiceDetail.GetAllAsNoTracking()
 			   .Where(p => (p.ProductBarCode.Trim() == barcode.Trim() || p.ProductName.Contains(barcode)) && p.SaleInvoiceId == invoiceId && p.IsActive && !p.IsDeleted && !p.SaleInvoice.IsDeleted)
 			   .Select(p => new SaleInvoiceDetailDto
@@ -164,7 +173,8 @@ namespace ERP_System.BLL.Guide
 				   UnitId = p.UnitId,
 				   UnitName = _UnitBll.GetById(p.UnitId.Value).Name,
 				   TotalQtyPrice = p.TotalQtyPrice,
-				   SellingPrice = p.SellingPrice
+				   SellingPrice = p.SellingPrice,
+				   ThrowbackQty = ThrowbackQty
 			   }).FirstOrDefault();
 
 				if (data != null)

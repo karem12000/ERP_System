@@ -722,6 +722,7 @@
                                                     <tr>
                                                         <td>المورد</td>
                                                         <td>الشركة</td>
+                                                        <td>رقم الهاتف</td>
                                                         <td>عدد المعاملات</td>
                                                         <td>حالة المورد</td>
                                                     </tr>
@@ -757,7 +758,13 @@
                 {
                     data: null,
                     bSortable: true,
-                    render: function (data, type, row) { return '<label class="CompanyName">' + (data.CompanyName ?? "") + '</label><input hidden name="CompanyName" class="CompanyName" value="" /> ' }
+                    render: function (data, type, row) { return '<label class="CompanyName">' + (data.companyName ?? "") + '</label><input hidden name="CompanyName" class="CompanyName" value="" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="Phone">' + (data.Phone ?? "") + '</label><input hidden name="Phone" class="Phone" value="" /> ' }
 
                 },
                 {
@@ -791,6 +798,7 @@
                                                         <tr>
                                                             <td>المورد</td>
                                                             <td>الشركة</td>
+                                                            <td>رقم الهاتف</td>
                                                             <td>عدد المعاملات</td>
                                                             <td>حالة المورد</td>
                                                         </tr>
@@ -826,7 +834,13 @@
                 {
                     data: null,
                     bSortable: true,
-                    render: function (data, type, row) { return '<label class="CompanyName">' + (data.CompanyName ?? "") + '</label><input hidden name="CompanyName" class="CompanyName" value="" /> ' }
+                    render: function (data, type, row) { return '<label class="CompanyName">' + (data.companyName ?? "") + '</label><input hidden name="CompanyName" class="CompanyName" value="" /> ' }
+
+                },
+                {
+                    data: null,
+                    bSortable: true,
+                    render: function (data, type, row) { return '<label class="Phone">' + (data.Phone ?? "") + '</label><input hidden name="Phone" class="Phone" value="" /> ' }
 
                 },
                 {

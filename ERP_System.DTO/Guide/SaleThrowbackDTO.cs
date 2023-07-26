@@ -51,6 +51,7 @@ namespace ERP_System.DTO.Guide
 		public decimal? Qty { get; set; }
 		public decimal? SellingPrice { get; set; }
 		public decimal? TotalQtyPrice { get; set; }
+		public decimal? ThrowbackQty { get; set; }
 		public decimal? DiscountPProduct { get; set; }
 		public DisscountType? DiscountTypePProduct { get; set; }
 		public int? DiscountTypePProductInt { get; set; }

@@ -30,9 +30,10 @@ namespace ERP_System.BLL.Guide
 		private readonly IRepository<Product> _repoProduct;
 		private readonly IRepository<ProductUnit> _repoProductUnit;
 		private readonly IRepository<PurchaseInvoiceDetail> _repoInvoiceDetail;
+		private readonly IRepository<PurchaseThrowbackDetail> _repoPurchaseInvoiceDetail;
 		private readonly IMapper _mapper;
 
-		public PurchaseInvoiceBll(IRepository<Product> repoProduct, IRepository<PurchaseThrowback> repoThrowbackInvoice, IRepository<Unit> repoUnit, IRepository<Supplier> repoSupplier, SupplierBll supplierBll, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
+		public PurchaseInvoiceBll(IRepository<Product> repoProduct, IRepository<PurchaseThrowbackDetail> repoPurchaseInvoiceDetail, IRepository<PurchaseThrowback> repoThrowbackInvoice, IRepository<Unit> repoUnit, IRepository<Supplier> repoSupplier, SupplierBll supplierBll, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
 		{
 			_repoInvoice = repoInvoice;
 			_mapper = mapper;
@@ -41,6 +42,7 @@ namespace ERP_System.BLL.Guide
 			_UnitBll = UnitBll;
 			_repoStock = repoStock;
 			_repoProductUnit = repoProductUnit;
+			_repoPurchaseInvoiceDetail = repoPurchaseInvoiceDetail;
 			_supplierBll = supplierBll;
 			_repoSupplier = repoSupplier;
 			_repoUnit = repoUnit;
@@ -105,6 +107,14 @@ namespace ERP_System.BLL.Guide
 			resultView.Status = false;
 			if (barcode != null)
 			{
+				var throwback = _repoPurchaseInvoiceDetail.GetAllAsNoTracking().Include(x => x.PurchaseThrowback)
+					.Where(x => (x.ProductBarCode.Trim() == barcode.Trim() || x.ProductName == barcode.Trim()) && x.PurchaseThrowback.PurchaseInvoiceId == invoiceId).ToList();
+				decimal ThrowbackQty = 0;
+				if (throwback != null)
+				{
+					ThrowbackQty = throwback.Sum(x => x.Qty.Value);
+				}
+
 				var data = _repoInvoiceDetail.GetAllAsNoTracking()
 			   .Where(p => (p.ProductBarCode.Trim() == barcode.Trim() || p.ProductName.Contains(barcode)) && p.PurchaseInvoiceId == invoiceId && p.IsActive && !p.IsDeleted && !p.PurchaseInvoice.IsDeleted)
 			   .Select(p => new PurchaseInvoiceProductsDTO
@@ -119,7 +129,8 @@ namespace ERP_System.BLL.Guide
 				   PurchasingPrice = p.PurchasingPrice,
 				   UnitId = p.UnitId,
 				   UnitName = _repoUnit.GetById(p.UnitId).Name,
-				   QtyInStockStr = string.Join(" - ", _repoProduct.GetById(p.ProductId).QtyInStock.Value, _repoProduct.GetById(p.ProductId).NameUnitOfQty)
+				   QtyInStockStr = string.Join(" - ", _repoProduct.GetById(p.ProductId).QtyInStock.Value, _repoProduct.GetById(p.ProductId).NameUnitOfQty),
+				   ThrowbackQty = ThrowbackQty
 
 			   }).FirstOrDefault();
 

@@ -116,7 +116,6 @@
 			}, true);
 		}
 	}
-
 	function LoadTable() {
 		$('#tbl').DataTable().destroy();
 
@@ -327,8 +326,6 @@
 			}
 		});
 	}
-
-
 	function getProduct(value, event) {
 		if (event.keyCode === 13) {
 
@@ -362,12 +359,14 @@
 						let data = res.Data;
 
 						let productExist = false;
+						let firstRowBarCode = $("#InvoiceProductsBody >tr:first-child").find('.ProductBarCode');
+
 						$.each($("#InvoiceProductsBody >tr"), function (key, value) {
 							let IdF = $(value).children("td").children(".ID").val().trim();
 							let ID = IdF == '0' ? null : IdF,
 								ProductId = $(value).children("td").children(".ProductId").val().trim(),
-								ProductBarCode = $(value).children("td").children(".ProductBarCode").val().trim(),
-								ProductName = $(value).children("td").children(".ProductName").val().trim(),
+								ProductBarCode2 = $(value).children("td").children(".ProductBarCode").val().trim(),
+								ProductName2 = $(value).children("td").children(".ProductName").val().trim(),
 								UnitId = $(value).children("td").children(".UnitId").val().trim(),
 								PurchaseDetailId = $(value).children("td").children(".PurchaseDetailId").val().trim(),
 								ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
@@ -375,7 +374,22 @@
 								PurchasingPrice = $(value).children("td").children(".PurchasingPrice").val().trim(),
 								TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
 							
-							if ((UnitId === data.UnitId && ProductId == data.ProductId) || (ProductBarCode === data.ProductBarCode && ProductId == data.ProductId)) {
+							if ((UnitId === data.UnitId && ProductId == data.ProductId) || (ProductBarCode2 === data.ProductBarCode && ProductId == data.ProductId)) {
+								if (Qty < (data.Qty - data.ThrowbackQty)) {
+									let newQty = parseInt(Qty);
+									$(value).children("td").children(".Qty").val(newQty + 1);
+									ProductName.val('');
+									ProductBarCode.val('');
+									getInvoiceTotalPrice(firstRowBarCode);
+								} else {
+									Swal.fire({
+										title: 'الكمية موجودة بالكامل',
+										timer: 1500,
+										timerProgressBar: true,
+										icon: 'warning',
+										showConfirmButton: false
+									});
+								}
 								productExist = true;
 							}
 						});
@@ -401,15 +415,16 @@
 							TotalQtyPrice.attr('disabled', 'disabled');
 
 					
-						} else {
-							Swal.fire({
-								title: 'هذا المنتج موجود بالفعل',
-								timer: 1500,
-								timerProgressBar: true,
-								icon: 'warning',
-								showConfirmButton: false
-							});
-						}
+						} 
+						//else {
+						//	Swal.fire({
+						//		title: 'هذا المنتج موجود بالفعل',
+						//		timer: 1500,
+						//		timerProgressBar: true,
+						//		icon: 'warning',
+						//		showConfirmButton: false
+						//	});
+						//}
 
 					} else {
 						Swal.fire({

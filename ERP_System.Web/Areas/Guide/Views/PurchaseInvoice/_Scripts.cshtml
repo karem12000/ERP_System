@@ -288,11 +288,13 @@
 
 						let data = res.Data;
 						let existProduct = false;
+						let firstRowBarCode = $("#InvoiceProductsBody >tr:first-child").find('.ProductBarCode');
+
 						$.each($("#InvoiceProductsBody >tr"), function (key, value) {
 							let IdF = $(value).children("td").children(".ID").val().trim();
 							let ID = IdF == '0' ? null : IdF,
 								ProductId = $(value).children("td").children(".ProductId").val().trim(),
-								ProductBarCode = $(value).children("td").children(".ProductBarCode").val().trim(),
+								ProductBarCode2 = $(value).children("td").children(".ProductBarCode").val().trim(),
 								ProductName = $(value).children("td").children(".ProductName").val().trim(),
 								UnitId = $(value).children("td").children(".UnitId").val().trim(),
 								ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
@@ -300,7 +302,11 @@
 								Qty = $(value).children("td").children(".Qty").val().trim(),
 								PurchasingPrice = $(value).children("td").children(".PurchasingPrice").val().trim(),
 								TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
-							if ((UnitId === data.IdUnitOfQty && ProductId == data.ID) || (ProductBarCode === data.BarCodeText && ProductId == data.ID)) {
+							if ((UnitId === data.IdUnitOfQty && ProductId == data.ID) || (ProductBarCode2 === data.BarCodeText && ProductId == data.ID)) {
+								let newQty = parseInt(Qty);
+								$(value).children("td").children(".Qty").val(newQty + 1);
+								ProductBarCode.val('');
+								getInvoiceTotalPrice(firstRowBarCode);
 								existProduct = true;
 							}
 						});
@@ -335,15 +341,16 @@
 							TotalQtyPrice.val(TQP);
 							getInvoiceTotalPrice(ProductBarCode)
 							$(".ProductBarCode").get(-1).focus();
-						} else {
-							Swal.fire({
-								title: 'هذا المنتج موجود بالفعل',
-								timer: 1500,
-								timerProgressBar: true,
-								icon: 'warning',
-								showConfirmButton: false
-							});
 						}
+						//else {
+						//	Swal.fire({
+						//		title: 'هذا المنتج موجود بالفعل',
+						//		timer: 1500,
+						//		timerProgressBar: true,
+						//		icon: 'warning',
+						//		showConfirmButton: false
+						//	});
+						//}
 
 
 					} else {
@@ -475,12 +482,13 @@
 
 
 						let existProduct = false;
+						let firstRowBarCode = $("#InvoiceProductsBody >tr:first-child").find('.ProductBarCode');
 						$.each($("#InvoiceProductsBody >tr"), function (key, value) {
 							let IdF = $(value).children("td").children(".ID").val().trim();
 							let ID = IdF == '0' ? null : IdF,
 								ProductId = $(value).children("td").children(".ProductId").val().trim(),
 								ProductBarCode = $(value).children("td").children(".ProductBarCode").val().trim(),
-								ProductName = $(value).children("td").children(".ProductName").val().trim(),
+								ProductName2 = $(value).children("td").children(".ProductName").val().trim(),
 								UnitId = $(value).children("td").children(".UnitId").val().trim(),
 								ConversionFactor = $(value).children("td").children(".ConversionFactor").val().trim(),
 								//ItemUnitPrice = $(value).children("td").children(".ItemUnitPrice").val().trim(),
@@ -488,6 +496,10 @@
 								PurchasingPrice = $(value).children("td").children(".PurchasingPrice").val().trim(),
 								TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
 							if ((UnitId === data.IdUnitOfQty && ProductId == data.ID) || (ProductBarCode === data.BarCodeText && ProductId == data.ID)) {
+								let newQty = parseInt(Qty);
+								$(value).children("td").children(".Qty").val(newQty + 1);
+								ProductName.val('');
+								getInvoiceTotalPrice(firstRowBarCode);
 								existProduct = true;
 							}
 						});
@@ -523,15 +535,16 @@
 							TotalQtyPrice.val(TQP);
 							getInvoiceTotalPrice(ProductBarCode)
 							$(".ProductBarCode").get(-1).focus();
-						} else {
-							Swal.fire({
-								title: 'هذا المنتج موجود بالفعل',
-								timer: 1500,
-								timerProgressBar: true,
-								icon: 'warning',
-								showConfirmButton: false
-							});
-						}
+						} 
+						//else {
+						//	Swal.fire({
+						//		title: 'هذا المنتج موجود بالفعل',
+						//		timer: 1500,
+						//		timerProgressBar: true,
+						//		icon: 'warning',
+						//		showConfirmButton: false
+						//	});
+						//}
 
 						//barCodeBtn.attr("href", data.BarCodePath);
 					} else {
