@@ -49,6 +49,14 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-6" id="SalePriceEditDev">
+                                        <div class="form-check">
+                                            <div class="checkbox">
+                                                <input type="checkbox" name="SalePriceEdit" id="SalePriceEdit" value="@Model.SalePriceEdit" checked="@Model.SalePriceEdit" class="form-check-input">
+                                                <label for="SalePriceEdit">صلاحية تعديل سعر البيع</label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group col-6">
                                         <label class="lable" for="ScreenId">الشاشة الإفتراضية</label>
                                         <select class="Select sAddress form-select" aria-label="اختر الشاشة"  asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Pages"] , "Value", "Text",Model.ScreenId)' name="ScreenId" id="ddlScreenId">
@@ -127,8 +135,10 @@
 
             if (userTypeId == '7b95531a-edcb-4c1f-b7d8-3abeb1aac16d') {
                 $('#DiscountPermissionDev').show();
+                $('#SalePriceEditDev').show();
             } else {
                 $('#DiscountPermissionDev').hide();
+                $('#SalePriceEditDev').hide();
             }
             //$('#ddlUserTypeId').val(userTypeId).trigger('change');
 

@@ -43,7 +43,12 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         public IActionResult Delete(Guid id) => Ok(_stockBll.Delete(id));
 
         #region LoadData
-        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_stockBll.LoadData(mdl));
+        public IActionResult LoadDataTable(DataTableRequest mdl)
+        {
+            var userId = HttpContext.UserId();
+            mdl.UserID = userId;
+            return JsonDataTable(_stockBll.LoadData(mdl));
+        }
         #endregion
 
     }

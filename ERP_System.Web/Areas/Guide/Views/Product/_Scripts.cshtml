@@ -76,7 +76,8 @@
 				{
 					data: null,
 					bSortable: true,
-					render: function (data, type, row) { return '</label><a target="_blank" href="' + data.BarCodePath + '" >' + (data.BarCodeText ?? "") + '</a> ' }
+					render: function (data, type, row) { return '<label class="BarCodeText">' + (data.BarCodeText ?? "") + '</label><input hidden name="BarCodeText" class="BarCodeText" value="' + data.BarCodeText + '" /> ' }
+
 
 				},
 				{
@@ -148,7 +149,8 @@
 
 																																																													   </a>
 	}
-																																	   `;
+											<a onclick="doAllForTable(this)" class="btn btn-outline-secondary mx-1" href="#"><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
+																																			   `;
 						return btn + '</div>';
 					}
 				}
@@ -175,7 +177,7 @@
 		$('#ddlGroupId').val(groupId).trigger('change');
 		$('#ddlIdUnitOfQty').val('0').trigger('change');
 		$("#UnitsTbl").empty();
-		UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" });
+		UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" },true);
 	}
 
 	function Save(type) {
@@ -357,9 +359,9 @@
 		$("#IsActive").val(isChecked);
 	});
 
-	function UnitAddNew(obj) {
+	function UnitAddNew(obj , isReset) {
 		$.post('@Url.GetAction("GetAllUnits")', function (res) {
-			let rowId = Math.floor(Math.random() * 500) + 1;
+			let rowId = Math.floor(Math.random() * 100000) + 1;
 			$("#UnitsTbl").append(` <tr>
 																 <td >
 																					<input class="form-control ID" type="hidden" value="0"/>
@@ -381,21 +383,29 @@
 																	</td>
 																</tr>
 															`);
-			let selectedUnits = reservedUnits;
-			//$.each($("#UnitsTbl .UnitId"), function () {
-			//    selectedUnits.push($(this).val())
-			//})
+			if(isReset==false){
+				let selectedUnits = reservedUnits;
+				//$.each($("#UnitsTbl .UnitId"), function () {
+				//    selectedUnits.push($(this).val())
+				//})
 
-			$.each(res, function (i, item) {
-				let selectedCon = selectedUnits.indexOf(item.Value) !== -1 ? "disabled='disabled'" : "";
-				$('#rowId-' + rowId).append($(`<option  value="${item.Value}" ${selectedCon}>${item.Text}</option>`));
-			});
+				$.each(res, function (i, item) {
+					let selectedCon = selectedUnits.indexOf(item.Value) !== -1 ? "disabled='disabled'" : "";
+					$('#rowId-' + rowId).append($(`<option  value="${item.Value}" ${selectedCon}>${item.Text}</option>`));
+				});
+			}else{
+				$.each(res, function (i, item) {
+					$('#rowId-' + rowId).append($(`<option  value="${item.Value}">${item.Text}</option>`));
+				});
+			}
+															
+			
 		});
 
 	}
 
 	$("#UnitsTbl").on("click", ".addRow", function () {
-		UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" })
+		UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" }, false)
 	})
 
 	$("#UnitsTbl").on("click", ".removeRow", function () {
@@ -418,7 +428,7 @@
 					if ($("#UnitsTbl > tr").length > 1) { $(btn).parent().parent().parent().remove(); }
 					else {
 						$("#UnitsTbl").empty();
-						UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" })
+						UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" }, false)
 					}
 				}
 			});
@@ -427,7 +437,7 @@
 			if ($("#UnitsTbl > tr").length > 1) { $(btn).parent().parent().parent().remove(); }
 			else {
 				$("#UnitsTbl").empty();
-				UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" })
+				UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" }, false)
 			}
 		}
 	});
@@ -475,6 +485,15 @@
 			var element = newWin.document.querySelector('#barcode');
 			generateBar(element, $(value).parents("tr").find(".UnitBarcode").val());
 		}
+	}
+	function doAllForTable(value) {
+		
+			var newWin = window.open('', '_blank');
+			newWin.document.write('<svg id="barcode"></svg>');
+			newWin.focus();
+			var element = newWin.document.querySelector('#barcode');
+		generateBar(element, $(value).parent().parent().parent().find(".BarCodeText").text());
+		
 	}
 
 	function generateBar(element, value) {

@@ -30,6 +30,7 @@ namespace ERP_System.BLL.Guide
         private readonly IRepository<Product> _repoProduct;
         private readonly IRepository<Unit> _repoUnit;
         private readonly IRepository<Attachment> _repoAttatchment;
+        private readonly IRepository<Stock> _repoStock;
         private readonly IRepository<ProductUnit> _repoProductUnit;
         private readonly IRepository<PurchaseInvoice> _repoPurchaseInvoice;
         private readonly IRepository<PurchaseThrowback> _repoPurchaseThrowback;
@@ -39,7 +40,7 @@ namespace ERP_System.BLL.Guide
         private readonly HelperBll _helperBll;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductBll(IRepository<Attachment> repoAttatchment, IRepository<ProductUnit> repoProductUnit, IRepository<Unit> repoUnit, IRepository<ProductUnit> productUnit,
+        public ProductBll(IRepository<Attachment> repoAttatchment, IRepository<Stock> repoStock, IRepository<ProductUnit> repoProductUnit, IRepository<Unit> repoUnit, IRepository<ProductUnit> productUnit,
             IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll,
             IRepository<StockProduct> stockProduct, IRepository<PurchaseInvoice> repoPurchaseInvoice, IRepository<PurchaseThrowback> repoPurchaseThrowback)
         {
@@ -54,6 +55,7 @@ namespace ERP_System.BLL.Guide
             _repoPurchaseInvoice = repoPurchaseInvoice;
             _repoPurchaseThrowback = repoPurchaseThrowback;
             _repoProductUnit = repoProductUnit;
+            _repoStock = repoStock;
         }
 
         #region Get
@@ -133,7 +135,7 @@ namespace ERP_System.BLL.Guide
 
         //    return resultView;
         //}
-        public ResultViewModel GetByProductBarCode(string barcode)
+        public ResultViewModel GetByProductBarCode(string barcode )
         {
             var resultView = new ResultViewModel();
             resultView.Status = false;
@@ -210,8 +212,91 @@ namespace ERP_System.BLL.Guide
             }
             return resultView;
         }
+		public ResultViewModel GetByProductBarCodeAndStockId(string barcode , Guid StockId)
+		{
+			var resultView = new ResultViewModel();
+			resultView.Status = false;
+            if(StockId == Guid.Empty)
+            {
+                resultView.Message = "اختر المخزن";
+                return resultView;
+            }
+			if (barcode != null)
+			{
+				var data = _repoProduct.GetAllAsNoTracking().Include(x => x.ProductUnits).ThenInclude(x => x.Unit)
+			   .Where(p => (p.BarCodeText.Trim().ToLower() == barcode.Trim().ToLower() || p.ProductUnits.Any(x => x.UnitBarcodeText.Trim().ToLower() == barcode.Trim().ToLower())) && p.IsActive && !p.IsDeleted)
+               .Where(p=>p.StockProducts.Any(x=>x.StockId==StockId))
+			   .Select(p => new ProductDTO
+			   {
+				   ID = p.ID,
+				   Name = p.Name,
+				   BarCodeText = p.BarCodeText,
+				   GroupId = p.GroupId,
+				   QtyInStock = p.QtyInStock,
+				   IdUnitOfQty = p.IdUnitOfQty,
+				   NameUnitOfQty = p.NameUnitOfQty,
+				   SalePrice = p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.SellingPrice).FirstOrDefault(),
+				   GetQtyInStock = p.QtyInStock / p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.ConversionFactor).FirstOrDefault(),
+				   GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
+				   {
+					   ID = c.ID,
+					   ConversionFactor = c.ConversionFactor,
+					   PurchasingPrice = c.PurchasingPrice,
+					   SellingPrice = c.SellingPrice,
+					   UnitBarcodeText = c.UnitBarcodeText,
+					   UnitId = c.UnitId,
+					   UnitName = c.Unit.Name
+				   }).ToArray(),
+				   QtyInStockStr = p.ProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).Select(x => x.Unit.Name).FirstOrDefault() ?? ""
 
-        public ResultViewModel GetProductPriceByBarCode(string barcode)
+			   }).FirstOrDefault();
+
+				if (data != null)
+				{
+					if (barcode.Trim().ToLower() != data.BarCodeText.Trim().ToLower())
+					{
+						var currentProduct = data.GetProductUnits.Where(x => x.UnitBarcodeText.Trim() == barcode.Trim()).FirstOrDefault();
+						data.BarCodeText = currentProduct.UnitBarcodeText;
+						data.BarCodePath = currentProduct.UnitBarcodePath;
+						data.IdUnitOfQty = currentProduct.UnitId;
+						data.NameUnitOfQty = currentProduct.UnitName;
+						data.SalePrice = currentProduct.SellingPrice;
+						data.ConversionFactor = currentProduct.ConversionFactor;
+
+					}
+
+					var conversionFactor = data.GetProductUnits.Where(x => x.UnitId == data.IdUnitOfQty).FirstOrDefault().ConversionFactor;
+					conversionFactor = conversionFactor ?? 0;
+					var qtyStock = data.QtyInStock ?? 0;
+
+					if (conversionFactor == 0 || qtyStock == 0)
+					{
+
+						data.QtyInStockStr = string.Join(" - ", Math.Round(0.0, 2), data.QtyInStockStr);
+
+					}
+					else
+					{
+						var qtyStr = qtyStock / conversionFactor;
+						data.QtyInStockStr = string.Join(" - ", Math.Round(qtyStr.Value, 2), data.QtyInStockStr);
+					}
+					resultView.Status = true;
+					resultView.Data = data;
+				}
+				else
+				{
+					resultView.Message ="هذا المنتج غير موجود بالمخزن المحدد";
+				}
+			}
+			else
+			{
+				resultView.Status = true;
+				resultView.Data = null;
+			}
+			return resultView;
+		}
+
+		public ResultViewModel GetProductPriceByBarCode(string barcode)
         {
             var resultView = new ResultViewModel();
             resultView.Status = false;
@@ -227,7 +312,9 @@ namespace ERP_System.BLL.Guide
                    UnitId = p.UnitId,
                    UnitName = _repoUnit.GetById(p.UnitId).Name,
                    SalePrice = p.SellingPrice,
-                   PurchasePrice = p.PurchasingPrice
+                   PurchasePrice = p.PurchasingPrice,
+                   StockName = _repoStock.GetById(p.Product.StockProducts.FirstOrDefault().StockId).Name,
+                   StockId = p.Product.StockProducts.FirstOrDefault().StockId
                }).FirstOrDefault();
                 if (data != null)
                 {
@@ -266,8 +353,10 @@ namespace ERP_System.BLL.Guide
                    UnitId = p.Product.IdUnitOfQty,
                    UnitName = _repoUnit.GetById(p.Product.IdUnitOfQty).Name,
                    SalePrice = p.SellingPrice,
-                   PurchasePrice = p.PurchasingPrice
-               }).FirstOrDefault();
+                   PurchasePrice = p.PurchasingPrice,
+				   StockName = _repoStock.GetById(p.Product.StockProducts.FirstOrDefault().StockId).Name,
+                   StockId = p.Product.StockProducts.FirstOrDefault().StockId
+			   }).FirstOrDefault();
                 if (data != null)
                 {
                     resultView.Status = true;
@@ -365,8 +454,79 @@ namespace ERP_System.BLL.Guide
             return resultView;
         }
 
+		public ResultViewModel GetByProductNameAndStockId(string barcode , Guid StockId)
+		{
+			var resultView = new ResultViewModel();
+			resultView.Status = false;
+			if (barcode != null)
+			{
+				if (StockId == Guid.Empty)
+				{
+					resultView.Message = "اختر المخزن";
+					return resultView;
+				}
+				var data = _repoProduct.GetAllAsNoTracking().Include(x => x.ProductUnits).ThenInclude(x => x.Unit)
+			   .Where(p => (p.Name.Trim().Contains(barcode.Trim())) && p.IsActive && !p.IsDeleted)
+               .Where(p=>p.StockProducts.Any(x=>x.StockId==StockId))
+			   .Select(p => new ProductDTO
+			   {
+				   ID = p.ID,
+				   Name = p.Name,
+				   BarCodeText = p.BarCodeText,
+				   BarCodePath = string.Concat("\\ProductsBarCode\\", p.BarCodePath),
+				   GroupId = p.GroupId,
+				   QtyInStock = p.QtyInStock,
+				   IdUnitOfQty = p.IdUnitOfQty,
+				   NameUnitOfQty = p.NameUnitOfQty,
+				   SalePrice = p.ProductUnits.Where(x => x.UnitId == p.IdUnitOfQty).Select(x => x.SellingPrice).FirstOrDefault(),
+				   ConversionFactor = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted && c.UnitId == p.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault(),
+				   GetQtyInStock = p.QtyInStock,
+				   GetProductUnits = p.ProductUnits.Where(c => c.IsActive && !c.IsDeleted).Select(c => new ProductUnitsDTO
+				   {
+					   ID = c.ID,
+					   ConversionFactor = c.ConversionFactor,
+					   PurchasingPrice = c.PurchasingPrice,
+					   SellingPrice = c.SellingPrice,
+					   UnitBarcodePath = string.Concat("\\ProductsBarCode\\UnitsBarCode\\", c.UnitBarcodePath),
+					   UnitBarcodeText = c.UnitBarcodeText,
+					   UnitId = c.UnitId,
+					   UnitName = c.Unit.Name
+				   }).ToArray(),
+				   QtyInStockStr = p.ProductUnits.Where(x => x.UnitId == p.IdUnitOfQty).Select(x => x.Unit.Name).FirstOrDefault() ?? ""
+			   }).FirstOrDefault();
 
-        public JsonResult SearchByName(string name)
+				if (data != null)
+				{
+					var conversionFactor = data.ConversionFactor ?? 0;
+					var qtyStock = data.QtyInStock ?? 0;
+					if (conversionFactor == 0 || qtyStock == 0)
+					{
+
+						data.QtyInStockStr = string.Join(" - ", Math.Round(0.0, 2), data.QtyInStockStr);
+
+					}
+					else
+					{
+						var qtyStr = qtyStock / conversionFactor;
+						data.QtyInStockStr = string.Join(" - ", Math.Round(qtyStr, 2), data.QtyInStockStr);
+					}
+					
+					resultView.Status = true;
+					resultView.Data = data;
+				}
+				else
+				{
+					resultView.Message = "هذا المنتج غير موجود بالمخزن المحدد";
+				}
+			}
+			else
+			{
+				resultView.Status = true;
+				resultView.Data = null;
+			}
+			return resultView;
+		}
+		public JsonResult SearchByName(string name)
         {
             var allData = _repoProduct.GetAllAsNoTracking()
                 .Where(x => x.Name.StartsWith(name, StringComparison.InvariantCultureIgnoreCase)).Select(x => x.Name);
@@ -535,7 +695,8 @@ namespace ERP_System.BLL.Guide
         {
             ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
 
-            var data = _repoProductUnit.GetAll().Where(p => p.ProductId == productDto.ProductId && p.UnitId == productDto.UnitId).FirstOrDefault();
+            var data = _repoProductUnit.GetAll().Where(p => p.ProductId == productDto.ProductId && p.UnitId == productDto.UnitId)
+                .Where(p=>p.Product.StockProducts.Any(x=>x.StockId == productDto.StockId)).FirstOrDefault();
             if (data != null)
             {
                 var tbl = data;

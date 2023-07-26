@@ -62,7 +62,12 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
 
         #region LoadData
-        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_ProductBll.LoadData(mdl));
+        public IActionResult LoadDataTable(DataTableRequest mdl)
+        {
+			var userId = HttpContext.UserId();
+			mdl.UserID = userId;
+			return JsonDataTable(_ProductBll.LoadData(mdl));
+        }
         #endregion
     }
 }

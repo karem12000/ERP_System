@@ -2,7 +2,7 @@
 
 	
 	let form = $('#frm');
-
+	
 	function getProductByBarcode() {
 
 		if (event.keyCode === 13) {
@@ -16,6 +16,8 @@
 						$('#BarCodeText').val(data.BarCode);
 						$('#ProductName').val(data.ProductName);
 						$('#UnitId').val(data.UnitId);
+						$('#StockName').val(data.StockName);
+						$('#StockId').val(data.StockId);
 						$('#UnitName').val(data.UnitName);
 						$('#SellingPrice').val(data.SalePrice);
 						$('#PurchasingPrice').val(data.PurchasePrice);
@@ -35,6 +37,7 @@
 
 		}
 	}
+
 	function getProductByName() {
 
 		if (event.keyCode === 13) {
@@ -48,6 +51,8 @@
 						$('#BarCodeText').val(data.BarCode);
 						$('#ProductName').val(data.ProductName);
 						$('#UnitId').val(data.UnitId);
+						$('#StockName').val(data.StockName);
+						$('#StockId').val(data.StockId);
 						$('#UnitName').val(data.UnitName);
 						$('#SellingPrice').val(data.SalePrice);
 						$('#PurchasingPrice').val(data.PurchasePrice);
@@ -116,6 +121,8 @@
 		$('#BarCodeText').val("");
 		$('#ProductName').val("");
 		$('#UnitId').val("0");
+		$('#StockName').val('');
+		$('#StockId').val('0');
 		$('#UnitName').val("");
 		$('#SellingPrice').val("0");
 		$('#PurchasingPrice').val("0");

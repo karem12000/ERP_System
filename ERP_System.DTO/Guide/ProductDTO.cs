@@ -13,6 +13,7 @@ namespace ERP_System.DTO.Guide
     {
         public Guid ProductId { get; set; }
         public Guid UnitId { get; set; }
+        public Guid StockId { get; set; }
         public string BarCode { get; set; }
         public string ProductName { get; set; }
         public string UnitName { get; set; }

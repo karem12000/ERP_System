@@ -25,6 +25,11 @@
                                         <input type="text" required onkeyup="getProductByName()" id="ProductName" name="ProductName" class="form-control" placeholder="اسم الصنف">
                                     </div>
                                     <div class="form-group col-3">
+                                        <label for="Stock"><span style="color:red;"> * </span>المخزن</label>
+                                        <input hidden name="StockId" id="StockId" value="" class="d-none" />
+                                        <input type="text" readonly id="StockName" name="StockName" class="form-control" placeholder="المخزن">
+                                    </div>
+                                    <div class="form-group col-3">
                                         <label for="Name"><span style="color:red;"> * </span>الوحده</label>
                                         <input hidden name="UnitId" id="UnitId" value="" class="d-none" />
                                         <input type="text" required readonly id="UnitName" name="UnitName" class="form-control" placeholder="اسم الصنف">

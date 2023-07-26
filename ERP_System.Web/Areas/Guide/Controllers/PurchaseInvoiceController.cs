@@ -61,8 +61,10 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
         public IActionResult Save(PurchaseInvoiceDTO mdl) => Ok(_invoiceBll.Save(mdl));
         public IActionResult SearchByProductName(string term) => Ok(_productBll.SearchByName(term));
-        public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
-        public IActionResult GetProductByName(string text) => Ok(_productBll.GetByProductName(text));
+        public IActionResult GetProductByBarCode(string text ,Guid stockId) => Ok(_productBll.GetByProductBarCodeAndStockId(text , stockId));
+        //public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
+        public IActionResult GetProductByName(string text, Guid stockId) => Ok(_productBll.GetByProductNameAndStockId(text , stockId));
+        //public IActionResult GetProductByName(string text) => Ok(_productBll.GetByProductName(text));
         public IActionResult GetLastInvoiceNumberByDate(DateTime? date) => Ok(_invoiceBll.GetLastInvoiceNumberByDate(date));
 		public IActionResult GetLastThrowbackInvoiceNumberByDate(DateTime? date) => Ok(_ThrowbackBll.GetLastInvoiceNumberByDate(date));
 		public IActionResult GetProductDataByUnitId(Guid? productId, Guid? unitId) => Ok(_productBll.GetProductDataByUnitId(productId, unitId));
@@ -73,7 +75,12 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         public IActionResult Delete(Guid id) => Ok(_invoiceBll.Delete(id));
 
         #region LoadData
-        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_invoiceBll.LoadData(mdl));
+        public IActionResult LoadDataTable(DataTableRequest mdl)
+        {
+            var userId = HttpContext.UserId();
+            mdl.UserID = userId;
+            return JsonDataTable(_invoiceBll.LoadData(mdl));
+        }
 
         #endregion
     }

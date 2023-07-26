@@ -127,7 +127,8 @@
 														}
 														else
 														{
-															<td><input type="number" disabled value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" />
+															<td class="d-flex gap-2">
+																<input type="number" disabled value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" />
 																<select class="Select sDescount form-select" disabled required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct" onchange="getInvoiceTotalPrice(this)">
 																	<option selected="" value="0"> % </option>
 																	<option value="1">قيمة</option>

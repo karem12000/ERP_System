@@ -267,7 +267,18 @@
 		var barcode = value.value;
 
 		if (event.keyCode === 13) {
-			if (barcode !== '' && barcode !== null) {
+			var stockId = $('#ddlStockId').val();
+			if (stockId == "0") {
+
+				Swal.fire({
+					title: 'اختر المخزن',
+					timer: 1500,
+					timerProgressBar: true,
+					icon: 'warning',
+					showConfirmButton: false
+				});
+
+			} else if(barcode !== '' && barcode !== null) {
 				let tBody = $(value).parent().parent();
 				let ID = tBody.find(".ID");
 				let ProductId = tBody.find(".ProductId");
@@ -283,7 +294,7 @@
 				//let barCodeBtn = tBody.find(".barCodeBtn");
 				let InvoiceTotalPrice = tBody.find(".InvoiceTotalPrice");
 
-				$.get('@Url.GetAction("GetProductByBarCode")', { text: barcode }, function (res) {
+				$.get('@Url.GetAction("GetProductByBarCode")', { text: barcode , stockId:stockId }, function (res) {
 					if (res.Status) {
 
 						let data = res.Data;
@@ -456,7 +467,18 @@
 		var name = value.value;
 
 		if (event.keyCode === 13) {
-			if (name !== '' && name !== null) {
+			var stockId = $('#ddlStockId').val();
+			if (stockId == "0") {
+
+				Swal.fire({
+					title: 'اختر المخزن',
+					timer: 1500,
+					timerProgressBar: true,
+					icon: 'warning',
+					showConfirmButton: false
+				});
+
+			} else if (name !== '' && name !== null) {
 
 				let tBody = $(value).parent().parent();
 				let ID = tBody.find(".ID");
@@ -476,7 +498,7 @@
 				//let oldUnitName = UnitId..text();
 				console.log(oldUnitId)
 				//console.log(oldUnitName)
-				$.get('@Url.GetAction("GetProductByName")', { text: name }, function (res) {
+				$.get('@Url.GetAction("GetProductByName")', { text: name , stockId:stockId }, function (res) {
 					if (res.Status) {
 						let data = res.Data;
 

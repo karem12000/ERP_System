@@ -64,10 +64,12 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
         public IActionResult Save(SaleInvoiceDTO mdl) => Ok(_invoiceBll.Save(mdl));
         public IActionResult SearchByProductName(string term) => Ok(_productBll.SearchByName(term));
-        public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
+        public IActionResult GetByProductBarCodeAndStockId(string text , Guid stockId) => Ok(_productBll.GetByProductBarCodeAndStockId(text , stockId));
+        //public IActionResult GetProductByBarCode(string text , Guid stockId) => Ok(_productBll.GetByProductBarCode(text));
 		public IActionResult GetLastInvoiceNumberByDate(DateTime? date) => Ok(_invoiceBll.GetLastInvoiceNumberByDate(date));
         public IActionResult GetLastThrowbackInvoiceNumberByDate(DateTime? date) => Ok(_ThrowbackinvoiceBll.GetLastInvoiceNumberByDate(date));
-        public IActionResult GetProductByName(string text) => Ok(_productBll.GetByProductName(text));
+        public IActionResult GetByProductNameAndStockId(string text,Guid stockId) => Ok(_productBll.GetByProductNameAndStockId(text , stockId));
+        //public IActionResult GetProductByName(string text) => Ok(_productBll.GetByProductName(text));
         public IActionResult GetProductDataByUnitId(Guid? productId, Guid? unitId) => Ok(_productBll.GetProductDataByUnitId(productId,unitId));
 
         [HttpPost]
@@ -81,7 +83,11 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         #endregion
 
         #region LoadData
-        public IActionResult LoadDataTable(DataTableRequest mdl) => JsonDataTable(_invoiceBll.LoadData(mdl));
+        public IActionResult LoadDataTable(DataTableRequest mdl) {
+            var userId = HttpContext.UserId();
+            mdl.UserID = userId;
+           return JsonDataTable(_invoiceBll.LoadData(mdl)); 
+        }
 
         #endregion
     }

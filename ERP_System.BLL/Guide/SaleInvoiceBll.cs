@@ -13,6 +13,7 @@ using ERP_System.Common.General;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
 
 namespace ERP_System.BLL.Guide
 {
