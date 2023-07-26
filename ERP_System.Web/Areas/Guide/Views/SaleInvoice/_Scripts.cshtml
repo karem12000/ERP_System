@@ -5,6 +5,7 @@
 		let allTableRows = document.querySelectorAll("#InvoiceProductsBody tr")
 		if (document.getElementById('ProductsCount')) {
 			document.getElementById('ProductsCount').innerText = allTableRows.length
+			$(".rowNumber").last().text(allTableRows.length)
 		}
 	}
 	getRowsNumber()
@@ -1004,7 +1005,7 @@
 		getRowsNumber()
 	}
 
-	$("#InvoiceProducts").on("click", ".addInvoiceProduct", function () {
+	$(".addInvoiceProduct").on("click", function () {
 		InvoiceProductsAddNew({
 			"id": "0", "ProductId": "0",
 			"ProductBarCode": "", "ProductName": ""
@@ -1016,13 +1017,15 @@
 	function InvoiceProductsAddNew(obj) {
 
 		
-			var haveDisscountPermission = @((ViewData.ContainsKey("DisscountPermission") && (bool)ViewData["DisscountPermission"] == true) ? "true" : "false");
+		var haveDisscountPermission = @((ViewData.ContainsKey("DisscountPermission") && (bool)ViewData["DisscountPermission"] == true) ? "true" : "false");
 		var haveSalePriceEditPermission = @((ViewData.ContainsKey("SalePriceEditPermission") && (bool)ViewData["SalePriceEditPermission"] == true) ? "true" : "false");
 		let rowId = Math.floor(Math.random() * 500) + 1;
 		if (haveDisscountPermission == true || haveDisscountPermission === "true") {
 			if (haveSalePriceEditPermission == true || haveSalePriceEditPermission === "true") {
 				$("#InvoiceProductsBody").append(` <tr>
-									<td>
+									<td class="d-flex gap-2 align-items-center">
+										<span class="rowNumber h5 mb-0"></span>
+										<span class="h5 mb-0">-</span>
 										<input class="form-control ID" type="hidden" value="${obj.id}" />
 										<input class="form-control ProductId" type="hidden" value="0" />
 											<input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
@@ -1241,7 +1244,7 @@
 		$(".addInvoiceProduct").on("click", function () {
 
 			$("#ProductsCount").text($("#InvoiceProductsBody tr").length)
-
+			$(".rowNumber").last().text($("#InvoiceProductsBody tr").length)
 		});
 	});
 

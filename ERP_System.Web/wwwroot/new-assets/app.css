@@ -148,3 +148,9 @@
 thead td.sorting{
     text-align:right !important;
 }
+.ProductName,
+.TotalQtyPrice,
+.InvoiceTotalPrice {
+    font-weight: bold;
+    font-size: 20px;
+}
