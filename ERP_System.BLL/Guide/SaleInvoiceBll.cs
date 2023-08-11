@@ -650,6 +650,7 @@ namespace ERP_System.BLL.Guide
 						_repoInvoice.Update(newInvoice);
 						resultViewModel.Status = true;
 						resultViewModel.Message = AppConstants.Messages.SavedSuccess;
+						//resultViewModel.Data = newInvoice;
 					}
 					else
 					{
@@ -811,7 +812,7 @@ namespace ERP_System.BLL.Guide
 						resultViewModel.Status = true;
 						resultViewModel.Message = AppConstants.Messages.SavedSuccess;
 						resultViewModel.Data = lastInvoiceNumber;
-
+						//resultViewModel.Data = newInvoice;
 					}
 					else
 					{

@@ -184,6 +184,8 @@
     <partial name="_Scripts" />
     <script>
         $(document).ready(function () {
+            $('#ddlStockId option:nth-child(2)').attr('selected', 'selected')
+            $('.ProductBarCode').focus();
             $("#sidebar").removeClass("active");
             const date = new Date();
             let day = date.getDate();

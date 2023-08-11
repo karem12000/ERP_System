@@ -22,26 +22,26 @@
 	function SetInvoiceThroback() {
 		let stockId = $("#ddlStockId").val();
 		$('.throwbackDetails').append(`
-			  <div class="col-8 d-flex">
-							<div class="col-4 p-1">
-								<div class="form-group">
-									<label for="SaleInvoiceId">رقم فاتورة المبيعات<span style="color:red;"> * </span></label>
-									<input hidden name="SaleInvoiceId" id="SaleInvoiceId" value="0" />
-									<input type="text" id="SaleInvoiceNo" name="SaleInvoiceNo" class="form-control" placeholder="رقم فاتورة المبيعات">
-								</div>
-							</div>
-							<div class="col-4 p-1">
-								<div class="form-group">
-									<label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
-									<input type="date" class="form-control" name="SInvoiceDate" id="SInvoiceDate">
-								</div>
-							</div>
-							<div class="col-2 p-1">
-								<div class="form-group">
-									<button type="button" onclick="handleGetSaleInvoice()" class="btn btn-success" name="btnGetSaleInvoice" id="btnGetSaleInvoice">بحث</button>
-								</div>
-							</div>
-						</div>
+			<div class="col-8 d-flex">
+				<div class="col-4 p-1">
+					<div class="form-group">
+						<label for="SaleInvoiceId">رقم فاتورة المبيعات<span style="color:red;"> * </span></label>
+						<input hidden name="SaleInvoiceId" id="SaleInvoiceId" value="0" />
+						<input type="text" id="SaleInvoiceNo" name="SaleInvoiceNo" class="form-control" placeholder="رقم فاتورة المبيعات">
+					</div>
+				</div>
+				<div class="col-4 p-1">
+					<div class="form-group">
+						<label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
+						<input type="date" class="form-control" name="SInvoiceDate" id="SInvoiceDate">
+					</div>
+				</div>
+				<div class="col-2 p-1">
+					<div class="form-group">
+						<button type="button" onclick="handleGetSaleInvoice()" class="btn btn-success" name="btnGetSaleInvoice" id="btnGetSaleInvoice">بحث</button>
+					</div>
+				</div>
+			</div>
 		`)
 		const date = new Date();
 
@@ -642,11 +642,13 @@
 				SellingPrice = $(value).children("td").children(".SellingPrice").val().trim(),
 				TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
 			if (UnitId !== '0') {
+				if(Qty !== '0'){
 				Products.push({
 					ID: ID, ProductId: ProductId, ProductBarCode: ProductBarCode, ProductName: ProductName,
 					UnitId: UnitId, ConversionFactor: ConversionFactor, ItemUnitPrice: ItemUnitPrice, DiscountTypePProduct: DiscountTypePProduct, DiscountPProduct: DiscountPProduct, Qty: Qty, SellingPrice: SellingPrice
 					, TotalQtyPrice: TotalQtyPrice
 				});
+				}
 			}
 			getRowsNumber();
 		});
@@ -1248,4 +1250,5 @@
 		});
 	});
 
+	
 </script>

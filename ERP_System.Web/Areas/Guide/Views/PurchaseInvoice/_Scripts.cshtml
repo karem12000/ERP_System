@@ -625,11 +625,13 @@
 				PurchasingPrice = $(value).children("td").children(".PurchasingPrice").val().trim(),
 				TotalQtyPrice = $(value).children("td").children(".TotalQtyPrice").val().trim();
 			if (UnitId !== '0') {
+				if(Qty !== '0'){
 				Products.push({
 					ID: ID, ProductId: ProductId, ProductBarCode: ProductBarCode, ProductName: ProductName,
 					UnitId: UnitId, ConversionFactor: ConversionFactor, Qty: Qty, PurchasingPrice: PurchasingPrice
 					, TotalQtyPrice: TotalQtyPrice
 				});
+				}
 			}
 			getRowsNumber();
 		});

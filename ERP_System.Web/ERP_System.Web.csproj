@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\assets\js\extensions\NewFolder\" />
     <Folder Include="wwwroot\ProductsBarCode\UnitsBarCode\" />
     <Folder Include="wwwroot\SiteImages\" />
   </ItemGroup>
