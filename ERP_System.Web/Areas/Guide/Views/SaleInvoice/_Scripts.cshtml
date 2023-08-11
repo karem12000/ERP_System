@@ -178,6 +178,9 @@
 		}).then((result) => {
 			if (result.isConfirmed) {
 				$.post('@Url.GetAction("GetCahierMoney")', {  }, function (res) {
+					if (res.Data.length){
+						printAtEnd(res.Data[0].TotalMoney)
+					}
 				console.log(res);
 						Swal.fire({
 						title: "إجمالي مبلغ عمليات اليوم",
