@@ -68,6 +68,13 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         //public IActionResult GetProductByBarCode(string text , Guid stockId) => Ok(_productBll.GetByProductBarCode(text));
 		public IActionResult GetLastInvoiceNumberByDate(DateTime? date) => Ok(_invoiceBll.GetLastInvoiceNumberByDate(date));
         public IActionResult GetLastThrowbackInvoiceNumberByDate(DateTime? date) => Ok(_ThrowbackinvoiceBll.GetLastInvoiceNumberByDate(date));
+		[HttpPost]
+		public IActionResult GetCahierMoney()
+        {
+            var userId = _httpContextAccessor.UserId();
+            var date = DateTime.Now.Date;
+           return Ok(_invoiceBll.GetCahierMoney(userId , date));
+        }
         public IActionResult GetByProductNameAndStockId(string text,Guid stockId) => Ok(_productBll.GetByProductNameAndStockId(text , stockId));
         //public IActionResult GetProductByName(string text) => Ok(_productBll.GetByProductName(text));
         public IActionResult GetProductDataByUnitId(Guid? productId, Guid? unitId) => Ok(_productBll.GetProductDataByUnitId(productId,unitId));

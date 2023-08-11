@@ -177,8 +177,26 @@
 			confirmButtonText: 'نعم!'
 		}).then((result) => {
 			if (result.isConfirmed) {
+				$.post('@Url.GetAction("GetCahierMoney")', {  }, function (res) {
+				console.log(res);
+						Swal.fire({
+						title: "إجمالي مبلغ عمليات اليوم",
+						text: res.Data.length ? `${res.Data[0].TotalMoney} جنية` : "لاتوجد عمليات",
+							type: "input",
+							showCancelButton: false,
+							closeOnConfirm: false,
+							showLoaderOnConfirm: true,
+							//cancelButtonText: 'لا',
+							confirmButtonText: 'تم'
+					}).then(() => {
+						window.location.href = "/Account/LogOff";
 
-				window.location.href = "/Account/LogOff";
+					})
+
+				});
+				
+				
+				//window.location.href = "/Guide/SaleInvoice/GetCahierMoney";
 			}
 		})
 
