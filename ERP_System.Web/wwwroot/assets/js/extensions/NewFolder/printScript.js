@@ -1,11 +1,11 @@
 ﻿
 function printDiv(data) {
 	console.log(data);
-	var a = window.open('', '', 'height=1200, width=1200');
-	a.document.write('<html>');
-	a.document.write('<body >');
-	a.document.write(
-		`
+    var a = window.open('', '', 'height=1200, width=1200');
+    a.document.write('<html>');
+    a.document.write('<body >');
+    a.document.write(
+        `
 				<div id="GFG"">
 					<table width=" 100%" align="center" cellpadding="0" cellspacing="0">
 					<tbody>
@@ -27,9 +27,7 @@ function printDiv(data) {
 										</td>
 										<td class="mobileHeader" width="135" align="right"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
-										  <img
-											src="${data[0].CompanyImageFullPath}"
-											width="100" alt="">
+										  <img src="../../../${data[0].CompanyImage}" width="100" alt="Logo" />
 										  <h5 style="font-size: 18px;margin:5px 0;"> اسم الشركة : ${data[0].CompanyName}</h5>
 
 										</td>
@@ -85,103 +83,125 @@ function printDiv(data) {
 
 							  <tr style="border: 1px solid #000;background-color: #a0a0a0;">
 								<th class="bold small" style="text-align: right;height: 25px;">الصنف</th>
-								<th class="bold small" style="text-align: right;height: 25px;">سعر الوحدة</th>
-								<th class="bold small" style="text-align: right;height: 25px;">الكمية</th>
+								<th class="bold small" style="text-align: right;height: 25px;">الباركود</th>
+								<th class="bold small" style="text-align: right;height: 25px;">الوحده</th>
 								<th class="bold small" style="text-align: right;height: 25px;">سعر البيع</th>
-								<th class="bold small" style="text-align: right;height: 25px;">نوع الخصم</th>
+								<th class="bold small" style="text-align: right;height: 25px;">الكمية</th>
 								<th class="bold small" style="text-align: right;height: 25px;">الخصم</th>
 								<th class="bold small" style="text-align: right;height: 25px;">الإجمالي</th>
 							  </tr>
-							  <tr>
-								<td>صنف تجريبي</td>
-								<td>100.00</td>
-								<td>10</td>
-								<td>10%</td>
-								<td>9000</td>
-							  </tr>
-							  <tr>
-								<td>صنف تجريبي</td>
-								<td>100.00</td>
-								<td>10</td>
-								<td>10%</td>
-								<td>9000</td>
-							  </tr>
-							  <tr>
-								<td>صنف تجريبي</td>
-								<td>100.00</td>
-								<td>10</td>
-								<td>10%</td>
-								<td>9000</td>
-							  </tr>
-							  <tr>
-								<td>صنف تجريبي</td>
-								<td>100.00</td>
-								<td>10</td>
-								<td>10%</td>
-								<td>9000</td>
-							  </tr>
-							</tbody>
-						  </table>
-						</td>
-					  </tr>
-					  <tr>
-						<td align="center">
-						  <table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
-							<tbody>
-							  <tr>
-								<td>
-								  <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 45px;">
+
+							  `);
+	if (data[0].InvoiceDetails.length) {
+		data[0].InvoiceDetails.forEach((detail) => {
+			a.document.write(
+				`
+			  <tr>
+								<td>${detail.UnitJsonDto[0].ProductJsonDto[0].ProductName}</td>
+								<td>${detail.UnitJsonDto[0].ProductJsonDto[0].ProductParcode}</td>
+								<td>${detail.UnitJsonDto[0].UnitName}</td>
+								<td>${detail.ProductSellingPrice}</td>
+								<td>${detail.ProductQty}</td>
+								<td>${detail.ProductDisscount} ${detail.ProductDiscountTypeStr}</td>
+								<td>${detail.ProductTotalQtyPrice}</td>
+								
+			 </tr>
+			`
+			)
+		});
+	} else {
+		a.document.write(`
+		<tr>
+			<td colspan="7">لاتوجد بيانات</td>
+			</tr>
+		`);
+	}
+
+
+    a.document.write(`
+	  
+							</tbody >
+						  </table >
+						</td >
+					  </tr >
+		<tr>
+			<td align="center">
+				<table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
+					<tbody>
+						<tr>
+							<td>
+								<table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 45px;">
 									<tbody>
-									  <tr dir="rtl">
-										<td width="135" align="left"
-										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
-										   <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;"> الخصم:</span>
-											<span class="normal small">${data[0].InvoiceTotalDiscount}</span>
-										  </h5>
-										   <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;"> نوع الخصم:</span>
-											<span class="normal small">${data[0].InvoiceDisscountTypeStr}</span>
-										  </h5>
-										  <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;">الإجمالي : </span>
-											<span class="normal small">${data[0].InvoiceTotalPrice}</span>
-										  </h5>
-										  <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;">المدفوع:</span>
-											<span class="normal small">${data[0].TotalPaid}</span>
-										  </h5>
-										   <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;">الباقي:</span>
-											<span class="normal small">${data[0].Remainning}</span>
-										  </h5>
-										</td>
-										<td width="135" align="center"></td>
-										<td width="135" align="right"></td>
-									  </tr>
+										<tr dir="rtl">
+											<td width="135" align="left"
+												style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
+												<h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
+													<span style="float: right;"> الخصم:</span>
+													<span class="normal small">${data[0].InvoiceTotalDiscount} ${data[0].InvoiceDisscountTypeStr}</span>
+												</h5>
+												<h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
+													<span style="float: right;">الإجمالي : </span>
+													<span class="normal small">${data[0].InvoiceTotalPrice}</span>
+												</h5>
+												<h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
+													<span style="float: right;">المدفوع:</span>
+													<span class="normal small">${data[0].TotalPaid}</span>
+												</h5>
+												<h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
+													<span style="float: right;">الباقي:</span>
+													<span class="normal small">${data[0].Remainning}</span>
+												</h5>
+											</td>
+											<td width="135" align="center"></td>
+											<td width="135" align="right"></td>
+										</tr>
 									</tbody>
-								  </table>
-								</td>
-							  </tr>
-							</tbody>
-						  </table>
-						</td>
-					  </tr>
+								</table>
+							</td>
+						</tr>
 					</tbody>
-					</table>
-				  </div>
-					`
-	);
-	a.document.write('</body></html>');
-	a.document.close();
-	a.print();
+				</table>
+			</td>
+		</tr>
+					</tbody >
+					</table >
+				  </div >
+					
+	`);
+							
+							 // <tr>
+								//<td>صنف تجريبي</td>
+								//<td>100.00</td>
+								//<td>10</td>
+								//<td>10%</td>
+								//<td>9000</td>
+							 // </tr>
+							 // <tr>
+								//<td>صنف تجريبي</td>
+								//<td>100.00</td>
+								//<td>10</td>
+								//<td>10%</td>
+								//<td>9000</td>
+							 // </tr>
+							 // <tr>
+								//<td>صنف تجريبي</td>
+								//<td>100.00</td>
+								//<td>10</td>
+								//<td>10%</td>
+								//<td>9000</td>
+							 // </tr>
+
+
+    a.document.write('</body></html>');
+    a.document.close();
+    a.print();
 }
 
 function printParchase(data) {
-	console.log(data);
-	var a = window.open('', '', 'height=1200, width=1200');
-	a.document.write('<html>');
-	a.document.write('<body >');
+    console.log(data);
+    var a = window.open('', '', 'height=1200, width=1200');
+    a.document.write('<html>');
+    a.document.write('<body >');
 	a.document.write(
 		`
 				<div id="GFG"">
@@ -206,7 +226,7 @@ function printParchase(data) {
 										<td class="mobileHeader" width="135" align="right"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
 										  <img
-											src="${data[0].CompanyImageFullPath}"
+											src="../../../${data[0].CompanyImage}"
 											width="100" alt="">
 										  <h5 style="font-size: 18px;margin:5px 0;"> اسم الشركة : ${data[0].CompanyName}</h5>
 
@@ -269,46 +289,40 @@ function printParchase(data) {
 						  <table class="mobileWidth borderd" width="640" cellspacing="0" cellpadding="0" style="margin-top: 50px;">
 							<tbody>
 							  <tr style="border: 1px solid #000;background-color: #a0a0a0;">
-								<th class="bold small" style="text-align: right;height: 25px;">باركود الصنف</th>
-								<th class="bold small" style="text-align: right;height: 25px;">اسم الصنف</th>
+								<th class="bold small" style="text-align: right;height: 25px;">الصنف</th>
+								<th class="bold small" style="text-align: right;height: 25px;">الباركود</th>
 								<th class="bold small" style="text-align: right;height: 25px;">الوحدة</th>
-								<th class="bold small" style="text-align: right;height: 25px;">الكمية</th>
 								<th class="bold small" style="text-align: right;height: 25px;">سعر الشراء</th>
+								<th class="bold small" style="text-align: right;height: 25px;">الكمية</th>
 								<th class="bold small" style="text-align: right;height: 25px;">المجموع</th>
 							  </tr>
-							  <tr>
-								<td>1111</td>
-								<td>صنف تجريبي</td>
-								<td>كيلوجرام</td>
-								<td>10</td>
-								<td>120</td>
-								<td>1200</td>
-							  </tr>
-							 <tr>
-								<td>1111</td>
-								<td>صنف تجريبي</td>
-								<td>كيلوجرام</td>
-								<td>10</td>
-								<td>120</td>
-								<td>1200</td>
-							  </tr>
-							 <tr>
-								<td>1111</td>
-								<td>صنف تجريبي</td>
-								<td>كيلوجرام</td>
-								<td>10</td>
-								<td>120</td>
-								<td>1200</td>
-							  </tr>
-							 <tr>
-								<td>1111</td>
-								<td>صنف تجريبي</td>
-								<td>كيلوجرام</td>
-								<td>10</td>
-								<td>120</td>
-								<td>1200</td>
-							  </tr>
-							 
+							 `);
+						if (data[0].InvoiceDetails.length) {
+							data[0].InvoiceDetails.forEach((detail) => {
+								console.log(detail)
+								a.document.write(
+									`
+								  <tr>
+													<td>${detail.UnitJsonDto[0].ProductJsonDto[0].ProductName}</td>
+													<td>${detail.UnitJsonDto[0].ProductJsonDto[0].ProductParcode}</td>
+													<td>${detail.UnitJsonDto[0].UnitName}</td>
+													<td>${detail.ProductPurchasingPrice}</td>
+													<td>${detail.ProductQty}</td>
+													<td>${detail.ProductTotalQtyPrice}</td>
+								
+								 </tr>
+								`
+								)
+							});
+						} else {
+							a.document.write(`
+							<tr>
+								<td colspan="7">لاتوجد بيانات</td>
+								</tr>
+							`);
+						}
+							
+							 a.document.write(`
 							</tbody>
 						  </table>
 						</td>
@@ -352,18 +366,18 @@ function printParchase(data) {
 					</table>
 				  </div>
 					`
-	);
-	a.document.write('</body></html>');
-	a.document.close();
-	a.print();
+    );
+    a.document.write('</body></html>');
+    a.document.close();
+    a.print();
 }
 
 function printAtEnd(data) {
-	var a = window.open('', '', 'height=1200, width=1200');
-	a.document.write('<html>');
-	a.document.write('<body >');
-	a.document.write(
-		`
+    var a = window.open('', '', 'height=1200, width=1200');
+    a.document.write('<html>');
+    a.document.write('<body >');
+    a.document.write(
+        `
 				<div id="GFG"">
 					<table width=" 100%" align="center" cellpadding="0" cellspacing="0">
 					<tbody>
@@ -386,7 +400,7 @@ function printAtEnd(data) {
 										<td class="mobileHeader" width="135" align="right"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
 										  <img
-											src="${data.CompanyImagePath}"
+											src="../../../${data[0].CompanyImage}"
 											width="100" alt="">
 										  <h5 style="font-size: 18px;margin:5px 0;"> اسم الشركة : ${data.CompanyName}</h5>
 
@@ -461,8 +475,8 @@ function printAtEnd(data) {
 					</table>
 				  </div>
 					`
-	);
-	a.document.write('</body></html>');
-	a.document.close();
-	a.print();
+    );
+    a.document.write('</body></html>');
+    a.document.close();
+    a.print();
 }

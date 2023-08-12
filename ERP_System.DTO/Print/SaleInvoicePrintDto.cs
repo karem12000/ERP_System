@@ -23,7 +23,7 @@ namespace ERP_System.DTO.Print
         public double? Remainning { get; set; }
         public int InvoiceNumber { get; set; }
         public int InvoiceTotalDiscountType { get; set; }
-        public string InvoiceDisscountTypeStr => InvoiceTotalDiscountType == 0 ? "%" : "قيمة";
+        public string InvoiceDisscountTypeStr => InvoiceTotalDiscountType == 0 ? "%" : "";
 		public IEnumerable<RootSaleInvoiceDto> InvoiceDetails
 => string.IsNullOrEmpty(DetailsAsJson) ? Enumerable.Empty<RootSaleInvoiceDto>() :
 JsonConvert.DeserializeObject<List<RootSaleInvoiceDto>>(DetailsAsJson);
@@ -47,7 +47,7 @@ JsonConvert.DeserializeObject<List<RootSaleInvoiceDto>>(DetailsAsJson);
 		public int InvoiceNumber { get; set; }
 		public int SaleInvoiceNumber { get; set; }
 		public int InvoiceTotalDiscountType { get; set; }
-		public string InvoiceDisscountTypeStr => InvoiceTotalDiscountType == 0 ? "%" : "قيمة";
+		public string InvoiceDisscountTypeStr => InvoiceTotalDiscountType == 0 ? "%" : "";
 		public IEnumerable<RootSaleInvoiceDto> InvoiceDetails
 => string.IsNullOrEmpty(DetailsSTAsJson) ? Enumerable.Empty<RootSaleInvoiceDto>() :
 JsonConvert.DeserializeObject<List<RootSaleInvoiceDto>>(DetailsSTAsJson);
@@ -109,7 +109,7 @@ JsonConvert.DeserializeObject<List<RootPurchaseInvoiceDto>>(DetailsPTAsJson);
 		public double ProductQty { get; set; }
 		public double ProductTotalQtyPrice { get; set; }
 		public double ProductSellingPrice { get; set; }
-		public string ProductDiscountTypeStr  => ProductDiscountType == 0 ? "%" : "قيمة";
+		public string ProductDiscountTypeStr  => ProductDiscountType == 0 ? "%" : "";
 		public double ProductDisscount { get; set; }
 		public int ProductDiscountType { get; set; }
 		public List<UnitJsonDto> UnitJsonDto { get; set; }

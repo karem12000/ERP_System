@@ -265,6 +265,9 @@
                                         @*<button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('edit')">
                                     حفظ
                                     </button>*@
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="handlePrintDiv()">
+                                              طباعة الفاتورة
+                                        </button>
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
                                             <div class="d-flex align-items-center justify-content-end ps-2">
@@ -284,6 +287,7 @@
         </div>
     </div>
 }
+<script src="~/assets/js/extensions/newfolder/printscript.js"></script>
 
 @section Scripts
     {

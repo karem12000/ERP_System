@@ -64,6 +64,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
         public IActionResult Save(SaleInvoiceDTO mdl) => Ok(_invoiceBll.Save(mdl));
         public IActionResult SearchByProductName(string term) => Ok(_productBll.SearchByName(term));
+        public IActionResult GetInvoiceToPrint(Guid? invoiceId) => Ok(_invoiceBll.GetInvoiceToPrint(invoiceId));
         public IActionResult GetByProductBarCodeAndStockId(string text , Guid stockId) => Ok(_productBll.GetByProductBarCodeAndStockId(text , stockId));
         //public IActionResult GetProductByBarCode(string text , Guid stockId) => Ok(_productBll.GetByProductBarCode(text));
 		public IActionResult GetLastInvoiceNumberByDate(DateTime? date) => Ok(_invoiceBll.GetLastInvoiceNumberByDate(date));

@@ -860,9 +860,24 @@ namespace ERP_System.BLL.Guide
         }
         #endregion
 
+        public ResultViewModel GetInvoiceToPrint(Guid? InvoiceId)
+        {
+            var result = new ResultViewModel();
+            result.Status = true;
+			var DataToPrint = _repoInvoice.ExecuteStoredProcedure<SaleInvoicePrintDto>("[Report].[spGetSaleInvoiceToPrint]", new[]  {
+						new SqlParameter("@invoiceId",InvoiceId)
+						}, CommandType.StoredProcedure);
+			if (DataToPrint != null && DataToPrint.Count()>0)
+			{
+				DataToPrint.FirstOrDefault().CompanyImageFullPath = _weebhost.WebRootPath + DataToPrint.FirstOrDefault().CompanyImage;
 
-        #region Delete
-        public ResultViewModel Delete(Guid id)
+			}
+			result.Data = DataToPrint;
+            return result;
+
+		}
+		#region Delete
+		public ResultViewModel Delete(Guid id)
         {
             ResultViewModel resultViewModel = new ResultViewModel();
             var tbl = _repoInvoice.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();

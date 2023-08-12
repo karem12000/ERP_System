@@ -19,6 +19,17 @@
 		Save(type,isPrint);
 
 	}
+	function handlePrintDiv(){
+		var InvoiceId = $('#id').val();
+		$.get('@Url.GetAction("GetInvoiceToPrint")', { invoiceId: InvoiceId}, function (res) {
+			if(res.Data){
+				var data = res.Data;
+				console.log(data);
+				printDiv(data);
+			}
+		});
+	}
+
 	function SetInvoiceThroback() {
 		let stockId = $("#ddlStockId").val();
 		$('.throwbackDetails').append(`
@@ -644,7 +655,6 @@
 		InvoiceRemaining.val(remainValue);
 	}
 	function Save(type,isPrint) {
-		console.log(isPrint)
 		let stockId = document.querySelector("#ddlStockId").value;
 		let Products = [];
 		$.each($("#InvoiceProductsBody >tr"), function (key, value) {

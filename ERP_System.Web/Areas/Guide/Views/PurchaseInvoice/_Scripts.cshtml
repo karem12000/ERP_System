@@ -21,6 +21,15 @@
 	//	TotalPaid.prop('disabled', true);
 	//	else
 	//}
+	function handlePrintDiv() {
+		var InvoiceId = $('#id').val();
+		$.get('@Url.GetAction("GetInvoiceToPrint")', { invoiceId: InvoiceId }, function (res) {
+			if (res.Data) {
+				var data = res.Data;
+				printParchase(data);
+			}
+		});
+	}
 	function LoadTable() {
 		$('#tbl').DataTable().destroy();
 

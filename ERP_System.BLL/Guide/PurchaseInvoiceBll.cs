@@ -393,7 +393,24 @@ namespace ERP_System.BLL.Guide
 			});
 
 		}
-		public DataTableResponse LoadData(DataTableRequest mdl)
+
+        public ResultViewModel GetInvoiceToPrint(Guid? InvoiceId)
+        {
+            var result = new ResultViewModel();
+            result.Status = true;
+            var DataToPrint = _repoInvoice.ExecuteStoredProcedure<PurchaseInvoicePrintDto>("[Report].[spGetPurchaseInvoiceToPrint]", new[]  {
+                                new SqlParameter("@invoiceId",InvoiceId)
+                                }, CommandType.StoredProcedure);
+            if (DataToPrint != null)
+            {
+                DataToPrint.FirstOrDefault().CompanyImageFullPath = _weebhost.WebRootPath + DataToPrint.FirstOrDefault().CompanyImage;
+
+            }
+            result.Data = DataToPrint;
+            return result;
+
+        }
+        public DataTableResponse LoadData(DataTableRequest mdl)
 		{
 			var data = _repoInvoice.ExecuteStoredProcedure<PurchaseInvoicesTableDTO>
 				(_spInvoices, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
