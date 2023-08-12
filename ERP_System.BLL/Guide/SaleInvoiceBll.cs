@@ -15,6 +15,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Hosting;
+using ERP_System.DTO.Print;
 
 namespace ERP_System.BLL.Guide
 {
@@ -22,6 +24,7 @@ namespace ERP_System.BLL.Guide
     {
         private const string _spInvoices = "[Guide].[spSaleInvoice]";
         private readonly IRepository<SaleInvoice> _repoInvoice;
+        //private readonly SettingBll _settingBll;
         private readonly IRepository<SaleThrowback> _repoThrowbackInvoice;
         private readonly UnitBll _UnitBll;
         private readonly IRepository<Stock> _repoStock;
@@ -30,14 +33,16 @@ namespace ERP_System.BLL.Guide
         private readonly IRepository<SaleInvoiceDetail> _repoInvoiceDetail;
         private readonly IRepository<SaleThrowbackDetail> _repoSaleThrowbackDetail;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _weebhost;
 
-        public SaleInvoiceBll(IRepository<Product> repoProduct, IRepository<SaleThrowbackDetail> repoSaleThrowbackDetail, IRepository<SaleThrowback> repoThrowbackInvoice, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<SaleInvoice> repoInvoice, IRepository<SaleInvoiceDetail> repoInvoiceDetail, IMapper mapper)
+        public SaleInvoiceBll(IRepository<Product> repoProduct, IWebHostEnvironment weebhost, IRepository<SaleThrowbackDetail> repoSaleThrowbackDetail, IRepository<SaleThrowback> repoThrowbackInvoice, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<SaleInvoice> repoInvoice, IRepository<SaleInvoiceDetail> repoInvoiceDetail, IMapper mapper)
         {
             _repoInvoice = repoInvoice;
             _mapper = mapper;
             _repoInvoiceDetail = repoInvoiceDetail;
             _repoProduct = repoProduct;
             _repoSaleThrowbackDetail = repoSaleThrowbackDetail;
+            _weebhost = weebhost;
             _UnitBll = UnitBll;
             _repoStock = repoStock;
             _repoProductUnit = repoProductUnit;
@@ -85,15 +90,21 @@ namespace ERP_System.BLL.Guide
 
             }).FirstOrDefault();
         }
-        public ResultViewModel GetCahierMoney(Guid? userId , DateTime? date)
+        public ResultViewModel GetCahierMoney(Guid? userId, DateTime? date)
         {
             var result = new ResultViewModel();
             result.Status = true;
+            var path = _weebhost.WebRootPath;
             var data = _repoInvoice.ExecuteStoredProcedure<CashierMoneyDto>("[People].[spGetCasherMoney]", new[]
             {
                 new SqlParameter("@UserId",userId),
                 new SqlParameter("@date",date.Value.Date)
             });
+            if (data != null && data.Count() > 0)
+            {
+
+                data.FirstOrDefault().CompanyImagePath = path + data.FirstOrDefault().CompanyImage;
+            }
             result.Data = data;
             return result;
         }
@@ -820,10 +831,18 @@ namespace ERP_System.BLL.Guide
                         }
                         _repoInvoiceDetail.InsertRange(AllDetails);
 
-                        var lastInvoiceNumber = newInvoice.InvoiceNumber + 1;
+                        //var lastInvoiceNumber = newInvoice.InvoiceNumber + 1;
                         resultViewModel.Status = true;
                         resultViewModel.Message = AppConstants.Messages.SavedSuccess;
-                        resultViewModel.Data = lastInvoiceNumber;
+                                var DataToPrint = _repoInvoice.ExecuteStoredProcedure<SaleInvoicePrintDto>("[Report].[spGetSaleInvoiceToPrint]", new[]  {
+                        new SqlParameter("@invoiceId",newInvoice.ID)
+                        }, CommandType.StoredProcedure);
+                        if(DataToPrint != null)
+                        {
+                            DataToPrint.FirstOrDefault().CompanyImageFullPath = _weebhost.WebRootPath + DataToPrint.FirstOrDefault().CompanyImage;
+
+						}
+                        resultViewModel.Data = DataToPrint;
 
                     }
                     else
@@ -880,6 +899,12 @@ namespace ERP_System.BLL.Guide
 
     public class CashierMoneyDto
     {
+        public string CompanyName { get; set; }
+        public string CurrentDate { get; set; }
+        public string CompanyPhone { get; set; }
+        public string CompanyAddress { get; set; }
+        public string CompanyImage { get; set; }
+        public string CompanyImagePath { get; set; }
         public string Name { get; set; }
         public decimal? TotalMoney { get; set; }
         public decimal? TotalPaid { get; set; }

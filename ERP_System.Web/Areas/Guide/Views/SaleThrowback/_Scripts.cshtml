@@ -760,6 +760,7 @@
                             icon: 'success',
                             showConfirmButton: false
                         }).then((result) => {
+                            console.log(res.Data);
                             if (type === 'add') {
                                 resetForm(stockId, '0');
                                 //$('#InvoiceNumber').val(res.Data);

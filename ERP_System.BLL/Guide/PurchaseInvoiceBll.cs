@@ -14,6 +14,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using ERP_System.DTO.Print;
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ERP_System.BLL.Guide
 {
@@ -32,8 +35,9 @@ namespace ERP_System.BLL.Guide
 		private readonly IRepository<PurchaseInvoiceDetail> _repoInvoiceDetail;
 		private readonly IRepository<PurchaseThrowbackDetail> _repoPurchaseInvoiceDetail;
 		private readonly IMapper _mapper;
+		private readonly IWebHostEnvironment _weebhost; 
 
-		public PurchaseInvoiceBll(IRepository<Product> repoProduct, IRepository<PurchaseThrowbackDetail> repoPurchaseInvoiceDetail, IRepository<PurchaseThrowback> repoThrowbackInvoice, IRepository<Unit> repoUnit, IRepository<Supplier> repoSupplier, SupplierBll supplierBll, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
+		public PurchaseInvoiceBll(IRepository<Product> repoProduct, IWebHostEnvironment weebhost, IRepository<PurchaseThrowbackDetail> repoPurchaseInvoiceDetail, IRepository<PurchaseThrowback> repoThrowbackInvoice, IRepository<Unit> repoUnit, IRepository<Supplier> repoSupplier, SupplierBll supplierBll, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseInvoice> repoInvoice, IRepository<PurchaseInvoiceDetail> repoInvoiceDetail, IMapper mapper)
 		{
 			_repoInvoice = repoInvoice;
 			_mapper = mapper;
@@ -43,6 +47,7 @@ namespace ERP_System.BLL.Guide
 			_repoStock = repoStock;
 			_repoProductUnit = repoProductUnit;
 			_repoPurchaseInvoiceDetail = repoPurchaseInvoiceDetail;
+			_weebhost = weebhost;
 			_supplierBll = supplierBll;
 			_repoSupplier = repoSupplier;
 			_repoUnit = repoUnit;
@@ -833,6 +838,15 @@ namespace ERP_System.BLL.Guide
 								}
 								resultViewModel.Status = true;
 								resultViewModel.Message = AppConstants.Messages.SavedSuccess;
+								var DataToPrint = _repoInvoice.ExecuteStoredProcedure<PurchaseInvoicePrintDto>("[Report].[spGetPurchaseInvoiceToPrint]", new[]  {
+								new SqlParameter("@invoiceId",newInvoice.ID)
+								}, CommandType.StoredProcedure);
+								if (DataToPrint != null)
+								{
+									DataToPrint.FirstOrDefault().CompanyImageFullPath = _weebhost.WebRootPath + DataToPrint.FirstOrDefault().CompanyImage;
+
+								}
+								resultViewModel.Data = DataToPrint;
 							}
 							else
 							{

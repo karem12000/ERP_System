@@ -13,6 +13,9 @@ using ERP_System.Common.General;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using ERP_System.DTO.Print;
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ERP_System.BLL.Guide
 {
@@ -29,8 +32,9 @@ namespace ERP_System.BLL.Guide
 		private readonly IRepository<ProductUnit> _repoProductUnit;
 		private readonly IRepository<SaleThrowbackDetail> _repoSaleThrowbackDetail;
 		private readonly IMapper _mapper;
+		private readonly IWebHostEnvironment _weebhost;
 
-		public SaleThrowbackBll(IRepository<Product> repoProduct, IRepository<Unit> repoUnit, SaleInvoiceBll saleInvoiceBll, IRepository<SaleInvoice> repoSaleInvoice, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<SaleThrowback> repoSaleThrowback, IRepository<SaleThrowbackDetail> repoSaleThrowbackDetail, IMapper mapper)
+		public SaleThrowbackBll(IRepository<Product> repoProduct, IWebHostEnvironment weebhost, IRepository<Unit> repoUnit, SaleInvoiceBll saleInvoiceBll, IRepository<SaleInvoice> repoSaleInvoice, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<SaleThrowback> repoSaleThrowback, IRepository<SaleThrowbackDetail> repoSaleThrowbackDetail, IMapper mapper)
 		{
 			_repoSaleThrowback = repoSaleThrowback;
 			_mapper = mapper;
@@ -42,6 +46,7 @@ namespace ERP_System.BLL.Guide
 			_repoSaleInvoice = repoSaleInvoice;
 			_saleInvoiceBll = saleInvoiceBll;
 			_repoUnit = repoUnit;
+			_weebhost = weebhost;
 		}
 
 		#region Get
@@ -740,14 +745,23 @@ namespace ERP_System.BLL.Guide
 
 						if (_repoSaleThrowbackDetail.InsertRange(AllDetails))
 						{
-							var newInvoiceNumber = newInvoice.InvoiceNumber + 1;
+							//var newInvoiceNumber = newInvoice.InvoiceNumber + 1;
 							foreach (var item in AllInvoiceProducts)
 							{
 								_repoProduct.Update(item);
 							}
 							resultViewModel.Status = true;
 							resultViewModel.Message = AppConstants.Messages.SavedSuccess;
-							resultViewModel.Data = newInvoiceNumber;
+							var DataToPrint = _repoSaleThrowback.ExecuteStoredProcedure<SaleThrowbackInvoicePrintDto>("[Report].[spGetSaleThrowbackInvoiceToPrint]", new[]  {
+						new SqlParameter("@invoiceId",newInvoice.ID)
+						}, CommandType.StoredProcedure);
+							if (DataToPrint != null)
+							{
+								DataToPrint.FirstOrDefault().CompanyImageFullPath = _weebhost.WebRootPath + DataToPrint.FirstOrDefault().CompanyImage;
+
+							}
+							resultViewModel.Data = DataToPrint;
+							//resultViewModel.Data = newInvoiceNumber;
 						}
 						else
 						{

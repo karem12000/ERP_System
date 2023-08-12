@@ -145,9 +145,9 @@
 	}
 
 	let form = $('#frm');
-	function Submit(type) {
+	function Submit(type,isPrint) {
 		event.preventDefault();
-		Save(type);
+		Save(type,isPrint);
 	}
 	function SetInvoiceThroback() {
 		let stockId = $("#ddlStockId").val();
@@ -609,7 +609,7 @@
 		InvoiceTotalPrice.val(TPrice);
 	}
 
-	function Save(type) {
+	function Save(type,isPrint) {
 		let stockId = document.querySelector("#ddlStockId").value;
 		let Products = [];
 		$.each($("#InvoiceProductsBody >tr"), function (key, value) {
@@ -698,6 +698,9 @@
 								icon: 'success',
 								showConfirmButton: false
 							}).then((result) => {
+								if(isPrint=='true'){
+									printParchase(res.Data);
+								}
 								if (type === 'add') {
 									resetForm(stockId, '0');
 								} else {

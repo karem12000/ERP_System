@@ -1,5 +1,6 @@
 ﻿
-function printDiv() {
+function printDiv(data) {
+	console.log(data);
 	var a = window.open('', '', 'height=1200, width=1200');
 	a.document.write('<html>');
 	a.document.write('<body >');
@@ -20,16 +21,16 @@ function printDiv() {
 										<td class="mobileHeader" width="135" align="left">
 										  <p class="small"
 											style="width:fit-content;font-size: 12px;font-weight: bold;color: #777;margin:0 0 5px 0;">
-											رقم الهاتف للتواصل: 01010203010
+											    رقم الشركة :  ${data[0].CompanyPhone}
 										  </p>
-										  <p class="small" style="margin: 0;">العنوان</p>
+										  <p class="small" style="margin: 0;"> عنوان الشركة : ${data[0].CompanyAddress}</p>
 										</td>
 										<td class="mobileHeader" width="135" align="right"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
 										  <img
-											src="https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg"
+											src="${data[0].CompanyImageFullPath}"
 											width="100" alt="">
-										  <h5 style="font-size: 18px;margin:5px 0;">أسم المتجر</h5>
+										  <h5 style="font-size: 18px;margin:5px 0;"> اسم الشركة : ${data[0].CompanyName}</h5>
 
 										</td>
 									  </tr>
@@ -52,12 +53,16 @@ function printDiv() {
 									  <tr>
 										<td class="mobileHeader" width="135" align="left">
 										  <h5 style="margin: 0;">
-											<span style="margin: 0 15px;">رقم الفاتورة</span>
-											<span>00075</span>
+											<span style="margin: 0 15px;">رقم الفاتورة : </span>
+											<span>${data[0].InvoiceNumber}</span>
 										  </h5>
 										  <h5 style="margin: 0;">
-											<span style="margin: 0 15px;">تاريخ الفاتورة</span>
-											<span>12/02/2023</span>
+											<span style="margin: 0 15px;">تاريخ الفاتورة :</span>
+											<span>${data[0].InvoiceDate}</span>
+										  </h5>
+										   <h5 style="margin: 0;">
+											<span style="margin: 0 15px;">المخزن : </span>
+											<span> ${data[0].StockName}</span>
 										  </h5>
 										</td>
 										<td class="mobileHeader" width="135" align="right"
@@ -77,12 +82,15 @@ function printDiv() {
 						<td align="center" dir="rtl">
 						  <table class="mobileWidth borderd" width="640" cellspacing="0" cellpadding="0" style="margin-top: 50px;">
 							<tbody>
+
 							  <tr style="border: 1px solid #000;background-color: #a0a0a0;">
 								<th class="bold small" style="text-align: right;height: 25px;">الصنف</th>
 								<th class="bold small" style="text-align: right;height: 25px;">سعر الوحدة</th>
 								<th class="bold small" style="text-align: right;height: 25px;">الكمية</th>
+								<th class="bold small" style="text-align: right;height: 25px;">سعر البيع</th>
+								<th class="bold small" style="text-align: right;height: 25px;">نوع الخصم</th>
 								<th class="bold small" style="text-align: right;height: 25px;">الخصم</th>
-								<th class="bold small" style="text-align: right;height: 25px;">المجموع</th>
+								<th class="bold small" style="text-align: right;height: 25px;">الإجمالي</th>
 							  </tr>
 							  <tr>
 								<td>صنف تجريبي</td>
@@ -127,17 +135,25 @@ function printDiv() {
 									  <tr dir="rtl">
 										<td width="135" align="left"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
-										  <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;">الإجمالي:</span>
-											<span class="normal small">36000.00</span>
+										   <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
+											<span style="float: right;"> الخصم:</span>
+											<span class="normal small">${data[0].InvoiceTotalDiscount}</span>
+										  </h5>
+										   <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
+											<span style="float: right;"> نوع الخصم:</span>
+											<span class="normal small">${data[0].InvoiceDisscountTypeStr}</span>
 										  </h5>
 										  <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;">مدفوعة:</span>
-											<span class="normal small">40000.00</span>
+											<span style="float: right;">الإجمالي : </span>
+											<span class="normal small">${data[0].InvoiceTotalPrice}</span>
 										  </h5>
 										  <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;">المبلغ المستحق:</span>
-											<span class="normal small">4000.00</span>
+											<span style="float: right;">المدفوع:</span>
+											<span class="normal small">${data[0].TotalPaid}</span>
+										  </h5>
+										   <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
+											<span style="float: right;">الباقي:</span>
+											<span class="normal small">${data[0].Remainning}</span>
 										  </h5>
 										</td>
 										<td width="135" align="center"></td>
@@ -161,7 +177,8 @@ function printDiv() {
 	a.print();
 }
 
-function printParchase() {
+function printParchase(data) {
+	console.log(data);
 	var a = window.open('', '', 'height=1200, width=1200');
 	a.document.write('<html>');
 	a.document.write('<body >');
@@ -182,16 +199,16 @@ function printParchase() {
 										<td class="mobileHeader" width="135" align="left">
 										  <p class="small"
 											style="width:fit-content;font-size: 12px;font-weight: bold;color: #777;margin:0 0 5px 0;">
-											رقم الهاتف للتواصل: 01010203010
+											    رقم الشركة :  ${data[0].CompanyPhone}
 										  </p>
-										  <p class="small" style="margin: 0;">العنوان</p>
+										  <p class="small" style="margin: 0;"> عنوان الشركة : ${data[0].CompanyAddress}</p>
 										</td>
 										<td class="mobileHeader" width="135" align="right"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
 										  <img
-											src="https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg"
+											src="${data[0].CompanyImageFullPath}"
 											width="100" alt="">
-										  <h5 style="font-size: 18px;margin:5px 0;">أسم المتجر</h5>
+										  <h5 style="font-size: 18px;margin:5px 0;"> اسم الشركة : ${data[0].CompanyName}</h5>
 
 										</td>
 									  </tr>
@@ -214,17 +231,29 @@ function printParchase() {
 									  <tr>
 										<td class="mobileHeader" width="135" align="left">
 										  <h5 style="margin: 0;">
-											<span style="margin: 0 15px;">رقم الفاتورة</span>
-											<span>00075</span>
+											<span style="margin: 0 15px;">رقم الفاتورة : </span>
+											<span>${data[0].InvoiceNumber}</span>
 										  </h5>
 										  <h5 style="margin: 0;">
-											<span style="margin: 0 15px;">تاريخ الفاتورة</span>
-											<span>12/02/2023</span>
+											<span style="margin: 0 15px;">تاريخ الفاتورة :</span>
+											<span>${data[0].InvoiceDate}</span>
+										  </h5>
+										   <h5 style="margin: 0;">
+											<span style="margin: 0 15px;">المخزن : </span>
+											<span> ${data[0].StockName}</span>
+										  </h5>
+										   <h5 style="margin: 0;">
+											<span style="margin: 0 15px;">المورد : </span>
+											<span> ${data[0].SupplierName}</span>
+										  </h5> 
+										  <h5 style="margin: 0;">
+											<span style="margin: 0 15px;">رقم التليفون للمورد  : </span>
+											<span> ${data[0].SupplierPhone}</span>
 										  </h5>
 										</td>
 										<td class="mobileHeader" width="135" align="right"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
-										  <h5 style="font-size: 18px;margin:5px 0;"> فاتورة مبيعات </h5>
+										  <h5 style="font-size: 18px;margin:5px 0;"> فاتورة مشتريات </h5>
 										</td>
 									  </tr>
 									</tbody>
@@ -296,16 +325,16 @@ function printParchase() {
 										<td width="135" align="left"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
 										  <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;">الإجمالي:</span>
-											<span class="normal small">36000.00</span>
+											<span style="float: right;">الإجمالي : </span>
+											<span class="normal small">${data[0].InvoiceTotalPrice}</span>
 										  </h5>
 										  <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;">مدفوعة:</span>
-											<span class="normal small">40000.00</span>
+											<span style="float: right;">المدفوع:</span>
+											<span class="normal small">${data[0].TotalPaid}</span>
 										  </h5>
-										  <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
-											<span style="float: right;">المبلغ المستحق:</span>
-											<span class="normal small">4000.00</span>
+										   <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
+											<span style="float: right;">الباقي:</span>
+											<span class="normal small">${data[0].Remainning}</span>
 										  </h5>
 										</td>
 										<td width="135" align="center"></td>
@@ -350,16 +379,16 @@ function printAtEnd(data) {
 										<td class="mobileHeader" width="135" align="left">
 										  <p class="small"
 											style="width:fit-content;font-size: 12px;font-weight: bold;color: #777;margin:0 0 5px 0;">
-											رقم الهاتف للتواصل: 01010203010
+											   : رقم الشركة ${data.CompanyPhone}
 										  </p>
-										  <p class="small" style="margin: 0;">العنوان</p>
+										  <p class="small" style="margin: 0;"> عنوان الشركة : ${data.CompanyAddress}</p>
 										</td>
 										<td class="mobileHeader" width="135" align="right"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
 										  <img
-											src="https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg"
+											src="${data.CompanyImagePath}"
 											width="100" alt="">
-										  <h5 style="font-size: 18px;margin:5px 0;">أسم المتجر</h5>
+										  <h5 style="font-size: 18px;margin:5px 0;"> اسم الشركة : ${data.CompanyName}</h5>
 
 										</td>
 									  </tr>
@@ -383,12 +412,12 @@ function printAtEnd(data) {
 										<td class="mobileHeader" width="135" align="left">
 										  <h5 style="margin: 0;">
 											<span style="margin: 0 15px;">التاريخ </span>
-											<span>12/02/2023</span>
+											<span>${data.CurrentDate}</span>
 										  </h5>
 										</td>
 										<td class="mobileHeader" width="135" align="right"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
-										  <h5 style="font-size: 18px;margin:5px 0;"> تقرير فاتورة مبيعات </h5>
+										  <h5 style="font-size: 18px;margin:5px 0;"> تقرير إجمالي مبيعات اليوم </h5>
 										</td>
 									  </tr>
 									</tbody>
@@ -413,7 +442,7 @@ function printAtEnd(data) {
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
 										  <h5 style="font-size: 18px;margin:5px 0; border-bottom: 1px solid;">
 											<span style="float: right;">إجمالي مبلغ عمليات اليوم:</span>
-											<span class="normal small">${data}</span>
+											<span class="normal small">${data.TotalMoney}</span>
 										  </h5>
 										  
 										</td>

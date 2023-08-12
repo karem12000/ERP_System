@@ -52,7 +52,7 @@ namespace ERP_System.BLL.Guide
                 tbl.CompanyName = settingDto.CompanyName;
                 tbl.CompanyPhone = settingDto.CompanyPhone;
                 tbl.CompanyAddress = settingDto.CompanyAddress;
-                tbl.Description = settingDto.Description.Trim();
+                tbl.Description = settingDto.Description;
                 var oldLogo = _webHostEnvironment.WebRootPath +data.Logo;
                 var oldCompanyImage = _webHostEnvironment.WebRootPath +data.CompanyImage;
 

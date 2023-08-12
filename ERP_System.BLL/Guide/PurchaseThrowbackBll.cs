@@ -13,6 +13,9 @@ using ERP_System.Common.General;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using ERP_System.DTO.Print;
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ERP_System.BLL.Guide
 {
@@ -30,14 +33,16 @@ namespace ERP_System.BLL.Guide
 		private readonly IRepository<ProductUnit> _repoProductUnit;
 		private readonly IRepository<PurchaseThrowbackDetail> _repoInvoiceDetail;
 		private readonly IMapper _mapper;
+		private readonly IWebHostEnvironment _weebhost;
 
-		public PurchaseThrowbackBll(IRepository<Product> repoProduct, IRepository<Unit> repoUnit, PurchaseInvoiceBll repoPInvoice, IRepository<Supplier> repoSupplier, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseThrowback> repoInvoice, IRepository<PurchaseThrowbackDetail> repoInvoiceDetail, IMapper mapper)
+		public PurchaseThrowbackBll(IRepository<Product> repoProduct, IWebHostEnvironment weebhost, IRepository<Unit> repoUnit, PurchaseInvoiceBll repoPInvoice, IRepository<Supplier> repoSupplier, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseThrowback> repoInvoice, IRepository<PurchaseThrowbackDetail> repoInvoiceDetail, IMapper mapper)
 		{
 			_repoInvoice = repoInvoice;
 			_mapper = mapper;
 			_repoInvoiceDetail = repoInvoiceDetail;
 			_repoProduct = repoProduct;
 			_UnitBll = UnitBll;
+			_weebhost = weebhost;
 			_repoStock = repoStock;
 			_repoProductUnit = repoProductUnit;
 			_repoSupplier = repoSupplier;
@@ -715,6 +720,15 @@ namespace ERP_System.BLL.Guide
 							{
 								resultViewModel.Status = true;
 								resultViewModel.Message = AppConstants.Messages.SavedSuccess;
+								var DataToPrint = _repoInvoice.ExecuteStoredProcedure<PurchaseThrowbackInvoicePrintDto>("[Report].[spGetPurchaseThrowbackInvoiceToPrint]", new[]  {
+						new SqlParameter("@invoiceId",newInvoice.ID)
+						}, CommandType.StoredProcedure);
+								if (DataToPrint != null)
+								{
+									DataToPrint.FirstOrDefault().CompanyImageFullPath = _weebhost.WebRootPath + DataToPrint.FirstOrDefault().CompanyImage;
+
+								}
+								resultViewModel.Data = DataToPrint;
 							}
 							else
 							{
@@ -723,6 +737,7 @@ namespace ERP_System.BLL.Guide
 								_repoInvoice.Update(newInvoice);
 								resultViewModel.Status = false;
 								resultViewModel.Message = AppConstants.Messages.SavedFailed;
+								
 							}
 
 							#endregion

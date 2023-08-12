@@ -14,9 +14,9 @@
 	});
 
 	let form = $('#frm');
-	function Submit(type) {
+	function Submit(type , isPrint) {
 		event.preventDefault();
-		Save(type);
+		Save(type,isPrint);
 
 	}
 	function SetInvoiceThroback() {
@@ -179,9 +179,7 @@
 			if (result.isConfirmed) {
 				$.post('@Url.GetAction("GetCahierMoney")', {  }, function (res) {
 					if (res.Data.length){
-						printAtEnd(res.Data[0].TotalMoney)
-					}
-				console.log(res);
+						printAtEnd(res.Data[0])
 						Swal.fire({
 						title: "إجمالي مبلغ عمليات اليوم",
 						text: res.Data.length ? `${res.Data[0].TotalMoney} جنية` : "لاتوجد عمليات",
@@ -195,7 +193,7 @@
 						window.location.href = "/Account/LogOff";
 
 					})
-
+					}
 				});
 				
 				
@@ -645,7 +643,8 @@
 		let remainValue = InvTotalPaid - InvoiceTotalPrice;
 		InvoiceRemaining.val(remainValue);
 	}
-	function Save(type) {
+	function Save(type,isPrint) {
+		console.log(isPrint)
 		let stockId = document.querySelector("#ddlStockId").value;
 		let Products = [];
 		$.each($("#InvoiceProductsBody >tr"), function (key, value) {
@@ -759,6 +758,9 @@
 								icon: 'success',
 								showConfirmButton: false
 							}).then((result) => {
+								if(isPrint=='true'){
+									printDiv(res.Data);
+								}
 								if (type === 'add') {
 									resetForm(stockId, '0');
 								} else {
@@ -804,6 +806,9 @@
 								icon: 'success',
 								showConfirmButton: false
 							}).then((result) => {
+								if (isPrint==true) {
+									printDiv(res.Data);
+								}
 								if (type === 'add') {
 									resetForm(stockId, '0');
 								} else {
