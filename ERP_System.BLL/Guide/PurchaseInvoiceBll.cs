@@ -780,8 +780,9 @@ namespace ERP_System.BLL.Guide
 								else
 								{
 									resultViewModel.Status = false;
+									//resultViewModel.Message = "لايوجد منتج بهذا الباركود أو الاسم";
 									resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد ";
-									resultViewModel.Data = newInvoice;
+									resultViewModel.Data = 500500;
 									_repoInvoice.Detached(newInvoice);
 									newInvoice.IsDeleted = true;
 									_repoInvoice.Update(newInvoice);

@@ -410,13 +410,33 @@
 						//	});
 						//}
 					} else {
-						Swal.fire({
-							title: `${res.Message}`,
-							timer: 1500,
-							timerProgressBar: true,
-							icon: 'warning',
-							showConfirmButton: false
-						});
+						if (res.Message === "هذا المنتج غير موجود بالمخزن المحدد") {
+							Swal.fire({
+								title: `${res.Message}`,
+								text: "هل تريد إضافة هذا المنتج ؟",
+								icon: 'warning',
+								showCancelButton: true,
+								confirmButtonColor: '#3085d6',
+								cancelButtonColor: '#d33',
+								cancelButtonText: 'الغاء',
+								confirmButtonText: 'إضافة'
+							}).then((result) => {
+								if (result.isConfirmed) {
+									let a = document.createElement('a');
+									a.target = '_blank';
+									a.href = "/Guide/Product/Add";
+									a.click();
+								}
+							});
+						} else {
+							Swal.fire({
+								title: `${res.Message}`,
+								timer: 1500,
+								timerProgressBar: true,
+								icon: 'warning',
+								showConfirmButton: false
+							});
+						}
 					}
 				});
 			}
@@ -549,13 +569,33 @@
 						//barCodeBtn.attr("href", data.BarCodePath);
 					} else {
 						ProductBarCode.val('');
-						Swal.fire({
-							title: `${res.Message}`,
-							timer: 1500,
-							timerProgressBar: true,
-							icon: 'warning',
-							showConfirmButton: false
-						});
+						if (res.Message === "هذا المنتج غير موجود بالمخزن المحدد") {
+							Swal.fire({
+								title: `${res.Message}`,
+								text: "هل تريد إضافة هذا المنتج ؟",
+								icon: 'warning',
+								showCancelButton: true,
+								confirmButtonColor: '#3085d6',
+								cancelButtonColor: '#d33',
+								cancelButtonText: 'الغاء',
+								confirmButtonText: 'إضافة'
+							}).then((result) => {
+								if (result.isConfirmed) {
+									let a = document.createElement('a');
+									a.target = '_blank';
+									a.href = "/Guide/Product/Add";
+									a.click();
+								}
+							});
+						} else {
+							Swal.fire({
+								title: `${res.Message}`,
+								timer: 1500,
+								timerProgressBar: true,
+								icon: 'warning',
+								showConfirmButton: false
+							});
+						}
 					}
 				});
 			}

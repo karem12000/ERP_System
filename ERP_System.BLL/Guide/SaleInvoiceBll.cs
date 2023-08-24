@@ -920,8 +920,14 @@ namespace ERP_System.BLL.Guide
         public string CompanyAddress { get; set; }
         public string CompanyImage { get; set; }
         public string CompanyImagePath { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
         public string Name { get; set; }
         public decimal? TotalMoney { get; set; }
+        public decimal? TotalMoneyForThrowback { get; set; }
+        public int NumOfSaleProducts { get; set; }
+        public int NumOfThrowbackProducts { get; set; }
+        public int NumOfThrowbackInvoices { get; set; }
         public decimal? TotalPaid { get; set; }
     }
 }
