@@ -400,7 +400,7 @@ function printAtEnd(data) {
 										<td class="mobileHeader" width="135" align="right"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
 										  <img
-											src="../../../${data[0].CompanyImage}"
+											src="../../../${data[0]?.CompanyImage}"
 											width="100" alt="">
 										  <h5 style="font-size: 18px;margin:5px 0;"> اسم الشركة : ${data.CompanyName}</h5>
 
@@ -426,12 +426,44 @@ function printAtEnd(data) {
 										<td class="mobileHeader" width="135" align="left">
 										  <h5 style="margin: 0;">
 											<span style="margin: 0 15px;">التاريخ </span>
-											<span>${data.CurrentDate}</span>
+											<span>${data?.CurrentDate}</span>
+										  </h5>
+										  <h5 style="margin: 0;">
+											<span style="margin: 0 15px;">بداية الوردية </span>
+											<span>${data?.StartDate}</span>
+										  </h5>
+										  <h5 style="margin: 0;">
+											<span style="margin: 0 15px;">نهاية الوردية </span>
+											<span>${data?.EndDate}</span>
 										  </h5>
 										</td>
 										<td class="mobileHeader" width="135" align="right"
 										  style="overflow:hidden;padding-right:22px;border-radius: 0 0 30px 0px">
-										  <h5 style="font-size: 18px;margin:5px 0;"> تقرير إجمالي مبيعات اليوم </h5>
+										  <h5 style="font-size: 18px;margin:5px 0;text-align:right;"> تقرير إجمالي مبيعات اليوم </h5>
+										  <h5 style="margin: 0;">
+											<span >اسم الكاشير</span>
+											<span style="margin: 0 15px;">${data?.Name}</span>
+										  </h5>
+										  <h5 style="margin: 0;">
+											<span >إجمالي المبيعات</span>
+											<span style="margin: 0 15px;">${data?.TotalMoney}</span>
+										  </h5>
+										  <h5 style="margin: 0;">
+											<span >إجمالي المدفوعات</span>
+											<span style="margin: 0 15px;">${data?.TotalPaid}</span>
+										  </h5>
+										  <h5 style="margin: 0;">
+											<span >إجمالي المرتجعات</span>
+											<span style="margin: 0 15px;">${data?.TotalMoneyForThrowback}</span>
+										  </h5>
+										  <h5 style="margin: 0;">
+											<span >إجمالي المنتجات المباعة</span>
+											<span style="margin: 0 15px;">${data?.NumOfSaleProducts}</span>
+										  </h5>
+										  <h5 style="margin: 0;">
+											<span>إجمالي المنتجات المرتجعة</span>
+											<span style="margin: 0 15px;">${data?.NumOfThrowbackProducts}</span>
+										  </h5>
 										</td>
 									  </tr>
 									</tbody>

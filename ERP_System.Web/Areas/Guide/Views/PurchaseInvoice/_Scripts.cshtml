@@ -1107,4 +1107,12 @@
             height: 100
         });
     }
+    document.onkeydown = function (e) {
+        var keyCode = e.keyCode;
+        if (keyCode == 113) {
+            document.getElementById("withoutPrint").click();
+        } if (keyCode == 115) {
+            document.getElementById("withPrint").click();
+        }
+    };
 </script>
