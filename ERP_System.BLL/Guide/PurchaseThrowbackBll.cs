@@ -253,10 +253,27 @@ namespace ERP_System.BLL.Guide
 			return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
 		}
 
+        public ResultViewModel GetInvoiceToPrint(Guid? InvoiceId)
+        {
+            var result = new ResultViewModel();
+            result.Status = true;
+            var DataToPrint = _repoInvoice.ExecuteStoredProcedure<PurchaseThrowbackInvoicePrintDto>("[Report].[spGetPurchaseThrowbackInvoiceToPrint]", new[]  {
+                                new SqlParameter("@invoiceId",InvoiceId)
+                                }, CommandType.StoredProcedure);
+            if (DataToPrint != null)
+            {
+                DataToPrint.FirstOrDefault().CompanyImageFullPath = _weebhost.WebRootPath + DataToPrint.FirstOrDefault().CompanyImage;
 
-		#endregion
-		#region Save 
-		public ResultViewModel Save(PurchaseThrowbackDTO InvoiceDTO)
+            }
+            result.Data = DataToPrint;
+            return result;
+
+        }
+
+
+        #endregion
+        #region Save 
+        public ResultViewModel Save(PurchaseThrowbackDTO InvoiceDTO)
 		{
 			ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
 

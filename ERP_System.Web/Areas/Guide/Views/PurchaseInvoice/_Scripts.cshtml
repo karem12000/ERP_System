@@ -130,21 +130,21 @@
 
     @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
     {
-                                                                                                                                                                                                <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/PurchaseInvoice/Edit/${data.ID}" >
-                                                                                                                                                                                         <i class="fas fa-eye"></i>
+                                                                                                                                                                                                        <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/PurchaseInvoice/Edit/${data.ID}" >
+                                                                                                                                                                                                 <i class="fas fa-eye"></i>
 
-                                                                                                                                                                                </a>
+                                                                                                                                                                                        </a>
 
     }
 
     @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
     {
-                                                                                                                                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
-                                                                                                                                                                               <i class="fas fa-trash-alt"></i>
+                                                                                                                                                                                                   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                                                                                                                                                       <i class="fas fa-trash-alt"></i>
 
-                                                                                                                                                                               </a>
+                                                                                                                                                                                       </a>
     }
-                                                                                                   `;
+                                                                                                       `;
                         return btn + '</div>';
                     }
                 }
@@ -169,15 +169,15 @@
         if (invoiceType === '0') {
             $('#ddlInvoiceType').empty();
             $('#ddlInvoiceType').append(`
-                                                  <option selected value="0">فاتورة مشتريات</option>
-                                            `);
+                                                      <option selected value="0">فاتورة مشتريات</option>
+                                                `);
             GetLastInvoiceNumberByDate(invoiceDate);
         } else if (invoiceType === '1') {
             $('#ddlInvoiceType').empty();
             $('#ddlInvoiceType').append(`
-                                            <option  value="0">فاتورة مشتريات</option>
-                                            <option selected value="1">فاتورة مرتجع مشتريات</option>
-                                    `);
+                                                <option  value="0">فاتورة مشتريات</option>
+                                                <option selected value="1">فاتورة مرتجع مشتريات</option>
+                                        `);
             GetLastThrowbackInvoiceNumberByDate(invoiceDate);
         } else { }
         $('#ddlStockId').val(stockId).trigger('change');
@@ -386,10 +386,11 @@
                                 confirmButtonText: 'إضافة'
                             }).then((result) => {
                                 if (result.isConfirmed) {
-                                let a = document.createElement('a');
-                                a.target = '_blank';
-                                a.href = "/Guide/Product/Add";
-                                a.click();}
+                                    let a = document.createElement('a');
+                                    a.target = '_blank';
+                                    a.href = "/Guide/Product/Add";
+                                    a.click();
+                                }
                             });
                         } else {
                             Swal.fire({
@@ -746,11 +747,12 @@
                                 icon: 'success',
                                 showConfirmButton: false
                             }).then((result) => {
-                                if (isPrint == 'true') {
-                                    printParchase(res.Data);
-                                }
+
                                 if (type === 'add') {
                                     resetForm(stockId, '0');
+                                    if (isPrint == 'true') {
+                                        printParchase(res.Data);
+                                    }
                                 } else {
                                     window.location.href = "/Guide/PurchaseInvoice/Index?previous=true";
                                 }
@@ -903,16 +905,16 @@
                         if (SType == 1) {
                             $('.SupplierData').empty();
                             $('.SupplierData').append(`
-                                                    <input type="text" readonly class="form-control" placeholder="مدين (له )">
-                                                        <input type="text" readonly class="form-control" placeholder="${res.ActualAmount}">
-                                                `);
+                                                        <input type="text" readonly class="form-control" placeholder="مدين (له )">
+                                                            <input type="text" readonly class="form-control" placeholder="${res.ActualAmount}">
+                                                    `);
 
                         } else {
                             $('.SupplierData').empty();
                             $('.SupplierData').append(`
-                                                    <input type="text" readonly class="form-control" placeholder="دائن (عليه )">
-                                                        <input type="text" readonly class="form-control" placeholder="${res.ActualAmount}">
-                                        `);
+                                                        <input type="text" readonly class="form-control" placeholder="دائن (عليه )">
+                                                            <input type="text" readonly class="form-control" placeholder="${res.ActualAmount}">
+                                            `);
                         }
                     }
                 }
@@ -979,31 +981,31 @@
         let rowId = Math.floor(Math.random() * 500) + 1;
         $("#InvoiceProductsBody").append(` <tr>
 
-                                <td>
-                                    <input class="form-control ID" type="hidden" value="0" />
-                                    <input class="form-control ProductId" type="hidden" value="0" />
-                                    <input type="text" onkeyup="getProduct(this,event)" required  value="${obj.ProductBarCode}" id="rowId-${rowId}" class="form-control ProductBarCode" />
-                                </td>
-                                        <td><input type="text" onkeyup="getProductByName(this,event)" required value="${obj.ProductName}" class="form-control ProductName" /></td>
-                                <td>
-                                        <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)" name="UnitId" id="ddlUnitId">
-                                        <option selected value="0">اختر الوحدة</option>
-                                    </select>
-                                        <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
-                                </td>
-                                        <td><input type="text" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                            <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty"  value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                            <td><input type="number"  step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0"  value="${obj.PurchasingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" /></td>
-                                    <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" value="${obj.TotalQtyPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                <td>
-                                    <div class="d-flex">
-                                        <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                        <a onclick="doAll(this)" class="btn btn-outline-secondary mx-1" href="#"><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
-                                        </div>
-                                </td>
+                                    <td>
+                                        <input class="form-control ID" type="hidden" value="0" />
+                                        <input class="form-control ProductId" type="hidden" value="0" />
+                                        <input type="text" onkeyup="getProduct(this,event)" required  value="${obj.ProductBarCode}" id="rowId-${rowId}" class="form-control ProductBarCode" />
+                                    </td>
+                                            <td><input type="text" onkeyup="getProductByName(this,event)" required value="${obj.ProductName}" class="form-control ProductName" /></td>
+                                    <td>
+                                            <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)" name="UnitId" id="ddlUnitId">
+                                            <option selected value="0">اختر الوحدة</option>
+                                        </select>
+                                            <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+                                    </td>
+                                            <td><input type="text" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty"  value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                <td><input type="number"  step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0"  value="${obj.PurchasingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control PurchasingPrice" /></td>
+                                        <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" value="${obj.TotalQtyPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                            <a onclick="doAll(this)" class="btn btn-outline-secondary mx-1" href="#"><i class="fas fa-sharp fa-solid fa-barcode"></i></a>
+                                            </div>
+                                    </td>
 
-                            </tr>
-                                `);
+                                </tr>
+                                    `);
         getRowsNumber();
 
     }

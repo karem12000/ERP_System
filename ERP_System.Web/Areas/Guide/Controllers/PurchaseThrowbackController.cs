@@ -68,6 +68,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
         public IActionResult GetProductDataByUnitId(Guid? productId, Guid? unitId) => Ok(_productBll.GetProductDataByUnitId(productId, unitId));
         public IActionResult GetSupplierById(Guid supplierId) => Ok(_supplierBll.GetById(supplierId));
         public IActionResult GetSuppliersSelect() => Ok(_supplierBll.GetSelect());
+        public IActionResult GetInvoiceToPrint(Guid? invoiceId) => Ok(_invoiceBll.GetInvoiceToPrint(invoiceId));
 
         [HttpPost]
         public IActionResult Delete(Guid id) => Ok(_invoiceBll.Delete(id));

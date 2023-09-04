@@ -14,10 +14,20 @@
 	});
 
 	let form = $('#frm');
-	function Submit(type) {
+	function Submit(type, isPrint) {
 		event.preventDefault();
-		Save(type);
+		Save(type, isPrint);
 
+	}
+
+	function handlePrintDiv() {
+		var InvoiceId = $('#id').val();
+		$.get('@Url.GetAction("GetInvoiceToPrint")', { invoiceId: InvoiceId }, function (res) {
+			if (res.Data) {
+				var data = res.Data;
+				printParchase(data);
+			}
+		});
 	}
 
 	function handleGetPurchaseInvoice() {
@@ -517,7 +527,7 @@
 		});
 		InvoiceTotalPrice.val(TPrice);
 	}
-	function Save(type) {
+	function Save(type, isPrint) {
 		let stockId = document.querySelector("#ddlStockId").value;
 		let Products = [];
 		$.each($("#InvoiceProductsBody >tr"), function (key, value) {
@@ -602,11 +612,15 @@
 							icon: 'success',
 							showConfirmButton: false
 						}).then((result) => {
-							console.log(res.Data);
 							if (type === 'add') {
+
 								resetForm(stockId, '0');
 								var invoiceDate = $('#InvoiceDate').val();
 								GetLastInvoiceNumberByDate(invoiceDate);
+
+								if (isPrint == 'true') {
+									printParchase(res.Data);
+								}
 							} else {
 								window.location.href = "/Guide/PurchaseThrowback/Index?previous=true";
 							}
@@ -906,4 +920,13 @@
 			height: 100
 		});
 	}
+
+	document.onkeydown = function (e) {
+		var keyCode = e.keyCode;
+		if (keyCode == 113) {
+			document.getElementById("withoutPrint").click();
+		} if (keyCode == 115) {
+			document.getElementById("withPrint").click();
+		}
+	};
 </script>

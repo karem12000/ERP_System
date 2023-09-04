@@ -117,7 +117,7 @@
                                                                     <td><input type="number" step="0.01" class="form-control SellingPrice" value="@unit.SellingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                     @if(Model.IdUnitOfQty == unit.UnitId)
                                                                     {
-                                                                        <td><input type="text" disabled value="@unit.UnitBarcodeText" class="form-control UnitBarcode" /></td>
+                                                                        <td><input type="text" value="@unit.UnitBarcodeText" class="form-control UnitBarcode" /></td>
                                                                     }
                                                                     else
                                                                     {

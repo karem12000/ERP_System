@@ -808,11 +808,12 @@
 								icon: 'success',
 								showConfirmButton: false
 							}).then((result) => {
-								if(isPrint=='true'){
-									printDiv(res.Data);
-								}
+								
 								if (type === 'add') {
 									resetForm(stockId, '0');
+									if (isPrint == 'true') {
+										printDiv(res.Data);
+									}
 								} else {
 									window.location.href = "/Guide/SaleInvoice/Index?previous=true";
 								}

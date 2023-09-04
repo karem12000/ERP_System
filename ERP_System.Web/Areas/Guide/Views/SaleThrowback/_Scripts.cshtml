@@ -177,9 +177,9 @@
         $('#ddlInvoiceTotalDiscountType').removeAttr("disabled");
         $('#ddlInvoiceTotalDiscountType').empty();
         $('#ddlInvoiceTotalDiscountType').append(`
-                    <option selected="" value="0"> % </option>
-                    <option value="1">قيمة</option>
-                    `);
+                        <option selected="" value="0"> % </option>
+                        <option value="1">قيمة</option>
+                        `);
         $('#Buyer').removeAttr("disabled");
         $('#Buyer').val('');
         $('#InvoiceProductsBody').empty();
@@ -488,8 +488,8 @@
                             UnitId.empty();
                             UnitId.attr('disabled', 'disabled');
                             UnitId.append(`
-                                                <option selected value="${data.UnitId}">${data.UnitName}</option>
-                                        `)
+                                                    <option selected value="${data.UnitId}">${data.UnitName}</option>
+                                            `)
                             //ID.val(data.ID);
                             ConversionFactor.val(data.ConversionFactor);
                             QtyInStock.val(data.QtyInStockStr);
@@ -764,6 +764,9 @@
                             if (type === 'add') {
                                 resetForm(stockId, '0');
                                 //$('#InvoiceNumber').val(res.Data);
+                                if (isPrint == 'true') {
+                                    printDiv(res.Data);
+                                }
                                 var invoiceDate = $('#InvoiceDate').val();
                                 GetLastInvoiceNumberByDate(invoiceDate);
 
@@ -917,21 +920,21 @@
 
     @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
     {
-                                                                                                                                                                                                        <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/SaleThrowback/Edit/${data.ID}" >
-                                                                                                                                                                                                 <i class="fas fa-eye"></i>
+                                                                                                                                                                                                                <a class="btn-icon btn btn-warning btn-sm"  href="/Guide/SaleThrowback/Edit/${data.ID}" >
+                                                                                                                                                                                                         <i class="fas fa-eye"></i>
 
-                                                                                                                                                                                </a>
+                                                                                                                                                                                        </a>
 
     }
 
     @if (CurrentForm.CurrentFormPermissionActions.DeleteHasPermission)
     {
-                                                                                                                                                                                           <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
-                                                                                                                                                                               <i class="fas fa-trash-alt"></i>
+                                                                                                                                                                                                   <a class="btn-icon btn btn-danger btn-sm" onclick="Delete(this,'${data.ID}')" href="javascript:void(0)">
+                                                                                                                                                                                       <i class="fas fa-trash-alt"></i>
 
-                                                                                                                                                                               </a>
+                                                                                                                                                                                       </a>
     }
-                                                                                                   `;
+                                                                                                       `;
                         return btn + '</div>';
                     }
                 }
@@ -1077,72 +1080,72 @@
         if (isReseted) {
             if (haveDisscountPermission == true || haveDisscountPermission === "true") {
                 $("#InvoiceProductsBody").append(` <tr>
-                                                <td>
-                                                    <input class="form-control ID" type="hidden" value="${obj.id}" />
-                                                            <input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
-                                                        <input class="form-control ProductId" type="hidden" value="${obj.ProductId}" />
-                                                        <input type="text"  onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
-                                                </td>
-                                                                    <td><input type="text" required  onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
-                                                <td>
-                                                        <select class="Select sAddress form-select UnitId"  required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
-                                                        <option selected value="0">اختر الوحدة</option>
-                                                    </select>
-                                                            <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
-                                                </td>
-                                                                    <td><input type="text" disabled class="form-control QtyInStock" value="${obj.QtyInStock}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                    <td>
+                                                        <input class="form-control ID" type="hidden" value="${obj.id}" />
+                                                                <input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
+                                                            <input class="form-control ProductId" type="hidden" value="${obj.ProductId}" />
+                                                            <input type="text"  onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+                                                    </td>
+                                                                        <td><input type="text" required  onkeyup="getProductByName(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+                                                    <td>
+                                                            <select class="Select sAddress form-select UnitId"  required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+                                                            <option selected value="0">اختر الوحدة</option>
+                                                        </select>
+                                                                <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+                                                    </td>
+                                                                        <td><input type="text" disabled class="form-control QtyInStock" value="${obj.QtyInStock}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
 
-                                                                <td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td><input type="number" step="0.01"  onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" readonly/></td>
-                                                                    <td class="d-flex gap-2">
-                                                                                        <input type="number" onkeyup="getInvoiceTotalPrice(this)"   value="${obj.DiscountPProduct}" onchange="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" />
-                                                                                                <select class="Select sDescount form-select" aria-label="اختر نوع الخصم"  value="${obj.DiscountTypePProduct}" required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct"  onchange="getInvoiceTotalPrice(this)">
-                                                                                        <option selected="" value="0"> % </option>
-                                                                                        <option value="1">قيمة</option>
-                                                                                    </select>
-                                                                    </td>
-                                                                <td><input type="number" step="0.01" value="${obj.TotalQtyPrice}" disabled onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control TotalQtyPrice" /></td>
+                                                                    <td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" step="0.01"  onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" readonly/></td>
+                                                                        <td class="d-flex gap-2">
+                                                                                            <input type="number" onkeyup="getInvoiceTotalPrice(this)"   value="${obj.DiscountPProduct}" onchange="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" />
+                                                                                                    <select class="Select sDescount form-select" aria-label="اختر نوع الخصم"  value="${obj.DiscountTypePProduct}" required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct"  onchange="getInvoiceTotalPrice(this)">
+                                                                                            <option selected="" value="0"> % </option>
+                                                                                            <option value="1">قيمة</option>
+                                                                                        </select>
+                                                                        </td>
+                                                                    <td><input type="number" step="0.01" value="${obj.TotalQtyPrice}" disabled onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control TotalQtyPrice" /></td>
 
 
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                    </div>
-                                                </td>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                        </div>
+                                                    </td>
 
-                                            </tr>
-                                            `);
+                                                </tr>
+                                                `);
             } else {
                 $("#InvoiceProductsBody").append(` <tr>
-                                                <td>
-                                                    <input class="form-control ID" type="hidden" value="${obj.id}" />
-                                                                <input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
+                                                    <td>
+                                                        <input class="form-control ID" type="hidden" value="${obj.id}" />
+                                                                    <input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
 
-                                                    <input class="form-control ProductId" type="hidden" value="0" />
-                                                        <input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
-                                                </td>
-                                                                <td><input type="text" required onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
-                                                <td>
-                                                        <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
-                                                        <option selected value="0">اختر الوحدة</option>
-                                                    </select>
-                                                            <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
-                                                </td>
-                                                            <td><input type="text" disabled class="form-control QtyInStock" value="${obj.QtyInStock}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <input class="form-control ProductId" type="hidden" value="0" />
+                                                            <input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+                                                    </td>
+                                                                    <td><input type="text" required onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+                                                    <td>
+                                                            <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+                                                            <option selected value="0">اختر الوحدة</option>
+                                                        </select>
+                                                                <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+                                                    </td>
+                                                                <td><input type="text" disabled class="form-control QtyInStock" value="${obj.QtyInStock}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
 
-                                                                <td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
-                                                            <td><input type="number" disabled value="${obj.DiscountPProduct}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                        <td><input type="number" disabled step="0.01" value="${obj.TotalQtyPrice}" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" /></td>
+                                                                    <td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+                                                                <td><input type="number" disabled value="${obj.DiscountPProduct}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                            <td><input type="number" disabled step="0.01" value="${obj.TotalQtyPrice}" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" /></td>
 
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                    </div>
-                                                </td>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                        </div>
+                                                    </td>
 
-                                            </tr>
-                                            `);
+                                                </tr>
+                                                `);
             }
         } else {
             var discountType = "";
@@ -1152,72 +1155,72 @@
                 discountType = "قيمة"
             if (haveDisscountPermission == true || haveDisscountPermission === "true") {
                 $("#InvoiceProductsBody").append(` <tr>
-                                                <td>
-                                                    <input class="form-control ID" type="hidden" value="${obj.id}" />
-                                                                <input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
+                                                    <td>
+                                                        <input class="form-control ID" type="hidden" value="${obj.id}" />
+                                                                    <input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
 
-                                                        <input class="form-control ProductId" type="hidden" value="${obj.ProductId}" />
-                                                        <input type="text" disabled onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
-                                                </td>
-                                                                <td><input type="text" required disabled onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
-                                                <td>
-                                                        <select class="Select sAddress form-select UnitId" disabled required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
-                                                        <option selected value="${obj.UnitId}">${obj.UnitName}</option>
-                                                    </select>
-                                                            <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
-                                                </td>
-                                                            <td><input type="text" disabled class="form-control QtyInStock" value="${obj.QtyInStock}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                            <input class="form-control ProductId" type="hidden" value="${obj.ProductId}" />
+                                                            <input type="text" disabled onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+                                                    </td>
+                                                                    <td><input type="text" required disabled onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+                                                    <td>
+                                                            <select class="Select sAddress form-select UnitId" disabled required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+                                                            <option selected value="${obj.UnitId}">${obj.UnitName}</option>
+                                                        </select>
+                                                                <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+                                                    </td>
+                                                                <td><input type="text" disabled class="form-control QtyInStock" value="${obj.QtyInStock}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
 
-                                                                <td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td><input type="number" step="0.01" disabled onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" readonly/></td>
-                                                                    <td class="d-flex gap-2">
-                                                                                        <input type="number" onkeyup="getInvoiceTotalPrice(this)" disabled  value="${obj.DiscountPProduct}" onchange="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" />
-                                                                                                <select class="Select sDescount form-select" aria-label="اختر المخزن" disabled value="${obj.DiscountTypePProduct}" required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct"  onchange="getInvoiceTotalPrice(this)">
-                                                                                        <option selected value="${obj.DiscountTypePProduct}">${discountType}</option>
-                                                                                    </select>
-                                                                    </td>
-                                                                <td><input type="number" step="0.01" value="${obj.TotalQtyPrice}" disabled onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control TotalQtyPrice" /></td>
+                                                                    <td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" step="0.01" disabled onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" readonly/></td>
+                                                                        <td class="d-flex gap-2">
+                                                                                            <input type="number" onkeyup="getInvoiceTotalPrice(this)" disabled  value="${obj.DiscountPProduct}" onchange="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" />
+                                                                                                    <select class="Select sDescount form-select" aria-label="اختر المخزن" disabled value="${obj.DiscountTypePProduct}" required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct"  onchange="getInvoiceTotalPrice(this)">
+                                                                                            <option selected value="${obj.DiscountTypePProduct}">${discountType}</option>
+                                                                                        </select>
+                                                                        </td>
+                                                                    <td><input type="number" step="0.01" value="${obj.TotalQtyPrice}" disabled onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control TotalQtyPrice" /></td>
 
 
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                    </div>
-                                                </td>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                        </div>
+                                                    </td>
 
-                                            </tr>
-                                            `);
+                                                </tr>
+                                                `);
             } else {
                 $("#InvoiceProductsBody").append(` <tr>
-                                                <td>
-                                                    <input class="form-control ID" type="hidden" value="${obj.id}" />
-                                                                <input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
+                                                    <td>
+                                                        <input class="form-control ID" type="hidden" value="${obj.id}" />
+                                                                    <input class="form-control SaleDetailId" type="hidden" value="${obj.SaleDetailId}" />
 
-                                                    <input class="form-control ProductId" type="hidden" value="0" />
-                                                        <input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
-                                                </td>
-                                                                <td><input type="text" required onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
-                                                <td>
-                                                        <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
-                                                        <option selected value="0">اختر الوحدة</option>
-                                                    </select>
-                                                            <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
-                                                </td>
-                                                            <td><input type="text" disabled class="form-control QtyInStock" value="${obj.QtyInStock}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                        <input class="form-control ProductId" type="hidden" value="0" />
+                                                            <input type="text" onkeyup="getProduct(this,event)"  value="${obj.ProductBarCode}" id="rowId-${rowId}" required class="form-control ProductBarCode" />
+                                                    </td>
+                                                                    <td><input type="text" required onkeyup="getProduct(this,event)" value="${obj.ProductName}" class="form-control ProductName" /></td>
+                                                    <td>
+                                                            <select class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" onchange="handleUnitChange(this,event)"  name="UnitId" id="ddlUnitId">
+                                                            <option selected value="0">اختر الوحدة</option>
+                                                        </select>
+                                                                <input class="form-control ConversionFactor"  value="${obj.ConversionFactor}" type="hidden" value="1" />
+                                                    </td>
+                                                                <td><input type="text" disabled class="form-control QtyInStock" value="${obj.QtyInStock}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
 
-                                                                <td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
-                                                            <td><input type="number" disabled value="${obj.DiscountPProduct}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                        <td><input type="number" disabled step="0.01" value="${obj.TotalQtyPrice}" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" /></td>
+                                                                    <td><input type="number" step="0.01" class="form-control Qty" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" value="${obj.Qty}" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" value="${obj.SellingPrice}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control SellingPrice" /></td>
+                                                                <td><input type="number" disabled value="${obj.DiscountPProduct}"  onkeyup="getInvoiceTotalPrice()" class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                            <td><input type="number" disabled step="0.01" value="${obj.TotalQtyPrice}" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" required class="form-control DiscountPProduct" /></td>
 
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-                                                    </div>
-                                                </td>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                        </div>
+                                                    </td>
 
-                                            </tr>
-                                            `);
+                                                </tr>
+                                                `);
             }
         }
 

@@ -177,9 +177,16 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-12 d-flex justify-content-between mt-5">
-                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add')">
-                                            حفظ
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add' , 'true')" id="withoutPrint">
+                                            حفظ وطباعة (F2)
                                         </button>
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add' , 'false')" id="withPrint">
+                                            حفظ بدون طباعة (F4)
+                                        </button>
+                                        @*<button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add')">
+                                            حفظ
+                                        </button>*@
+
                                        @* <div class="col-1">
                                             <div class="form-group">
                                                 <button type="button" onclick="FinishShift();" class="btn btn-danger" name="btnFinishShift" id="btnFinishShift">إنهاء الخدمة</button>
@@ -204,6 +211,7 @@
         </div>
     </div>
 }
+<script src="~/assets/js/extensions/newfolder/printscript.js"></script>
 
 @section Scripts
 	{

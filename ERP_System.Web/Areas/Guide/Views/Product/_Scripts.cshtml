@@ -165,7 +165,7 @@
 		reader.readAsDataURL(selectedFile);
 	}
 
-	function resetForm(stockId, groupId) {
+	function resetForm(stockId, groupId, BaseUnitId) {
 		$('#id').val('');
 		$('#Name').val('');
 		$('#BarCodeText').val('');
@@ -175,7 +175,7 @@
 		$('#IsActive').attr('checked');
 		$('#ddlStockId').val(stockId).trigger('change');
 		$('#ddlGroupId').val(groupId).trigger('change');
-		$('#ddlIdUnitOfQty').val('0').trigger('change');
+		$('#ddlIdUnitOfQty').val(BaseUnitId).trigger('change');
 		$("#UnitsTbl").empty();
 		UnitAddNew({ "id": "0", "ConversionFactor": "", "PurchasingPrice": "", "SellingPrice": "", "UnitBarcode": "" },true);
 	}
@@ -183,9 +183,10 @@
 	function Save(type) {
 		let groupId = document.querySelector("#ddlGroupId").value;
 		let stockId = document.querySelector("#ddlStockId").value;
-		if ($('#ddlStockId').val() == '0' || $('#ddlGroupId').val() == '0' || $('#BarCodeText').val() == '' || $('#Name').val() == '' || $('#ddlUnitId').val() == '0') {
+		let BaseUnitId = document.querySelector("#ddlIdUnitOfQty").value;
+		if ($('#ddlStockId').val() == '0' || $('#ddlGroupId').val() == '0' || $('#BarCodeText').val() == '' || $('#Name').val() == '') {
 			Swal.fire({
-				title: `من فضلك أدخل البيانات`,
+				title: `من فضلك أدخل البيانات المطلوبة`,
 				timer: 2000,
 				timerProgressBar: true,
 				icon: 'error',
@@ -222,15 +223,15 @@
 			frm.append("ProductUnitsStr", JSON.stringify(Units));
 			var $preloader = $('#loader');
 
-			if (Units.length == 0) {
-				Swal.fire({
-					title: `من فضلك أدخل وحدات المنتج`,
-					timer: 2000,
-					timerProgressBar: true,
-					icon: 'error',
-					showConfirmButton: false
-				})
-			} else {
+			//if (Units.length == 0) {
+			//	Swal.fire({
+			//		title: `من فضلك أدخل وحدات المنتج`,
+			//		timer: 2000,
+			//		timerProgressBar: true,
+			//		icon: 'error',
+			//		showConfirmButton: false
+			//	})
+			//} else {
 				$preloader.fadeIn('slow');
 				$.ajax({
 					url: '@Url.GetAction("Save")',
@@ -277,7 +278,7 @@
 								showConfirmButton: false
 							}).then((result) => {
 								if (type === 'add') {
-									resetForm(stockId, groupId);
+									resetForm(stockId, groupId, BaseUnitId);
 								} else {
 									window.location.href = "/Guide/Product/Index";
 								}
@@ -306,7 +307,7 @@
 					}
 				});
 
-			}
+			//}
 
 		}
 	}
@@ -452,8 +453,17 @@
 				}
 			}
 		});
-
-
+	}
+	function RefreshUnits() {
+		$.get('@Url.GetAction("GetAllUnits")', function (res) {
+			if (res) {
+				$('#ddlIdUnitOfQty').empty();
+				$('#ddlIdUnitOfQty').append('<option value="0">اختر الوحده</option>');
+				for (i = 0; i < res.length; i++) {
+					$('#ddlIdUnitOfQty').append('<option value="' + res[i].Value + '">' + res[i].Text + '</option>');
+				}
+			}
+		});
 	}
 
 	function RefreshItemGroups() {
