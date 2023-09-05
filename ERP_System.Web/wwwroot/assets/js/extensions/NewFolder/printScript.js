@@ -2,18 +2,18 @@
 function printDiv(data) {
 	console.log(data);
 	if (data) {
-		var a = window.open('', '', 'height=1200, width=1200');
+		var a = window.open('', '', 'height=600, width=600');
 
 		a.document.write('<html>');
-		a.document.write('<body >');
+		a.document.write('<body style="margin:0;padding:0;">');
 		a.document.write(
 			`
 				<div id="GFG"">
 					<table width=" 100%" align="center" cellpadding="0" cellspacing="0">
-					<tbody>
+					<tbody style="zoom: 1;height: fit-content;">
 					  <tr>
 						<td align="center">
-						  <table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
+						  <table class="mobileWidth" width="100%" cellspacing="0" cellpadding="0">
 							<tbody>
 							  <tr>
 								<td>
@@ -44,7 +44,7 @@ function printDiv(data) {
 					  </tr>
 					  <tr>
 						<td align="center">
-						  <table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
+						  <table class="mobileWidth" width="100%" cellspacing="0" cellpadding="0">
 							<tbody>
 							  <tr>
 								<td>
@@ -80,17 +80,17 @@ function printDiv(data) {
 					  </tr>
 					  <tr>
 						<td align="center" dir="rtl">
-						  <table class="mobileWidth borderd" width="640" cellspacing="0" cellpadding="0" style="margin-top: 50px;">
+						  <table class="mobileWidth borderd" width="100%" cellspacing="0" cellpadding="0" style="margin-top: 50px;">
 							<tbody>
 
 							  <tr style="border: 1px solid #000;background-color: #a0a0a0;">
-								<th class="bold small" style="text-align: right;height: 25px;">الصنف</th>
-								<th class="bold small" style="text-align: right;height: 25px;">الباركود</th>
-								<th class="bold small" style="text-align: right;height: 25px;">الوحده</th>
-								<th class="bold small" style="text-align: right;height: 25px;">سعر البيع</th>
-								<th class="bold small" style="text-align: right;height: 25px;">الكمية</th>
-								<th class="bold small" style="text-align: right;height: 25px;">الخصم</th>
-								<th class="bold small" style="text-align: right;height: 25px;">الإجمالي</th>
+								<th  style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">الصنف</th>
+								<th  style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">الباركود</th>
+								<th  style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">الوحده</th>
+								<th  style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">سعر البيع</th>
+								<th  style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">الكمية</th>
+								<th  style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">الخصم</th>
+								<th  style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">الإجمالي</th>
 							  </tr>
 
 							  `);
@@ -99,13 +99,13 @@ function printDiv(data) {
 				a.document.write(
 					`
 			  <tr>
-								<td>${detail.UnitJsonDto[0]?.ProductJsonDto[0]?.ProductName}</td>
-								<td>${detail.UnitJsonDto[0]?.ProductJsonDto[0]?.ProductParcode}</td>
-								<td>${detail.UnitJsonDto[0]?.UnitName}</td>
-								<td>${detail.ProductSellingPrice}</td>
-								<td>${detail.ProductQty}</td>
-								<td>${detail.ProductDisscount} ${detail.ProductDiscountTypeStr}</td>
-								<td>${detail.ProductTotalQtyPrice}</td>
+								<td style="font-size: 14px;padding: 0 5px;">${detail.UnitJsonDto[0]?.ProductJsonDto[0]?.ProductName}</td>
+								<td style="font-size: 14px;padding: 0 5px;">${detail.UnitJsonDto[0]?.ProductJsonDto[0]?.ProductParcode}</td>
+								<td style="font-size: 14px;padding: 0 5px;">${detail.UnitJsonDto[0]?.UnitName}</td>
+								<td style="font-size: 14px;padding: 0 5px;">${detail.ProductSellingPrice}</td>
+								<td style="font-size: 14px;padding: 0 5px;">${detail.ProductQty}</td>
+								<td style="font-size: 14px;padding: 0 5px;">${detail.ProductDisscount} ${detail.ProductDiscountTypeStr}</td>
+								<td style="font-size: 14px;padding: 0 5px;">${detail.ProductTotalQtyPrice}</td>
 								
 			 </tr>
 			`
@@ -128,8 +128,8 @@ function printDiv(data) {
 					  </tr >
 		<tr>
 			<td align="center">
-				<table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
-					<tbody>
+				<table class="mobileWidth" width="100%" cellspacing="0" cellpadding="0">
+					<tbody >
 						<tr>
 							<td>
 								<table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 45px;">
@@ -203,17 +203,17 @@ function printDiv(data) {
 function printParchase(data) {
 	console.log(data);
 	if (data) {
-		var a = window.open('', '', 'height=1200, width=1200');
+		var a = window.open('', '', 'height=600, width=600');
 		a.document.write('<html>');
-		a.document.write('<body >');
+		a.document.write('<body style="margin:0;padding:0;">');
 		a.document.write(
 			`
 				<div id="GFG"">
 					<table width=" 100%" align="center" cellpadding="0" cellspacing="0">
-					<tbody>
+					<tbody style="zoom: 1;height: fit-content;">
 					  <tr>
 						<td align="center">
-						  <table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
+						  <table class="mobileWidth" width="100%" cellspacing="0" cellpadding="0">
 							<tbody>
 							  <tr>
 								<td>
@@ -246,7 +246,7 @@ function printParchase(data) {
 					  </tr>
 					  <tr>
 						<td align="center">
-						  <table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
+						  <table class="mobileWidth" width="100%" cellspacing="0" cellpadding="0">
 							<tbody>
 							  <tr>
 								<td>
@@ -290,15 +290,15 @@ function printParchase(data) {
 					  </tr>
 					  <tr>
 						<td align="center" dir="rtl">
-						  <table class="mobileWidth borderd" width="640" cellspacing="0" cellpadding="0" style="margin-top: 50px;">
+						  <table class="mobileWidth borderd" width="100%" cellspacing="0" cellpadding="0" style="margin-top: 50px;">
 							<tbody>
 							  <tr style="border: 1px solid #000;background-color: #a0a0a0;">
-								<th class="bold small" style="text-align: right;height: 25px;">الصنف</th>
-								<th class="bold small" style="text-align: right;height: 25px;">الباركود</th>
-								<th class="bold small" style="text-align: right;height: 25px;">الوحدة</th>
-								<th class="bold small" style="text-align: right;height: 25px;">سعر الشراء</th>
-								<th class="bold small" style="text-align: right;height: 25px;">الكمية</th>
-								<th class="bold small" style="text-align: right;height: 25px;">المجموع</th>
+								<th style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">الصنف</th>
+								<th style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">الباركود</th>
+								<th style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">الوحدة</th>
+								<th style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">سعر الشراء</th>
+								<th style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">الكمية</th>
+								<th style="text-align: right;height: 25px;font-size: 14px;padding: 0 5px;">المجموع</th>
 							  </tr>
 							 `);
 		if (data[0].InvoiceDetails.length) {
@@ -307,12 +307,12 @@ function printParchase(data) {
 				a.document.write(
 					`
 								  <tr>
-													<td>${detail.UnitJsonDto[0].ProductJsonDto[0].ProductName}</td>
-													<td>${detail.UnitJsonDto[0].ProductJsonDto[0].ProductParcode}</td>
-													<td>${detail.UnitJsonDto[0].UnitName}</td>
-													<td>${detail.ProductPurchasingPrice}</td>
-													<td>${detail.ProductQty}</td>
-													<td>${detail.ProductTotalQtyPrice}</td>
+													<td style="font-size: 14px;padding: 0 5px;">${detail.UnitJsonDto[0].ProductJsonDto[0].ProductName}</td>
+													<td style="font-size: 14px;padding: 0 5px;">${detail.UnitJsonDto[0].ProductJsonDto[0].ProductParcode}</td>
+													<td style="font-size: 14px;padding: 0 5px;">${detail.UnitJsonDto[0].UnitName}</td>
+													<td style="font-size: 14px;padding: 0 5px;">${detail.ProductPurchasingPrice}</td>
+													<td style="font-size: 14px;padding: 0 5px;">${detail.ProductQty}</td>
+													<td style="font-size: 14px;padding: 0 5px;">${detail.ProductTotalQtyPrice}</td>
 								
 								 </tr>
 								`
@@ -333,7 +333,7 @@ function printParchase(data) {
 					  </tr>
 					  <tr>
 						<td align="center">
-						  <table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
+						  <table class="mobileWidth" width="100%" cellspacing="0" cellpadding="0">
 							<tbody>
 							  <tr>
 								<td>
@@ -380,17 +380,17 @@ function printParchase(data) {
 function printAtEnd(data) {
 	console.log(data);
 	if (data) {
-		var a = window.open('', '', 'height=1200, width=1200');
+		var a = window.open('', '', 'height=600, width=600');
 		a.document.write('<html>');
-		a.document.write('<body >');
+		a.document.write('<body style="margin:0;padding:0;">');
 		a.document.write(
 			`
 				<div id="GFG"">
 					<table width=" 100%" align="center" cellpadding="0" cellspacing="0">
-					<tbody>
+					<tbody style="zoom: 1;height: fit-content;">
 					  <tr>
 						<td align="center">
-						  <table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
+						  <table class="mobileWidth" width="100%" cellspacing="0" cellpadding="0">
 							<tbody>
 							  <tr>
 								<td>
@@ -423,7 +423,7 @@ function printAtEnd(data) {
 					  </tr>
 					  <tr>
 						<td align="center">
-						  <table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
+						  <table class="mobileWidth" width="100%" cellspacing="0" cellpadding="0">
 							<tbody>
 							  <tr>
 								<td>
@@ -484,7 +484,7 @@ function printAtEnd(data) {
 					  
 					  <tr>
 						<td align="center">
-						  <table class="mobileWidth" width="640" cellspacing="0" cellpadding="0">
+						  <table class="mobileWidth" width="100%" cellspacing="0" cellpadding="0">
 							<tbody>
 							  <tr>
 								<td>
