@@ -700,6 +700,7 @@ namespace ERP_System.BLL.Guide
                 newInvoice.InvoiceTotalDiscountType = InvoiceDTO.InvoiceTotalDiscountType;
                 newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;
                 newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
+                newInvoice.CreatedDate = DateTime.Now;
                 newInvoice.AddedTax = InvoiceDTO.AddedTax ?? 0;
 
                 decimal? SumInvoiceTotalQtyPrice = 0;

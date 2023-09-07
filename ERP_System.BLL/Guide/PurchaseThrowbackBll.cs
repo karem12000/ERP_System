@@ -19,239 +19,239 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace ERP_System.BLL.Guide
 {
-	public class PurchaseThrowbackBll
-	{
-		private const string _spPurchaseThrowback = "[Guide].[spPurchaseThrowback]";
-		private readonly IRepository<PurchaseThrowback> _repoInvoice;
-		private readonly PurchaseInvoiceBll _repoPInvoice;
-		private readonly UnitBll _UnitBll;
-		//private readonly SupplierBll _supplierBll
-		private readonly IRepository<Supplier> _repoSupplier;
-		private readonly IRepository<Unit> _repoUnit;
-		private readonly IRepository<Stock> _repoStock;
-		private readonly IRepository<Product> _repoProduct;
-		private readonly IRepository<ProductUnit> _repoProductUnit;
-		private readonly IRepository<PurchaseThrowbackDetail> _repoInvoiceDetail;
-		private readonly IMapper _mapper;
-		private readonly IWebHostEnvironment _weebhost;
+    public class PurchaseThrowbackBll
+    {
+        private const string _spPurchaseThrowback = "[Guide].[spPurchaseThrowback]";
+        private readonly IRepository<PurchaseThrowback> _repoInvoice;
+        private readonly PurchaseInvoiceBll _repoPInvoice;
+        private readonly UnitBll _UnitBll;
+        //private readonly SupplierBll _supplierBll
+        private readonly IRepository<Supplier> _repoSupplier;
+        private readonly IRepository<Unit> _repoUnit;
+        private readonly IRepository<Stock> _repoStock;
+        private readonly IRepository<Product> _repoProduct;
+        private readonly IRepository<ProductUnit> _repoProductUnit;
+        private readonly IRepository<PurchaseThrowbackDetail> _repoInvoiceDetail;
+        private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _weebhost;
 
-		public PurchaseThrowbackBll(IRepository<Product> repoProduct, IWebHostEnvironment weebhost, IRepository<Unit> repoUnit, PurchaseInvoiceBll repoPInvoice, IRepository<Supplier> repoSupplier, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseThrowback> repoInvoice, IRepository<PurchaseThrowbackDetail> repoInvoiceDetail, IMapper mapper)
-		{
-			_repoInvoice = repoInvoice;
-			_mapper = mapper;
-			_repoInvoiceDetail = repoInvoiceDetail;
-			_repoProduct = repoProduct;
-			_UnitBll = UnitBll;
-			_weebhost = weebhost;
-			_repoStock = repoStock;
-			_repoProductUnit = repoProductUnit;
-			_repoSupplier = repoSupplier;
-			_repoPInvoice = repoPInvoice;
-			_repoUnit = repoUnit;
-		}
+        public PurchaseThrowbackBll(IRepository<Product> repoProduct, IWebHostEnvironment weebhost, IRepository<Unit> repoUnit, PurchaseInvoiceBll repoPInvoice, IRepository<Supplier> repoSupplier, IRepository<ProductUnit> repoProductUnit, IRepository<Stock> repoStock, UnitBll UnitBll, IRepository<PurchaseThrowback> repoInvoice, IRepository<PurchaseThrowbackDetail> repoInvoiceDetail, IMapper mapper)
+        {
+            _repoInvoice = repoInvoice;
+            _mapper = mapper;
+            _repoInvoiceDetail = repoInvoiceDetail;
+            _repoProduct = repoProduct;
+            _UnitBll = UnitBll;
+            _weebhost = weebhost;
+            _repoStock = repoStock;
+            _repoProductUnit = repoProductUnit;
+            _repoSupplier = repoSupplier;
+            _repoPInvoice = repoPInvoice;
+            _repoUnit = repoUnit;
+        }
 
-		#region Get
-		public int GetLastInvoiceNumberByDate(DateTime? date)
-		{
-			var invoiceNumber = _repoInvoice.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.InvoiceDate.Date >= date.Value.Date)
-				 .OrderByDescending(c => c.CreatedDate).Select(c => c.InvoiceNumber).FirstOrDefault();
+        #region Get
+        public int GetLastInvoiceNumberByDate(DateTime? date)
+        {
+            var invoiceNumber = _repoInvoice.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.InvoiceDate.Date >= date.Value.Date)
+                 .OrderByDescending(c => c.CreatedDate).Select(c => c.InvoiceNumber).FirstOrDefault();
 
-			return invoiceNumber;
-		}
-		public PurchaseThrowbackDTO GetById(Guid id)
-		{
-			var invoice = _repoInvoice.GetAllAsNoTracking().Include(c => c.PurchaseThrowbackDetails).Where(p => p.ID == id).Select(x => new PurchaseThrowbackDTO
-			{
-				ID = x.ID,
-				InvoiceDateStr = x.InvoiceDate.Date.ToString(),
-				//InvoiceDate = x.InvoiceDate,
-				InvoiceNumber = x.InvoiceNumber,
-				PurchaseInvoiceId = x.PurchaseInvoiceId,
-				PurchaseInvoiceDateStr = x.PurchaseInvoiceDate.Value.Date.ToString(),
-				PurchaseInvoiceNo = _repoPInvoice.GetById(x.PurchaseInvoiceId.Value).InvoiceNumber,
-				StockId = x.StockId,
-				StockName = x.StockName,
-				SupplierId = x.SupplierId,
-				SupplierName = x.SupplierName,
-				IsActive = x.IsActive,
-				InvoiceTotalPrice = x.InvoiceTotalPrice,
-				TransactionType = (int)x.TransactionType,
-				TotalPaid = x.TotalPaid,
-				GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
-				{
-					ID = c.ID,
-					ProductId = c.ProductId,
-					ProductName = c.ProductName,
-					Qty = c.Qty,
-					UnitId = c.UnitId,
-					ConversionFactor = c.ConversionFactor,
-					PurchaseDetailId = c.PurchaseDetailId,
-					ProductBarCode = c.ProductBarCode,
-					PurchasingPrice = c.PurchasingPrice,
-					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
-					QtyInStockStr = string.Join(" - ", Math.Round((_repoProduct.GetById(c.ProductId.Value).QtyInStock/c.ConversionFactor) ?? 0, 2), _UnitBll.GetById(c.UnitId.Value).Name) 
-				}).ToList(),
-
-
-			}).FirstOrDefault();
-
-			//foreach (var item in invoice.GetInvoiceDetails)
-			//{
-			//	var stockQty = item.QtyInStock;
-			//	var conversionFactor = item.ConversionFactor;
-			//	var fQty = stockQty / conversionFactor;
-			//	fQty = Math.Round(fQty ?? 0, 2);
-			//	item.QtyInStockStr = string.Join(" - ", fQty, item.QtyInStockStr);
-			//}
-
-			return invoice;
-		}
-
-		public PurchaseThrowbackDTO GetByInvoiceNumber(int? number)
-		{
-			return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new PurchaseThrowbackDTO
-			{
-				ID = x.ID,
-				InvoiceDateStr = x.InvoiceDate.Date.ToString(),
-				InvoiceNumber = x.InvoiceNumber,
-				StockId = x.StockId,
-				StockName = x.StockName,
-				SupplierId = x.SupplierId,
-				SupplierName = x.SupplierName,
-				IsActive = x.IsActive,
-				TransactionType = (int)x.TransactionType,
-				InvoiceTotalPrice = x.InvoiceTotalPrice,
-				GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
-				{
-					ID = c.ID,
-					ProductId = c.ProductId,
-					ProductName = c.ProductName,
-					Qty = c.Qty,
-					UnitId = c.UnitId,
-					ConversionFactor = c.ConversionFactor,
-					ProductBarCode = c.ProductBarCode,
-					PurchasingPrice = c.PurchasingPrice,
-					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
-					QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
-
-				}).ToList(),
-
-			}).FirstOrDefault();
-		}
+            return invoiceNumber;
+        }
+        public PurchaseThrowbackDTO GetById(Guid id)
+        {
+            var invoice = _repoInvoice.GetAllAsNoTracking().Include(c => c.PurchaseThrowbackDetails).Where(p => p.ID == id).Select(x => new PurchaseThrowbackDTO
+            {
+                ID = x.ID,
+                InvoiceDateStr = x.InvoiceDate.Date.ToString(),
+                //InvoiceDate = x.InvoiceDate,
+                InvoiceNumber = x.InvoiceNumber,
+                PurchaseInvoiceId = x.PurchaseInvoiceId,
+                PurchaseInvoiceDateStr = x.PurchaseInvoiceDate.Value.Date.ToString(),
+                PurchaseInvoiceNo = _repoPInvoice.GetById(x.PurchaseInvoiceId.Value).InvoiceNumber,
+                StockId = x.StockId,
+                StockName = x.StockName,
+                SupplierId = x.SupplierId,
+                SupplierName = x.SupplierName,
+                IsActive = x.IsActive,
+                InvoiceTotalPrice = x.InvoiceTotalPrice,
+                TransactionType = (int)x.TransactionType,
+                TotalPaid = x.TotalPaid,
+                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
+                {
+                    ID = c.ID,
+                    ProductId = c.ProductId,
+                    ProductName = c.ProductName,
+                    Qty = c.Qty,
+                    UnitId = c.UnitId,
+                    ConversionFactor = c.ConversionFactor,
+                    PurchaseDetailId = c.PurchaseDetailId,
+                    ProductBarCode = c.ProductBarCode,
+                    PurchasingPrice = c.PurchasingPrice,
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+                    QtyInStockStr = string.Join(" - ", Math.Round((_repoProduct.GetById(c.ProductId.Value).QtyInStock / c.ConversionFactor) ?? 0, 2), _UnitBll.GetById(c.UnitId.Value).Name)
+                }).ToList(),
 
 
-		public PurchaseThrowbackDTO GetByInvoiceDate(DateTime? date)
-		{
-			if (date != null)
-			{
-				return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceDate.Date == date.Value.Date && p.IsActive && !p.IsDeleted).Select(x => new PurchaseThrowbackDTO
-				{
-					ID = x.ID,
-					InvoiceDateStr = x.InvoiceDate.Date.ToString(),
-					InvoiceNumber = x.InvoiceNumber,
-					StockId = x.StockId,
-					StockName = x.StockName,
-					SupplierId = x.SupplierId,
-					SupplierName = x.SupplierName,
-					IsActive = x.IsActive,
-					TransactionType = (int)x.TransactionType,
-					InvoiceTotalPrice = x.InvoiceTotalPrice,
-					GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
-					{
-						ID = c.ID,
-						ProductId = c.ProductId,
-						ProductName = c.ProductName,
-						Qty = c.Qty,
-						UnitId = c.UnitId,
-						ConversionFactor = c.ConversionFactor,
-						ProductBarCode = c.ProductBarCode,
-						PurchasingPrice = c.PurchasingPrice,
-						GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
-						QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+            }).FirstOrDefault();
+
+            //foreach (var item in invoice.GetInvoiceDetails)
+            //{
+            //	var stockQty = item.QtyInStock;
+            //	var conversionFactor = item.ConversionFactor;
+            //	var fQty = stockQty / conversionFactor;
+            //	fQty = Math.Round(fQty ?? 0, 2);
+            //	item.QtyInStockStr = string.Join(" - ", fQty, item.QtyInStockStr);
+            //}
+
+            return invoice;
+        }
+
+        public PurchaseThrowbackDTO GetByInvoiceNumber(int? number)
+        {
+            return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceNumber == number && p.IsActive && !p.IsDeleted).Select(x => new PurchaseThrowbackDTO
+            {
+                ID = x.ID,
+                InvoiceDateStr = x.InvoiceDate.Date.ToString(),
+                InvoiceNumber = x.InvoiceNumber,
+                StockId = x.StockId,
+                StockName = x.StockName,
+                SupplierId = x.SupplierId,
+                SupplierName = x.SupplierName,
+                IsActive = x.IsActive,
+                TransactionType = (int)x.TransactionType,
+                InvoiceTotalPrice = x.InvoiceTotalPrice,
+                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
+                {
+                    ID = c.ID,
+                    ProductId = c.ProductId,
+                    ProductName = c.ProductName,
+                    Qty = c.Qty,
+                    UnitId = c.UnitId,
+                    ConversionFactor = c.ConversionFactor,
+                    ProductBarCode = c.ProductBarCode,
+                    PurchasingPrice = c.PurchasingPrice,
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+                    QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+
+                }).ToList(),
+
+            }).FirstOrDefault();
+        }
 
 
-					}).ToList(),
-
-				}).FirstOrDefault();
-			}
-			return null;
-		}
-
-		public IQueryable<PurchaseThrowbackDTO> GetAllByDate(DateTime? date)
-		{
-
-			return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date == date.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseThrowbackDTO
-			{
-				ID = x.ID,
-				InvoiceDateStr = x.InvoiceDate.Date.ToString(),
-				InvoiceNumber = x.InvoiceNumber,
-				StockId = x.StockId,
-				StockName = x.StockName,
-				SupplierId = x.SupplierId,
-				SupplierName = x.SupplierName,
-				IsActive = x.IsActive,
-
-				InvoiceTotalPrice = x.InvoiceTotalPrice,
-				GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
-				{
-					ID = c.ID,
-					ProductId = c.ProductId,
-					ProductName = c.ProductName,
-					Qty = c.Qty,
-					UnitId = c.UnitId,
-					ConversionFactor = c.ConversionFactor,
-					ProductBarCode = c.ProductBarCode,
-					PurchasingPrice = c.PurchasingPrice,
-					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
-					QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+        public PurchaseThrowbackDTO GetByInvoiceDate(DateTime? date)
+        {
+            if (date != null)
+            {
+                return _repoInvoice.GetAllAsNoTracking().Where(p => p.InvoiceDate.Date == date.Value.Date && p.IsActive && !p.IsDeleted).Select(x => new PurchaseThrowbackDTO
+                {
+                    ID = x.ID,
+                    InvoiceDateStr = x.InvoiceDate.Date.ToString(),
+                    InvoiceNumber = x.InvoiceNumber,
+                    StockId = x.StockId,
+                    StockName = x.StockName,
+                    SupplierId = x.SupplierId,
+                    SupplierName = x.SupplierName,
+                    IsActive = x.IsActive,
+                    TransactionType = (int)x.TransactionType,
+                    InvoiceTotalPrice = x.InvoiceTotalPrice,
+                    GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
+                    {
+                        ID = c.ID,
+                        ProductId = c.ProductId,
+                        ProductName = c.ProductName,
+                        Qty = c.Qty,
+                        UnitId = c.UnitId,
+                        ConversionFactor = c.ConversionFactor,
+                        ProductBarCode = c.ProductBarCode,
+                        PurchasingPrice = c.PurchasingPrice,
+                        GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+                        QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
 
 
-				}).ToList(),
+                    }).ToList(),
 
-			});
+                }).FirstOrDefault();
+            }
+            return null;
+        }
 
-		}
-		public IQueryable<PurchaseThrowbackDTO> GetAllByDate(DateTime? fromDate, DateTime? toDate)
-		{
+        public IQueryable<PurchaseThrowbackDTO> GetAllByDate(DateTime? date)
+        {
 
-			return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= fromDate.Value.Date && x.InvoiceDate.Date <= toDate.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseThrowbackDTO
-			{
-				ID = x.ID,
-				InvoiceDateStr = x.InvoiceDate.Date.ToString(),
-				InvoiceNumber = x.InvoiceNumber,
-				StockId = x.StockId,
-				StockName = x.StockName,
-				SupplierId = x.SupplierId,
-				SupplierName = x.SupplierName,
-				IsActive = x.IsActive,
+            return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date == date.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseThrowbackDTO
+            {
+                ID = x.ID,
+                InvoiceDateStr = x.InvoiceDate.Date.ToString(),
+                InvoiceNumber = x.InvoiceNumber,
+                StockId = x.StockId,
+                StockName = x.StockName,
+                SupplierId = x.SupplierId,
+                SupplierName = x.SupplierName,
+                IsActive = x.IsActive,
 
-				InvoiceTotalPrice = x.InvoiceTotalPrice,
-				GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
-				{
-					ID = c.ID,
-					ProductId = c.ProductId,
-					ProductName = c.ProductName,
-					Qty = c.Qty,
-					UnitId = c.UnitId,
-					ConversionFactor = c.ConversionFactor,
-					ProductBarCode = c.ProductBarCode,
-					PurchasingPrice = c.PurchasingPrice,
-					GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
-					QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+                InvoiceTotalPrice = x.InvoiceTotalPrice,
+                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
+                {
+                    ID = c.ID,
+                    ProductId = c.ProductId,
+                    ProductName = c.ProductName,
+                    Qty = c.Qty,
+                    UnitId = c.UnitId,
+                    ConversionFactor = c.ConversionFactor,
+                    ProductBarCode = c.ProductBarCode,
+                    PurchasingPrice = c.PurchasingPrice,
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+                    QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
 
 
-				}).ToList(),
+                }).ToList(),
 
-			});
+            });
 
-		}
-		public DataTableResponse LoadData(DataTableRequest mdl)
-		{
-			var data = _repoInvoice.ExecuteStoredProcedure<PurchaseThrowbackTableDTO>
-				(_spPurchaseThrowback, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
+        }
+        public IQueryable<PurchaseThrowbackDTO> GetAllByDate(DateTime? fromDate, DateTime? toDate)
+        {
 
-			return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
-		}
+            return _repoInvoice.GetAllAsNoTracking().Where(x => x.InvoiceDate.Date >= fromDate.Value.Date && x.InvoiceDate.Date <= toDate.Value.Date).Where(x => !x.IsDeleted && x.IsActive).Select(x => new PurchaseThrowbackDTO
+            {
+                ID = x.ID,
+                InvoiceDateStr = x.InvoiceDate.Date.ToString(),
+                InvoiceNumber = x.InvoiceNumber,
+                StockId = x.StockId,
+                StockName = x.StockName,
+                SupplierId = x.SupplierId,
+                SupplierName = x.SupplierName,
+                IsActive = x.IsActive,
+
+                InvoiceTotalPrice = x.InvoiceTotalPrice,
+                GetInvoiceDetails = x.PurchaseThrowbackDetails.Select(c => new PurchaseThrowbackProductsDTO
+                {
+                    ID = c.ID,
+                    ProductId = c.ProductId,
+                    ProductName = c.ProductName,
+                    Qty = c.Qty,
+                    UnitId = c.UnitId,
+                    ConversionFactor = c.ConversionFactor,
+                    ProductBarCode = c.ProductBarCode,
+                    PurchasingPrice = c.PurchasingPrice,
+                    GetProductUnits = _UnitBll.GetAllByProductId(c.ProductId),
+                    QtyInStockStr = string.Join(" - ", _repoProduct.GetById(c.ProductId).QtyInStock.Value, _repoProduct.GetById(c.ProductId).NameUnitOfQty)
+
+
+                }).ToList(),
+
+            });
+
+        }
+        public DataTableResponse LoadData(DataTableRequest mdl)
+        {
+            var data = _repoInvoice.ExecuteStoredProcedure<PurchaseThrowbackTableDTO>
+                (_spPurchaseThrowback, mdl?.ToSqlParameter(), CommandType.StoredProcedure);
+
+            return new DataTableResponse() { aaData = data, iTotalRecords = data?.FirstOrDefault()?.TotalCount ?? 0 };
+        }
 
         public ResultViewModel GetInvoiceToPrint(Guid? InvoiceId)
         {
@@ -274,72 +274,72 @@ namespace ERP_System.BLL.Guide
         #endregion
         #region Save 
         public ResultViewModel Save(PurchaseThrowbackDTO InvoiceDTO)
-		{
-			ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
+        {
+            ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
 
-			if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Length > 0)
-			{
-				if (InvoiceDTO.InvoiceDetails.Any(x => x.PurchasingPrice == 0))
-				{
-					resultViewModel.Status = false;
-					resultViewModel.Message = "لايمكن حفظ سعر الشراء للوحده بالقيمة 0";
-					return resultViewModel;
-				}
-			}
+            if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Length > 0)
+            {
+                if (InvoiceDTO.InvoiceDetails.Any(x => x.PurchasingPrice == 0))
+                {
+                    resultViewModel.Status = false;
+                    resultViewModel.Message = "لايمكن حفظ سعر الشراء للوحده بالقيمة 0";
+                    return resultViewModel;
+                }
+            }
 
-			var purchaseInvoice = _repoPInvoice.GetById(InvoiceDTO.PurchaseInvoiceId.Value);
-			if (purchaseInvoice == null)
-			{
-				resultViewModel.Status = false;
-				resultViewModel.Message = "خطأ في تحديد فاتورة المشتريات من فضلك تأكد من البحث عن الفاتورة";
-				return resultViewModel;
-			}
-			if(InvoiceDTO.SupplierId == null || InvoiceDTO.SupplierId == Guid.Empty)
-			{
-				resultViewModel.Status = false;
-				resultViewModel.Message = "من فضلك أختر المورد";
-				return resultViewModel;
-			}
-			var AllPurchaseThrowbackInvoices = _repoInvoice.GetAllAsNoTracking().Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted).ToList();
-			var data = _repoInvoice.GetAllAsNoTracking().Include(x => x.PurchaseThrowbackDetails).Where(p => p.ID == InvoiceDTO.ID && p.IsActive && !p.IsDeleted).FirstOrDefault();
-			if(InvoiceDTO.SupplierId == null || InvoiceDTO.SupplierId==Guid.Empty)
-			{
-				resultViewModel.Status = false;
-				resultViewModel.Message = "من فضلك تأكد من اختيار المورد";
-				return resultViewModel;
-			}
-			var Supplier = _repoSupplier.GetById(InvoiceDTO.SupplierId.Value);
-			if (Supplier != null)
-			{
-				if (data != null)
-				{
-					var oldInvoiceTotalPaid = data.TotalPaid ?? 0;
-					var oldInvoiceTotalPrice = data.InvoiceTotalPrice ?? 0;
+            var purchaseInvoice = _repoPInvoice.GetById(InvoiceDTO.PurchaseInvoiceId.Value);
+            if (purchaseInvoice == null)
+            {
+                resultViewModel.Status = false;
+                resultViewModel.Message = "خطأ في تحديد فاتورة المشتريات من فضلك تأكد من البحث عن الفاتورة";
+                return resultViewModel;
+            }
+            if (InvoiceDTO.SupplierId == null || InvoiceDTO.SupplierId == Guid.Empty)
+            {
+                resultViewModel.Status = false;
+                resultViewModel.Message = "من فضلك أختر المورد";
+                return resultViewModel;
+            }
+            var AllPurchaseThrowbackInvoices = _repoInvoice.GetAllAsNoTracking().Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted).ToList();
+            var data = _repoInvoice.GetAllAsNoTracking().Include(x => x.PurchaseThrowbackDetails).Where(p => p.ID == InvoiceDTO.ID && p.IsActive && !p.IsDeleted).FirstOrDefault();
+            if (InvoiceDTO.SupplierId == null || InvoiceDTO.SupplierId == Guid.Empty)
+            {
+                resultViewModel.Status = false;
+                resultViewModel.Message = "من فضلك تأكد من اختيار المورد";
+                return resultViewModel;
+            }
+            var Supplier = _repoSupplier.GetById(InvoiceDTO.SupplierId.Value);
+            if (Supplier != null)
+            {
+                if (data != null)
+                {
+                    var oldInvoiceTotalPaid = data.TotalPaid ?? 0;
+                    var oldInvoiceTotalPrice = data.InvoiceTotalPrice ?? 0;
 
-					var newInvoice = data;
-					newInvoice.StockId = InvoiceDTO.StockId;
-					newInvoice.PurchaseInvoiceId = InvoiceDTO.PurchaseInvoiceId;
-					newInvoice.PurchaseInvoiceDate = InvoiceDTO.PurchaseInvoiceDate;
-					newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
-					newInvoice.AddedTax = data.AddedTax ?? 0;
-					newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
-					newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
-					newInvoice.SupplierId = Supplier.ID;
-					newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
-					newInvoice.TransactionType = (TransactionType?)InvoiceDTO.TransactionType;
-					newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
-					newInvoice.AddedBy = data.AddedBy;
-					newInvoice.ModifiedDate = AppDateTime.Now;
-					newInvoice.ModifiedBy = _repoInvoice.UserId;
-					newInvoice.CreatedDate = data.CreatedDate;
+                    var newInvoice = data;
+                    newInvoice.StockId = InvoiceDTO.StockId;
+                    newInvoice.PurchaseInvoiceId = InvoiceDTO.PurchaseInvoiceId;
+                    newInvoice.PurchaseInvoiceDate = InvoiceDTO.PurchaseInvoiceDate;
+                    newInvoice.StockName = _repoStock.GetById(newInvoice.StockId).Name;
+                    newInvoice.AddedTax = data.AddedTax ?? 0;
+                    newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
+                    newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
+                    newInvoice.SupplierId = Supplier.ID;
+                    newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
+                    newInvoice.TransactionType = (TransactionType?)InvoiceDTO.TransactionType;
+                    newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
+                    newInvoice.AddedBy = data.AddedBy;
+                    newInvoice.ModifiedDate = AppDateTime.Now;
+                    newInvoice.ModifiedBy = _repoInvoice.UserId;
+                    newInvoice.CreatedDate = data.CreatedDate;
 
-					
-					#region Supplier ProcessType and Amount
-					
-					var InvoiceTotalPaid = newInvoice.TotalPaid ?? 0;
-					var invoiceTotPrice = newInvoice.InvoiceTotalPrice??0;
-					var diffPrice = invoiceTotPrice- InvoiceTotalPaid;
-					var oldDiff = oldInvoiceTotalPrice - oldInvoiceTotalPaid;
+
+                    #region Supplier ProcessType and Amount
+
+                    var InvoiceTotalPaid = newInvoice.TotalPaid ?? 0;
+                    var invoiceTotPrice = newInvoice.InvoiceTotalPrice ?? 0;
+                    var diffPrice = invoiceTotPrice - InvoiceTotalPaid;
+                    var oldDiff = oldInvoiceTotalPrice - oldInvoiceTotalPaid;
 
                     Supplier.ProcessAmount = Supplier.ProcessAmount + oldDiff;
                     Supplier.ProcessAmount = Supplier.ProcessAmount - diffPrice;
@@ -353,214 +353,215 @@ namespace ERP_System.BLL.Guide
 
 
                     decimal? TotalPrice = 0;
-					var oldInvoiceDetails = data.PurchaseThrowbackDetails;
-					if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
-					{
+                    var oldInvoiceDetails = data.PurchaseThrowbackDetails;
+                    if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
+                    {
 
-						var AllInvoiceProducts = new List<Product>();
-						var AllDetails = new List<PurchaseThrowbackDetail>();
-						foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
-						{
-							var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
-							var purchaseProduct = purchaseInvoice.GetInvoiceDetails.Where(x => x.ID == invoiceDetail.PurchaseDetailId ).FirstOrDefault();
-							var existPurchaseThrowbackProduct = _repoInvoice.GetAllAsNoTracking()
-									.Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted && x.PurchaseInvoiceDate == InvoiceDTO.PurchaseInvoiceDate && x.PurchaseThrowbackDetails.Any(x => x.ProductId == invoiceDetail.ProductId && x.UnitId==invoiceDetail.UnitId && !x.IsDeleted))
-									.Select(x => new SaleThrowbackproductDto
-									{
-										ConversionFactor = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId  && !x.IsDeleted).FirstOrDefault().ConversionFactor,
-										Qty = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId  && !x.IsDeleted).FirstOrDefault().Qty
-									});
-							decimal? alreadyThrowbacks = 0;
-							if(purchaseProduct != null)
-							{
-								var canThrowback = (invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value) > (purchaseProduct.Qty.Value * purchaseProduct.ConversionFactor.Value);
-								if (canThrowback)
-								{
-									resultViewModel.Status = false;
-									resultViewModel.Message = "لا يمكن إرجاع كمية أكبر من الكمية الموجودة بفاتورة المشتريات " + purchaseProduct.ProductName;
-									return resultViewModel;
-								}
+                        var AllInvoiceProducts = new List<Product>();
+                        var AllDetails = new List<PurchaseThrowbackDetail>();
+                        foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
+                        {
+                            var oldDetail = oldInvoiceDetails.Where(x => x.ID == invoiceDetail.ID).FirstOrDefault();
+                            var purchaseProduct = purchaseInvoice.GetInvoiceDetails.Where(x => x.ID == invoiceDetail.PurchaseDetailId).FirstOrDefault();
+                            var existPurchaseThrowbackProduct = _repoInvoice.GetAllAsNoTracking()
+                                    .Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted && x.PurchaseInvoiceDate == InvoiceDTO.PurchaseInvoiceDate && x.PurchaseThrowbackDetails.Any(x => x.ProductId == invoiceDetail.ProductId && x.UnitId == invoiceDetail.UnitId && !x.IsDeleted))
+                                    .Select(x => new SaleThrowbackproductDto
+                                    {
+                                        ConversionFactor = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId && !x.IsDeleted).FirstOrDefault().ConversionFactor,
+                                        Qty = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId && !x.IsDeleted).FirstOrDefault().Qty
+                                    });
+                            decimal? alreadyThrowbacks = 0;
+                            if (purchaseProduct != null)
+                            {
+                                var canThrowback = (invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value) > (purchaseProduct.Qty.Value * purchaseProduct.ConversionFactor.Value);
+                                if (canThrowback)
+                                {
+                                    resultViewModel.Status = false;
+                                    resultViewModel.Message = "لا يمكن إرجاع كمية أكبر من الكمية الموجودة بفاتورة المشتريات " + purchaseProduct.ProductName;
+                                    return resultViewModel;
+                                }
 
-								if (existPurchaseThrowbackProduct != null)
-								{
-									foreach (var item in existPurchaseThrowbackProduct)
-									{
-										alreadyThrowbacks += item.Qty * item.ConversionFactor;
-									}
-									canThrowback = (invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value) > (((purchaseProduct.Qty.Value * purchaseProduct.ConversionFactor.Value) +(oldDetail.Qty.Value * oldDetail.ConversionFactor.Value) ) - (alreadyThrowbacks));
-									if (canThrowback)
-									{
-										resultViewModel.Status = false;
-										resultViewModel.Message = "لايمكن إرجاع الكمية لانها تمت إرجاعها من قبل " + invoiceDetail.ProductName;
-										return resultViewModel;
-									}
-								}
+                                if (existPurchaseThrowbackProduct != null)
+                                {
+                                    foreach (var item in existPurchaseThrowbackProduct)
+                                    {
+                                        alreadyThrowbacks += item.Qty * item.ConversionFactor;
+                                    }
+                                    canThrowback = (invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value) > (((purchaseProduct.Qty.Value * purchaseProduct.ConversionFactor.Value) + (oldDetail.Qty.Value * oldDetail.ConversionFactor.Value)) - (alreadyThrowbacks));
+                                    if (canThrowback)
+                                    {
+                                        resultViewModel.Status = false;
+                                        resultViewModel.Message = "لايمكن إرجاع الكمية لانها تمت إرجاعها من قبل " + invoiceDetail.ProductName;
+                                        return resultViewModel;
+                                    }
+                                }
 
-								var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(c => c.ProductId == invoiceDetail.ProductId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
-								if (product != null)
-								{
-									var existProduct = AllInvoiceProducts.Where(x => x.BarCodeText == product.BarCodeText).FirstOrDefault();
-									IQueryable<ProductUnit> productUnit = null;
-									decimal? QtyInStock = 0;
-									decimal? ConversionFactor = 0;
-									dynamic? TotalQtyInStock = 0;
-									if (existProduct != null)
-									{
-										productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-										QtyInStock = existProduct.QtyInStock ?? 0;
-										ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-										TotalQtyInStock = QtyInStock * ConversionFactor;
-									}
-									else
-									{
-										productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-										QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
-										ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-										TotalQtyInStock = QtyInStock * ConversionFactor;
-									}
+                                var product = _repoProduct.GetAll().Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(c => c.ProductId == invoiceDetail.ProductId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
+                                if (product != null)
+                                {
+                                    var existProduct = AllInvoiceProducts.Where(x => x.BarCodeText == product.BarCodeText).FirstOrDefault();
+                                    IQueryable<ProductUnit> productUnit = null;
+                                    decimal? QtyInStock = 0;
+                                    decimal? ConversionFactor = 0;
+                                    dynamic? TotalQtyInStock = 0;
+                                    if (existProduct != null)
+                                    {
+                                        productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+                                        QtyInStock = existProduct.QtyInStock ?? 0;
+                                        ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                        TotalQtyInStock = QtyInStock * ConversionFactor;
+                                    }
+                                    else
+                                    {
+                                        productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+                                        QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock;
+                                        ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                        TotalQtyInStock = QtyInStock * ConversionFactor;
+                                    }
 
-									if (oldDetail != null)
-									{
-										var oldEntireQty = oldDetail.Qty * oldDetail.ConversionFactor;
-										TotalQtyInStock = TotalQtyInStock + oldEntireQty;
-										var requiredQty = invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value;
+                                    if (oldDetail != null)
+                                    {
+                                        var oldEntireQty = oldDetail.Qty * oldDetail.ConversionFactor;
+                                        TotalQtyInStock = TotalQtyInStock + oldEntireQty;
+                                        var requiredQty = invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value;
 
 
-										product.QtyInStock = TotalQtyInStock;
-										product.QtyInStock = TotalQtyInStock - requiredQty;
-										product.QtyInStock = product.QtyInStock / ConversionFactor;
-										product.QtyInStock = Math.Abs(product.QtyInStock.Value);
+                                        product.QtyInStock = TotalQtyInStock;
+                                        product.QtyInStock = TotalQtyInStock - requiredQty;
+                                        product.QtyInStock = product.QtyInStock / ConversionFactor;
+                                        product.QtyInStock = Math.Abs(product.QtyInStock.Value);
 
-										if (product.QtyInStock < 0)
-										{
-											resultViewModel.Status = false;
-											resultViewModel.Message = " الكمية المطلوب استرجاعها للمنتج " + product.Name + " غير متوفرة  ";
-											return resultViewModel;
-										}
-										else
-										{
-											AllInvoiceProducts.Remove(existProduct);
-											AllInvoiceProducts.Add(product);
+                                        if (product.QtyInStock < 0)
+                                        {
+                                            resultViewModel.Status = false;
+                                            resultViewModel.Message = " الكمية المطلوب استرجاعها للمنتج " + product.Name + " غير متوفرة  ";
+                                            return resultViewModel;
+                                        }
+                                        else
+                                        {
+                                            AllInvoiceProducts.Remove(existProduct);
+                                            AllInvoiceProducts.Add(product);
 
-											oldDetail.Qty = invoiceDetail.Qty;
-											oldDetail.ConversionFactor = invoiceDetail.ConversionFactor;
-											oldDetail.TotalQtyPrice = invoiceDetail.TotalQtyPrice;
-											oldDetail.TotalQtyPrice = invoiceDetail.TotalQtyPrice;
-											oldDetail.PurchasingPrice = invoiceDetail.PurchasingPrice;
-											oldDetail.UnitId = invoiceDetail.UnitId;
-											oldDetail.ProductBarCode = invoiceDetail.ProductBarCode;
-											oldDetail.ProductName = invoiceDetail.ProductName;
-											oldDetail.ProductId = invoiceDetail.ProductId;
-											oldDetail.PurchaseDetailId = invoiceDetail.PurchaseDetailId;
-											oldDetail.PurchaseThrowbackId = oldDetail.PurchaseThrowbackId;
-											AllDetails.Add(oldDetail);
+                                            oldDetail.Qty = invoiceDetail.Qty;
+                                            oldDetail.ConversionFactor = invoiceDetail.ConversionFactor;
+                                            oldDetail.TotalQtyPrice = invoiceDetail.TotalQtyPrice;
+                                            oldDetail.TotalQtyPrice = invoiceDetail.TotalQtyPrice;
+                                            oldDetail.PurchasingPrice = invoiceDetail.PurchasingPrice;
+                                            oldDetail.UnitId = invoiceDetail.UnitId;
+                                            oldDetail.ProductBarCode = invoiceDetail.ProductBarCode;
+                                            oldDetail.ProductName = invoiceDetail.ProductName;
+                                            oldDetail.ProductId = invoiceDetail.ProductId;
+                                            oldDetail.PurchaseDetailId = invoiceDetail.PurchaseDetailId;
+                                            oldDetail.PurchaseThrowbackId = oldDetail.PurchaseThrowbackId;
+                                            AllDetails.Add(oldDetail);
 
-										}
-									}
-									else
-									{
+                                        }
+                                    }
+                                    else
+                                    {
 
-										var requiredAQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
+                                        var requiredAQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
 
-										product.QtyInStock = TotalQtyInStock - requiredAQty.Value;
-										product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
-										if (requiredAQty > product.QtyInStock)
-										{
-											resultViewModel.Status = false;
-											resultViewModel.Message = " الكمية المطلوب استرجاعها للمنتج " + product.Name + " غير متوفرة  ";
-											return resultViewModel;
-										}
-										else
-										{
-											AllInvoiceProducts.Remove(existProduct);
-											AllInvoiceProducts.Add(product);
+                                        product.QtyInStock = TotalQtyInStock - requiredAQty.Value;
+                                        product.QtyInStock = Math.Round((product.QtyInStock.Value / ConversionFactor.Value), 2);
+                                        if (requiredAQty > product.QtyInStock)
+                                        {
+                                            resultViewModel.Status = false;
+                                            resultViewModel.Message = " الكمية المطلوب استرجاعها للمنتج " + product.Name + " غير متوفرة  ";
+                                            return resultViewModel;
+                                        }
+                                        else
+                                        {
+                                            AllInvoiceProducts.Remove(existProduct);
+                                            AllInvoiceProducts.Add(product);
 
-											var newInvoiceDetail = new PurchaseThrowbackDetail()
-											{
-												AddedBy = _repoInvoice.UserId,
-												IsActive = true,
-												UnitId = invoiceDetail.UnitId,
-												ConversionFactor = invoiceDetail.ConversionFactor,
-												ProductBarCode = invoiceDetail.ProductBarCode,
-												ProductId = invoiceDetail.ProductId,
-												PurchasingPrice = invoiceDetail.PurchasingPrice,
-												Qty = invoiceDetail.Qty,
-												ID = Guid.NewGuid(),
-												TotalQtyPrice = invoiceDetail.TotalQtyPrice,
-												PurchaseThrowbackId = newInvoice.ID,
-												ProductName = product.Name
-											};
-											AllDetails.Add(newInvoiceDetail);
-										}
-									}
-								}
-								else
-								{
-									resultViewModel.Status = false;
-									resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد";
-									return resultViewModel;
+                                            var newInvoiceDetail = new PurchaseThrowbackDetail()
+                                            {
+                                                AddedBy = _repoInvoice.UserId,
+                                                IsActive = true,
+                                                UnitId = invoiceDetail.UnitId,
+                                                ConversionFactor = invoiceDetail.ConversionFactor,
+                                                ProductBarCode = invoiceDetail.ProductBarCode,
+                                                ProductId = invoiceDetail.ProductId,
+                                                PurchasingPrice = invoiceDetail.PurchasingPrice,
+                                                Qty = invoiceDetail.Qty,
+                                                ID = Guid.NewGuid(),
+                                                TotalQtyPrice = invoiceDetail.TotalQtyPrice,
+                                                PurchaseThrowbackId = newInvoice.ID,
+                                                ProductName = product.Name
+                                            };
+                                            AllDetails.Add(newInvoiceDetail);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    resultViewModel.Status = false;
+                                    resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد";
+                                    return resultViewModel;
 
-								}
-							}
-							else
-							{
-								resultViewModel.Status = false;
-								resultViewModel.Message = "لايمكن إرجاع منتج غير موجود بفاتورة المشتريات من فضلك تأكد من وجود المنتجات المراد عمل ارجاع لها بفاتورة المشتريات";
-								return resultViewModel;
-							}
-							
-						}
+                                }
+                            }
+                            else
+                            {
+                                resultViewModel.Status = false;
+                                resultViewModel.Message = "لايمكن إرجاع منتج غير موجود بفاتورة المشتريات من فضلك تأكد من وجود المنتجات المراد عمل ارجاع لها بفاتورة المشتريات";
+                                return resultViewModel;
+                            }
 
-						#region Save
-						var deleteInvoiceDetaails = _repoInvoiceDetail.DeleteRange(oldInvoiceDetails);
-						var saveInvoiceDetaails = _repoInvoiceDetail.InsertRange(AllDetails);
+                        }
 
-						if (deleteInvoiceDetaails && saveInvoiceDetaails && _repoSupplier.Update(Supplier))
-						{
-							foreach (var item in AllInvoiceProducts)
-							{
-								_repoProduct.Update(item);
-							}
-							_repoInvoice.Update(newInvoice);
-							resultViewModel.Status = true;
-							resultViewModel.Message = AppConstants.Messages.SavedSuccess;
-						}
-						else
-						{
-							resultViewModel.Status = false;
-							resultViewModel.Message = "خطأ في حفظ تفاصيل الفاتورة";
-							return resultViewModel;
+                        #region Save
+                        var deleteInvoiceDetaails = _repoInvoiceDetail.DeleteRange(oldInvoiceDetails);
+                        var saveInvoiceDetaails = _repoInvoiceDetail.InsertRange(AllDetails);
 
-						}
-						#endregion
-					}
-					else
-					{
-						resultViewModel.Status = false;
-						resultViewModel.Message = "هذه الفاتورة لا تحتوي علي منتجات";
-					}
-				}
-				else
-				{
-					var newInvoice = new PurchaseThrowback();
-					newInvoice.StockId = InvoiceDTO.StockId;
-					newInvoice.InvoiceDate = DateTime.Now;
-					newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
-					newInvoice.AddedTax = InvoiceDTO.AddedTax ?? 0;
-					newInvoice.PurchaseInvoiceId = InvoiceDTO.PurchaseInvoiceId;
-					newInvoice.PurchaseInvoiceDate = InvoiceDTO.PurchaseInvoiceDate;
-					newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
-					newInvoice.SupplierId = Supplier.ID;
-					newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
-					newInvoice.TransactionType = (TransactionType?)InvoiceDTO.TransactionType;
-					newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0 ;
-					newInvoice.AddedBy = _repoInvoice.UserId;
-					
+                        if (deleteInvoiceDetaails && saveInvoiceDetaails && _repoSupplier.Update(Supplier))
+                        {
+                            foreach (var item in AllInvoiceProducts)
+                            {
+                                _repoProduct.Update(item);
+                            }
+                            _repoInvoice.Update(newInvoice);
+                            resultViewModel.Status = true;
+                            resultViewModel.Message = AppConstants.Messages.SavedSuccess;
+                        }
+                        else
+                        {
+                            resultViewModel.Status = false;
+                            resultViewModel.Message = "خطأ في حفظ تفاصيل الفاتورة";
+                            return resultViewModel;
 
-					#region Supplier Process Type And Amount
-					var InvoiceTotalPaid = newInvoice.TotalPaid ?? 0;
-					var invoiceTotPrice = newInvoice.InvoiceTotalPrice.Value;
-					var diffPrice = invoiceTotPrice+ InvoiceTotalPaid;
+                        }
+                        #endregion
+                    }
+                    else
+                    {
+                        resultViewModel.Status = false;
+                        resultViewModel.Message = "هذه الفاتورة لا تحتوي علي منتجات";
+                    }
+                }
+                else
+                {
+                    var newInvoice = new PurchaseThrowback();
+                    newInvoice.StockId = InvoiceDTO.StockId;
+                    newInvoice.InvoiceDate = DateTime.Now;
+                    newInvoice.InvoiceNumber = InvoiceDTO.InvoiceNumber;
+                    newInvoice.AddedTax = InvoiceDTO.AddedTax ?? 0;
+                    newInvoice.PurchaseInvoiceId = InvoiceDTO.PurchaseInvoiceId;
+                    newInvoice.PurchaseInvoiceDate = InvoiceDTO.PurchaseInvoiceDate;
+                    newInvoice.InvoiceDate = InvoiceDTO.InvoiceDate;
+                    newInvoice.SupplierId = Supplier.ID;
+                    newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
+                    newInvoice.TransactionType = (TransactionType?)InvoiceDTO.TransactionType;
+                    newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
+                    newInvoice.AddedBy = _repoInvoice.UserId;
+                    newInvoice.CreatedDate = DateTime.Now;
+
+
+                    #region Supplier Process Type And Amount
+                    var InvoiceTotalPaid = newInvoice.TotalPaid ?? 0;
+                    var invoiceTotPrice = newInvoice.InvoiceTotalPrice.Value;
+                    var diffPrice = invoiceTotPrice + InvoiceTotalPaid;
 
                     Supplier.ProcessAmount = Supplier.ProcessAmount - diffPrice;
 
@@ -573,244 +574,244 @@ namespace ERP_System.BLL.Guide
                     #endregion
 
                     if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)
-					{
-						if (_repoInvoice.Insert(newInvoice))
-						{
-							var AllInvoiceProducts = new List<Product>();
-							var AllDetails = new List<PurchaseThrowbackDetail>();
-							foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
-							{
+                    {
+                        if (_repoInvoice.Insert(newInvoice))
+                        {
+                            var AllInvoiceProducts = new List<Product>();
+                            var AllDetails = new List<PurchaseThrowbackDetail>();
+                            foreach (var invoiceDetail in InvoiceDTO.InvoiceDetails)
+                            {
 
-								var purchaseProduct = purchaseInvoice.GetInvoiceDetails.Where(x => x.ID == invoiceDetail.PurchaseDetailId).FirstOrDefault();
-								var existPurchaseThrowbackProduct = _repoInvoice.GetAllAsNoTracking()
-									.Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted && x.PurchaseInvoiceDate == InvoiceDTO.PurchaseInvoiceDate && x.PurchaseThrowbackDetails.Any(x => x.ProductId == invoiceDetail.ProductId && x.UnitId == invoiceDetail.UnitId && !x.IsDeleted))
-									.Select(x => new SaleThrowbackproductDto
-									{
-										ConversionFactor = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId  && !x.IsDeleted).FirstOrDefault().ConversionFactor,
-										Qty = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId && !x.IsDeleted).FirstOrDefault().Qty
-									});
-								decimal? alreadyThrowbacks = 0;
+                                var purchaseProduct = purchaseInvoice.GetInvoiceDetails.Where(x => x.ID == invoiceDetail.PurchaseDetailId).FirstOrDefault();
+                                var existPurchaseThrowbackProduct = _repoInvoice.GetAllAsNoTracking()
+                                    .Where(x => x.PurchaseInvoiceId == InvoiceDTO.PurchaseInvoiceId && !x.IsDeleted && x.PurchaseInvoiceDate == InvoiceDTO.PurchaseInvoiceDate && x.PurchaseThrowbackDetails.Any(x => x.ProductId == invoiceDetail.ProductId && x.UnitId == invoiceDetail.UnitId && !x.IsDeleted))
+                                    .Select(x => new SaleThrowbackproductDto
+                                    {
+                                        ConversionFactor = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId && !x.IsDeleted).FirstOrDefault().ConversionFactor,
+                                        Qty = x.PurchaseThrowbackDetails.Where(xx => xx.ProductId == invoiceDetail.ProductId && !x.IsDeleted).FirstOrDefault().Qty
+                                    });
+                                decimal? alreadyThrowbacks = 0;
 
-								if (purchaseProduct != null)
-								{
+                                if (purchaseProduct != null)
+                                {
 
-									var canThrowback = (invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value) > (purchaseProduct.Qty.Value * purchaseProduct.ConversionFactor.Value);
-									if (canThrowback)
-									{
-										resultViewModel.Status = false;
-										resultViewModel.Message = "لا يمكن إرجاع كمية أكبر من الكمية التي تم شراؤها للمنتج " + purchaseProduct.ProductName;
-										_repoInvoice.Detached(newInvoice);
-										newInvoice.IsDeleted = true;
-										_repoInvoice.Update(newInvoice);
-										return resultViewModel;
-									}
-									if (existPurchaseThrowbackProduct != null)
-									{
-										foreach (var item in existPurchaseThrowbackProduct)
-										{
-											alreadyThrowbacks += item.Qty* item.ConversionFactor;
-										}
-										canThrowback = (invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value) > ((purchaseProduct.Qty.Value * purchaseProduct.ConversionFactor.Value) - (alreadyThrowbacks));
-										if (canThrowback)
-										{
-											resultViewModel.Status = false;
-											resultViewModel.Message = "لايمكن إرجاع الكمية لانها تمت إرجاعها من قبل " + invoiceDetail.ProductName;
-											_repoInvoice.Detached(newInvoice);
-											newInvoice.IsDeleted = true;
-											_repoInvoice.Update(newInvoice);
-											return resultViewModel;
-										}
-									}
+                                    var canThrowback = (invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value) > (purchaseProduct.Qty.Value * purchaseProduct.ConversionFactor.Value);
+                                    if (canThrowback)
+                                    {
+                                        resultViewModel.Status = false;
+                                        resultViewModel.Message = "لا يمكن إرجاع كمية أكبر من الكمية التي تم شراؤها للمنتج " + purchaseProduct.ProductName;
+                                        _repoInvoice.Detached(newInvoice);
+                                        newInvoice.IsDeleted = true;
+                                        _repoInvoice.Update(newInvoice);
+                                        return resultViewModel;
+                                    }
+                                    if (existPurchaseThrowbackProduct != null)
+                                    {
+                                        foreach (var item in existPurchaseThrowbackProduct)
+                                        {
+                                            alreadyThrowbacks += item.Qty * item.ConversionFactor;
+                                        }
+                                        canThrowback = (invoiceDetail.Qty.Value * invoiceDetail.ConversionFactor.Value) > ((purchaseProduct.Qty.Value * purchaseProduct.ConversionFactor.Value) - (alreadyThrowbacks));
+                                        if (canThrowback)
+                                        {
+                                            resultViewModel.Status = false;
+                                            resultViewModel.Message = "لايمكن إرجاع الكمية لانها تمت إرجاعها من قبل " + invoiceDetail.ProductName;
+                                            _repoInvoice.Detached(newInvoice);
+                                            newInvoice.IsDeleted = true;
+                                            _repoInvoice.Update(newInvoice);
+                                            return resultViewModel;
+                                        }
+                                    }
 
-									var product = _repoProduct.GetAll().Include(x => x.ProductUnits).Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId && x.StockId == InvoiceDTO.StockId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
-									var existProduct = AllInvoiceProducts.Where(x => x.BarCodeText == product.BarCodeText).FirstOrDefault();
-									//var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-
-
-									decimal? QtyInStock = 0;
-									decimal? ConversionFactor = 0;
-									dynamic? TotalQtyInStock = 0;
-									if (product != null)
-									{
-									var productUnit =product.ProductUnits.ToList();
-										var currentUnit = _repoUnit.GetById(invoiceDetail.UnitId.Value);
-										if (currentUnit == null)
-										{
-											resultViewModel.Status = false;
-											resultViewModel.Message = $"الوحده للمنتج بالباركود {invoiceDetail.ProductBarCode} غير موجوده بالنظام";
-											_repoInvoice.Detached(newInvoice);
-											newInvoice.IsDeleted = true;
-											_repoInvoice.Update(newInvoice);
-											return resultViewModel;
-										}
-										if (!productUnit.Any(x => x.UnitId == invoiceDetail.UnitId && !x.IsDeleted))
-										{
-											resultViewModel.Status = false;
-											resultViewModel.Message = $"الوحده {currentUnit.Name} غير موجوده بوحدات المنتج {product.Name}";
-											_repoInvoice.Detached(newInvoice);
-											newInvoice.IsDeleted = true;
-											_repoInvoice.Update(newInvoice);
-											return resultViewModel;
-
-										}
-										if (existProduct != null)
-										{
-											//productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-											QtyInStock = existProduct.QtyInStock ?? 0;
-											//ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-											ConversionFactor = productUnit.Where(x => x.UnitId == product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-											TotalQtyInStock = QtyInStock * ConversionFactor;
-										}
-										else
-										{
-											//productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
-											QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock ?? 0;
-											//ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-											ConversionFactor = productUnit.Where(x => x.UnitId == product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
-											TotalQtyInStock = QtyInStock * ConversionFactor;
-										}
-
-										var TotalRequiredQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
-
-										if (TotalRequiredQty > TotalQtyInStock)
-										{
-											resultViewModel.Status = false;
-											resultViewModel.Message = " الكمية المراد استرجاعها من المنتج " + product.Name + " غير متوفرة ";
-											_repoInvoice.Detached(newInvoice);
-											newInvoice.IsDeleted = true;
-											_repoInvoice.Update(newInvoice);
-											return resultViewModel;
-										}
-										else
-										{
-											product.QtyInStock = TotalQtyInStock - TotalRequiredQty;
-											product.QtyInStock = product.QtyInStock / ConversionFactor;
-											product.QtyInStock = Math.Round(product.QtyInStock.Value, 2);
-											AllInvoiceProducts.Remove(existProduct);
-											AllInvoiceProducts.Add(product);
-											var newInvoiceDetail = new PurchaseThrowbackDetail()
-											{
-												AddedBy = _repoInvoice.UserId,
-												IsActive = true,
-												UnitId = invoiceDetail.UnitId,
-												ConversionFactor = invoiceDetail.ConversionFactor,
-												ProductBarCode = invoiceDetail.ProductBarCode,
-												ProductId = invoiceDetail.ProductId,
-												PurchasingPrice = invoiceDetail.PurchasingPrice,
-												PurchaseDetailId = invoiceDetail.PurchaseDetailId,
-												Qty = invoiceDetail.Qty,
-												ID = Guid.NewGuid(),
-												TotalQtyPrice = invoiceDetail.TotalQtyPrice,
-												PurchaseThrowbackId = newInvoice.ID,
-												ProductName = product.Name
-											};
-											AllDetails.Add(newInvoiceDetail);
-										}
-									}
-									else
-									{
-										resultViewModel.Status = false;
-										resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد ";
-										_repoInvoice.Detached(newInvoice);
-										newInvoice.IsDeleted = true;
-										_repoInvoice.Update(newInvoice);
-										return resultViewModel;
-
-									}
+                                    var product = _repoProduct.GetAll().Include(x => x.ProductUnits).Where(x => x.ID == invoiceDetail.ProductId.Value && x.StockProducts.Any(x => x.ProductId == invoiceDetail.ProductId && x.StockId == InvoiceDTO.StockId) && (x.BarCodeText.Trim() == invoiceDetail.ProductBarCode.Trim() || x.ProductUnits.Any(x => x.UnitBarcodeText.Trim() == invoiceDetail.ProductBarCode.Trim()))).FirstOrDefault();
+                                    var existProduct = AllInvoiceProducts.Where(x => x.BarCodeText == product.BarCodeText).FirstOrDefault();
+                                    //var productUnit = _repoProductUnit.GetAll().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
 
 
-								}
-								else
-								{
-									resultViewModel.Status = false;
-									resultViewModel.Message = "لايمكن إرجاع منتج غير موجود بفاتورة المشتريات من فضلك تأكد من وجود المنتجات المراد عمل ارجاع لها بفاتورة المشتريات";
-									_repoInvoice.Detached(newInvoice);
-									newInvoice.IsDeleted = true;
-									_repoInvoice.Update(newInvoice);
-									return resultViewModel;
-								}
+                                    decimal? QtyInStock = 0;
+                                    decimal? ConversionFactor = 0;
+                                    dynamic? TotalQtyInStock = 0;
+                                    if (product != null)
+                                    {
+                                        var productUnit = product.ProductUnits.ToList();
+                                        var currentUnit = _repoUnit.GetById(invoiceDetail.UnitId.Value);
+                                        if (currentUnit == null)
+                                        {
+                                            resultViewModel.Status = false;
+                                            resultViewModel.Message = $"الوحده للمنتج بالباركود {invoiceDetail.ProductBarCode} غير موجوده بالنظام";
+                                            _repoInvoice.Detached(newInvoice);
+                                            newInvoice.IsDeleted = true;
+                                            _repoInvoice.Update(newInvoice);
+                                            return resultViewModel;
+                                        }
+                                        if (!productUnit.Any(x => x.UnitId == invoiceDetail.UnitId && !x.IsDeleted))
+                                        {
+                                            resultViewModel.Status = false;
+                                            resultViewModel.Message = $"الوحده {currentUnit.Name} غير موجوده بوحدات المنتج {product.Name}";
+                                            _repoInvoice.Detached(newInvoice);
+                                            newInvoice.IsDeleted = true;
+                                            _repoInvoice.Update(newInvoice);
+                                            return resultViewModel;
 
-							}
+                                        }
+                                        if (existProduct != null)
+                                        {
+                                            //productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+                                            QtyInStock = existProduct.QtyInStock ?? 0;
+                                            //ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                            ConversionFactor = productUnit.Where(x => x.UnitId == product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                            TotalQtyInStock = QtyInStock * ConversionFactor;
+                                        }
+                                        else
+                                        {
+                                            //productUnit = _repoProductUnit.GetAllAsNoTracking().Include(x => x.Product).Where(x => x.ProductId == invoiceDetail.ProductId && x.IsActive && !x.IsDeleted);
+                                            QtyInStock = productUnit.FirstOrDefault().Product.QtyInStock ?? 0;
+                                            //ConversionFactor = productUnit.Where(x => x.UnitId == productUnit.FirstOrDefault().Product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                            ConversionFactor = productUnit.Where(x => x.UnitId == product.IdUnitOfQty).Select(x => x.ConversionFactor).FirstOrDefault();
+                                            TotalQtyInStock = QtyInStock * ConversionFactor;
+                                        }
 
-							#region Save
-							if (_repoInvoiceDetail.InsertRange(AllDetails) && _repoSupplier.Update(Supplier))
-							{
-								resultViewModel.Status = true;
-								resultViewModel.Message = AppConstants.Messages.SavedSuccess;
-								var DataToPrint = _repoInvoice.ExecuteStoredProcedure<PurchaseThrowbackInvoicePrintDto>("[Report].[spGetPurchaseThrowbackInvoiceToPrint]", new[]  {
-						new SqlParameter("@invoiceId",newInvoice.ID)
-						}, CommandType.StoredProcedure);
-								if (DataToPrint != null)
-								{
-									DataToPrint.FirstOrDefault().CompanyImageFullPath = _weebhost.WebRootPath + DataToPrint.FirstOrDefault().CompanyImage;
+                                        var TotalRequiredQty = invoiceDetail.Qty * invoiceDetail.ConversionFactor;
 
-								}
-								resultViewModel.Data = DataToPrint;
-							}
-							else
-							{
-								_repoInvoice.Detached(newInvoice);
-								newInvoice.IsDeleted = true;
-								_repoInvoice.Update(newInvoice);
-								resultViewModel.Status = false;
-								resultViewModel.Message = AppConstants.Messages.SavedFailed;
-								
-							}
+                                        if (TotalRequiredQty > TotalQtyInStock)
+                                        {
+                                            resultViewModel.Status = false;
+                                            resultViewModel.Message = " الكمية المراد استرجاعها من المنتج " + product.Name + " غير متوفرة ";
+                                            _repoInvoice.Detached(newInvoice);
+                                            newInvoice.IsDeleted = true;
+                                            _repoInvoice.Update(newInvoice);
+                                            return resultViewModel;
+                                        }
+                                        else
+                                        {
+                                            product.QtyInStock = TotalQtyInStock - TotalRequiredQty;
+                                            product.QtyInStock = product.QtyInStock / ConversionFactor;
+                                            product.QtyInStock = Math.Round(product.QtyInStock.Value, 2);
+                                            AllInvoiceProducts.Remove(existProduct);
+                                            AllInvoiceProducts.Add(product);
+                                            var newInvoiceDetail = new PurchaseThrowbackDetail()
+                                            {
+                                                AddedBy = _repoInvoice.UserId,
+                                                IsActive = true,
+                                                UnitId = invoiceDetail.UnitId,
+                                                ConversionFactor = invoiceDetail.ConversionFactor,
+                                                ProductBarCode = invoiceDetail.ProductBarCode,
+                                                ProductId = invoiceDetail.ProductId,
+                                                PurchasingPrice = invoiceDetail.PurchasingPrice,
+                                                PurchaseDetailId = invoiceDetail.PurchaseDetailId,
+                                                Qty = invoiceDetail.Qty,
+                                                ID = Guid.NewGuid(),
+                                                TotalQtyPrice = invoiceDetail.TotalQtyPrice,
+                                                PurchaseThrowbackId = newInvoice.ID,
+                                                ProductName = product.Name
+                                            };
+                                            AllDetails.Add(newInvoiceDetail);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        resultViewModel.Status = false;
+                                        resultViewModel.Message = " لا يوجد منتج بهذا الباركود " + invoiceDetail.ProductBarCode + " أو المنتج المختار لاينتمي الي المخزن المحدد ";
+                                        _repoInvoice.Detached(newInvoice);
+                                        newInvoice.IsDeleted = true;
+                                        _repoInvoice.Update(newInvoice);
+                                        return resultViewModel;
 
-							#endregion
-						}
-						else
-						{
-							resultViewModel.Status = false;
-							resultViewModel.Message = AppConstants.Messages.SavedFailed;
-						}
-					}
-					else
-					{
-						resultViewModel.Status = false;
-						resultViewModel.Message = "هذه الفاتورة لا تحتوي علي منتجات";
-					}
-				}
-			}
-			else
-			{
-				resultViewModel.Status = false;
-				resultViewModel.Message = "من فضلك تأكد من المورد";
-
-			}
-
-			return resultViewModel;
-		}
-		#endregion
-
-
-		#region Delete
-		public ResultViewModel Delete(Guid id)
-		{
-			ResultViewModel resultViewModel = new ResultViewModel();
-			var tbl = _repoInvoice.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
-
-			if (tbl == null)
-			{
-				resultViewModel.Status = false;
-				resultViewModel.Message = AppConstants.Messages.DeletedFailed;
-				return resultViewModel;
-			}
-
-			tbl.IsDeleted = true;
-			if (_repoInvoice.UserId != Guid.Empty)
-			{
-				tbl.DeletedBy = _repoInvoice.UserId;
-			}
-			tbl.DeletedDate = AppDateTime.Now;
-			var IsSuceess = _repoInvoice.Update(tbl);
-
-			resultViewModel.Status = IsSuceess;
-			resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;
+                                    }
 
 
-			return resultViewModel;
-		}
-		#endregion
-	}
+                                }
+                                else
+                                {
+                                    resultViewModel.Status = false;
+                                    resultViewModel.Message = "لايمكن إرجاع منتج غير موجود بفاتورة المشتريات من فضلك تأكد من وجود المنتجات المراد عمل ارجاع لها بفاتورة المشتريات";
+                                    _repoInvoice.Detached(newInvoice);
+                                    newInvoice.IsDeleted = true;
+                                    _repoInvoice.Update(newInvoice);
+                                    return resultViewModel;
+                                }
+
+                            }
+
+                            #region Save
+                            if (_repoInvoiceDetail.InsertRange(AllDetails) && _repoSupplier.Update(Supplier))
+                            {
+                                resultViewModel.Status = true;
+                                resultViewModel.Message = AppConstants.Messages.SavedSuccess;
+                                var DataToPrint = _repoInvoice.ExecuteStoredProcedure<PurchaseThrowbackInvoicePrintDto>("[Report].[spGetPurchaseThrowbackInvoiceToPrint]", new[]  {
+                        new SqlParameter("@invoiceId",newInvoice.ID)
+                        }, CommandType.StoredProcedure);
+                                if (DataToPrint != null)
+                                {
+                                    DataToPrint.FirstOrDefault().CompanyImageFullPath = _weebhost.WebRootPath + DataToPrint.FirstOrDefault().CompanyImage;
+
+                                }
+                                resultViewModel.Data = DataToPrint;
+                            }
+                            else
+                            {
+                                _repoInvoice.Detached(newInvoice);
+                                newInvoice.IsDeleted = true;
+                                _repoInvoice.Update(newInvoice);
+                                resultViewModel.Status = false;
+                                resultViewModel.Message = AppConstants.Messages.SavedFailed;
+
+                            }
+
+                            #endregion
+                        }
+                        else
+                        {
+                            resultViewModel.Status = false;
+                            resultViewModel.Message = AppConstants.Messages.SavedFailed;
+                        }
+                    }
+                    else
+                    {
+                        resultViewModel.Status = false;
+                        resultViewModel.Message = "هذه الفاتورة لا تحتوي علي منتجات";
+                    }
+                }
+            }
+            else
+            {
+                resultViewModel.Status = false;
+                resultViewModel.Message = "من فضلك تأكد من المورد";
+
+            }
+
+            return resultViewModel;
+        }
+        #endregion
+
+
+        #region Delete
+        public ResultViewModel Delete(Guid id)
+        {
+            ResultViewModel resultViewModel = new ResultViewModel();
+            var tbl = _repoInvoice.GetAllAsNoTracking().Where(p => p.ID == id).FirstOrDefault();
+
+            if (tbl == null)
+            {
+                resultViewModel.Status = false;
+                resultViewModel.Message = AppConstants.Messages.DeletedFailed;
+                return resultViewModel;
+            }
+
+            tbl.IsDeleted = true;
+            if (_repoInvoice.UserId != Guid.Empty)
+            {
+                tbl.DeletedBy = _repoInvoice.UserId;
+            }
+            tbl.DeletedDate = AppDateTime.Now;
+            var IsSuceess = _repoInvoice.Update(tbl);
+
+            resultViewModel.Status = IsSuceess;
+            resultViewModel.Message = IsSuceess ? AppConstants.Messages.DeletedSuccess : AppConstants.Messages.DeletedFailed;
+
+
+            return resultViewModel;
+        }
+        #endregion
+    }
 }

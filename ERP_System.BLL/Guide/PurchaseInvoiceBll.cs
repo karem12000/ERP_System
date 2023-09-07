@@ -694,9 +694,10 @@ namespace ERP_System.BLL.Guide
 					newInvoice.TransactionType = (TransactionType?)InvoiceDTO.TransactionType;
 					newInvoice.InvoiceTotalPrice = InvoiceDTO.InvoiceDetails != null ? InvoiceDTO.InvoiceDetails.Sum(x => x.TotalQtyPrice) : 0;
 					newInvoice.AddedBy = _repoInvoice.UserId;
+                    newInvoice.CreatedDate = DateTime.Now;
 
 
-					decimal? TotalPrice = 0;
+                    decimal? TotalPrice = 0;
 					
 
 					if (InvoiceDTO.InvoiceDetails != null && InvoiceDTO.InvoiceDetails.Count() > 0)

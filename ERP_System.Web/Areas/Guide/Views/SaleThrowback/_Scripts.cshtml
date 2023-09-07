@@ -13,9 +13,9 @@
     });
 
     let form = $('#frm');
-    function Submit(type) {
+    function Submit(type, isPrint) {
         event.preventDefault();
-        Save(type);
+        Save(type, isPrint);
 
     }
     function handleGetSaleInvoice() {
@@ -669,7 +669,7 @@
         InvoiceRemaining.val(remainValue);
     }
 
-    function Save(type) {
+    function Save(type, isPrint) {
         let stockId = document.querySelector("#ddlStockId").value;
         let Products = [];
 
@@ -765,7 +765,7 @@
                                 resetForm(stockId, '0');
                                 //$('#InvoiceNumber').val(res.Data);
                                 if (isPrint == 'true') {
-                                    printDiv(res.Data);
+                                    printSaleThroback(res.Data);
                                 }
                                 var invoiceDate = $('#InvoiceDate').val();
                                 GetLastInvoiceNumberByDate(invoiceDate);
@@ -831,6 +831,18 @@
 
 
     }
+
+
+    function handlePrintSaleThrowback() {
+        var InvoiceId = $('#id').val();
+        $.get('@Url.GetAction("GetInvoiceToPrint")', { invoiceId: InvoiceId }, function (res) {
+            if (res.Data) {
+                var data = res.Data;
+                printSaleThroback(data);
+            }
+        });
+    }
+
 
     function LoadTable() {
         $('#tbl').DataTable().destroy();
@@ -1308,4 +1320,13 @@
 
         });
     });
+
+    document.onkeydown = function (e) {
+        var keyCode = e.keyCode;
+        if (keyCode == 113) {
+            document.getElementById("withoutPrint").click();
+        } if (keyCode == 115) {
+            document.getElementById("withPrint").click();
+        }
+    };
 </script>
