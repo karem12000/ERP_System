@@ -1,4 +1,5 @@
 ﻿using ERP_System.Common;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,5 +16,6 @@ namespace ERP_System.Tables
         public string CompanyPhone { get; set; }
         public string CompanyAddress { get; set; }
         public string Description { get; set; }
+        public DateTime? Duration { get; set; }
     }
 }

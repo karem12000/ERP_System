@@ -46,6 +46,11 @@
         frm.append("Logo", document.querySelectorAll('input[type="file"]')[1].files[0]);
         frm.append("CompanyImage", document.querySelectorAll('input[type="file"]')[0].files[0]);
 
+        if (document.getElementById('Duration')) {
+            frm.append("Duration", document.getElementById('Duration').value);
+            frm.append("MacAddress", document.getElementById('MacAddress').value);
+        }
+
         var $preloader = $('#loader');
         if ($('#Name').val() == '') {
 
@@ -121,7 +126,7 @@
                 //        })
                 //    }
                 //}
-                
+
             });
         }
     }

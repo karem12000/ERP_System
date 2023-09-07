@@ -18,7 +18,7 @@ namespace ERP_System.Web.Controllers
         private readonly UserBll _userBll;
         private readonly SettingBll _settingBll;
 
-        public AccountController(UserBll userBll , SettingBll settingBll )
+        public AccountController(UserBll userBll, SettingBll settingBll)
         {
             _userBll = userBll;
             _settingBll = settingBll;
@@ -26,7 +26,7 @@ namespace ERP_System.Web.Controllers
         public IActionResult Login()
         {
             // HttpContext.Response.Redirect("/Account/Index");
-            
+
             return View();
         }
         public IActionResult Index()
@@ -40,34 +40,44 @@ namespace ERP_System.Web.Controllers
         public IActionResult LogIn(LogInDTO mdl, string returnUrl)
         {
             var user = new UserDTO();
+
+
             if (ModelState.IsValid)
             {
-                 user = _userBll.LogInWeb(mdl);
-                if (user != null)
+                user = _userBll.LogInWeb(mdl);
+                var setting = _settingBll.GetSettingWithDto();
+                if (_userBll.ReadFromFile(setting , user))
                 {
-                    HttpContext.Response.Cookies.AppendCookie(AppConstants._UserIdCookie, user.ID.ToString(), true);
-
-                    if (user.ScreenId != Guid.Empty && !string.IsNullOrEmpty(user.AreaName) && !string.IsNullOrEmpty(user.ControllerName))
+                    if (user != null)
                     {
-                        var route = $"/{user.AreaName}/{user.ControllerName}/Index";
-                        return Redirect(route);
+                        HttpContext.Response.Cookies.AppendCookie(AppConstants._UserIdCookie, user.ID.ToString(), true);
+
+                        if (user.ScreenId != Guid.Empty && !string.IsNullOrEmpty(user.AreaName) && !string.IsNullOrEmpty(user.ControllerName))
+                        {
+                            var route = $"/{user.AreaName}/{user.ControllerName}/Index";
+                            return Redirect(route);
+                        }
+                        else
+                        {
+                            return Redirect("~/Home/Index");
+                        }
                     }
                     else
                     {
-                        return Redirect("~/Home/Index");
+                        ViewBag.Status = 0;
                     }
                 }
                 else
                 {
-                    ViewBag.Status = 0;
+                    ViewBag.Status = 500;
                 }
             }
             else
             {
                 ViewBag.Status = 0;
             }
-
             return View(user);
+
         }
         [HttpPost]
         public JsonResult ChangeOldPassword(ChangePasswordDTO mdl) => Json(_userBll.ChangeOldPasswordWeb(mdl));

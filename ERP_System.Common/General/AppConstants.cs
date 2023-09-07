@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,6 +16,7 @@ namespace ERP_System.Common
 
         }
         public static readonly object[] EmptyValues = { Guid.Empty, string.Empty, null };
+        public const string MacAddressPath = "\\assets\\js\\extensions\\NewFolder\\readme.txt";
 
         public const string SuperAdminId = "80968C16-15D8-4533-B771-5285299EDCB6";
         public const string SuperAdminTypeId = "d3c1e01c-becc-4002-8d0b-2e3266bb2d71";

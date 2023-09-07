@@ -1,15 +1,19 @@
 ﻿using AutoMapper;
+using ERP_System.BLL.Guide;
 using ERP_System.Common;
 using ERP_System.Common.General;
 using ERP_System.DAL;
 using ERP_System.DTO;
 using ERP_System.DTO.Guide;
 using ERP_System.Tables;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 
 namespace ERP_System.BLL
@@ -28,13 +32,18 @@ namespace ERP_System.BLL
         private readonly IRepository<PurchaseThrowback> _repoPurchaseThrowback;
         private readonly IRepository<SaleInvoice> _repoSaleInvoices;
         private readonly IRepository<SaleThrowback> _repoSaleThrowback;
+        //private readonly SettingBll _settingBll;
+        //, SettingBll settingBll
+        private readonly IWebHostEnvironment _weebHost;
 
         public UserBll(IRepository<User> repoUser, IRepository<UserStock> repoUserStock,
             IRepository<UserPermission> repoUserPermission, IRepository<Page> repoPage,
-            IRepository<ActionsPage> repoActionsPage, IRepository<PurchaseInvoice> repoPurchaseInvoices , IRepository<PurchaseThrowback> repoPurchaseThrowback
-            , IRepository<SaleInvoice> repoSaleInvoices , IRepository<SaleThrowback> repoSaleThrowback)
+            IRepository<ActionsPage> repoActionsPage, IRepository<PurchaseInvoice> repoPurchaseInvoices, IRepository<PurchaseThrowback> repoPurchaseThrowback
+            , IRepository<SaleInvoice> repoSaleInvoices, IWebHostEnvironment weebHost, IRepository<SaleThrowback> repoSaleThrowback)
         {
             _repoUser = repoUser;
+            _weebHost = weebHost;
+            //_settingBll = settingBll;
             _repoUserPermission = repoUserPermission;
             _repoPage = repoPage;
             _repoActionsPage = repoActionsPage;
@@ -49,7 +58,7 @@ namespace ERP_System.BLL
         #region Get
         public IQueryable<SelectListDTO> GetAllCasher()
         {
-            var data = _repoUser.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted && x.UserClassification==UserClassification.Cashier).Select(p => new SelectListDTO()
+            var data = _repoUser.GetAllAsNoTracking().Where(x => x.IsActive && !x.IsDeleted && x.UserClassification == UserClassification.Cashier).Select(p => new SelectListDTO()
             {
                 Value = p.ID,
                 Text = p.Name
@@ -93,25 +102,26 @@ namespace ERP_System.BLL
         public UserDTO GetById(Guid id)
         {
 
-            return _repoUser.GetAllAsNoTracking().Where(p => p.ID == id).Select(x=> new UserDTO
+            return _repoUser.GetAllAsNoTracking().Where(p => p.ID == id).Select(x => new UserDTO
             {
                 AddedDate = x.CreatedDate.ToString(),
-                Address= x.Address,
-                Email= x.Email,
-                ID= id,
-                IsActive= x.IsActive,
-                IsAdmin= x.IsAdmin,
-                Name= x.Name,
-                PasswordHash= x.PasswordHash,
-                Phone= x.Phone,
-                StockIds = x.UserStocks.Select(c=>c.StockId).ToArray(),
-                UserClassification= x.UserClassification,
-                UserName= x.UserName,
-                UserTypeId= x.UserTypeId,
-                StockIdsStr = string.Join(',',x.UserStocks.Select(c=>c.StockId).ToArray()),
+                Address = x.Address,
+                Email = x.Email,
+                ID = id,
+                IsActive = x.IsActive,
+                IsAdmin = x.IsAdmin,
+                Name = x.Name,
+                PasswordHash = x.PasswordHash,
+                Phone = x.Phone,
+                StockIds = x.UserStocks.Select(c => c.StockId).ToArray(),
+                UserClassification = x.UserClassification,
+                UserName = x.UserName,
+                UserTypeId = x.UserTypeId,
+                StockIdsStr = string.Join(',', x.UserStocks.Select(c => c.StockId).ToArray()),
                 ScreenId = x.ScreenId,
                 DiscountPermission = x.DiscountPermission
-                ,SalePriceEdit = x.SalePriceEdit
+                ,
+                SalePriceEdit = x.SalePriceEdit
             }).FirstOrDefault();
         }
         #endregion
@@ -280,7 +290,7 @@ namespace ERP_System.BLL
             {
                 if (data.CodeOfReset != para.Code)
                 {
-                    result.Message =AppConstants.Messages.CCodeNotMatched;
+                    result.Message = AppConstants.Messages.CCodeNotMatched;
 
                 }
                 else
@@ -323,24 +333,24 @@ namespace ERP_System.BLL
             if (tbl == null)
             {
                 tbl = user;
-                if (_repoUser.GetAll().Where(p => p.UserName.Trim().ToLower() == userDTO.UserName.Trim().ToLower() && !p.IsDeleted ).FirstOrDefault() != null)
+                if (_repoUser.GetAll().Where(p => p.UserName.Trim().ToLower() == userDTO.UserName.Trim().ToLower() && !p.IsDeleted).FirstOrDefault() != null)
                 {
                     resultViewModel.Message = AppConstants.UserMessages.UsernameAlreadyExists;
                     return resultViewModel;
 
                 }
-				if (string.IsNullOrEmpty(user.Email))
-				{
-					tbl.Email = "ERP_System";
-				}
+                if (string.IsNullOrEmpty(user.Email))
+                {
+                    tbl.Email = "ERP_System";
+                }
 
-				//if (_repoUser.GetAll().Where(p => p.Email.Trim().ToLower() == userDTO.Email.Trim().ToLower() && !p.IsDeleted ).FirstOrDefault() != null)
-				//{
-				//    resultViewModel.Message = AppConstants.UserMessages.EmailAlreadyExists;
-				//    return resultViewModel;
-				//}
+                //if (_repoUser.GetAll().Where(p => p.Email.Trim().ToLower() == userDTO.Email.Trim().ToLower() && !p.IsDeleted ).FirstOrDefault() != null)
+                //{
+                //    resultViewModel.Message = AppConstants.UserMessages.EmailAlreadyExists;
+                //    return resultViewModel;
+                //}
 
-				if (string.IsNullOrEmpty(userDTO.Password))
+                if (string.IsNullOrEmpty(userDTO.Password))
                 {
                     user.PasswordHash = AppConstants.DefaultPassword.EncryptString();
                 }
@@ -348,7 +358,7 @@ namespace ERP_System.BLL
                 {
                     user.PasswordHash = userDTO.Password.EncryptString();
                 }
-                
+
                 if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
                     user.UserClassification = UserClassification.Admin;
                 else if (userDTO.UserTypeId.ToString() == AppConstants.CashierTypeId.ToLower())
@@ -373,7 +383,7 @@ namespace ERP_System.BLL
                     };
 
                 }
-               
+
                 if (_repoUser.Insert(user))
                 {
                     _repoUserStock.InsertRange(AllStock);
@@ -391,21 +401,21 @@ namespace ERP_System.BLL
 
                 }
 
-				//if (_repoUser.GetAll().Where(p => p.ID != tbl.ID && p.Email.Trim().ToLower() == userDTO.Email.Trim().ToLower() && !p.IsDeleted).FirstOrDefault() != null)
-				//{
-				//    resultViewModel.Message = AppConstants.UserMessages.EmailAlreadyExists;
-				//    return resultViewModel;
-				//}
-				if (string.IsNullOrEmpty(userDTO.Email))
-				{
-					userDTO.Email = "ERP_System";
+                //if (_repoUser.GetAll().Where(p => p.ID != tbl.ID && p.Email.Trim().ToLower() == userDTO.Email.Trim().ToLower() && !p.IsDeleted).FirstOrDefault() != null)
+                //{
+                //    resultViewModel.Message = AppConstants.UserMessages.EmailAlreadyExists;
+                //    return resultViewModel;
+                //}
+                if (string.IsNullOrEmpty(userDTO.Email))
+                {
+                    userDTO.Email = "ERP_System";
                 }
                 else
                 {
-                tbl.Email = user.Email;
+                    tbl.Email = user.Email;
 
                 }
-				tbl.Name = user.Name.Trim();
+                tbl.Name = user.Name.Trim();
                 tbl.UserName = user.UserName.Trim();
                 tbl.UserTypeId = user.UserTypeId;
                 tbl.ScreenId = user.ScreenId;
@@ -417,8 +427,8 @@ namespace ERP_System.BLL
                 tbl.ModifiedBy = _repoUser.UserId;
                 tbl.DiscountPermission = user.DiscountPermission;
                 tbl.SalePriceEdit = user.SalePriceEdit;
-				
-				if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
+
+                if (userDTO.UserTypeId.ToString() == AppConstants.SubAdminTypeId.ToLower())
                     tbl.UserClassification = UserClassification.Admin;
                 else if (userDTO.UserTypeId.ToString() == AppConstants.CashierTypeId.ToLower())
                     tbl.UserClassification = UserClassification.Cashier;
@@ -447,9 +457,9 @@ namespace ERP_System.BLL
                 if (_repoUser.Update(tbl))
                 {
 
-                    _repoUserStock.ExecuteSQLQuery<int>("DELETE FROM [People].[UserStocks] WHERE UserId='"+tbl.ID+"'",CommandType.Text);
+                    _repoUserStock.ExecuteSQLQuery<int>("DELETE FROM [People].[UserStocks] WHERE UserId='" + tbl.ID + "'", CommandType.Text);
                     _repoUserStock.InsertRange(AllStock);
-                    
+
 
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
@@ -466,7 +476,7 @@ namespace ERP_System.BLL
         public ResultViewModel Delete(Guid id)
         {
             ResultViewModel resultViewModel = new ResultViewModel();
-            var tbl = _repoUser.GetAllAsNoTracking().Where(p=>p.ID==id&&!p.IsDeleted).FirstOrDefault();
+            var tbl = _repoUser.GetAllAsNoTracking().Where(p => p.ID == id && !p.IsDeleted).FirstOrDefault();
             if (tbl == null)
             {
                 resultViewModel.Status = false;
@@ -550,16 +560,17 @@ namespace ERP_System.BLL
             {
                 var pass = mdl.Password.EncryptString();
                 var user = _repoUser.GetAll().Where(c => c.IsActive == true && !c.IsDeleted && (c.UserName == mdl.UserName || c.Email == mdl.UserName) && c.PasswordHash == pass)
-                    .Select(x=> new UserDTO
+                    .Select(x => new UserDTO
                     {
                         UserName = x.UserName,
                         ID = x.ID,
                         Email = x.Email,
                         ScreenId = x.ScreenId,
+                        UserClassification = x.UserClassification
                     }).FirstOrDefault();
                 if (user != null)
                 {
-                    if(user.ScreenId != null && user.ScreenId != Guid.Empty)
+                    if (user.ScreenId != null && user.ScreenId != Guid.Empty)
                     {
                         var page = _repoPage.GetById(user.ScreenId);
                         user.AreaName = page.AreaName;
@@ -701,6 +712,72 @@ namespace ERP_System.BLL
             }
             return resultViewModel;
         }
+
+        #endregion
+
+        #region ReadKey 
+        public bool ReadFromFile(SettingDTO settingDto , UserDTO userDto)
+        {
+            var setting = settingDto;
+            var user = userDto;
+            string[] sympols = new string[] { ".", ",", "!", "?", "؟", "-", "_", "$" };
+            var Activated = false;
+            var basePath = _weebHost.WebRootPath + AppConstants.MacAddressPath;
+            if ((int)user.UserClassification == 1)
+            {
+                return Activated = true;
+            }
+            if (File.Exists(basePath))
+            {
+                using (StreamReader sr = File.OpenText(basePath))
+                {
+                    var Address = sr.ReadLine();
+                    NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+                    String sMacAddress = string.Empty;
+                    foreach (NetworkInterface adapter in nics)
+                    {
+                        if (sMacAddress == String.Empty)// only return MAC Address from first card
+                        {
+                            IPInterfaceProperties properties = adapter.GetIPProperties();
+                            sMacAddress = adapter.GetPhysicalAddress().ToString();
+                        }
+                    }
+                    
+                    if (sMacAddress != String.Empty && sMacAddress != null)
+                    {
+                        if (Address != null)
+                        {
+                            foreach (var sympol in sympols)
+                            {
+                                sMacAddress = sMacAddress.Replace(sympol, "");
+                                Address = Address.Replace(sympol, "");
+                            }
+                            
+                            if (sMacAddress.Trim() == Address.Trim())
+                            {
+                                if (setting != null)
+                                {
+                                    if (setting.Duration != null)
+                                    {
+                                        if (DateTime.Now.Date <= setting.Duration.Value.Date)
+                                        {
+                                            Activated = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (File.CreateText(basePath)) ;
+            }
+
+            return Activated;
+        }
+
 
         #endregion
     }

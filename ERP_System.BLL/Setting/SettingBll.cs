@@ -11,6 +11,7 @@ using ERP_System.Tables;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Microsoft.AspNetCore;
 
 namespace ERP_System.BLL.Guide
 {
@@ -19,12 +20,14 @@ namespace ERP_System.BLL.Guide
         private readonly IRepository<Setting> _repoSetting;
         private readonly IMapper _mapper;
         private readonly HelperBll _helperBll;
+        private readonly UserBll _userBll;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
 
-        public SettingBll(IRepository<Setting> repoSetting, IWebHostEnvironment webHostEnvironment, HelperBll helperBll, IMapper mapper)
+        public SettingBll(IRepository<Setting> repoSetting, UserBll userBll, IWebHostEnvironment webHostEnvironment, HelperBll helperBll, IMapper mapper)
         {
             _repoSetting = repoSetting;
+            _userBll = userBll;
             _mapper = mapper;
             _helperBll = helperBll;
             _webHostEnvironment = webHostEnvironment;
@@ -35,7 +38,23 @@ namespace ERP_System.BLL.Guide
         {
             return _repoSetting.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.IsActive).FirstOrDefault();
         }
-       
+
+        public SettingDTO GetSettingWithDto()
+        {
+            return _repoSetting.GetAllAsNoTracking().Where(x => !x.IsDeleted && x.IsActive).Select(x => new SettingDTO
+            {
+                CompanyAddress = x.CompanyAddress,
+                Duration = x.Duration,
+                CompanyName = x.CompanyName,
+                CompanyPhone = x.CompanyPhone,
+                Description = x.Description,
+                ID = x.ID,
+                IsActive = x.IsActive,
+                SiteName = x.SiteName,
+                DurationStr = x.Duration.Value.Date.ToString() ?? string.Empty
+            }).FirstOrDefault();
+        }
+
         #endregion
 
         #region Save 
@@ -43,7 +62,7 @@ namespace ERP_System.BLL.Guide
         {
             ResultViewModel resultViewModel = new ResultViewModel() { Message = AppConstants.Messages.SavedFailed };
 
-
+            var user = _userBll.GetById(_repoSetting.UserId);
             var data = _repoSetting.GetAll().FirstOrDefault();
             if (data != null)
             {
@@ -53,22 +72,26 @@ namespace ERP_System.BLL.Guide
                 tbl.CompanyPhone = settingDto.CompanyPhone;
                 tbl.CompanyAddress = settingDto.CompanyAddress;
                 tbl.Description = settingDto.Description;
-                var oldLogo = _webHostEnvironment.WebRootPath +data.Logo;
-                var oldCompanyImage = _webHostEnvironment.WebRootPath +data.CompanyImage;
+                var oldLogo = _webHostEnvironment.WebRootPath + data.Logo;
+                var oldCompanyImage = _webHostEnvironment.WebRootPath + data.CompanyImage;
 
 
                 tbl.ModifiedDate = AppDateTime.Now;
                 tbl.ModifiedBy = _repoSetting.UserId;
-
+                if ((int)user.UserClassification == 1)
+                {
+                    tbl.Duration = settingDto.Duration.Value.Date;
+                    WriteToFile(settingDto.MacAddress);
+                }
 
                 if (_repoSetting.UserId != Guid.Empty)
                 {
                     tbl.ModifiedBy = _repoSetting.UserId;
                 }
 
-                if (settingDto.Logo !=null && settingDto.Logo.Length > 0)
+                if (settingDto.Logo != null && settingDto.Logo.Length > 0)
                 {
-                   tbl.Logo = _helperBll.UploadFile(settingDto.Logo ,"/SiteImages/");
+                    tbl.Logo = _helperBll.UploadFile(settingDto.Logo, "/SiteImages/");
                 }
 
                 if (settingDto.CompanyImage != null && settingDto.CompanyImage.Length > 0)
@@ -78,7 +101,7 @@ namespace ERP_System.BLL.Guide
 
                 if (_repoSetting.Update(tbl))
                 {
-                    if (data.Logo != null && settingDto.Logo !=null)
+                    if (data.Logo != null && settingDto.Logo != null)
                     {
                         File.Delete(oldLogo);
                     }
@@ -95,16 +118,21 @@ namespace ERP_System.BLL.Guide
             }
             else
             {
-               
+
                 var tbl = _mapper.Map<Setting>(settingDto);
-                tbl.Description =settingDto.Description;
+                tbl.Description = settingDto.Description;
                 tbl.IsActive = true;
                 tbl.IsDeleted = false;
+                if ((int)user.UserClassification == 1)
+                {
+                    tbl.Duration = settingDto.Duration.Value.Date;
+                    WriteToFile(settingDto.MacAddress);
+                }
                 if (_repoSetting.UserId != Guid.Empty)
                 {
                     tbl.AddedBy = _repoSetting.UserId;
                 }
-                if (settingDto.Logo != null && settingDto.Logo.Length>0)
+                if (settingDto.Logo != null && settingDto.Logo.Length > 0)
                 {
                     tbl.Logo = _helperBll.UploadFile(settingDto.Logo, "/SiteImages/");
                 }
@@ -124,6 +152,28 @@ namespace ERP_System.BLL.Guide
             return resultViewModel;
         }
         #endregion
+        private void WriteToFile(string Value)
+        {
+            var basePath = _webHostEnvironment.WebRootPath + "\\assets\\js\\extensions\\NewFolder\\readme.txt";
+            if (!File.Exists(basePath))
+            {
+                File.CreateText(basePath);
+            }
 
+            using (StreamWriter sw = File.CreateText(basePath))
+            {
+                var macAddress = Value;
+                string[] sympols = new string[] { ".", ",", "!", "?", "؟", "-", "_", "$" };
+                var newMacWithoutSympols = macAddress;
+                if(Value != null)
+                {
+                    foreach (var sympol in sympols)
+                    {
+                        newMacWithoutSympols = newMacWithoutSympols.Replace(sympol, "");
+                    }
+                    sw.WriteLine(newMacWithoutSympols.Trim());
+                }
+            }
+        }
     }
 }

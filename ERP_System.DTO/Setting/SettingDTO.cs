@@ -18,5 +18,8 @@ namespace ERP_System.DTO.Guide
         public string CompanyAddress { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; } = true;
+        public DateTime? Duration { get; set; }
+        public string DurationStr { get; set; }
+        public string MacAddress { get; set; }
     }
 }

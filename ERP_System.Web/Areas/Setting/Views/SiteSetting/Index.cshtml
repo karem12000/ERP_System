@@ -1,9 +1,11 @@
 ﻿@{
     Layout = "_Layout";
 }
-@model ERP_System.Tables.Setting;
+@model ERP_System.DTO.Guide.SettingDTO;
+@inject ERP_System.BLL.UserBll _userBll;
 @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
 {
+
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -61,6 +63,23 @@
                                             <img style="width: 200px;height: 200px;margin-top: 15px;display: none;" id="sImg">
                                         </div>
                                     </div>
+                                    @if (ViewBag.UserClassification == 1)
+                                    {
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="MacAddress">عنوان الجهاز</label>
+                                                <input type="text" id="MacAddress" value="@ViewBag.MacAddress" name="MacAddress" class="form-control" placeholder="عنوان الجهاز">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="ActivationDuration">تاريخ التفعيل </label>
+                                                <input type="date" id="Duration" value="@Model.DurationStr" name="Duration" class="form-control" placeholder="مدة التفعيل">
+                                            </div>
+                                        </div>
+                                    }
+
                                     <div class="col-sm-12 d-flex justify-content-between">
                                         <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit()">
                                             حفظ
