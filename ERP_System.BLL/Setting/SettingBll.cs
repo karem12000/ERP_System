@@ -78,11 +78,7 @@ namespace ERP_System.BLL.Guide
 
                 tbl.ModifiedDate = AppDateTime.Now;
                 tbl.ModifiedBy = _repoSetting.UserId;
-                if ((int)user.UserClassification == 1)
-                {
-                    tbl.Duration = settingDto.Duration.Value.Date;
-                    WriteToFile(settingDto.MacAddress);
-                }
+          
 
                 if (_repoSetting.UserId != Guid.Empty)
                 {
@@ -98,9 +94,17 @@ namespace ERP_System.BLL.Guide
                 {
                     tbl.CompanyImage = _helperBll.UploadFile(settingDto.CompanyImage, "/SiteImages/");
                 }
-
+                if ((int)user.UserClassification == 1)
+                {
+                    tbl.Duration = settingDto.Duration.Value.Date;
+                }
                 if (_repoSetting.Update(tbl))
                 {
+                    if ((int)user.UserClassification == 1)
+                    {
+                        //tbl.Duration = settingDto.Duration.Value.Date;
+                        WriteToFile(settingDto.MacAddress, settingDto.Duration);
+                    }
                     if (data.Logo != null && settingDto.Logo != null)
                     {
                         File.Delete(oldLogo);
@@ -123,11 +127,7 @@ namespace ERP_System.BLL.Guide
                 tbl.Description = settingDto.Description;
                 tbl.IsActive = true;
                 tbl.IsDeleted = false;
-                if ((int)user.UserClassification == 1)
-                {
-                    tbl.Duration = settingDto.Duration.Value.Date;
-                    WriteToFile(settingDto.MacAddress);
-                }
+             
                 if (_repoSetting.UserId != Guid.Empty)
                 {
                     tbl.AddedBy = _repoSetting.UserId;
@@ -140,9 +140,17 @@ namespace ERP_System.BLL.Guide
                 {
                     tbl.CompanyImage = _helperBll.UploadFile(settingDto.CompanyImage, "/SiteImages/");
                 }
-
+                if ((int)user.UserClassification == 1)
+                {
+                    tbl.Duration = settingDto.Duration.Value.Date;
+                }
                 if (_repoSetting.Insert(tbl))
                 {
+                    if ((int)user.UserClassification == 1)
+                    {
+                        //tbl.Duration = settingDto.Duration.Value.Date;
+                        WriteToFile(settingDto.MacAddress, settingDto.Duration);
+                    }
                     resultViewModel.Status = true;
                     resultViewModel.Message = AppConstants.Messages.SavedSuccess;
                     resultViewModel.Data = tbl;
@@ -152,27 +160,33 @@ namespace ERP_System.BLL.Guide
             return resultViewModel;
         }
         #endregion
-        private void WriteToFile(string Value)
+        private void WriteToFile(string Value, DateTime? Duration)
         {
-            var basePath = _webHostEnvironment.WebRootPath + "\\assets\\js\\extensions\\NewFolder\\readme.txt";
+            var basePath = _webHostEnvironment.WebRootPath + AppConstants.MacAddressPath;
+            //var basePath = _webHostEnvironment.WebRootPath + "\\assets\\js\\extensions\\NewFolder\\readme.txt";
             if (!File.Exists(basePath))
             {
-                File.CreateText(basePath);
+                File.Create(basePath).Close();
             }
 
-            using (StreamWriter sw = File.CreateText(basePath))
+            using (StreamWriter sw = new StreamWriter(basePath))
             {
-                var macAddress = Value;
+                var macAddress = Value ?? "";
+                var ActivationDuration = "";
+                if (Duration.HasValue)
+                {
+                    ActivationDuration = Duration.Value.ToString("yyyy-MM-dd");
+                }
                 string[] sympols = new string[] { ".", ",", "!", "?", "؟", "-", "_", "$" };
                 var newMacWithoutSympols = macAddress;
-                if(Value != null)
+
+                foreach (var sympol in sympols)
                 {
-                    foreach (var sympol in sympols)
-                    {
-                        newMacWithoutSympols = newMacWithoutSympols.Replace(sympol, "");
-                    }
-                    sw.WriteLine(newMacWithoutSympols.Trim());
+                    newMacWithoutSympols = newMacWithoutSympols.Replace(sympol, "");
                 }
+                sw.WriteLine("key:" + newMacWithoutSympols.Trim());
+                sw.WriteLine("Du:" + ActivationDuration.ToString());
+
             }
         }
     }

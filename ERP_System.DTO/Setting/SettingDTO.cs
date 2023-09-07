@@ -22,4 +22,9 @@ namespace ERP_System.DTO.Guide
         public string DurationStr { get; set; }
         public string MacAddress { get; set; }
     }
+    public class ActivationData
+    {
+        public string Address { get; set; }
+        public string Duration { get; set; }
+    }
 }

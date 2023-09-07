@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\assets\js\extensions\NewFolder\" />
+    <Folder Include="wwwroot\assets\js\extensions\skins\content\writer\data\" />
     <Folder Include="wwwroot\ProductsBarCode\UnitsBarCode\" />
     <Folder Include="wwwroot\SiteImages\" />
   </ItemGroup>

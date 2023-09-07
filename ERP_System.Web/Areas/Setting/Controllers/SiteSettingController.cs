@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ERP_System.Web.Areas.Setting.Controllers
 {
@@ -36,7 +38,9 @@ namespace ERP_System.Web.Areas.Setting.Controllers
                 if ((int)userType.UserClassification == 1)
                 {
                     ViewBag.UserClassification = 1;
-                    ViewBag.MacAddress = GetMacAddress();
+                    var ActivationData = GetMacAddress();
+                    ViewBag.MacAddress = ActivationData.Address.Replace("key:",string.Empty);
+                    ViewBag.Duration = ActivationData.Duration.Replace("Du:", string.Empty);
                 }
             }
             return View(setting);
@@ -45,13 +49,37 @@ namespace ERP_System.Web.Areas.Setting.Controllers
 
         public IActionResult Save(SettingDTO mdl) => Ok(_settingBll.Save(mdl));
 
-        private string GetMacAddress()
+        private ActivationData GetMacAddress()
         {
             var basePath = _webRoot.WebRootPath + AppConstants.MacAddressPath;
-            using(StreamReader sr = new StreamReader(basePath))
+            var address = "";
+            var Du = "";
+            var Data = new List<string>();
+            var ActivationData = new ActivationData();
+            ActivationData.Address = "";
+            ActivationData.Duration = "";
+            if (System.IO.File.Exists(basePath))
             {
-                return sr.ReadLine();
+                using (StreamReader sr = new StreamReader(basePath))
+                {
+                  var AllData =  System.IO.File.ReadAllLines(basePath);
+                    if(AllData != null)
+                    {
+                        foreach (var line in AllData)
+                        {
+                            Data.Add(line);
+                        }
+                        address = Data.Where(x => x.StartsWith("key:")).FirstOrDefault();
+                        Du = Data.Where(x => x.StartsWith("Du:")).FirstOrDefault();
+                        ActivationData.Address = address??"";
+                        ActivationData.Duration = Du??"";
+                    }
+                }
             }
+           
+           return ActivationData;
+           
         }
     }
+   
 }

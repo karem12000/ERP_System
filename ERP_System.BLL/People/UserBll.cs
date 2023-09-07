@@ -7,12 +7,14 @@ using ERP_System.DTO;
 using ERP_System.DTO.Guide;
 using ERP_System.Tables;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 
@@ -716,6 +718,35 @@ namespace ERP_System.BLL
         #endregion
 
         #region ReadKey 
+        private ActivationData GetMacAddress()
+        {
+            var basePath = _weebHost.WebRootPath + AppConstants.MacAddressPath;
+            var address = "";
+            var Du = "";
+            var Data = new List<string>();
+            var ActivationData = new ActivationData();
+            if (System.IO.File.Exists(basePath))
+            {
+                using (StreamReader sr = new StreamReader(basePath))
+                {
+                    var AllData = System.IO.File.ReadAllLines(basePath);
+                    if (AllData != null)
+                    {
+                        foreach (var line in AllData)
+                        {
+                            Data.Add(line);
+                        }
+                        address = Data.Where(x => x.StartsWith("key:")).FirstOrDefault();
+                        Du = Data.Where(x => x.StartsWith("Du:")).FirstOrDefault();
+                        ActivationData.Address = address;
+                        ActivationData.Duration = Du;
+                    }
+                }
+            }
+
+            return ActivationData;
+
+        }
         public bool ReadFromFile(SettingDTO settingDto , UserDTO userDto)
         {
             var setting = settingDto;
@@ -731,7 +762,23 @@ namespace ERP_System.BLL
             {
                 using (StreamReader sr = File.OpenText(basePath))
                 {
-                    var Address = sr.ReadLine();
+                    var AllData = File.ReadAllLines(basePath);
+                    var Address = "";
+                    var Du = "";
+                    var Data = new List<string>();
+                    //var ActivationData = new ActivationData();
+                    if (AllData != null)
+                    {
+                        foreach (var line in AllData)
+                        {
+                            Data.Add(line);
+                        }
+                        Address = Data.Where(x => x.StartsWith("key:")).FirstOrDefault() ?? "";
+                        Du = Data.Where(x => x.StartsWith("Du:")).FirstOrDefault()??"";
+                        Address = Address.Replace("key:", string.Empty);
+                        Du = Du.Replace("Du:", string.Empty);
+                    }
+                    //var Address = sr.ReadLine();
                     NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
                     String sMacAddress = string.Empty;
                     foreach (NetworkInterface adapter in nics)
@@ -745,7 +792,7 @@ namespace ERP_System.BLL
                     
                     if (sMacAddress != String.Empty && sMacAddress != null)
                     {
-                        if (Address != null)
+                        if ((Address != null && Address != string.Empty) && (Du !=null && Du != string.Empty))
                         {
                             foreach (var sympol in sympols)
                             {
@@ -755,16 +802,20 @@ namespace ERP_System.BLL
                             
                             if (sMacAddress.Trim() == Address.Trim())
                             {
-                                if (setting != null)
+                                if (DateTime.Now.Date <= Convert.ToDateTime(Du).Date)
                                 {
-                                    if (setting.Duration != null)
-                                    {
-                                        if (DateTime.Now.Date <= setting.Duration.Value.Date)
-                                        {
-                                            Activated = true;
-                                        }
-                                    }
+                                    Activated = true;
                                 }
+                                //if (setting != null)
+                                //{
+                                //    if (setting.Duration != null)
+                                //    {
+                                //        if (DateTime.Now.Date <= setting.Duration.Value.Date)
+                                //        {
+                                //            Activated = true;
+                                //        }
+                                //    }
+                                //}
                             }
                         }
                     }
@@ -772,7 +823,7 @@ namespace ERP_System.BLL
             }
             else
             {
-                using (File.CreateText(basePath)) ;
+                File.CreateText(basePath).Close();
             }
 
             return Activated;
@@ -782,3 +833,4 @@ namespace ERP_System.BLL
         #endregion
     }
 }
+
