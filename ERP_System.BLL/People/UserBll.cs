@@ -823,6 +823,7 @@ namespace ERP_System.BLL
             }
             else
             {
+                Activated = false;
                 File.CreateText(basePath).Close();
             }
 
