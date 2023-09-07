@@ -163,9 +163,14 @@ namespace ERP_System.BLL.Guide
         private void WriteToFile(string Value, DateTime? Duration)
         {
             var basePath = _webHostEnvironment.WebRootPath + AppConstants.MacAddressPath;
+            var DirectorybasePath = _webHostEnvironment.WebRootPath + AppConstants.MacAddressPath.Replace("\\readme.txt", string.Empty);
             //var basePath = _webHostEnvironment.WebRootPath + "\\assets\\js\\extensions\\NewFolder\\readme.txt";
             if (!File.Exists(basePath))
             {
+                if (!Directory.Exists(DirectorybasePath))
+                {
+                    Directory.CreateDirectory(DirectorybasePath);
+                }
                 File.Create(basePath).Close();
             }
 
