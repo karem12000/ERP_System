@@ -57,7 +57,24 @@ namespace ERP_System.BLL.Guide
 
 			return invoiceNumber;
 		}
-		public SaleThrowbackDTO GetById(Guid id)
+
+        public ResultViewModel GetInvoiceToPrint(Guid? InvoiceId)
+        {
+            var result = new ResultViewModel();
+            result.Status = true;
+            var DataToPrint = _repoSaleThrowback.ExecuteStoredProcedure<SaleThrowbackInvoicePrintDto>("[Report].[spGetSaleThrowbackInvoiceToPrint]", new[]  {
+                        new SqlParameter("@invoiceId",InvoiceId)
+                        }, CommandType.StoredProcedure);
+            if (DataToPrint != null && DataToPrint.Count() > 0)
+            {
+                DataToPrint.FirstOrDefault().CompanyImageFullPath = _weebhost.WebRootPath + DataToPrint.FirstOrDefault().CompanyImage;
+
+            }
+            result.Data = DataToPrint;
+            return result;
+
+        }
+        public SaleThrowbackDTO GetById(Guid id)
 		{
 			return _repoSaleThrowback.GetAllAsNoTracking().Include(c => c.SaleInvoiceDetails).Where(p => p.ID == id).Select(x => new SaleThrowbackDTO
 			{
@@ -549,6 +566,7 @@ namespace ERP_System.BLL.Guide
 				newInvoice.TotalPaid = InvoiceDTO.TotalPaid;
 				newInvoice.AddedBy = _repoSaleThrowback.UserId;
 				newInvoice.AddedTax = InvoiceDTO.AddedTax ?? 0;
+				newInvoice.CreatedDate = DateTime.Now;
 				newInvoice.InvoiceTotalDiscount = InvoiceDTO.InvoiceTotalDiscount;
 				newInvoice.InvoiceTotalDiscountType = InvoiceDTO.InvoiceTotalDiscountType;
 				decimal? SumInvoiceTotalQtyPrice = 0;

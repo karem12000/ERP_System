@@ -276,6 +276,10 @@
                                                 <button type="button" onclick="FinishShift();" class="btn btn-danger" name="btnFinishShift" id="btnFinishShift">إنهاء الخدمة</button>
                                             </div>
                                         </div>*@
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="handlePrintSaleThrowback()">
+                                            طباعة الفاتورة
+                                        </button>
+
                                         @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
                                         {
                                             <div class="d-flex align-items-center justify-content-end ps-2">
@@ -295,6 +299,7 @@
         </div>
     </div>
 }
+<script src="~/assets/js/extensions/newfolder/printscript.js"></script>
 
 @section Scripts
     {

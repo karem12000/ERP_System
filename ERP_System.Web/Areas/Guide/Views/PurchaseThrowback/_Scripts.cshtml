@@ -25,7 +25,7 @@
 		$.get('@Url.GetAction("GetInvoiceToPrint")', { invoiceId: InvoiceId }, function (res) {
 			if (res.Data) {
 				var data = res.Data;
-				printParchase(data);
+				printParchaseThrowback(data);
 			}
 		});
 	}
@@ -619,7 +619,7 @@
 								GetLastInvoiceNumberByDate(invoiceDate);
 
 								if (isPrint == 'true') {
-									printParchase(res.Data);
+									printParchaseThrowback(res.Data);
 								}
 							} else {
 								window.location.href = "/Guide/PurchaseThrowback/Index?previous=true";
