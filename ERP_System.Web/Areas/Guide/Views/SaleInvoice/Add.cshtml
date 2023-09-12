@@ -95,14 +95,10 @@
                                                             <span class="h5 mb-0">-</span>
                                                             <input class="form-control ID" type="hidden" value="@Guid.NewGuid()" />
                                                             <input class="form-control ProductId" type="hidden" value="0" />
-                                                            <input type="text" onkeyup="getProduct(this,event)" required class="form-control ProductBarCode" />
+                                                            <input type="text" onkeyup="getProduct(this,event)" onClick="this.select();" required class="form-control ProductBarCode" />
                                                         </td>
-                                                        @*<td><input type="text" onkeyup="getProductByName(this,event)" required class="form-control ProductName" /></td>*@
-                                                        <td>
-                                                            <select class="ddlProductName form-select" id="ddlProductName" onchange="alert();" style="width: 100%">
-                                                                <option>اختر المنتج</option>
-                                                            </select>
-                                                        </td>
+                                                        <td><input type="text" onkeyup="getProductByName(this,event)" onClick="this.select();" required class="form-control ProductName" /></td>
+                                                      
                                                         <td>
                                                             <select onchange="handleUnitChange(this,event)" class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
                                                                 <option selected value="0">اختر الوحدة</option>
@@ -111,19 +107,19 @@
                                                         </td>
                                                         <td><input type="text" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 ))" /></td>
                                                         @*<td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>*@
-                                                        <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" /></td>
+                                                        <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onClick="this.select();" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" /></td>
                                                         @if ((bool)ViewData["SalePriceEditPermission"])
                                                         {
-                                                            <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control SellingPrice" /></td>
+                                                            <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onClick="this.select();" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control SellingPrice" /></td>
                                                         }
                                                         else
                                                         {
-                                                            <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control SellingPrice" readonly /></td>
+                                                            <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onClick="this.select();" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control SellingPrice" readonly /></td>
                                                         }
                                                         @if ((bool)ViewData["DisscountPermission"])
                                                         {
                                                             <td class="d-flex gap-2">
-                                                                <input type="number" value="0" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control DiscountPProduct" />
+                                                                <input type="number" value="0" onkeyup="getInvoiceTotalPrice(this)" onClick="this.select();" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control DiscountPProduct" />
                                                                 <select class="Select sDescount form-select" required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct" onchange="getInvoiceTotalPrice(this)">
                                                                     <option selected="" value="0"> % </option>
                                                                     <option value="1">قيمة</option>
@@ -133,7 +129,7 @@
                                                         else
                                                         {
                                                             <td class="d-flex gap-2">
-                                                                <input type="number" disabled value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control DiscountPProduct" />
+                                                                <input type="number" disabled value="0" min="0" onClick="this.select();" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control DiscountPProduct" />
                                                                 <select class="Select sDescount form-select" disabled required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct" onchange="getInvoiceTotalPrice(this)">
                                                                     <option selected="" value="0"> % </option>
                                                                     <option value="1">قيمة</option>
@@ -155,7 +151,7 @@
                                         <div class="row my-3">
                                             <div class="col-2 d-flex gap-2 align-items-center">
                                                 <h5 class="mb-0">المبلغ المدفوع</h5>
-                                                <input type="number" step="1" class="form-control TotalPaid w-75" onkeyup="calcInvoiceRemaining(this)" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                                <input type="number" step="1" class="form-control TotalPaid w-75" onClick="this.select();" onkeyup="calcInvoiceRemaining(this)" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
                                             </div>
                                             <div class="col-3 d-flex gap-2 align-items-center">
 
@@ -163,7 +159,7 @@
                                                 @if ((bool)ViewData["DisscountPermission"])
                                                 {
                                                     <div class="d-flex gap-2 w-75">
-                                                        <input type="number" class="form-control InvoiceTotalDiscount" onkeyup="getInvoiceTotalPrice(this)" value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                                        <input type="number" class="form-control InvoiceTotalDiscount" onClick="this.select();" onkeyup="getInvoiceTotalPrice(this)" value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
                                                         <select class="Select sDescount form-select sInvoiceDescount" name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
                                                             <option selected="" value="0"> % </option>
                                                             <option value="1">قيمة</option>
@@ -173,7 +169,7 @@
                                                 else
                                                 {
                                                     <div class="d-flex gap-2 w-75">
-                                                        <input disabled type="number" class="form-control InvoiceTotalDiscount " onkeyup="getInvoiceTotalPrice(this)" value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                                        <input disabled type="number" class="form-control InvoiceTotalDiscount " onClick="this.select();" onkeyup="getInvoiceTotalPrice(this)" value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
                                                         <select class="Select sDescount form-select sInvoiceDescount" disabled name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
                                                             <option selected="" value="0"> % </option>
                                                             <option value="1">قيمة</option>
@@ -188,12 +184,12 @@
 
                                             <div class="col-3 d-flex gap-2 align-items-center">
                                                 <h5 class="mb-0">الإجمالي</h5>
-                                                <input disabled type="number" class="form-control InvoiceTotalPrice w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                                <input disabled type="number" class="form-control InvoiceTotalPrice w-75" onClick="this.select();" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
 
                                             </div>
                                             <div class="col-2 d-flex gap-2 align-items-center">
                                                 <h5 class="mb-0">الباقي</h5>
-                                                <input disabled type="number" class="form-control Remaining w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                                <input disabled type="number" class="form-control Remaining w-75"  value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
 
                                             </div>
                                         </div>
@@ -248,18 +244,6 @@
         $(document).ready(function () {
             $('#ddlStockId option:nth-child(2)').attr('selected', 'selected')
             $('.ProductBarCode').focus();
-
-
-            var data = ["Apple", "Banana", "Cherry", "Date", "ElderberriesElderberry"]; // Programatically-generated options array with > 5 options
-            var placeholder = "select";
-            $(".ddlProductName").select2({
-                data: data,
-                placeholder: placeholder,
-                allowClear: false,
-                minimumResultsForSearch: 5
-            });
-
-
 
             const date = new Date();
             let day = date.getDate();
