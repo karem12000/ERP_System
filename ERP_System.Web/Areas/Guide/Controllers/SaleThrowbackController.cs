@@ -64,6 +64,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
 
         public IActionResult Save(SaleThrowbackDTO mdl) => Ok(_invoiceBll.Save(mdl));
+        public IActionResult GetProductsNames() => Ok(_productBll.GetProductsNames());
         public IActionResult SearchByProductName(string term) => Ok(_productBll.SearchByName(term));
         public IActionResult GetProductByBarCode(string text) => Ok(_productBll.GetByProductBarCode(text));
         public IActionResult GetProductByBarCodeAndInvoiceId(string text , Guid? saleInvoiceId) => Ok(_saleInvoiceBll.GetProductByBarCodeAndInvoiceId(text, saleInvoiceId));

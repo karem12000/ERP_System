@@ -467,7 +467,6 @@
 		});
 	}
 	function getProduct(value, event) {
-
 		if (event.keyCode === 13) {
 			var barcode = value.value;
 			var stockId = $('#ddlStockId').val();
@@ -801,13 +800,13 @@
 					success: function (res) {
 						$preloader.delay(200).fadeOut('slow');
 						if (res.Status) {
-							Swal.fire({
-								title: `${res.Message}`,
-								timer: 2000,
-								timerProgressBar: true,
-								icon: 'success',
-								showConfirmButton: false
-							}).then((result) => {
+							//Swal.fire({
+							//	title: `${res.Message}`,
+							//	timer: 2000,
+							//	timerProgressBar: true,
+							//	icon: 'success',
+							//	showConfirmButton: false
+							//}).then((result) => {
 								
 								if (type === 'add') {
 									resetForm(stockId, '0');
@@ -817,7 +816,7 @@
 								} else {
 									window.location.href = "/Guide/SaleInvoice/Index?previous=true";
 								}
-							})
+							//})
 						} else {
 							Swal.fire({
 								title: `${res.Message}`,

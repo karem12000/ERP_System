@@ -1,271 +1,286 @@
 @{
-	Layout = "_Layout";
+    Layout = "_Layout";
 }
 
 @if (CurrentForm.CurrentFormPermissionActions.AddHasPermission)
 {
-	@*<style>
+    @*<style>
 		.swal2-html-container{direction:ltr}
 	</style>*@
-	<div class="row">
-		<div class="col-12">
-			<div class="card" style="zoom:.8">
-				<div class="card-header throwbackDetails">
-					<h4 class="card-title" id="pageTitle">إضافة فاتورة مبيعات</h4>
-				</div>
-				<div class="card-content">
-					<div class="card-body">
-						<form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
-							<div class="form-body">
-								<div class="row align-items-end">
-									<div class="form-group col-2 mb-0">
-										<label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
-										<input hidden name="id" id="id" value="" class="d-none" />
-										<select class="Select sAddress form-select" onchange="SetInvoiceThroback()" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
-											<option selected value="0">فاتورة مبيعات</option>
-											@*@if (CurrentFormByControllerName("SaleThrowback").CurrentFormPermissionActions.AddHasPermission)
-										{*@
-											@*<option value="1">فاتورة مرتجع مبيعات</option>*@
-											@*  *@}
-										</select>
-									</div>
-									<div class="form-group col-2 mb-0">
-										<label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
-										<select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
-											<option value="0" disabled>اختر المخزن</option>
-										</select>
-									</div>
-									<div class="col-2">
-										<div class="form-group mb-0">
-											<label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
-											<input type="text" readonly id="InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
-										</div>
-									</div>
-									<div class="col-2">
-										<div class="form-group mb-0">
-											<label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
-											<input type="date" class="form-control" name="InvoiceDate" id="InvoiceDate" readonly>
-										</div>
-									</div>
-									<div class="col-2">
-										<div class="form-group mb-0">
-											<label for="Supplier">اسم العميل</label>
-											<input type="text" class="form-control" name="Buyer" id="Buyer">
-										</div>
-									</div>
-									<div class="col-1">
-										<div class="form-group mb-0">
-											<button type="button" onclick="CancelProcess()" class="btn btn-primary" name="btnCancel" id="btnCancel">إلغاء العملية</button>
-										</div>
-									</div>
-									<div class="col-1">
-										@if (CurrentFormByControllerName("SaleThrowback").CurrentFormPermissionActions.AddHasPermission)
-										{
-											<div class="form-group mb-0">
-												<a type="button" target="_blank" href="/Guide/SaleThrowback/Add" class="btn btn-primary" name="btnThrowback" id="btnThrowback">إضافة مرتجع</a>
-											</div>
-										}
-									</div>
-								</div>
-								<hr>
-								<div class="row">
-									<div class="col-md-12">
-										<label for="Products">المنتجات  </label>
-										<button type="button" class="btn btn-outline-primary addInvoiceProduct mx-2">إضافة</button>
+    <div class="row">
+        <div class="col-12">
+            <div class="card" style="zoom:.8">
+                <div class="card-header throwbackDetails">
+                    <h4 class="card-title" id="pageTitle">إضافة فاتورة مبيعات</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
+                            <div class="form-body">
+                                <div class="row align-items-end">
+                                    <div class="form-group col-2 mb-0">
+                                        <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
+                                        <input hidden name="id" id="id" value="" class="d-none" />
+                                        <select class="Select sAddress form-select" onchange="SetInvoiceThroback()" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
+                                            <option selected value="0">فاتورة مبيعات</option>
+                                            @*@if (CurrentFormByControllerName("SaleThrowback").CurrentFormPermissionActions.AddHasPermission)
+                                        {*@
+                                            @*<option value="1">فاتورة مرتجع مبيعات</option>*@
+                                            @*  *@}
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-2 mb-0">
+                                        <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
+                                        <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
+                                            <option value="0" disabled>اختر المخزن</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group mb-0">
+                                            <label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
+                                            <input type="text" readonly id="InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group mb-0">
+                                            <label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
+                                            <input type="date" class="form-control" name="InvoiceDate" id="InvoiceDate" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group mb-0">
+                                            <label for="Supplier">اسم العميل</label>
+                                            <input type="text" class="form-control" name="Buyer" id="Buyer">
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+                                        <div class="form-group mb-0">
+                                            <button type="button" onclick="CancelProcess()" class="btn btn-primary" name="btnCancel" id="btnCancel">إلغاء العملية</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+                                        @if (CurrentFormByControllerName("SaleThrowback").CurrentFormPermissionActions.AddHasPermission)
+                                        {
+                                            <div class="form-group mb-0">
+                                                <a type="button" target="_blank" href="/Guide/SaleThrowback/Add" class="btn btn-primary" name="btnThrowback" id="btnThrowback">إضافة مرتجع</a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="Products">المنتجات  </label>
+                                        <button type="button" class="btn btn-outline-primary addInvoiceProduct mx-2">إضافة</button>
 
-										<label id="ProductsCount"> 0 </label>
-										<div class="table-container" id="InvoiceProducts" style="max-height:375px;overflow-y:auto">
+                                        <label id="ProductsCount"> 0 </label>
+                                        <div class="table-container" id="InvoiceProducts" style="max-height:375px;overflow-y:auto">
 
-											<table class="table">
-												<thead>
-													<tr>
-														<th>الباركود<span style="color:red;"> * </span></th>
-														<th>اسم المنتج<span style="color:red;"> * </span></th>
-														<th>الوحدة<span style="color:red;"> * </span></th>
-														<th>الكمية بالمخزن</th>
-														@*<th>سعر الوحدة</th>*@
-														<th>الكمية<span style="color:red;"> * </span></th>
-														<th>سعر البيع<span style="color:red;"> * </span></th>
-														<th>الخصم للمنتج</th>
-														<th>الإجمالي للمنتج</th>
-														<th>التحكم</th>
-													</tr>
-												</thead>
-												<tbody id="InvoiceProductsBody">
-													<tr>
-														<td class="d-flex gap-2 align-items-center">
-															<span class="rowNumber h5 mb-0">1</span>
-															<span class="h5 mb-0">-</span>
-															<input class="form-control ID" type="hidden" value="@Guid.NewGuid()" />
-															<input class="form-control ProductId" type="hidden" value="0" />
-															<input type="text" onkeyup="getProduct(this,event)" required class="form-control ProductBarCode" />
-														</td>
-														<td><input type="text" onkeyup="getProductByName(this,event)" required class="form-control ProductName" /></td>
-														
-														<td>
-															<select onchange="handleUnitChange(this,event)" class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
-																<option selected value="0">اختر الوحدة</option>
-															</select>
-															<input class="form-control ConversionFactor" type="hidden" value="0" />
-														</td>
-														<td><input type="text" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 ))" /></td>
-														@*<td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>*@
-														<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" /></td>
-														@if ((bool)ViewData["SalePriceEditPermission"])
-														{
-															<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control SellingPrice" /></td>
-														}
-														else
-														{
-															<td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control SellingPrice" readonly /></td>
-														}
-														@if ((bool)ViewData["DisscountPermission"])
-														{
-															<td class="d-flex gap-2">
-																<input type="number" value="0" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control DiscountPProduct" />
-																<select class="Select sDescount form-select" required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct" onchange="getInvoiceTotalPrice(this)">
-																	<option selected="" value="0"> % </option>
-																	<option value="1">قيمة</option>
-																</select>
-															</td>
-														}
-														else
-														{
-															<td class="d-flex gap-2">
-																<input type="number" disabled value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control DiscountPProduct" />
-																<select class="Select sDescount form-select" disabled required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct" onchange="getInvoiceTotalPrice(this)">
-																	<option selected="" value="0"> % </option>
-																	<option value="1">قيمة</option>
-																</select>
-															</td>
-														}
-														<td><input type="number" disabled class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" /></td>
-														<td>
-															<div class="d-flex">
-																<button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
-																@*<a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>*@
-															</div>
-														</td>
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>الباركود<span style="color:red;"> * </span></th>
+                                                        <th>اسم المنتج<span style="color:red;"> * </span></th>
+                                                        <th>الوحدة<span style="color:red;"> * </span></th>
+                                                        <th>الكمية بالمخزن</th>
+                                                        @*<th>سعر الوحدة</th>*@
+                                                        <th>الكمية<span style="color:red;"> * </span></th>
+                                                        <th>سعر البيع<span style="color:red;"> * </span></th>
+                                                        <th>الخصم للمنتج</th>
+                                                        <th>الإجمالي للمنتج</th>
+                                                        <th>التحكم</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="InvoiceProductsBody">
+                                                    <tr>
+                                                        <td class="d-flex gap-2 align-items-center">
+                                                            <span class="rowNumber h5 mb-0">1</span>
+                                                            <span class="h5 mb-0">-</span>
+                                                            <input class="form-control ID" type="hidden" value="@Guid.NewGuid()" />
+                                                            <input class="form-control ProductId" type="hidden" value="0" />
+                                                            <input type="text" onkeyup="getProduct(this,event)" required class="form-control ProductBarCode" />
+                                                        </td>
+                                                        @*<td><input type="text" onkeyup="getProductByName(this,event)" required class="form-control ProductName" /></td>*@
+                                                        <td>
+                                                            <select class="ddlProductName form-select" id="ddlProductName" onchange="alert();" style="width: 100%">
+                                                                <option>اختر المنتج</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select onchange="handleUnitChange(this,event)" class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
+                                                                <option selected value="0">اختر الوحدة</option>
+                                                            </select>
+                                                            <input class="form-control ConversionFactor" type="hidden" value="0" />
+                                                        </td>
+                                                        <td><input type="text" disabled class="form-control QtyInStock" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 ))" /></td>
+                                                        @*<td><input type="number" disabled class="form-control ItemUnitPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>*@
+                                                        <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" class="form-control Qty" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" /></td>
+                                                        @if ((bool)ViewData["SalePriceEditPermission"])
+                                                        {
+                                                            <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control SellingPrice" /></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td><input type="number" step="0.01" onchange="getInvoiceTotalPrice(this)" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control SellingPrice" readonly /></td>
+                                                        }
+                                                        @if ((bool)ViewData["DisscountPermission"])
+                                                        {
+                                                            <td class="d-flex gap-2">
+                                                                <input type="number" value="0" onkeyup="getInvoiceTotalPrice(this)" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control DiscountPProduct" />
+                                                                <select class="Select sDescount form-select" required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct" onchange="getInvoiceTotalPrice(this)">
+                                                                    <option selected="" value="0"> % </option>
+                                                                    <option value="1">قيمة</option>
+                                                                </select>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="d-flex gap-2">
+                                                                <input type="number" disabled value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" required class="form-control DiscountPProduct" />
+                                                                <select class="Select sDescount form-select" disabled required="" name="DiscountTypePProduct" id="ddlDiscountTypePProduct" onchange="getInvoiceTotalPrice(this)">
+                                                                    <option selected="" value="0"> % </option>
+                                                                    <option value="1">قيمة</option>
+                                                                </select>
+                                                            </td>
+                                                        }
+                                                        <td><input type="number" disabled class="form-control TotalQtyPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" /></td>
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <button type="button" class="btn btn-danger btn-icon removeRow mx-1"><i class="fas fa-minus"></i></button>
+                                                                @*<a target="_blank" class="btn btn-outline-secondary mx-1 barCodeBtn" href=""><i class="fas fa-sharp fa-solid fa-barcode"></i></a>*@
+                                                            </div>
+                                                        </td>
 
-													</tr>
-												</tbody>
-											</table>
-										</div>
-										<div class="row my-3">
-											<div class="col-2 d-flex gap-2 align-items-center">
-												<h5 class="mb-0">المبلغ المدفوع</h5>
-												<input type="number" step="1" class="form-control TotalPaid w-75" onkeyup="calcInvoiceRemaining(this)" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
-											</div>
-											<div class="col-3 d-flex gap-2 align-items-center">
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="col-2 d-flex gap-2 align-items-center">
+                                                <h5 class="mb-0">المبلغ المدفوع</h5>
+                                                <input type="number" step="1" class="form-control TotalPaid w-75" onkeyup="calcInvoiceRemaining(this)" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                            </div>
+                                            <div class="col-3 d-flex gap-2 align-items-center">
 
-												<h5 class="mb-0">الخصم للفاتورة</h5>
-												@if ((bool)ViewData["DisscountPermission"])
-												{
-													<div class="d-flex gap-2 w-75">
-														<input type="number" class="form-control InvoiceTotalDiscount" onkeyup="getInvoiceTotalPrice(this)" value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
-														<select class="Select sDescount form-select sInvoiceDescount" name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
-															<option selected="" value="0"> % </option>
-															<option value="1">قيمة</option>
-														</select>
-													</div>
-												}
-												else
-												{
-													<div class="d-flex gap-2 w-75">
-														<input disabled type="number" class="form-control InvoiceTotalDiscount " onkeyup="getInvoiceTotalPrice(this)" value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
-														<select class="Select sDescount form-select sInvoiceDescount" disabled name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
-															<option selected="" value="0"> % </option>
-															<option value="1">قيمة</option>
-														</select>
-													</div>
-												}
-											</div>
-											@*<div class="col-2 d-flex gap-2 align-items-center">
-													<h5 class="mb-0"> ضريبة القيمة المضافة</h5>
-													<input type="number" step="0.01" class="form-control AddedTax w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
-											</div>*@
+                                                <h5 class="mb-0">الخصم للفاتورة</h5>
+                                                @if ((bool)ViewData["DisscountPermission"])
+                                                {
+                                                    <div class="d-flex gap-2 w-75">
+                                                        <input type="number" class="form-control InvoiceTotalDiscount" onkeyup="getInvoiceTotalPrice(this)" value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                                        <select class="Select sDescount form-select sInvoiceDescount" name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
+                                                            <option selected="" value="0"> % </option>
+                                                            <option value="1">قيمة</option>
+                                                        </select>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="d-flex gap-2 w-75">
+                                                        <input disabled type="number" class="form-control InvoiceTotalDiscount " onkeyup="getInvoiceTotalPrice(this)" value="0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                                        <select class="Select sDescount form-select sInvoiceDescount" disabled name="InvoiceTotalDiscountType" id="ddlInvoiceTotalDiscountType" onchange="getInvoiceTotalPrice(this)">
+                                                            <option selected="" value="0"> % </option>
+                                                            <option value="1">قيمة</option>
+                                                        </select>
+                                                    </div>
+                                                }
+                                            </div>
+                                            @*<div class="col-2 d-flex gap-2 align-items-center">
+                                        <h5 class="mb-0"> ضريبة القيمة المضافة</h5>
+                                        <input type="number" step="0.01" class="form-control AddedTax w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+                                        </div>*@
 
-											<div class="col-3 d-flex gap-2 align-items-center">
-												<h5 class="mb-0">الإجمالي</h5>
-												<input disabled type="number" class="form-control InvoiceTotalPrice w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                            <div class="col-3 d-flex gap-2 align-items-center">
+                                                <h5 class="mb-0">الإجمالي</h5>
+                                                <input disabled type="number" class="form-control InvoiceTotalPrice w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
 
-											</div>
-											<div class="col-2 d-flex gap-2 align-items-center">
-												<h5 class="mb-0">الباقي</h5>
-												<input disabled type="number" class="form-control Remaining w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                            </div>
+                                            <div class="col-2 d-flex gap-2 align-items-center">
+                                                <h5 class="mb-0">الباقي</h5>
+                                                <input disabled type="number" class="form-control Remaining w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
 
-											</div>
-										</div>
-									</div>
-									<hr>
-									<div class="col-12 d-flex">
-										<div class="form-check">
-											<div class="checkbox">
-												<input type="checkbox" name="IsActive" id="IsActive" value="true" class="form-check-input" checked>
-												<label for="IsActive">الحاله</label>
-											</div>
-										</div>
-									</div>
-									<div class="col-sm-12 d-flex justify-content-between mt-3">
-										<button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add','true')" id="withoutPrint">
-											حفظ وطباعة (F2)
-										</button>
-										<button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add','false')" id="withPrint">
-											حفظ بدون طباعة (F4)
-										</button>
-										<div class="col-1">
-											<div class="form-group">
-												<button type="button" onclick="FinishShift();" class="btn btn-danger" name="btnFinishShift" id="btnFinishShift">إغلاق الوردية</button>
-											</div>
-										</div>
-										@if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
-										{
-											<div class="d-flex align-items-center justify-content-end ps-2">
-												<a class="btn btn-outline-primary" href="/Guide/SaleInvoice/Index?previous=true">
-													رجوع للقائمة
-													<span class="fa-arrow-left fas"></span>
-												</a>
-											</div>
-										}
-									</div>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="col-12 d-flex">
+                                        <div class="form-check">
+                                            <div class="checkbox">
+                                                <input type="checkbox" name="IsActive" id="IsActive" value="true" class="form-check-input" checked>
+                                                <label for="IsActive">الحاله</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 d-flex justify-content-between mt-3">
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add','true')" id="withoutPrint">
+                                            حفظ وطباعة (F2)
+                                        </button>
+                                        <button type="button" class="btn btn-primary me-1 mb-1" onclick="Submit('add','false')" id="withPrint">
+                                            حفظ بدون طباعة (F4)
+                                        </button>
+                                        <div class="col-1">
+                                            <div class="form-group">
+                                                <button type="button" onclick="FinishShift();" class="btn btn-danger" name="btnFinishShift" id="btnFinishShift">إغلاق الوردية</button>
+                                            </div>
+                                        </div>
+                                        @if (CurrentForm.CurrentFormPermissionActions.ShowHasPermission)
+                                        {
+                                            <div class="d-flex align-items-center justify-content-end ps-2">
+                                                <a class="btn btn-outline-primary" href="/Guide/SaleInvoice/Index?previous=true">
+                                                    رجوع للقائمة
+                                                    <span class="fa-arrow-left fas"></span>
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @section Scripts
-	{
+    {
 
     <script src="~/assets/js/extensions/newfolder/printscript.js"></script>
 
-	<script>
-		$(document).ready(function () {
-			$('#ddlStockId option:nth-child(2)').attr('selected', 'selected')
-			$('.ProductBarCode').focus();
+    <script>
+        $(document).ready(function () {
+            $('#ddlStockId option:nth-child(2)').attr('selected', 'selected')
+            $('.ProductBarCode').focus();
 
 
-			const date = new Date();
-			let day = date.getDate();
-			let month = date.getMonth() + 1;
-			let year = date.getFullYear();
-			if (month < 10) {
-				month = `0${month}`
-			} if (day < 10) {
-				day = `0${day}`
-			}
+            var data = ["Apple", "Banana", "Cherry", "Date", "ElderberriesElderberry"]; // Programatically-generated options array with > 5 options
+            var placeholder = "select";
+            $(".ddlProductName").select2({
+                data: data,
+                placeholder: placeholder,
+                allowClear: false,
+                minimumResultsForSearch: 5
+            });
 
-			let currentDate = `${year}-${month}-${day}`;
-			$("#InvoiceDate").val(currentDate);
-			GetLastInvoiceNumberByDate(currentDate);
 
-			$("#sidebar").removeClass("active");
-		})
-	</script>
 
-	<partial name="_Scripts" />
+            const date = new Date();
+            let day = date.getDate();
+            let month = date.getMonth() + 1;
+            let year = date.getFullYear();
+            if (month < 10) {
+                month = `0${month}`
+            } if (day < 10) {
+                day = `0${day}`
+            }
+
+            let currentDate = `${year}-${month}-${day}`;
+            $("#InvoiceDate").val(currentDate);
+            GetLastInvoiceNumberByDate(currentDate);
+
+            $("#sidebar").removeClass("active");
+        })
+    </script>
+
+    <partial name="_Scripts" />
 }

@@ -19,6 +19,7 @@ using ZXing.QrCode.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Microsoft.AspNetCore.Http;
 
 namespace ERP_System.BLL.Guide
 {
@@ -39,10 +40,11 @@ namespace ERP_System.BLL.Guide
 		private readonly IMapper _mapper;
 		private readonly HelperBll _helperBll;
 		private readonly IWebHostEnvironment _webHostEnvironment;
+		private readonly IHttpContextAccessor _httpContext;
 
 		public ProductBll(IRepository<Attachment> repoAttatchment, IRepository<Stock> repoStock, IRepository<ProductUnit> repoProductUnit, IRepository<Unit> repoUnit, IRepository<ProductUnit> productUnit,
 			IWebHostEnvironment webHostEnvironment, IRepository<Product> repoProduct, IMapper mapper, HelperBll helperBll,
-			IRepository<StockProduct> stockProduct, IRepository<PurchaseInvoice> repoPurchaseInvoice, IRepository<PurchaseThrowback> repoPurchaseThrowback)
+			IRepository<StockProduct> stockProduct, IHttpContextAccessor httpContext, IRepository<PurchaseInvoice> repoPurchaseInvoice, IRepository<PurchaseThrowback> repoPurchaseThrowback)
 		{
 			_repoProduct = repoProduct;
 			_mapper = mapper;
@@ -56,12 +58,24 @@ namespace ERP_System.BLL.Guide
 			_repoPurchaseThrowback = repoPurchaseThrowback;
 			_repoProductUnit = repoProductUnit;
 			_repoStock = repoStock;
+			_httpContext = httpContext;
 		}
 
 		#region Get
+
+		public IEnumerable<string> GetProductsNames()
+		{
+			var userId = _httpContext.UserId();
+			var stocks = _repoStock.GetAllAsNoTracking().Where(x => x.UserStocks.Any(c => c.UserId == userId)).Select(x => x.ID).ToList();
+			//var stockP = _stockProduct.GetAllAsNoTracking().Where(x => stocks.Contains(x.ID)).ToList();
+
+            var data = _repoProduct.GetAllAsNoTracking().Where(x=>x.IsActive && !x.IsDeleted && x.StockProducts.Any(x=>stocks.Contains(x.StockId.Value))).Select(x => x.Name).ToList();
+			
+			return data?? Enumerable.Empty<string>();
+		}
 		public ProductDTO GetById(Guid id)
 		{
-			return _repoProduct.GetAllAsNoTracking().Include(p => p.Attachments).Include(x => x.StockProducts).ThenInclude(x => x.Stock).Where(p => p.ID == id).Select(x => new ProductDTO
+			var data = _repoProduct.GetAllAsNoTracking().Include(p => p.Attachments).Include(x => x.StockProducts).ThenInclude(x => x.Stock).Where(p => p.ID == id).Select(x => new ProductDTO
 			{
 
 
@@ -90,6 +104,11 @@ namespace ERP_System.BLL.Guide
 					UnitId = c.UnitId
 				}).ToArray()
 			}).FirstOrDefault();
+
+			data.BaseUnitPurchasePrice = data.GetProductUnits.Where(x => x.UnitId == data.IdUnitOfQty).FirstOrDefault().PurchasingPrice;
+			data.BaseUnitSalePrice = data.GetProductUnits.Where(x => x.UnitId == data.IdUnitOfQty).FirstOrDefault().SellingPrice;
+
+			return data;
 
 		}
 
@@ -894,8 +913,8 @@ namespace ERP_System.BLL.Guide
 						{
 							ProductId = tbl.ID,
 							ConversionFactor = 1,
-							PurchasingPrice = 0,
-							SellingPrice = 0,
+							PurchasingPrice = productDto.BaseUnitPurchasePrice,
+							SellingPrice = productDto.BaseUnitSalePrice,
 							UnitBarcodeText = tbl.BarCodeText,
 							UnitId = tbl.IdUnitOfQty
 						};
@@ -937,8 +956,8 @@ namespace ERP_System.BLL.Guide
 							{
 								ProductId = tbl.ID,
 								ConversionFactor = 1,
-								PurchasingPrice = 0,
-								SellingPrice = 0,
+								PurchasingPrice = productDto.BaseUnitPurchasePrice,
+								SellingPrice = productDto.BaseUnitSalePrice,
 								UnitBarcodeText = tbl.BarCodeText,
 								UnitId = tbl.IdUnitOfQty
 							};
@@ -1078,8 +1097,8 @@ namespace ERP_System.BLL.Guide
 						{
 							ProductId = tbl.ID,
 							ConversionFactor = 1,
-							PurchasingPrice = 0,
-							SellingPrice = 0,
+							PurchasingPrice = productDto.BaseUnitPurchasePrice,
+							SellingPrice = productDto.BaseUnitSalePrice,
 							UnitBarcodeText = tbl.BarCodeText,
 							UnitId = tbl.IdUnitOfQty
 						};
@@ -1119,8 +1138,8 @@ namespace ERP_System.BLL.Guide
 							{
 								ProductId = tbl.ID,
 								ConversionFactor = 1,
-								PurchasingPrice = 0,
-								SellingPrice = 0,
+								PurchasingPrice = productDto.BaseUnitPurchasePrice,
+								SellingPrice = productDto.BaseUnitSalePrice,
 								UnitBarcodeText = tbl.BarCodeText,
 								UnitId = tbl.IdUnitOfQty
 							};

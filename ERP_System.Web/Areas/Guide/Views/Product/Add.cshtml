@@ -56,7 +56,7 @@
                                     </div>
 
                                     <div class="form-group col-6">
-                                        <label class="lable" for="IdUnitOfQty">وحدة الكمية</label>
+                                        <label class="lable" for="IdUnitOfQty">الوحده الأساسية للكمية</label>
                                         <input hidden name="txtIdUnitOfQty" id="txtIdUnitOfQty" value="" class="d-none" />
                                         <select class="Select sAddress form-select" aria-label="اختر الوحدة" onchange="handleSelectIdUnitOfQty()" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text")' name="IdUnitOfQty" id="ddlIdUnitOfQty">
                                             <option selected value="0">اختر الوحدة</option>
@@ -75,6 +75,16 @@
                                     <div class="form-group col-6">
                                         <label for="Quantity">الكمية</label>
                                         <input type="number" id="QtyInStock" step="0.1" name="QtyInStock" class="form-control" placeholder="الكمية بالمخزن" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
+                                    </div>
+
+                                    <div class="form-group col-3">
+                                        <label for="BaseUnitSalePrice">سعر البيع للوحده الأساسية</label>
+                                        <input type="number" id="BaseUnitSalePrice" step="0.1" name="BaseUnitSalePrice" class="form-control"  min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
+                                    </div>
+
+                                    <div class="form-group col-3">
+                                        <label for="BaseUnitPurchasePrice">سعر الشراء للوحده الأساسية</label>
+                                        <input type="number" id="BaseUnitPurchasePrice" step="0.1" name="BaseUnitPurchasePrice" class="form-control"  min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
                                     </div>
 
                                     <div class="form-group col-6">

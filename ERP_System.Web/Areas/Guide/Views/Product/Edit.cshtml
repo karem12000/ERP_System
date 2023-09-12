@@ -61,7 +61,7 @@
                                     </div>
 
                                     <div class="form-group col-6">
-                                        <label class="lable" for="IdUnitOfQty">وحدة الكمية</label>
+                                        <label class="lable" for="IdUnitOfQty">الوحده الأساسية للكمية</label>
                                         <input hidden id="txtIdUnitOfQty" value="@Model.IdUnitOfQty">
                                         <select class="Select sAddress form-select" onchange="handleSelectIdUnitOfQty()" aria-label="اختر الوحدة" asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Units"] , "Value", "Text",Model.IdUnitOfQty)' name="IdUnitOfQty" id="ddlIdUnitOfQty">
                                             <option selected value="0">اختر الوحدة</option>
@@ -71,6 +71,16 @@
                                     <div class="form-group col-6">
                                         <label for="Quantity">الكمية</label>
                                         <input type="number" id="QtyInStock" step="0.1" value="@Model.QtyInStock" name="QtyInStock" class="form-control" placeholder="الكمية بالمخزن" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label for="BaseUnitSalePrice">سعر البيع للوحده الأساسية</label>
+                                        <input type="number" id="BaseUnitSalePrice" value="@Model.BaseUnitSalePrice" step="0.1" name="BaseUnitSalePrice" class="form-control" placeholder="سعر البيع للوحده الأساسية" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label for="BaseUnitPurchasePrice">سعر الشراء للوحده الأساسية</label>
+                                        <input type="number" id="BaseUnitPurchasePrice" step="0.1" value="@Model.BaseUnitPurchasePrice" name="BaseUnitPurchasePrice" class="form-control" placeholder="سعر الشراء للوحده الأساسية" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
                                     </div>
 
                                     <div class="form-group col-6">
@@ -113,8 +123,8 @@
                                                                         </select>
                                                                     </td>
                                                                     <td><input type="number" class="form-control ConversionFactor" value="@unit.ConversionFactor" min="0" step="0.1" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                    <td><input type="number" step="0.01" class="form-control PurchasingPrice " value="@unit.PurchasingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                    <td><input type="number" step="0.01" class="form-control SellingPrice" value="@unit.SellingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" onkeyup="handleBindUnitPrice(this , 'false')" step="0.01" class="form-control PurchasingPrice " value="@unit.PurchasingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                    <td><input type="number" step="0.01" onkeyup="handleBindUnitPrice(this , 'true')" class="form-control SellingPrice" value="@unit.SellingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                     @if(Model.IdUnitOfQty == unit.UnitId)
                                                                     {
                                                                         <td><input type="text" value="@unit.UnitBarcodeText" class="form-control UnitBarcode" /></td>
@@ -146,8 +156,8 @@
                                                                     </select>
                                                                 </td>
                                                                 <td><input type="number" class="form-control ConversionFactor"  min="0" step="0.1" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td><input type="number" step="0.01" class="form-control PurchasingPrice " min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
-                                                                <td><input type="number" step="0.01" class="form-control SellingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                <td><input type="number" step="0.01" onkeyup="handleBindUnitPrice(this , 'false')" class="form-control PurchasingPrice " min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
+                                                                <td><input type="number" step="0.01" onkeyup="handleBindUnitPrice(this , 'true')" class="form-control SellingPrice" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" /></td>
                                                                 <td><input type="text"  class="form-control UnitBarcode" /></td>
                                                                 <td>
                                                                     <div class="d-flex">
