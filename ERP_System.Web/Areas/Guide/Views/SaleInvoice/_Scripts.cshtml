@@ -9,6 +9,9 @@
 		}
 	}
 	getRowsNumber()
+	$(window).focus(function () {
+		$(".ProductBarCode").get(-1).focus();
+	});
 	$(document).ready(function () {
 		LoadTable();
 	});
