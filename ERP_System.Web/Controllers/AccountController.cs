@@ -17,14 +17,21 @@ namespace ERP_System.Web.Controllers
     {
         private readonly UserBll _userBll;
         private readonly SettingBll _settingBll;
+        private readonly UnitBll _unitBll;
+        private readonly ItemGrpoupBll _groupBll;
+        private readonly ProductBll _productBll;
 
-        public AccountController(UserBll userBll, SettingBll settingBll)
+        public AccountController(UserBll userBll, SettingBll settingBll, UnitBll unitBll, ItemGrpoupBll groupBll, ProductBll productBll)
         {
             _userBll = userBll;
             _settingBll = settingBll;
+            _unitBll = unitBll;
+            _groupBll = groupBll;
+            _productBll = productBll;
         }
         public IActionResult Login()
         {
+
             // HttpContext.Response.Redirect("/Account/Index");
 
             return View();

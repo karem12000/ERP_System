@@ -1,6 +1,7 @@
 ﻿using ERP_System.BLL;
 using ERP_System.BLL.Guide;
 using ERP_System.Common.General;
+using ERP_System.DTO;
 using ERP_System.DTO.Guide;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

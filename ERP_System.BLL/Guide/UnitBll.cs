@@ -10,6 +10,7 @@ using System.Text;
 using ERP_System.Tables;
 using AutoMapper;
 using ERP_System.Common.General;
+using ClosedXML.Excel;
 
 namespace ERP_System.BLL.Guide
 {
@@ -181,6 +182,48 @@ namespace ERP_System.BLL.Guide
 
 
             return resultViewModel;
+        }
+        #endregion
+
+
+        #region Import Units 
+        public void importUnits()
+        {
+            string fileName = "D:\\ERP DB Scripts\\Units.xlsx";
+            using (var excelWorkbook = new XLWorkbook(fileName))
+            {
+                var nonEmptyDataRows = excelWorkbook.Worksheet(1).RowsUsed();
+                var query = "";
+                var otherQuery = "";
+                var unitList = new List<Unit>();
+                foreach (var dataRow in nonEmptyDataRows)
+                {
+                    //for row number check
+                    if (dataRow.RowNumber() >= 2)
+                    {
+                        var UnitName = dataRow.Cell(3).Value.ToString().Trim();
+                       
+
+                        if (!string.IsNullOrEmpty(UnitName))
+                        {
+                            var unit = new Unit
+                            {
+                                Name = UnitName,
+                                CreatedDate = DateTime.Now,
+                                AddedBy = Guid.Parse("80968C16-15D8-4533-B771-5285299EDCB6")
+                            };
+                            unitList.Add(unit);
+                        }
+                    }
+
+                }
+
+                if(unitList!=null && unitList.Count() > 0)
+                {
+                    _repoUnit.InsertRange(unitList);
+                }
+
+            }
         }
         #endregion
     }

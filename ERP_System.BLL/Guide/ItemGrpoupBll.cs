@@ -10,6 +10,7 @@ using System.Text;
 using ERP_System.Tables;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using ClosedXML.Excel;
 
 namespace ERP_System.BLL.Guide
 {
@@ -91,7 +92,7 @@ namespace ERP_System.BLL.Guide
                     return resultViewModel;
                 }
                 var tbl = _mapper.Map<ItemGrpoup>(GroupItemDTO);
-                
+
                 if (_repoGroup.UserId != Guid.Empty)
                 {
                     tbl.AddedBy = _repoGroup.UserId;
@@ -112,7 +113,7 @@ namespace ERP_System.BLL.Guide
         public ResultViewModel Delete(Guid id)
         {
             ResultViewModel resultViewModel = new ResultViewModel();
-            var tbl = _repoGroup.GetAllAsNoTracking().Where(p => p.ID == id).Include(x=>x.Products).FirstOrDefault();
+            var tbl = _repoGroup.GetAllAsNoTracking().Where(p => p.ID == id).Include(x => x.Products).FirstOrDefault();
 
             if (tbl == null)
             {
@@ -141,5 +142,46 @@ namespace ERP_System.BLL.Guide
             return resultViewModel;
         }
         #endregion
+
+        #region Save From Excel
+        public void importItemGroups()
+        {
+            string fileName = "D:\\ERP DB Scripts\\ItemGroups.xlsx";
+            var ItemGroupList = new List<ItemGrpoup>();
+            using (var excelWorkbook = new XLWorkbook(fileName))
+            {
+                var nonEmptyDataRows = excelWorkbook.Worksheet(1).RowsUsed();
+                var query = "";
+                foreach (var dataRow in nonEmptyDataRows)
+                {
+                    //for row number check
+                    if (dataRow.RowNumber() >= 2)
+                    {
+                        var ItemGroupName = dataRow.Cell(3).Value.ToString().Trim();
+
+                        if (!string.IsNullOrEmpty(ItemGroupName))
+                        {
+                            var newItem = new ItemGrpoup
+                            {
+                                AddedBy = Guid.Parse("80968C16-15D8-4533-B771-5285299EDCB6"),
+                                CreatedDate = DateTime.Now,
+                                IsActive = true,
+                                IsDeleted = false,
+                                Name = ItemGroupName
+                            };
+                            ItemGroupList.Add(newItem);
+                        }
+                    }
+                }
+
+                if (ItemGroupList != null && ItemGroupList.Count > 0)
+                {
+                    _repoGroup.InsertRange(ItemGroupList);
+                }
+            }
+        }
+
+        #endregion
     }
 }
+
