@@ -14,7 +14,7 @@
 					<div class="card-body">
 						<div class="form-body">
 							<div class="row">
-								<div class="form-group col-3">
+								<div class="form-group col-2">
 									<label class="lable" for="ReportType">اختر التقرير<span style="color:red;"> * </span> </label>
 									<select class="Select sAddress form-select" onchange="handleSelectReportType()" aria-label="اختر التقرير" required name="ReportType" id="ddlReportType">
 										<option selected value="0">اختر التقرير</option>
@@ -29,20 +29,20 @@
 										<option value="9">تقرير الموردين</option>
 									</select>
 								</div>
-								<div class="form-group col-3">
+								<div class="form-group col-2">
 									<label class="lable" for="StockId">المخزن</label>
 									<select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
 										<option selected value="0">اختر المخزن</option>
 									</select>
 								</div>
-								<div class="form-group col-3">
+								<div class="form-group col-2">
 									<label class="lable" for="StockId">الكاشير</label>
 									<select class="Select sAddress form-select" aria-label="اختر الكاشير" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Cashers"] , "Value", "Text")' name="cashierId" id="ddlCashierId">
 										<option selected value="0">اختر الكاشير</option>
 									</select>
 								</div>
-								<div class="form-group  SubReportOptionDev">
-									<div class="form-group col-4">
+								<div class="form-group  SubReportOptionDev col-3">
+									<div class="form-group">
 										<label class="lable" for="PeriodType">اختر النوع<span style="color:red;"> * </span> </label>
 										<select class="Select sAddress form-select subReportSelect" aria-label="اختر النوع" onchange="handleSelectSubType()" name="SubReportType" id="ddlSubReportType">
 											<option selected value="0">كل الأصناف</option>
@@ -51,8 +51,10 @@
 										</select>
 									</div>
 								</div>
-								<div class="form-group  ReportPeriodOptionDev">
-									<div class="form-group col-4">
+								<div class="form-group  ReportPeriodOptionDev col-3 ">
+									<div class="d-flex justify-content-between gap-2">
+
+									<div class="form-group w-100">
 										<label class="lable" for="PeriodType">اختر المدة<span style="color:red;"> * </span> </label>
 										<select class="Select sAddress form-select" onchange="handlePeriodTypeChange();" aria-label="اختر المدة" required name="PeriodType" id="ddlPeriodType">
 											<option selected value="0">يومي</option>
@@ -62,9 +64,10 @@
 										</select>
 									</div>
 
-									<div class="form-group col-4 PeriodDate">
+									<div class="form-group PeriodDate">
 										<label for="FromDate">التاريخ</label>
 										<input type="date" class="form-control" name="FromDate" id="FromDate">
+									</div>
 									</div>
 								</div>
 

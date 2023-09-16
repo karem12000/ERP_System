@@ -15,7 +15,7 @@
                         <form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
                             <div class="form-body">
                                 <div class="row">
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-3">
                                         <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
                                         <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
                                             <option selected value="0">اختر المخزن</option>
@@ -28,14 +28,14 @@
                                         }
                                         <button type="button" class="btn btn-success btn-icon mx-1" onclick="RefreshStocks()"><i class="fas fa-sync"></i></button>
                                     </div>
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-3">
                                         <label class="lable" for="GroupId">  المجموعة<span style="color:red;"> * </span> </label>
                                         <select class="Select sAddress form-select" aria-label="اختر المجموعة" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Groups"] , "Value", "Text")' name="GroupId" id="ddlGroupId">
                                             <option selected value="0">اختر المجموعة</option>
                                         </select>
                                     </div>
 
-                                    <div class="form-group col-6 d-flex align-items-end">
+                                    <div class="form-group col-3 d-flex align-items-end">
                                         @if (CurrentFormByControllerName("ItemGrpoup").CurrentFormPermissionActions.AddHasPermission)
                                         {
 
