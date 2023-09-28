@@ -107,7 +107,22 @@
                                                             <input class="form-control ProductId" type="hidden" value="0" />
                                                             <input type="text" onkeyup="getProduct(this,event)" onClick="this.select();" required class="form-control ProductBarCode" />
                                                         </td>
-                                                        <td><input type="text" onkeyup="getProductByName(this,event)" onClick="this.select();" required class="form-control ProductName" /></td>
+                                                        <td>
+                                                            <input type="text" list="ProductNames" onkeyup="getProductByName(this,event)" onClick="this.select();" required class="form-control ProductName" />
+                                                            <datalist id="ProductNames">
+                                                                @if (ViewData.ContainsKey("Products"))
+                                                                {
+                                                                    @foreach (var product in ViewData["Products"] as IEnumerable<string>)
+                                                                    {
+
+                                                                        <option value="@product"></option>
+
+                                                                    }
+                                                                }
+
+                                                            </datalist>
+
+                                                        </td>
                                                        
                                                         <td>
                                                             <select onchange="handleUnitChange(this,event)" class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">

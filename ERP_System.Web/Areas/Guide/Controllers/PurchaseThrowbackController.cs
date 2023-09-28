@@ -39,6 +39,8 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             var userId = _httpContextAccessor.UserId();
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
             ViewData["Suppliers"] = _supplierBll.GetSelect();
+            ViewData["Products"] = _productBll.GetProductsNames();
+
             return View();
         }
 

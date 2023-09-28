@@ -42,6 +42,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             ViewData["DisscountPermission"] = _userBll.GetById(userId).DiscountPermission;
             ViewData["SalePriceEditPermission"] = _userBll.GetById(userId).SalePriceEdit;
             ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
+            ViewData["Products"] = _productBll.GetProductsNames();
             return View();
         }
 
@@ -64,6 +65,7 @@ namespace ERP_System.Web.Areas.Guide.Controllers
 
 
         public IActionResult Save(SaleInvoiceDTO mdl) => Ok(_invoiceBll.Save(mdl));
+        [HttpGet]
         public IActionResult GetProductsNames() => Ok(_productBll.GetProductsNames());
         public IActionResult SearchByProductName(string term) => Ok(_productBll.SearchByName(term));
         public IActionResult GetInvoiceToPrint(Guid? invoiceId) => Ok(_invoiceBll.GetInvoiceToPrint(invoiceId));

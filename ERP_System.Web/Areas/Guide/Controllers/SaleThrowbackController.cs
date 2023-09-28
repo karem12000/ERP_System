@@ -42,6 +42,8 @@ namespace ERP_System.Web.Areas.Guide.Controllers
             ViewData["DisscountPermission"] = _userBll.GetById(userId).DiscountPermission;
 			ViewData["SalePriceEditPermission"] = _userBll.GetById(userId).SalePriceEdit;
 			ViewData["Stocks"] = _stockBll.GetStocksSelectByUserId(userId);
+            ViewData["Products"] = _productBll.GetProductsNames();
+
             return View();
         }
 

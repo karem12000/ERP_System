@@ -7,72 +7,72 @@
     @*<style>
 		.swal2-html-container{direction:ltr}
 	</style>*@
-	<div class="row">
-		<div class="col-12">
-			<div class="card" style="zoom:.8">
-				<div class="card-content">
-					<div class="card-body">
-						<form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
-							<div class="form-body">
-								<div class="row align-items-end">
-									<div class="form-group col-2 mb-0">
-										<label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
-										<input hidden name="id" id="id" value="" class="d-none" />
-										<select class="Select sAddress form-select" onchange="SetInvoiceThroback()" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
-											<option selected value="0">فاتورة مبيعات</option>
-											@*@if (CurrentFormByControllerName("SaleThrowback").CurrentFormPermissionActions.AddHasPermission)
-										{*@
-											@*<option value="1">فاتورة مرتجع مبيعات</option>*@
-											@*  *@}
-										</select>
-									</div>
-									<div class="form-group col-2 mb-0">
-										<label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
-										<select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
-											<option value="0" disabled>اختر المخزن</option>
-										</select>
-									</div>
-									<div class="col-2">
-										<div class="form-group mb-0">
-											<label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
-											<input type="text" readonly id="InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
-										</div>
-									</div>
-									<div class="col-2">
-										<div class="form-group mb-0">
-											<label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
-											<input type="date" class="form-control" name="InvoiceDate" id="InvoiceDate" readonly>
-										</div>
-									</div>
-									<div class="col-2">
-										<div class="form-group mb-0">
-											<label for="Supplier">اسم العميل</label>
-											<input type="text" class="form-control" name="Buyer" id="Buyer">
-										</div>
-									</div>
-									<div class="col-1">
-										<div class="form-group mb-0">
-											<button type="button" onclick="CancelProcess()" class="btn btn-primary" name="btnCancel" id="btnCancel">إلغاء العملية</button>
-										</div>
-									</div>
-									<div class="col-1">
-										@if (CurrentFormByControllerName("SaleThrowback").CurrentFormPermissionActions.AddHasPermission)
-										{
-											<div class="form-group mb-0">
-												<a type="button" target="_blank" href="/Guide/SaleThrowback/Add" class="btn btn-primary" name="btnThrowback" id="btnThrowback">إضافة مرتجع</a>
-											</div>
-										}
-									</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card" style="zoom:.8">
+                <div class="card-content">
+                    <div class="card-body">
+                        <form class="form form-horizontal" id="frm" onsubmit="Submit('add')">
+                            <div class="form-body">
+                                <div class="row align-items-end">
+                                    <div class="form-group col-2 mb-0">
+                                        <label class="lable" for="InvoiceType">نوع الفاتورة<span style="color:red;"> * </span></label>
+                                        <input hidden name="id" id="id" value="" class="d-none" />
+                                        <select class="Select sAddress form-select" onchange="SetInvoiceThroback()" aria-label="اختر نوع الفاتورة" required name="InvoiceType" id="ddlInvoiceType">
+                                            <option selected value="0">فاتورة مبيعات</option>
+                                            @*@if (CurrentFormByControllerName("SaleThrowback").CurrentFormPermissionActions.AddHasPermission)
+                                        {*@
+                                            @*<option value="1">فاتورة مرتجع مبيعات</option>*@
+                                            @*  *@}
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-2 mb-0">
+                                        <label class="lable" for="StockId">  المخزن<span style="color:red;"> * </span></label>
+                                        <select class="Select sAddress form-select" aria-label="اختر المخزن" required asp-items='new SelectList((IEnumerable<SelectListDTO>)ViewData["Stocks"] , "Value", "Text")' name="StockId" id="ddlStockId">
+                                            <option value="0" disabled>اختر المخزن</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group mb-0">
+                                            <label for="InvoiceNumber">رقم الفاتورة<span style="color:red;"> * </span></label>
+                                            <input type="text" readonly id="InvoiceNumber" name="InvoiceNumber" class="form-control" placeholder="رقم الفاتورة">
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group mb-0">
+                                            <label for="InvoiceDate">تاريخ الفاتورة<span style="color:red;"> * </span></label>
+                                            <input type="date" class="form-control" name="InvoiceDate" id="InvoiceDate" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-group mb-0">
+                                            <label for="Supplier">اسم العميل</label>
+                                            <input type="text" class="form-control" name="Buyer" id="Buyer">
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+                                        <div class="form-group mb-0">
+                                            <button type="button" onclick="CancelProcess()" class="btn btn-primary" name="btnCancel" id="btnCancel">إلغاء العملية</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+                                        @if (CurrentFormByControllerName("SaleThrowback").CurrentFormPermissionActions.AddHasPermission)
+                                        {
+                                            <div class="form-group mb-0">
+                                                <a type="button" target="_blank" href="/Guide/SaleThrowback/Add" class="btn btn-primary" name="btnThrowback" id="btnThrowback">إضافة مرتجع</a>
+                                            </div>
+                                        }
+                                    </div>
 
-								</div>
-								<hr>
-								<div class="row">
-									<div class="col-md-12">
-										<label for="Products">المنتجات  </label>
-										<button type="button" class="btn btn-outline-primary addInvoiceProduct mx-2">إضافة</button>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="Products">المنتجات  </label>
+                                        <button type="button" class="btn btn-outline-primary addInvoiceProduct mx-2">إضافة</button>
 
-										<label id="ProductsCount"> 0 </label>
-										<div class="table-container" id="InvoiceProducts" style="height:500px;overflow-y:auto">
+                                        <label id="ProductsCount"> 0 </label>
+                                        <div class="table-container" id="InvoiceProducts" style="height:400px;overflow-y:auto">
 
                                             <table class="table">
                                                 <thead>
@@ -100,16 +100,19 @@
                                                         </td>
                                                         <td>
                                                             <input type="text" list="ProductNames" onkeyup="getProductByName(this,event)" onClick="this.select();" required class="form-control ProductName choices" />
-                                                            <datalist id="ProductNames">
-                                                                <option value="Gryfindor"></option>
-                                                                <option value="Hufflepuff"></option>
-                                                                <option value="Slytherin"></option>
-                                                                <option value="Ravenclaw"></option>
-                                                                <option value="Horned Serpent"></option>
-                                                                <option value="Thunderbird"></option>
-                                                                <option value="Pukwudgie"></option>
-                                                                <option value="Wampus"></option>
+                                                            <datalist id="ProductNames"  >
+                                                                @if (ViewData.ContainsKey("Products"))
+                                                                {
+                                                                    @foreach (var product in ViewData["Products"] as IEnumerable<string>)
+                                                                    {
+
+                                                                        <option value="@product"></option>
+
+                                                                    }
+                                                                }
+                                                              
                                                             </datalist>
+
                                                         </td>
                                                         <td>
                                                             <select onchange="handleUnitChange(this,event)" class="Select sAddress form-select UnitId" required aria-label="اختر الوحدة" name="UnitId" id="ddlUnitId">
@@ -201,7 +204,7 @@
                                             </div>
                                             <div class="col-2 d-flex gap-2 align-items-center">
                                                 <h5 class="mb-0">الباقي</h5>
-                                                <input disabled type="number" class="form-control Remaining w-75"  value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
+                                                <input disabled type="number" class="form-control Remaining w-75" value="0.0" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46))" />
 
                                             </div>
                                         </div>
@@ -257,6 +260,14 @@
             $('#ddlStockId option:nth-child(2)').attr('selected', 'selected')
             $('.ProductBarCode').focus();
 
+            //$.get('@Url.GetAction("GetProductsNames")', function (res) {
+            //    if (res.Status) {
+            //        if (res.Data) {
+            //            console.log(res.Data)
+            //        }
+            //    }
+            //});
+
             const date = new Date();
             let day = date.getDate();
             let month = date.getMonth() + 1;
@@ -273,7 +284,7 @@
 
             $("#sidebar").removeClass("active");
         })
-        
+
     </script>
 
     <partial name="_Scripts" />
