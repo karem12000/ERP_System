@@ -2,10 +2,10 @@
 function printDiv(data) {
 	console.log(data);
 	if (data) {
-		var a = window.open('', '', 'height=600, width=600');
+		var a = window.open('', '', ' width=600');
 
 
-		a.document.write('<html>');
+		a.document.write('<html  style="height:fit-content;overflow-y: hidden;">');
 		a.document.write(
 			`
 			<style>
@@ -15,7 +15,7 @@ function printDiv(data) {
 			</style>
 			`
 		);
-		a.document.write('<body style="margin:0;padding:0;">');
+		a.document.write('<body style="margin: 0;padding:0;height: fit-content;width: 100%;">');
 		a.document.write(
 			`
 				<div id="GFG"">
@@ -103,10 +103,10 @@ function printDiv(data) {
 					`
 			  <tr style="zoom:0.8;">
 								<td colspan="3" style="font-size: 18px;padding: 0 5px;">${detail.UnitJsonDto[0]?.ProductJsonDto[0]?.ProductName}</td>
-								<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductSellingPrice}</td>
-								<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductQty}</td>
-								<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductDisscount} ${detail.ProductDiscountTypeStr}</td>
-								<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductTotalQtyPrice}</td>
+								<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductSellingPrice}</td>
+								<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductQty}</td>
+								<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductDisscount} ${detail.ProductDiscountTypeStr}</td>
+								<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductTotalQtyPrice}</td>
 								
 			 </tr>
 			`
@@ -217,7 +217,7 @@ function printSaleThroback(data) {
 			</style>
 			`
 		);
-		a.document.write('<body style="margin:0;padding:0;">');
+		a.document.write('<body style="margin: 0;padding:0;height: fit-content;width: 100%;">');
 		a.document.write(
 			`
 				<div id="GFG"">
@@ -305,10 +305,10 @@ function printSaleThroback(data) {
 					`
 			  <tr style="zoom:0.8;">
 								<td colspan="3" style="font-size: 16px;padding: 0 5px;">${detail.UnitJsonDto[0]?.ProductJsonDto[0]?.ProductName}</td>
-								<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductSellingPrice}</td>
-								<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductQty}</td>
-								<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductDisscount} ${detail.ProductDiscountTypeStr}</td>
-								<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductTotalQtyPrice}</td>
+								<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductSellingPrice}</td>
+								<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductQty}</td>
+								<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductDisscount} ${detail.ProductDiscountTypeStr}</td>
+								<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductTotalQtyPrice}</td>
 								
 			 </tr>
 			`
@@ -573,8 +573,8 @@ function printParchase(data) {
 function printParchaseThrowback(data) {
 	console.log(data);
 	if (data) {
-		var a = window.open('', '', 'height=600, width=600');
-		a.document.write('<html>');
+		var a = window.open('', '', 'height=fit-content, width=600');
+		a.document.write('<html style="heigt:fit-content;">');
 		a.document.write(
 			`
 			<style>
@@ -584,7 +584,7 @@ function printParchaseThrowback(data) {
 			</style>
 			`
 		);
-		a.document.write('<body style="margin:0;padding:0;">');
+		a.document.write('<body style="margin: 0;padding:0;height: fit-content;width: 100%;">');
 		a.document.write(
 			`
 				<div id="GFG"">
@@ -670,9 +670,9 @@ function printParchaseThrowback(data) {
 					`
 								  <tr style="zoom:0.8;">
 													<td colspan="3" style="font-size: 16px;padding: 0 5px;">${detail.UnitJsonDto[0].ProductJsonDto[0].ProductName}</td>
-													<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductPurchasingPrice}</td>
-													<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductQty}</td>
-													<td colspan="1" style="font-size: 12px;padding: 0 5px;">${detail.ProductTotalQtyPrice}</td>
+													<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductPurchasingPrice}</td>
+													<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductQty}</td>
+													<td colspan="1" style="font-size: 14px;padding: 0 5px;">${detail.ProductTotalQtyPrice}</td>
 								
 								 </tr>
 								`
@@ -752,7 +752,7 @@ function printAtEnd(data) {
 			</style>
 			`
 		);
-		a.document.write('<body style="margin:0;padding:0;">');
+		a.document.write('<body style="margin: 0;padding:0;height: fit-content;width: 100%;">');
 		a.document.write(
 			`
 				<div id="GFG"">
@@ -928,5 +928,5 @@ function printAtEnd(data) {
 		a.onfocus = function () { setTimeout(function () { a.close(); }, 500); }
 	}
 
-	
+
 }
